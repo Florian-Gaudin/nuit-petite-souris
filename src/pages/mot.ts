@@ -3,9 +3,10 @@ import '../styles/style.css';
 import qrcode from 'qrcode-generator';
 import '../lib/plateforme';
 import { initStockage } from '../lib/stockage';
+import { installerProfil, baseHistoire } from '../lib/profilCourant';
 
 await initStockage();
-await import('../legacy/config.js');
+installerProfil();
 await import('../legacy/art.js');
 
 const W = window as any;
@@ -16,7 +17,7 @@ document.body.insertAdjacentHTML('afterbegin', W.ART.symboles());
 $('titre').textContent = 'Merci pour ta dent, ' + C.enfant + ' !';
 $('cadeau').textContent = 'Mon cadeau sèche ' + C.billet.lieu + ' !';
 $('signature').textContent = C.souris;
-$('url').textContent = C.url;
+$('url').textContent = baseHistoire();
 if (!C.url) $('alerte').hidden = false;
 
 // QR code généré hors ligne (aucune requête réseau)

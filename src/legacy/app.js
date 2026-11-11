@@ -18,7 +18,7 @@
   const hasard = arr => arr[Math.floor(Math.random() * arr.length)];
 
   // ---------- Progression (mémorisée en local) ----------
-  const KEY = 'souris.v2';
+  const KEY = 'souris.progression.' + window.PROFIL.id; // une progression par profil (plusieurs enfants, plusieurs dents)
   const State = { unlocked: 0, scene: 0, etoiles: {}, badges: [], secret: false, nuit: null, fini: false };
   function calcNuit() { const d = new Date(); if (d.getHours() < 12) d.setDate(d.getDate() - 1); return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
   function load() {
@@ -43,8 +43,8 @@
   // ?chapitre=1&scene=4 ouvre la scène 4 du voyage, ?t=30 avance de 30 s dans la caméra
   const params = new URLSearchParams(location.search);
   if (params.has('reset')) {
-    ['souris.v1', KEY, 'souris.muet'].forEach(k => window.STOCKAGE.effacer(k));
-    location.replace(location.pathname); return;
+    [KEY, 'souris.muet'].forEach(k => window.STOCKAGE.effacer(k)); // le profil, lui, est gardé
+    location.replace(location.pathname + location.hash); return;
   }
   load();
   const tTest = Math.max(0, parseFloat(params.get('t')) || 0);
@@ -54,7 +54,7 @@
     State.unlocked = Math.max(State.unlocked, n); demande = n;
     if (params.has('scene')) { sceneDemande = Math.max(0, Math.min(5, parseInt(params.get('scene'), 10) || 0)); State.scene = Math.max(State.scene, sceneDemande); }
     save();
-    try { history.replaceState(null, '', location.pathname + '#' + n); } catch (e) { }
+    try { history.replaceState(null, '', location.pathname + location.hash); } catch (e) { } // retire ?chapitre de l'adresse, garde le profil
   }
 
   // ---------- Fil rouge, heure, son, toasts ----------
@@ -130,7 +130,7 @@
     // Recommencer : un second toucher confirme (pour éviter un effacement par erreur)
     $('#pref-reset').onclick = () => {
       const b = $('#pref-reset');
-      if (b.classList.contains('confirme')) { location.href = location.pathname + '?reset=1'; return; }
+      if (b.classList.contains('confirme')) { location.href = location.pathname + '?reset=1' + location.hash; return; }
       b.classList.add('confirme'); b.innerHTML = A.icone('recommencer') + ' Sûr ? Touche encore pour tout effacer';
       clearTimeout(b.t); b.t = setTimeout(majPrefs, 4000);
     };
@@ -156,7 +156,6 @@
     courantN = n; courant = Chapitres[n];
     root.innerHTML = courant.render(opts); root.className = 'scene ch-' + n;
     window.scrollTo(0, 0); updateFil(n); courant.mount(root, opts);
-    try { history.replaceState(null, '', location.pathname + '#' + n); } catch (e) { }
   }
 
   // ---------- Chapitre 0 : accueil ----------
@@ -470,7 +469,7 @@
   <div class="confettis" aria-hidden="true"></div>
   <div class="diplome-wrap">${window.CERTIFICAT.html({ badges: State.badges.concat(State.badges.indexOf('jumelle') < 0 ? ['jumelle'] : []), secret: State.secret, nuitTexte: nuitTexte(), etoiles: nbEtoiles(), total: totalEtoiles })}</div>
   <div class="fin">
-    <a class="btn btn-grand btn-or" id="btn-imprimer" href="certificat.html?${qs}" target="_blank" rel="noopener">${A.icone('imprimer')} Imprimer le diplôme</a>
+    <a class="btn btn-grand btn-or" id="btn-imprimer" href="certificat.html?${qs}#p=${window.PROFIL.code}" target="_blank" rel="noopener">${A.icone('imprimer')} Imprimer le diplôme</a>
     <button class="btn btn-petit" id="btn-revoir5">Revoir l'histoire</button>
   </div>
 </section>`;
@@ -509,11 +508,8 @@
   }
   ['fullscreenchange', 'webkitfullscreenchange'].forEach(n => document.addEventListener(n, boutonPlein));
 
-  const h = parseInt((location.hash || '').slice(1), 10);
-  if (demande != null) show(demande);
-  else if (!isNaN(h) && h > 0 && h <= State.unlocked) show(Math.min(5, h));
-  else show(0);
-  window.addEventListener('hashchange', () => { const n = parseInt((location.hash || '').slice(1), 10); if (!isNaN(n) && n !== courantN && n <= State.unlocked) show(n); });
+  // Le « # » de l'adresse porte le profil de l'enfant ; on démarre toujours par l'accueil (ou ?chapitre=n pour tester)
+  if (demande != null) show(demande); else show(0);
 
   // Exposé pour les tests
   window.APP = { show, state: State, nuitTexte };

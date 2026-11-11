@@ -3,9 +3,10 @@ import '../styles/style.css';
 import '../styles/diplome.css';
 import '../lib/plateforme';
 import { initStockage, stockage } from '../lib/stockage';
+import { installerProfil } from '../lib/profilCourant';
 
 await initStockage();
-await import('../legacy/config.js');
+const pc = installerProfil();
 await import('../legacy/data.js');
 await import('../legacy/art.js');
 await import('../legacy/certificat.js');
@@ -17,7 +18,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
 document.body.insertAdjacentHTML('afterbegin', ART.symboles());
 const p = new URLSearchParams(location.search);
 let etat: any = {};
-try { etat = JSON.parse(stockage.lire('souris.v2') || '{}'); } catch { /* état illisible : on repart de zéro */ }
+try { etat = JSON.parse(stockage.lire('souris.progression.' + pc.id) || '{}'); } catch { /* état illisible : on repart de zéro */ }
 
 // Priorité : paramètres d'adresse (envoyés par la tablette) > mémoire locale > tout gagné
 const tous = DATA.badges.filter((b: any) => !b.secret).map((b: any) => b.id);
@@ -45,3 +46,6 @@ const zone = document.getElementById('diplome') as HTMLElement;
 zone.innerHTML = CERTIFICAT.html({ badges: badges.concat(badges.indexOf('jumelle') < 0 ? ['jumelle'] : []), secret, nuitTexte, etoiles, total });
 CERTIFICAT.brancher(zone);
 (document.getElementById('btn-print') as HTMLElement).onclick = () => window.print();
+// Retour à l'histoire, avec le même profil
+const retour = document.querySelector<HTMLAnchorElement>('a[href^="index.html"]');
+if (retour) retour.href = 'index.html#p=' + pc.code;

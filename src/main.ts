@@ -5,11 +5,12 @@ import './styles/style.css';
 import './styles/diplome.css';
 import './lib/plateforme';
 import { initStockage } from './lib/stockage';
+import { installerProfil } from './lib/profilCourant';
 
 await initStockage();
+installerProfil(); // le profil de l'enfant (QR code, mémoire ou exemple) → window.CONFIG
 
 // L'ordre compte : chaque fichier s'appuie sur ceux d'avant (window.CONFIG, window.DATA…).
-await import('./legacy/config.js');
 await import('./legacy/data.js');
 await import('./legacy/art.js');
 await import('./legacy/decors.js');

@@ -1,0 +1,113 @@
+import { describe, expect, it } from 'vitest';
+import qrcode from 'qrcode-generator';
+import {
+  type Profil, PROFIL_EXEMPLE, DENTS_DE_LAIT, adresseProfil, codeDepuisAdresse, configDepuisProfil,
+  decoderProfil, encoderProfil, idProfil, verifierProfil,
+} from './profil';
+import LZString from 'lz-string';
+
+const SITE = 'https://florian-gaudin.github.io/nuit-petite-souris/';
+
+// Un profil « maximal » : tous les champs remplis, noms longs, beaucoup de dents
+const MAXIMAL: Profil = {
+  prenom: 'Marie-Charlotte-Eugénie',
+  genre: 'f',
+  doudou: { type: 'licorne', nom: 'Paillette des Étoiles' },
+  fratrie: { prenom: 'Jean-Baptiste-Alexandre', genre: 'g', dortACote: true },
+  chat: 'Monsieur Moustache',
+  dents: { nuit: 64, deja: [81, 71, 82, 72, 51, 61, 52, 62, 83, 73, 53, 63] },
+  billet: 50,
+  cachette: 'table-de-nuit',
+  ville: { nom: 'Saint-Rémy-de-Provence', codePostal: '13210', departement: '13' },
+  nuit: '2026-11-10',
+};
+
+const avec = (modif: (p: Profil) => void): Profil => { const p = structuredClone(MAXIMAL); modif(p); return p; };
+// L'ordre des dents déjà tombées n'est pas conservé (masque) : on compare dans l'ordre du schéma
+const normal = (p: Profil): Profil => ({ ...p, dents: { ...p.dents, deja: [...p.dents.deja].sort((a, b) => DENTS_DE_LAIT.indexOf(a) - DENTS_DE_LAIT.indexOf(b)) } });
+
+describe('profil', () => {
+  it('le profil d\'exemple et le profil maximal sont valides', () => {
+    expect(verifierProfil(PROFIL_EXEMPLE)).toEqual([]);
+    expect(verifierProfil(MAXIMAL)).toEqual([]);
+  });
+
+  it('20 dents de lait', () => {
+    expect(DENTS_DE_LAIT).toHaveLength(20);
+    expect(DENTS_DE_LAIT).toContain(51);
+    expect(DENTS_DE_LAIT).toContain(85);
+  });
+
+  it('aller-retour sans perte', () => {
+    for (const p of [PROFIL_EXEMPLE, MAXIMAL, avec(p => { p.fratrie = null; p.nuit = null; p.doudou = { type: 'aucun', nom: '' }; })]) {
+      const l = decoderProfil(encoderProfil(p));
+      expect(l.ok).toBe(true);
+      if (l.ok) expect(l.profil).toEqual(normal(p));
+    }
+  });
+
+  it('l\'adresse transporte le profil après #p=', () => {
+    const url = adresseProfil(SITE, MAXIMAL);
+    expect(url.startsWith(SITE + '#p=')).toBe(true);
+    const code = codeDepuisAdresse(new URL(url).hash);
+    expect(code).not.toBeNull();
+    const l = decoderProfil(code!);
+    expect(l.ok && l.profil.prenom).toBe('Marie-Charlotte-Eugénie');
+    expect(codeDepuisAdresse('#3')).toBeNull();
+    expect(codeDepuisAdresse('')).toBeNull();
+  });
+
+  it('le QR code reste petit et lisible en A6 même pour un profil maximal', () => {
+    const url = adresseProfil(SITE, MAXIMAL);
+    expect(url.length).toBeLessThan(330);
+    const qr = qrcode(0, 'M'); qr.addData(url); qr.make();
+    const version = (qr.getModuleCount() - 17) / 4;
+    console.log(`adresse ${url.length} caractères → QR version ${version} (${qr.getModuleCount()} modules)`);
+    expect(version).toBeLessThanOrEqual(13);
+  });
+
+  it('refuse les valeurs invalides', () => {
+    expect(verifierProfil(avec(p => { p.prenom = '<img src=x onerror=alert(1)>'; }))).toContain('prénom');
+    expect(verifierProfil(avec(p => { p.prenom = ''; }))).toContain('prénom');
+    expect(verifierProfil(avec(p => { p.prenom = 'A'.repeat(41); }))).toContain('prénom');
+    expect(verifierProfil(avec(p => { p.ville.nom = 'Paris"><script>'; }))).toContain('ville');
+    expect(verifierProfil(avec(p => { (p as any).billet = 7; }))).toContain('billet');
+    expect(verifierProfil(avec(p => { p.dents.nuit = 99; }))).toContain('dent de la nuit');
+    expect(verifierProfil(avec(p => { p.dents.deja = [81, 81]; }))).toContain('dents déjà tombées');
+    expect(verifierProfil(avec(p => { p.dents.deja = [64]; }))).toContain('dents déjà tombées');
+    expect(verifierProfil(avec(p => { p.nuit = '2026-02-30'; }))).toContain('date');
+    expect(verifierProfil(avec(p => { (p as any).cachette = 'cave'; }))).toContain('cachette');
+  });
+
+  it('un code abîmé ou forgé est refusé sans planter', () => {
+    expect(decoderProfil('nimportequoi').ok).toBe(false);
+    expect(decoderProfil('').ok).toBe(false);
+    const forge = (s: string) => decoderProfil(LZString.compressToEncodedURIComponent(s));
+    expect(forge('1|<b>x</b>|f|0|Nicolas|Pantoufle|71|1|5|0|Aiglemont|08090|08||').ok).toBe(false);
+    expect(forge('1|Léa|f|0|Nicolas|Pantoufle|71|1|7|0|Aiglemont|08090|08||').ok).toBe(false);   // billet 7 €
+    expect(forge('1|Léa|f|0|Nicolas|Pantoufle|71|zzzzzz|5|0|Aiglemont|08090|08||').ok).toBe(false); // masque hors limites
+    expect(forge('1|Léa|f|0|Nicolas|Pantoufle|71|1|5|0|Aiglemont').ok).toBe(false);                // champs manquants
+    expect(forge('1|Léa|f|0|Nicolas|Pantoufle|71|1|5|0|Aiglemont|08090|08||').ok).toBe(true);      // le bon, pour comparaison
+    expect(forge('99|Léa|f').ok).toBe(false);
+    expect(forge('99|Léa|f')).toEqual({ ok: false, raison: 'version inconnue' });
+  });
+
+  it('identifiant stable et différent d\'un profil à l\'autre', () => {
+    expect(idProfil(MAXIMAL)).toBe(idProfil(structuredClone(MAXIMAL)));
+    expect(idProfil(MAXIMAL)).not.toBe(idProfil(PROFIL_EXEMPLE));
+    expect(idProfil(avec(p => { p.dents.nuit = 65; }))).not.toBe(idProfil(MAXIMAL));
+  });
+
+  it('traduction vers la configuration du moteur actuel', () => {
+    const c = configDepuisProfil(PROFIL_EXEMPLE, SITE + '#p=x');
+    expect(c.enfant).toBe('Clémentine');
+    expect(c.poupee).toBe('Nicolas');
+    expect(c.ville).toBe('Aiglemont');
+    expect(c.billet.lieu).toBe('sur la cheminée');
+    expect(c.dents).toEqual([
+      { numero: 1, position: 'bas-centrale-gauche', code: 81 },
+      { numero: 2, position: 'bas-centrale-droite', code: 71 },
+    ]);
+    expect(configDepuisProfil(MAXIMAL, '').billet.lieu).toBe('sur ta table de nuit');
+  });
+});
