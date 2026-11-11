@@ -1,4 +1,4 @@
-// Les six décors illustrés du chapitre 1 (SVG 1000 × 600, sol vers y = 480).
+// Les sept décors illustrés du chapitre 1 (SVG 1000 × 600, sol vers y = 480).
 // Chaque élément à toucher est un <g class="tap" data-el="…"> qui commence par un halo.
 window.DECORS = (function () {
   'use strict';
@@ -148,7 +148,7 @@ ${maison(80, 480, 150, 100, '#D64045')}
 ${maison(330, 450, 170, 110, '#3E7C8F')}
 ${maison(640, 400, 190, 130, '#D64045')}
 <rect x="920" y="300" width="100" height="70" fill="#E9E2D6"/><path d="M910 300l60-40 60 40z" fill="#3E7C8F"/>${volet(940, 318)}
-${tap('fenetre', 'La fenêtre de la chambre', `${halo(0, 0, 44)}<rect class="vitre" x="-18" y="-24" width="36" height="48" rx="3" fill="#FFC857"/><g class="nicolas"><circle cx="0" cy="-4" r="8" fill="#2b2b33"/><rect x="-8" y="4" width="16" height="20" rx="5" fill="#2b2b33"/><path d="M-8 10l-6 8M8 10l6 8" stroke="#2b2b33" stroke-width="4" stroke-linecap="round"/></g><path d="M-18 0h36M0-24v48" stroke="#F3EFE6" stroke-width="2.5"/><rect x="-18" y="-24" width="36" height="48" rx="3" fill="none" stroke="#F3EFE6" stroke-width="3"/>`, 'transform="translate(735,312)"')}
+${tap('fenetre', 'La fenêtre de la chambre', `${halo(0, 0, 44)}<rect class="vitre" x="-18" y="-24" width="36" height="48" rx="3" fill="#FFC857"/>${window.DESSINS.silhouetteFenetre({ type: window.CONFIG.profil.doudou.type, fratrie: !!(window.CONFIG.profil.fratrie && window.CONFIG.profil.fratrie.dortACote) })}<path d="M-18 0h36M0-24v48" stroke="#F3EFE6" stroke-width="2.5"/><rect x="-18" y="-24" width="36" height="48" rx="3" fill="none" stroke="#F3EFE6" stroke-width="3"/>`, 'transform="translate(735,312)"')}
 ${tap('girouette', 'La girouette', `${halo(0, -24, 52)}<rect x="-3" y="-14" width="6" height="40" fill="#6b6560"/><g class="coq"><path d="M-34-24h68" stroke="#F3EFE6" stroke-width="4" stroke-linecap="round"/><path d="M24-34l12 10-12 10z" fill="#F3EFE6"/><path d="M-6-28q-6-18 8-22 10-2 14 8 2 8-6 14z" fill="#D64045"/><path d="M-10-46l4-8 4 8 4-8 2 10z" fill="#FFC857"/><circle cx="8" cy="-40" r="1.8" fill="#2B2B33"/></g>`, 'transform="translate(415,318)"')}
 ${tap('lampadaire', 'Un lampadaire qui grésille', `${halo(0, -162, 52)}<rect x="-4" y="-150" width="8" height="150" fill="#6b6560"/><path d="M-20-150h40l-6-28h-28z" fill="#3b4254"/><circle class="lampe-lueur" cx="0" cy="-164" r="80" fill="url(#halo-or)"/><circle class="ampoule" cx="0" cy="-164" r="11" fill="#FFC857"/>`, 'transform="translate(230,470)"')}
 ${lueur(L.x, L.y, 100)}
@@ -190,7 +190,47 @@ ${tap('quenotte', 'Quenotte', `${halo(195, 430, 95)}${A.souris(sx, sy, sw, 'clas
 </svg>`;
   }
 
-  return { chateau, foret, meuse, place, aiglemont, pantoufle };
+
+  // ---------- 5. La montgolfière, au-dessus des Ardennes ----------
+  function montgolfiere(nuit) {
+    let lumieresCharleville = '', lumieresVille = '';
+    for (let i = 0; i < 12; i++) lumieresCharleville += '<rect x="' + (40 + i * 13) + '" y="' + (486 - (i % 3) * 6) + '" width="4" height="5" fill="#FFC857"/>';
+    for (let i = 0; i < 7; i++) lumieresVille += '<rect x="' + (850 + i * 14) + '" y="' + (452 - (i % 2) * 5) + '" width="4" height="5" fill="#FFC857"/>';
+    // Enveloppe rayée rouge et jaune, aux couleurs de l'écharpe de Quenotte
+    const enveloppe = '<g class="enveloppe">'
+      + '<path d="M-40 -95C-112 -150-112 -300 0 -312C112 -300 112 -150 40 -95Z" fill="#D64045" stroke="#9a2a32" stroke-width="3"/>'
+      + '<path d="M-14 -95C-40 -160-36 -292 0 -312C36 -292 40 -160 14 -95Z" fill="#FFC857"/>'
+      + '<path d="M-31 -96C-80 -160-80 -290-18 -309M31 -96C80 -160 80 -290 18 -309" fill="none" stroke="#FFC857" stroke-width="7"/>'
+      + '<ellipse cx="0" cy="-305" rx="22" ry="7" fill="#9a2a32" opacity=".6"/>'
+      + '<path d="M-60 -250C-72 -210-66 -160-50 -130" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".25"/>'
+      + '</g>';
+    const nacelle = '<path d="M-26 -42L-38 -94M26 -42L38 -94M-10 -42L-14 -94M10 -42L14 -94" stroke="#6b4a32" stroke-width="2"/>'
+      + '<rect x="-12" y="-104" width="24" height="10" rx="2" fill="#7d8597"/>'
+      + '<g class="flamme"><path d="M0 -150C-14 -128-10 -110 0 -104C10 -110 14 -128 0 -150Z" fill="#FFC857"/><path d="M0 -136C-6 -124-4 -112 0 -108C4 -112 6 -124 0 -136Z" fill="#fff4d6"/></g>'
+      + A.souris(-46, -88, 92)
+      + '<rect x="-30" y="-44" width="60" height="44" rx="5" fill="#B07A4F" stroke="#6b4a32" stroke-width="3"/>'
+      + '<path d="M-30 -30h60M-30 -16h60M-15 -44v44M0 -44v44M15 -44v44" stroke="#8B5A3C" stroke-width="2" opacity=".7"/>';
+    return '<svg class="decor decor-montgolfiere" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Une montgolfière rouge et jaune au-dessus des Ardennes, la nuit">'
+      + A.fond(nuit, 81, { x: 860, y: 96, r: 30 })
+      // le paysage vu d'en haut : collines, forêt, la Meuse qui brille, Charleville et la ville d'arrivée au loin
+      + '<path d="M0 470Q180 420 360 450T720 430T1000 420V600H0Z" fill="#1E2658"/>'
+      + '<path d="M0 500Q220 470 460 500T1000 470V600H0Z" fill="#1E3F36"/>'
+      + '<g fill="#173229">' + [30, 90, 150, 520, 580, 640, 700].map(x => '<path d="M' + x + ' 520l18-44 18 44z"/>').join('') + '</g>'
+      + '<path class="meuse-vue" d="M-10 560C120 540 160 590 300 570S520 530 600 560S820 600 1010 560" fill="none" stroke="#7FB8C7" stroke-width="10" stroke-linecap="round" opacity=".75"/>'
+      + '<g class="lumieres-loin">' + lumieresCharleville + lumieresVille + '</g>'
+      + '<path d="M840 456l8-8 8 8M868 452l8-9 8 9M900 456l7-7 7 7" fill="none" stroke="#3E7C8F" stroke-width="2"/>'
+      // secret : une étoile qui scintille… et file quand on la touche
+      + tap('etoile', 'Une étoile qui scintille', halo(480, 120, 46) + '<g class="filante"><path d="M0 0L-120 60" stroke="#FFF4D6" stroke-width="3" stroke-linecap="round" opacity=".8"/><circle r="5" fill="#FFF4D6"/></g><path class="etoile-vive" d="M480 106l3.5 8 8.5 1-6.2 6 1.6 8.6-7.4-4.2-7.4 4.2 1.6-8.6-6.2-6 8.5-1z" fill="#FFF4D6"/>')
+      // secret : un vol d'oies sauvages
+      + tap('oies', "Un vol d'oies sauvages", halo(405, 240, 66) + '<g class="vol-oies">' + [[0, 0], [-26, -14], [-52, -28], [-26, 14], [-52, 28]].map(([dx, dy]) => '<path transform="translate(' + (432 + dx) + ' ' + (240 + dy) + ')" d="M0 0q-9-9-18-4q9-1 14 6q-12 2-20 10q12-4 24-10z" fill="#cfd3ee"/>').join('') + '</g>')
+      // la montgolfière et son brûleur (élément à toucher trois fois)
+      + '<g class="quenotte ballon" transform="translate(250,488)"><g class="ballon-in">'
+      + tap('bruleur', 'Le brûleur de la montgolfière', halo(0, -122, 50) + enveloppe + nacelle, 'data-etape="0"')
+      + '</g></g>'
+      + '</svg>';
+  }
+
+  return { chateau, foret, meuse, place, montgolfiere, aiglemont, pantoufle };
 })();
 
 // Module ES (chargé par src/main.ts) : le contenu reste un script qui expose ses objets sur window.

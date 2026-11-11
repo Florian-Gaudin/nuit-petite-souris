@@ -247,10 +247,7 @@ ${etoiles(40, 1000, 500, 5)}
 <g id="cam-salon">
   <rect width="400" height="300" fill="#06180B"/>
   <line x1="0" y1="250" x2="400" y2="250" stroke="#1d4d26" stroke-width="2"/>
-  <rect x="100" y="120" width="200" height="130" fill="none" stroke="#2fbf2f" stroke-width="2"/>
-  <rect x="140" y="160" width="120" height="90" fill="#0b2a10" stroke="#2fbf2f" stroke-width="2"/>
-  <g stroke="#2fbf2f" stroke-width="1.5" fill="none"><path d="M150 250v-30h40v30M200 250v-40h44v40"/><path d="M160 232h20M210 226h24"/></g>
-  <rect x="86" y="108" width="228" height="14" rx="3" fill="#0f4a1b" stroke="#39FF14" stroke-width="2"/>
+  ${window.DESSINS.cachetteCam(window.CONFIG.profil.cachette)}
   <circle cx="200" cy="66" r="22" fill="none" stroke="#2fbf2f" stroke-width="2"/><path d="M200 66v-14M200 66l9 7" stroke="#39FF14" stroke-width="2" stroke-linecap="round"/>
   <rect x="112" y="78" width="16" height="30" fill="none" stroke="#2fbf2f" stroke-width="1.5"/>
   <path d="M330 250v-60h50v60M330 190q25-20 50 0" fill="none" stroke="#2fbf2f" stroke-width="2"/>
@@ -263,9 +260,9 @@ ${etoiles(40, 1000, 500, 5)}
   <!-- fenêtre et rideaux -->
   <rect x="292" y="32" width="76" height="86" fill="none" stroke="#2fbf2f" stroke-width="2"/><path d="M330 32v86M292 75h76" stroke="#2fbf2f" stroke-width="1.5"/>
   <path d="M284 24q10 52 0 104M376 24q-10 52 0 104M280 24h100" fill="none" stroke="#2fbf2f" stroke-width="2"/>
-  <!-- table de nuit et veilleuse -->
+  ${window.CONFIG.profil.fratrie && window.CONFIG.profil.fratrie.dortACote ? window.DESSINS.fratrieCam(window.CONFIG.profil.fratrie.genre) : `<!-- table de nuit et veilleuse -->
   <rect x="320" y="178" width="50" height="58" rx="3" fill="none" stroke="#2fbf2f" stroke-width="2"/><path d="M320 202h50" stroke="#2fbf2f" stroke-width="1.5"/><circle cx="345" cy="191" r="2.2" fill="#39FF14"/>
-  <path d="M332 162l5-18h16l5 18z" fill="#0f4a1b" stroke="#39FF14" stroke-width="2"/><path d="M345 162v16" stroke="#2fbf2f" stroke-width="3"/>
+  <path d="M332 162l5-18h16l5 18z" fill="#0f4a1b" stroke="#39FF14" stroke-width="2"/><path d="M345 162v16" stroke="#2fbf2f" stroke-width="3"/>`}
   <!-- lit : tête de lit arrondie à barreaux, pied de lit, sommier, pieds -->
   <path d="M30 236V112q0-16 16-16h8q16 0 16 16v124" fill="#0b3a14" stroke="#2fbf2f" stroke-width="2"/>
   <path d="M42 112v84M50 108v88M58 112v84" stroke="#1d7a2c" stroke-width="1.5"/>
@@ -278,25 +275,13 @@ ${etoiles(40, 1000, 500, 5)}
   <!-- la dent et le petit mot, glissés au bord de l'oreiller -->
   <g id="dent1"><use href="#dent-cam" x="124" y="165" width="12" height="12"/></g>
   <g id="mot1" class="cam-mot"><use href="#mot-cam" x="114" y="163" width="26" height="19"/></g>
-  <!-- l'enfant : cheveux étalés sur l'oreiller, visage endormi -->
-  <path d="M94 146q-22-6-28 10q-4 12 4 20M90 160q-14 4-16 16M96 144q-6-8-20-8" fill="none" stroke="#2fbf2f" stroke-width="2" stroke-linecap="round"/>
-  <circle cx="104" cy="157" r="15" fill="#0f4a1b" stroke="#39FF14" stroke-width="2"/>
-  <path d="M90 151q6-12 26-8q2 6-6 8q-8 0-14 6" fill="#0b3a14" stroke="#39FF14" stroke-width="1.8" stroke-linejoin="round"/>
-  <path d="M105 157q4 3 8 0" fill="none" stroke="#39FF14" stroke-width="2" stroke-linecap="round"/>
-  <path d="M118 159q3 2 1 5" fill="none" stroke="#39FF14" stroke-width="1.6" stroke-linecap="round"/>
-  <path d="M109 166q3 2 6 0" fill="none" stroke="#39FF14" stroke-width="1.6" stroke-linecap="round"/>
+  <!-- l'enfant endormi -->
+  ${window.DESSINS.enfantCam(window.CONFIG.profil.genre)}
   <!-- la couverture qui épouse le corps, avec ses plis -->
   <path d="M112 197v-25q10-12 30-12q30-4 58 4q34 8 60 4q20-2 34 6v23z" fill="#0b3a14" stroke="#2fbf2f" stroke-width="2"/>
   <path d="M150 178q20 9 40 3M222 182q24 7 48 0M118 186q86 9 176 0" fill="none" stroke="#1d7a2c" stroke-width="1.5"/>
-  <!-- Nicolas, le doudou ours, serré contre l'enfant -->
-  <g id="doudou">
-    <ellipse cx="198" cy="158" rx="13" ry="11" fill="#0f4a1b" stroke="#39FF14" stroke-width="2"/>
-    <circle cx="186" cy="127" r="5.5" fill="#0f4a1b" stroke="#39FF14" stroke-width="2"/><circle cx="205" cy="127" r="5.5" fill="#0f4a1b" stroke="#39FF14" stroke-width="2"/>
-    <circle cx="195.5" cy="138" r="12" fill="#0f4a1b" stroke="#39FF14" stroke-width="2"/>
-    <ellipse cx="196" cy="143" rx="5.5" ry="4" fill="#0b3a14" stroke="#39FF14" stroke-width="1.5"/><circle cx="196" cy="141.5" r="1.6" fill="#39FF14"/>
-    <path d="M188 136q2.5 2 5 0M198.5 136q2.5 2 5 0" fill="none" stroke="#39FF14" stroke-width="1.6" stroke-linecap="round"/>
-    <circle cx="209" cy="163" r="4.5" fill="#0f4a1b" stroke="#39FF14" stroke-width="1.6"/>
-  </g>
+  <!-- le doudou choisi par les parents, serré contre l'enfant -->
+  ${window.DESSINS.doudouCam(window.CONFIG.profil.doudou.type)}
   <!-- le bras de l'enfant par-dessus la couverture, qui tient le doudou -->
   <path d="M124 174q22-7 46-3q10 2 16-3" fill="none" stroke="#39FF14" stroke-width="5" stroke-linecap="round"/>
   <circle cx="188" cy="166" r="4.5" fill="#0f4a1b" stroke="#39FF14" stroke-width="1.8"/>

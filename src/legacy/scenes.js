@@ -7,12 +7,13 @@ window.SCENES = (function () {
   const $ = (s, r) => (r || document).querySelector(s);
   const $$ = (s, r) => Array.prototype.slice.call((r || document).querySelectorAll(s));
   const wait = ms => new Promise(r => setTimeout(r, ms));
-  const DESSINS = { chateau: DEC.chateau, foret: DEC.foret, meuse: DEC.meuse, place: DEC.place, aiglemont: DEC.aiglemont, pantoufle: DEC.pantoufle };
+  const DESSINS = { chateau: DEC.chateau, foret: DEC.foret, meuse: DEC.meuse, place: DEC.place, montgolfiere: DEC.montgolfiere, aiglemont: DEC.aiglemont, pantoufle: DEC.pantoufle };
   const ICONES_FRISE = {
     chateau: '<path d="M5 20V9h3V6h2v3h4V6h2v3h3v11zM10 20v-5h4v5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>',
     foret: '<path d="M12 3l6 9h-3l4 6H5l4-6H6zM12 18v3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>',
     meuse: '<path d="M3 10q3-3 6 0t6 0 6 0M3 15q3-3 6 0t6 0 6 0" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>',
     place: '<path d="M4 20v-8a4 4 0 0 1 8 0v8M12 20v-8a4 4 0 0 1 8 0v8M3 20h18M4 8h16" fill="none" stroke="currentColor" stroke-width="1.8"/>',
+    montgolfiere: '<path d="M12 3a7 7 0 0 0-7 7c0 4 4 7 5 9h4c1-2 5-5 5-9a7 7 0 0 0-7-7zM10 19h4v3h-4z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>',
     aiglemont: '<path d="M4 11l8-7 8 7v9H4zM10 20v-5h4v5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>',
     pantoufle: '<path d="M6 10l-1-5 4 3h6l4-3-1 5a6 6 0 0 1-12 0z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="10" cy="11" r="1" fill="currentColor"/><circle cx="14" cy="11" r="1" fill="currentColor"/>',
   };
@@ -21,7 +22,7 @@ window.SCENES = (function () {
   let chaine = [], idx = 0, derniere = null, aideT1 = null, aideT2 = null, raf = null, bougeT = null, secretTaps = 0, secretT = null;
   let occupe = false, enSecret = false;
   // Partie utile de chaque décor (en largeur) : sur un écran en hauteur, on recadre dessus plutôt que d'ajouter du ciel
-  const ZONES = { chateau: [260, 890], foret: [100, 930], meuse: [0, 1000], place: [230, 910], aiglemont: [20, 860], pantoufle: [90, 960] };
+  const ZONES = { chateau: [260, 890], foret: [100, 930], meuse: [0, 1000], place: [230, 910], montgolfiere: [130, 780], aiglemont: [20, 860], pantoufle: [90, 960] };
   const heureTexte = h => { const [hh, mm] = h.split(':'); return 'La nuit dernière à ' + parseInt(hh, 10) + ' h ' + mm; };
   // À la fin de certaines scènes, avant le « pont »
   const FIN = { place() { const g = $('.tap[data-el="marionnettiste"]', svg); if (g) g.classList.add('montre'); } };
@@ -54,6 +55,11 @@ window.SCENES = (function () {
       fenetre() { SON.play('pigeon'); },
       fromage(g) { g.classList.add('croque'); SON.play('croque'); },
     },
+    montgolfiere: {
+      bruleur(g, sub, etape) { SON.play('bruleur'); const f = $('.flamme', svg); f.classList.remove('feu'); void f.getBBox(); f.classList.add('feu'); },
+      etoile(g) { g.classList.remove('file'); void g.getBBox(); g.classList.add('file'); SON.play('filante'); },
+      oies(g) { g.classList.remove('passe'); void g.getBBox(); g.classList.add('passe'); SON.play('oies'); },
+    },
     aiglemont: {
       girouette(g) { g.classList.remove('tourne'); void g.getBBox(); g.classList.add('tourne'); SON.play('girouette'); },
       lampadaire() { SON.play('gresille'); },
@@ -71,6 +77,7 @@ window.SCENES = (function () {
     chateau: { lanterne: () => wait(RM ? 100 : 700) },
     meuse: { billet: traversee },
     place: { marionnettiste: () => wait(RM ? 100 : 900) },
+    montgolfiere: { bruleur: async () => { svg.classList.add('vole'); SON.play('bruleur'); await wait(RM ? 100 : 3800); } },
     aiglemont: { girouette: async () => { await wait(RM ? 100 : 2300); svg.classList.add('trouve'); SON.play('allume'); await wait(400); } },
     pantoufle: { yeux: () => wait(RM ? 100 : 900) },
   };

@@ -45,6 +45,14 @@ L'histoire se raconte selon le profil (`src/lib/recit.ts`) :
 
 Dans `src/legacy/data.js`, un texte peut avoir plusieurs versions, choisies par aiguillage : `{ variante: { premiere, jumelle, suite } }`, `{ deja: { une, plusieurs } }`, `{ doudou: { oui, non } }`, `{ fratrie: { aCote, ailleurs, non } }` (une branche `null` omet la ligne). Les mots du profil s'écrivent entre accolades : `{ordinal}`, `{euros}`, `{cachetteNom}`, `{Chere}`, `{frere}`… Avec le profil d'exemple, les textes sont identiques mot pour mot à ceux de la première histoire.
 
+## Les dessins personnalisés
+
+- **La montgolfière** : une septième scène, entre la place Ducale et la ville d'arrivée. Trois flammes au brûleur gonflent le ballon rayé rouge et jaune, qui s'envole au-dessus des Ardennes ; deux secrets (une étoile filante, un vol d'oies sauvages). 14 étoiles cachées en tout.
+- **Le doudou** (`src/lib/dessins.ts`) : ours, lapin, chat, chien, bébé, licorne ou dinosaure, dans la caméra et en silhouette à la fenêtre ; rien s'il n'y a pas de doudou.
+- **La cachette filmée** : cheminée, radiateur, commode, bureau ou étagère dans le salon de la caméra.
+- **L'enfant endormi** : cheveux longs ou courts selon fille ou garçon.
+- **Le frère ou la sœur** : un petit lit dans la chambre, et son nom détecté par la caméra, s'il dort dans la même chambre.
+
 ## Arborescence
 
 | Dossier | Rôle |
@@ -58,6 +66,7 @@ Dans `src/legacy/data.js`, un texte peut avoir plusieurs versions, choisies par 
 | `src/lib/profil.ts` | Le profil de l'enfant : vérification, encodage pour le QR, dents et variantes d'histoire. |
 | `src/lib/qr.ts` | QR codes en SVG et en PNG, générés hors ligne. |
 | `src/lib/recit.ts` | Vocabulaire de l'histoire et choix des versions de texte. |
+| `src/lib/dessins.ts` | Dessins personnalisés : doudous, cachettes, enfant, frère ou sœur. |
 | `src/lib/geometrieDents.ts`, `src/lib/machoire.ts` | Schéma des 20 dents (formulaire et diplôme). |
 | `src/styles/`, `src/assets/` | Styles et polices (licence OFL). |
 | `public/` | Icônes et manifeste de la web app. |
@@ -74,7 +83,7 @@ npm run verifier   # vérifie les types
 npm test           # tests automatiques (format du profil, QR)
 ```
 
-Raccourcis de test dans l'adresse (à placer avant le `#p=…`) : `?reset=1` efface la progression du profil, `?chapitre=3` ouvre un chapitre, `?chapitre=1&scene=4` ouvre une scène du voyage.
+Raccourcis de test dans l'adresse (à placer avant le `#p=…`) : `?reset=1` efface la progression du profil, `?chapitre=3` ouvre un chapitre, `?chapitre=1&scene=4` ouvre une scène du voyage (0 à 6).
 
 ## Publication
 
@@ -87,6 +96,6 @@ Réglage à faire une fois sur github.com : dépôt → **Settings** → **Pages
 2. Profil de l'enfant et QR code ✓
 3. Espace parents ✓
 4. Récit adaptatif (dents, billet, endroit du cadeau, frère ou sœur, accords) ✓
-5. Nouveaux dessins (montgolfière, doudous, endroits, billets)
+5. Nouveaux dessins (montgolfière, doudous, endroits, billets) ✓
 6. Hors connexion, mode surprise, tests
 7. Appli des stores (Capacitor)

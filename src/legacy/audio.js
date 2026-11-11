@@ -68,6 +68,9 @@ window.SON = (function () {
     pantin() { [784, 988, 784, 1175].forEach((f, i) => tone(f, 0.12, 'square', 0.05, i * 0.14)); },
     luciole() { tone(2093, 0.12, 'sine', 0.08); tone(2637, 0.18, 'sine', 0.06, 0.1); },
     ronds() { tone(1047, 0.3, 'sine', 0.08, 0, 880); tone(880, 0.4, 'sine', 0.06, 0.2, 700); },
+    bruleur() { bruit(0.9, 0.16, 0, 260, 0.6); bruit(0.6, 0.08, 0.1, 520, 0.8); },
+    filante() { [2637, 2349, 2093, 1760].forEach((f, i) => tone(f, 0.25, 'sine', 0.07, i * 0.06)); },
+    oies() { [0, 0.28, 0.5].forEach(t => { tone(520, 0.12, 'sawtooth', 0.05, t, 430); }); },
     allume() { tone(523, 0.2, 'triangle', 0.14); tone(784, 0.3, 'triangle', 0.1, 0.15); },
   };
   function ronfleStart() {

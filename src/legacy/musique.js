@@ -13,6 +13,7 @@ window.MUSIQUE = (function () {
     foret: { root: 440, gamme: MIN, tempo: 56, densite: 0.35, nappe: 0.7, grave: 0, vol: 0.9 },
     meuse: { root: 587.33, gamme: MAJ, tempo: 84, densite: 0.7, nappe: 0.4, grave: 0, vol: 1, vague: true },
     place: { root: 783.99, gamme: MAJ, tempo: 100, densite: 0.75, nappe: 0.2, grave: 0, vol: 1 },
+    montgolfiere: { root: 659.25, gamme: MAJ, tempo: 76, densite: 0.55, nappe: 0.7, grave: 0, vol: 0.95 },
     aiglemont: { root: 523.25, gamme: MAJ, tempo: 64, densite: 0.45, nappe: 0.5, grave: 0, vol: 0.95 },
     pantoufle: { root: 329.63, gamme: MIN, tempo: 60, densite: 0.15, nappe: 0, grave: 1, vol: 0.9 },
     jeu: { root: 329.63, gamme: MIN, tempo: 72, densite: 0.2, nappe: 0, grave: 1, vol: 0.85 },

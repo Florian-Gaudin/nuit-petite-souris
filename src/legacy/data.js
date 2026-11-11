@@ -88,11 +88,26 @@ window.DATA = {
         fenetre: { bulle: { txt: "Chut, un pigeon dort derrière la fenêtre. Oh, je l'ai réveillé ! Pardon, monsieur le pigeon.", expr: "chuchote" } },
         fromage: { bulle: { txt: "Pause fromage ! Avec tous ces kilomètres, j'avais bien mérité un petit morceau. Miam.", expr: "joie" } },
       },
-      pont: { txt: "Le Grand Marionnettiste m'indique le chemin : tout droit jusqu'à {ville} !", expr: "sourire" },
+      pont: { txt: "Le Grand Marionnettiste m'indique le chemin : au bout de la place, une montgolfière m'attend !", expr: "sourire" },
+    },
+    {
+      id: "montgolfiere", titre: "Au-dessus des Ardennes", heure: "02:00", ambiance: "montgolfiere",
+      intro: { txt: "Au bout de la place, une petite montgolfière rouge et jaune m'attend, posée dans l'herbe. Je grimpe dans la nacelle avec ma lanterne et mon sac. Mais pour décoller, il faut réchauffer l'air du ballon.", expr: "joie" },
+      oblig: ["bruleur"], bonus: ["etoile", "oies"],
+      elements: {
+        bruleur: {
+          demande: { txt: "Touche le brûleur, juste au-dessus de la nacelle, pour faire une grande flamme. Il faut trois flammes pour décoller !", expr: "clin" },
+          etapes: ["Fouuu… le ballon se gonfle !", "Fouuuu… il se redresse !", "Fouuuuu… on décolle !"],
+          reponse: { txt: "On s'envole ! Je vois les Ardennes qui dorment, et la Meuse qui brille comme un ruban d'argent. Le vent me pousse tout droit vers {ville}.", expr: "joie" },
+        },
+        etoile: { bulle: { txt: "Une étoile filante ! Vite, fais un vœu. Moi, j'ai fait le mien : que ta dent arrive bien au château.", expr: "surprise" } },
+        oies: { bulle: { txt: "Des oies sauvages volent à côté de moi. Elles cancanent « Bon voyage, {souris} ! » et filent vers le sud.", expr: "surprise" } },
+      },
+      pont: { txt: "La montgolfière redescend tout doucement… J'aperçois les toits de {ville} !", expr: "sourire" },
     },
     {
       id: "aiglemont", titre: "{ville}", heure: "02:10", ambiance: "aiglemont",
-      intro: { txt: "Me voici à {ville}. Toutes les maisons dorment et les volets sont fermés. Mais laquelle est la tienne ?", expr: "surprise" },
+      intro: { txt: "La montgolfière se pose sans bruit dans un champ. Me voici à {ville}. Toutes les maisons dorment et les volets sont fermés. Mais laquelle est la tienne ?", expr: "surprise" },
       oblig: ["girouette"], bonus: ["lampadaire", "fenetre"],
       elements: {
         girouette: {
@@ -211,7 +226,7 @@ window.DATA = {
     // obtenu : ce que dit le diplôme quand le badge est gagné ; aGagner : comment l'obtenir
     { id: "detective", nom: "Détective de nuit", chapitre: 1, obtenu: "Tu as guidé {souris} de son château jusqu'à ta maison.", aGagner: "Guide {souris} de son château jusqu'à ta maison." },
     { id: "exploratrice", nom: "{Exploratrice}", etoiles: 6, obtenu: "Tu as trouvé au moins 6 étoiles cachées dans les images.", aGagner: "Trouve 6 étoiles cachées dans les images du voyage." },
-    { id: "lynx", nom: "Œil de lynx", etoiles: 12, obtenu: "Tu as trouvé les 12 étoiles cachées. Rien ne t'échappe !", aGagner: "Trouve les 12 étoiles cachées dans les images du voyage." },
+    { id: "lynx", nom: "Œil de lynx", etoiles: 14, obtenu: "Tu as trouvé les 14 étoiles cachées. Rien ne t'échappe !", aGagner: "Trouve les 14 étoiles cachées dans les images du voyage." },
     { id: "passechat", nom: "Passe-Chat", chapitre: 2, obtenu: "Tu as aidé {souris} à passer devant {chat} sans le réveiller.", aGagner: "Aide {souris} à passer devant {chat} sans le réveiller." },
     { id: "hibou", nom: "Œil de hibou", chapitre: 3, obtenu: "Tu as regardé le film de la caméra de {souris} jusqu'au bout.", aGagner: "Regarde le film de la caméra de {souris} jusqu'au bout." },
     { id: "amie", nom: "{Amie} de {souris}", chapitre: 4, obtenu: "Tu as lu la lettre que {souris} t'a laissée.", aGagner: "Lis la lettre que {souris} t'a laissée." },

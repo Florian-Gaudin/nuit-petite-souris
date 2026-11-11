@@ -51,7 +51,7 @@
   if (params.has('chapitre')) {
     const n = Math.max(0, Math.min(5, parseInt(params.get('chapitre'), 10) || 0));
     State.unlocked = Math.max(State.unlocked, n); demande = n;
-    if (params.has('scene')) { sceneDemande = Math.max(0, Math.min(5, parseInt(params.get('scene'), 10) || 0)); State.scene = Math.max(State.scene, sceneDemande); }
+    if (params.has('scene')) { sceneDemande = Math.max(0, Math.min(D.scenes.length - 1, parseInt(params.get('scene'), 10) || 0)); State.scene = Math.max(State.scene, sceneDemande); }
     save();
     try { history.replaceState(null, '', location.pathname + location.hash); } catch (e) { } // retire ?chapitre de l'adresse, garde le profil
   }
@@ -203,11 +203,11 @@
   const Ch1 = {
     render() { return `<section class="ch ch1" id="ch1"></section>`; },
     mount(r, opts) {
-      const n = sceneDemande != null ? sceneDemande : (opts.scene != null ? opts.scene : Math.min(State.scene, 5));
+      const n = sceneDemande != null ? sceneDemande : (opts.scene != null ? opts.scene : Math.min(State.scene, D.scenes.length - 1));
       sceneDemande = null;
       window.SCENES.monter($('#ch1', r), {
         state: State, config: C, T, heure, etoile, toast, save,
-        sceneFaite(i) { if (State.scene < i + 1) { State.scene = Math.min(5, i + 1); save(); } },
+        sceneFaite(i) { if (State.scene < i + 1) { State.scene = Math.min(D.scenes.length - 1, i + 1); save(); } },
         fondu,
         finChapitre() { complete(1); badge('detective'); show(2); },
         scene13,
@@ -371,6 +371,7 @@
         [16, () => { salon.setAttribute('hidden', ''); chambre.removeAttribute('hidden'); nom.textContent = 'CAM 2 · CHAMBRE'; dets.innerHTML = ''; SON.play('bip'); chuchote(D.camera.chambre); }],
         [17, () => det('clem', (C.enfant + ' – DORT').toUpperCase(), 16, 46, 58, 20)],
         [18.2, () => { if (C.aDoudou) det('nico', (C.poupee + ' – DORT AUSSI').toUpperCase(), 45, 40, 9, 17); }],
+        [18.9, () => { if (C.fratrieACote) det('frere', (C.frere + ' – DORT AUSSI').toUpperCase(), 79, 55, 20, 24, 'gauche'); }],
         [19.6, () => { mv(cs1, 60, 232); SON.play('pas'); }],
         [21.6, () => det('souris', 'PETITE SOURIS', 14, 76, 20, 20)],
         [23.4, () => { mv(cs1, 62, 122); SON.play('pas'); }],

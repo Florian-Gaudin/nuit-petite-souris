@@ -12,6 +12,7 @@ installerProfil(); // le profil de l'enfant (QR code, mémoire ou exemple) → w
 
 // L'ordre compte : chaque fichier s'appuie sur ceux d'avant (window.CONFIG, window.DATA…).
 await import('./legacy/data.js');
+await import('./lib/dessins');
 await import('./legacy/art.js');
 await import('./legacy/decors.js');
 await import('./legacy/audio.js');
