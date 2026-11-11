@@ -1,8 +1,10 @@
 <script lang="ts">
   // La ville de l'enfant, avec les suggestions du service public des communes (geo.api.gouv.fr).
   // Seul le texte tapé est envoyé à ce service, pour proposer des noms de communes.
-  // Sans connexion, la ville tapée est gardée telle quelle.
+  // Sans connexion, ou si le service est trop lent, la ville tapée est gardée telle quelle.
   import { villeValide } from '../lib/profil';
+
+  const DELAI_MAX = 6000; // au-delà, on n'attend plus le service
 
   type Ville = { nom: string; codePostal: string; departement: string };
   let { ville = $bindable() }: { ville: Ville | null } = $props();
@@ -11,17 +13,22 @@
   let suggestions = $state<Ville[]>([]);
   let message = $state('');
   let ouvert = $state(false);
+  let recherche = $state(false);
   let minuteur: ReturnType<typeof setTimeout> | undefined;
   let requete: AbortController | undefined;
 
   async function chercher(texte: string) {
     requete?.abort();
     const t = texte.trim();
-    if (t.length < 2) { suggestions = []; return; }
-    requete = new AbortController();
+    if (t.length < 2) { suggestions = []; recherche = false; return; }
+    const ctrl = new AbortController();
+    requete = ctrl;
+    let tropLent = false;
+    const limite = setTimeout(() => { tropLent = true; ctrl.abort(); }, DELAI_MAX);
     const param = /^\d{5}$/.test(t) ? `codePostal=${t}` : `nom=${encodeURIComponent(t)}&boost=population`;
+    recherche = true; message = '';
     try {
-      const r = await fetch(`https://geo.api.gouv.fr/communes?${param}&fields=nom,codesPostaux,codeDepartement&limit=8`, { signal: requete.signal });
+      const r = await fetch(`https://geo.api.gouv.fr/communes?${param}&fields=nom,codesPostaux,codeDepartement&limit=8`, { signal: ctrl.signal });
       if (!r.ok) throw new Error('réponse ' + r.status);
       const liste = (await r.json()) as { nom: string; codesPostaux: string[]; codeDepartement: string }[];
       suggestions = liste
@@ -30,9 +37,14 @@
       message = suggestions.length ? '' : 'Aucune commune trouvée. Vérifiez l\'orthographe, ou gardez le nom tapé.';
       ouvert = true;
     } catch (e) {
-      if ((e as Error).name === 'AbortError') return;
+      if ((e as Error).name === 'AbortError' && !tropLent) return; // remplacée par une recherche plus récente
       suggestions = [];
-      message = 'Suggestions indisponibles (pas de connexion ?). Le nom tapé sera utilisé tel quel.';
+      message = tropLent
+        ? 'Le service des communes répond lentement. Vous pouvez réessayer, ou garder le nom tapé tel quel.'
+        : 'Suggestions indisponibles (pas de connexion ?). Le nom tapé sera utilisé tel quel.';
+    } finally {
+      clearTimeout(limite);
+      if (requete === ctrl) recherche = false;
     }
   }
 
@@ -65,7 +77,9 @@
       {/each}
     </ul>
   {/if}
-  {#if ville && ville.departement}
+  {#if recherche}
+    <p class="message" role="status">Recherche…</p>
+  {:else if ville && ville.departement}
     <p class="choisie">✓ {ville.nom} ({ville.codePostal})</p>
   {:else if message}
     <p class="message">{message}</p>
