@@ -43,6 +43,9 @@ p{margin:.4rem 0}
 /* Préférences */
 .prefs{position:relative;flex:none}
 .prefs-menu{position:absolute;right:0;top:calc(100% + 8px);z-index:45;min-width:250px;background:var(--papier);color:var(--encre);border-radius:16px;box-shadow:0 12px 30px rgba(0,0,0,.45);padding:6px;display:flex;flex-direction:column;gap:2px}
+.prefs-menu a{display:flex;align-items:center;gap:10px;min-height:48px;border-radius:12px;color:inherit;font:700 1rem var(--display);text-decoration:none;padding:0 12px}
+.prefs-menu a:hover,.prefs-menu a:focus-visible{background:#f3e3bd}
+.lien-parents{margin-top:4px;color:var(--lanterne);font-weight:700;font-size:.95rem;text-decoration:underline;min-height:44px;display:inline-flex;align-items:center}
 .prefs-menu button{display:flex;align-items:center;gap:10px;min-height:48px;width:100%;border:0;border-radius:12px;background:none;color:inherit;font:700 1rem var(--display);text-align:left;padding:0 12px;cursor:pointer}
 .prefs-menu button:hover,.prefs-menu button:focus-visible{background:#f3e3bd}
 .prefs-menu .ico{width:22px;height:22px}

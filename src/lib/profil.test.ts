@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import qrcode from 'qrcode-generator';
 import {
   type Profil, PROFIL_EXEMPLE, DENTS_DE_LAIT, adresseProfil, codeDepuisAdresse, configDepuisProfil,
-  decoderProfil, encoderProfil, idProfil, verifierProfil,
+  decoderProfil, encoderProfil, idProfil, verifierProfil, jumelle, varianteDent, rangDent, nomDent, nuitParDefaut,
 } from './profil';
 import LZString from 'lz-string';
 
@@ -109,5 +109,26 @@ describe('profil', () => {
       { numero: 2, position: 'bas-centrale-droite', code: 71 },
     ]);
     expect(configDepuisProfil(MAXIMAL, '').billet.lieu).toBe('sur ta table de nuit');
+  });
+
+  it("jumelles, variantes d'histoire et rang", () => {
+    expect(jumelle(81)).toBe(71); expect(jumelle(71)).toBe(81); expect(jumelle(51)).toBe(61); expect(jumelle(65)).toBe(55);
+    expect(varianteDent({ nuit: 81, deja: [] })).toBe('premiere');
+    expect(varianteDent({ nuit: 71, deja: [81] })).toBe('jumelle');
+    expect(varianteDent({ nuit: 72, deja: [81, 71] })).toBe('suite');
+    expect(varianteDent({ nuit: 82, deja: [81, 71, 72] })).toBe('jumelle');
+    expect(rangDent({ nuit: 82, deja: [81, 71, 72] })).toBe(4);
+    expect(nomDent(81)).toBe('incisive centrale du bas, à droite');
+    expect(nomDent(64)).toBe('première molaire du haut, à gauche');
+  });
+
+  it('nuit par défaut : avant midi la nuit passée, après midi celle qui vient', () => {
+    expect(nuitParDefaut(new Date('2026-11-11T08:00:00'))).toBe('2026-11-10');
+    expect(nuitParDefaut(new Date('2026-11-11T20:00:00'))).toBe('2026-11-11');
+  });
+
+  it('accepte les très longs noms de communes', () => {
+    expect(verifierProfil(avec(p => { p.ville.nom = 'Saint-Remy-en-Bouzemont-Saint-Genest-et-Isson'; }))).toEqual([]);
+    expect(verifierProfil(avec(p => { p.ville.nom = "L'Haÿ-les-Roses"; }))).toEqual([]);
   });
 });

@@ -110,6 +110,7 @@
         <div class="prefs-menu" id="prefs-menu" role="menu" hidden>
           <button role="menuitem" id="pref-son"></button>
           ${PLEIN.api && !PLEIN.appli ? `<button role="menuitem" id="pref-plein"></button>` : ''}
+          <a role="menuitem" id="pref-parents" href="parents.html">${A.icone('reglages')} Espace parents</a>
           <button role="menuitem" id="pref-reset" class="danger">${A.icone('recommencer')} Recommencer l'histoire</button>
         </div>
       </div>
@@ -166,6 +167,7 @@
   <div class="ch0-texte">
     <h1 class="titre">La nuit de la Petite Souris</h1>
     <p class="sous">${esc(C.ville)} · ${esc(nuitTexte())}</p>
+    ${window.PROFIL.origine === 'exemple' ? `<a class="lien-parents" href="parents.html">Vous êtes parent ? Créez l’histoire de votre enfant</a>` : ''}
   </div>
 </section>`;
     },

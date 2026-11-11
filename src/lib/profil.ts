@@ -56,9 +56,12 @@ export const PROFIL_EXEMPLE: Profil = {
 // Les noms sont réaffichés dans la page : on n'accepte que des lettres, chiffres, espaces et
 // ponctuation simple (pas de < > & " …), ce qui ferme la porte à toute injection de code.
 const NOM = /^[\p{L}\p{M}0-9][\p{L}\p{M}0-9 '’.\-()]{0,39}$/u;
+// Les noms de communes peuvent être très longs (« Saint-Remy-en-Bouzemont-Saint-Genest-et-Isson »)
+const VILLE = /^[\p{L}\p{M}0-9][\p{L}\p{M}0-9 '’.\-()]{0,59}$/u;
 const DATE = /^\d{4}-\d{2}-\d{2}$/;
 
 export function nomValide(s: unknown): s is string { return typeof s === 'string' && NOM.test(s.trim()) && s.trim() === s; }
+export function villeValide(s: unknown): s is string { return typeof s === 'string' && VILLE.test(s.trim()) && s.trim() === s; }
 function dateValide(s: unknown): s is string {
   if (typeof s !== 'string' || !DATE.test(s)) return false;
   const d = new Date(s + 'T12:00:00');
@@ -78,11 +81,44 @@ export function verifierProfil(p: Profil): string[] {
   if (!Array.isArray(p.dents?.deja) || p.dents.deja.some(d => !DENTS_DE_LAIT.includes(d)) || new Set(p.dents.deja).size !== p.dents.deja.length || p.dents.deja.includes(p.dents.nuit)) e.push('dents déjà tombées');
   if (!BILLETS.includes(p.billet)) e.push('billet');
   if (!CACHETTES.includes(p.cachette)) e.push('cachette');
-  if (!nomValide(p.ville?.nom)) e.push('ville');
+  if (!villeValide(p.ville?.nom)) e.push('ville');
   if (typeof p.ville?.codePostal !== 'string' || !/^(\d{5})?$/.test(p.ville.codePostal)) e.push('code postal');
   if (typeof p.ville?.departement !== 'string' || !/^(\d{2,3}|2A|2B)?$/.test(p.ville.departement)) e.push('département');
   if (p.nuit !== null && !dateValide(p.nuit)) e.push('date');
   return e;
+}
+
+// ---------- Les dents et la variante de l'histoire ----------
+export type Arcade = 'haut' | 'bas';
+export const NOMS_DENTS = ['incisive centrale', 'incisive latérale', 'canine', 'première molaire', 'deuxième molaire'] as const;
+
+export function arcade(d: number): Arcade { return d < 70 ? 'haut' : 'bas'; }
+// La jumelle d'une dent : la même dent, de l'autre côté de la bouche (51 ↔ 61, 71 ↔ 81…)
+export function jumelle(d: number): number {
+  const q = Math.floor(d / 10), i = d % 10;
+  return ({ 5: 6, 6: 5, 7: 8, 8: 7 } as Record<number, number>)[q] * 10 + i;
+}
+export function nomDent(d: number): string {
+  const cote = [5, 8].includes(Math.floor(d / 10)) ? 'droite' : 'gauche'; // côté de l'enfant
+  return `${NOMS_DENTS[(d % 10) - 1]} du ${arcade(d)}, à ${cote}`;
+}
+
+// Trois histoires : la toute première dent, une dent dont la jumelle est déjà au château, ou la suite
+export type Variante = 'premiere' | 'jumelle' | 'suite';
+export function varianteDent(dents: Profil['dents']): Variante {
+  if (dents.deja.length === 0) return 'premiere';
+  if (dents.deja.includes(jumelle(dents.nuit))) return 'jumelle';
+  return 'suite';
+}
+// Rang de la dent de la nuit (1re, 2e…)
+export function rangDent(dents: Profil['dents']): number { return dents.deja.length + 1; }
+
+// La nuit par défaut : avant midi, la nuit qui vient de finir ; après midi, celle qui vient
+export function nuitParDefaut(maintenant = new Date()): string {
+  const d = new Date(maintenant);
+  if (d.getHours() < 12) d.setDate(d.getDate() - 1);
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 }
 
 // ---------- Encodage compact ----------

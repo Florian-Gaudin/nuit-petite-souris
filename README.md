@@ -6,7 +6,7 @@ Site : **https://florian-gaudin.github.io/nuit-petite-souris/**
 
 ## Technique
 
-- **Vite** (construction), **TypeScript**, **Svelte** (écrans de l'espace parents, à venir).
+- **Vite** (construction), **TypeScript**, **Svelte** (espace parents).
 - **Capacitor** prévu pour publier plus tard l'appli sur l'App Store et Google Play, à partir du même code.
 - Aucun serveur : le profil de l'enfant voyage dans le QR code.
 
@@ -19,6 +19,19 @@ Le profil (`src/lib/profil.ts`) voyage après le « # » de l'adresse : `…/nui
 - **Sécurité** : chaque valeur est vérifiée ; les noms n'acceptent que lettres, chiffres, espaces et ponctuation simple. Un QR abîmé ou falsifié est ignoré.
 - **Mémoire** : le dernier profil scanné est retenu sur l'appareil ; la progression est mémorisée par profil (plusieurs enfants, plusieurs dents sur la même tablette). Sans profil, l'histoire raconte l'exemple de Clémentine.
 
+## L'espace parents
+
+Page `parents.html`, accessible depuis le menu Préférences de l'histoire (et depuis l'accueil tant qu'aucun profil n'est créé).
+
+1. **Verrou** : maintenir un bouton 3 secondes, pour que les enfants n'y tombent pas par hasard.
+2. **L'enfant** : prénom, fille ou garçon, doudou (8 choix), frère ou sœur.
+3. **La dent** : schéma des 20 dents de lait, vu de face ; la dent de la nuit et celles déjà tombées. Le schéma annonce l'histoire qui sera racontée : première dent, retrouvailles des jumelles, ou suite de la collection.
+4. **Le cadeau** : billet de 5, 10, 20 ou 50 €, et l'endroit où il sèche.
+5. **La maison** : la ville, avec les suggestions du service public des communes (geo.api.gouv.fr, seul le texte tapé est envoyé), et le nom du chat du voisin.
+6. **La nuit** : la date.
+
+À la fin : le QR code, avec « Imprimer le mot de la souris », « Télécharger le QR code », « Partager le lien » et « Lancer l'histoire ici ». La saisie en cours est gardée sur l'appareil.
+
 ## Arborescence
 
 | Dossier | Rôle |
@@ -28,6 +41,9 @@ Le profil (`src/lib/profil.ts`) voyage après le « # » de l'adresse : `…/nui
 | `src/lib/stockage.ts` | Mémoire de la progression : navigateur sur le web, stockage natif dans l'appli des stores. |
 | `src/lib/plateforme.ts` | Web ou appli native. |
 | `src/pages/` | Le mot A6 avec le QR code, le diplôme à imprimer. |
+| `src/parents/` | L'espace parents (Svelte) : formulaire, schéma des dents, choix de la ville, QR code. |
+| `src/lib/profil.ts` | Le profil de l'enfant : vérification, encodage pour le QR, dents et variantes d'histoire. |
+| `src/lib/qr.ts` | QR codes en SVG et en PNG, générés hors ligne. |
 | `src/styles/`, `src/assets/` | Styles et polices (licence OFL). |
 | `public/` | Icônes et manifeste de la web app. |
 | `capacitor.config.ts` | Réglages de la future appli native. |
@@ -54,7 +70,7 @@ Réglage à faire une fois sur github.com : dépôt → **Settings** → **Pages
 
 1. Socle technique ✓
 2. Profil de l'enfant et QR code ✓
-3. Espace parents
+3. Espace parents ✓
 4. Récit adaptatif (dents, billet, endroit du cadeau, frère ou sœur, accords)
 5. Nouveaux dessins (montgolfière, doudous, endroits, billets)
 6. Hors connexion, mode surprise, tests

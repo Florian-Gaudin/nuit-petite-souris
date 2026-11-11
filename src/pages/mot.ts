@@ -1,6 +1,6 @@
 // Le mot de la souris (A6) avec le QR code vers l'histoire.
 import '../styles/style.css';
-import qrcode from 'qrcode-generator';
+import { svgQr } from '../lib/qr';
 import '../lib/plateforme';
 import { initStockage } from '../lib/stockage';
 import { installerProfil, baseHistoire } from '../lib/profilCourant';
@@ -21,13 +21,7 @@ $('url').textContent = baseHistoire();
 if (!C.url) $('alerte').hidden = false;
 
 // QR code généré hors ligne (aucune requête réseau)
-const qr = qrcode(0, 'M');
-qr.addData(C.url);
-qr.make();
-const n = qr.getModuleCount(), marge = 2, taille = n + marge * 2;
-let chemins = '';
-for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) if (qr.isDark(r, c)) chemins += `M${c + marge} ${r + marge}h1v1h-1z`;
-$('qr').innerHTML = `<svg viewBox="0 0 ${taille} ${taille}" shape-rendering="crispEdges"><rect width="${taille}" height="${taille}" fill="#fff"/><path d="${chemins}" fill="#141A3A"/></svg>`;
+$('qr').innerHTML = svgQr(C.url);
 
 $('btn-print').onclick = () => window.print();
 $('btn-plein').onclick = () => {
