@@ -9,12 +9,11 @@
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const wait = ms => new Promise(r => setTimeout(r, ms));
   function T(s) {
-    return String(s).replace(/\{(\w+)\}/g, (m, k) => {
-      if (k === 'lieuBillet') return C.billet.lieu;
-      return C[k] != null ? C[k] : m;
-    });
+    const r = window.RECIT.resoudre(s); // un texte peut avoir plusieurs versions (dent, doudou, frère ou sœur)
+    if (r == null) return '';
+    return String(typeof r === 'string' ? r : r.txt).replace(/\{(\w+)\}/g, (m, k) => (C[k] != null ? C[k] : m));
   }
-  const B = b => b ? { txt: T(b.txt), expr: b.expr } : null;
+  const B = b0 => { const b = window.RECIT.resoudre(b0); return b ? { txt: T(b.txt), expr: b.expr } : null; };
   const hasard = arr => arr[Math.floor(Math.random() * arr.length)];
 
   // ---------- Progression (mémorisée en local) ----------
@@ -361,7 +360,7 @@
       const evenements = [
         [0.3, () => { mv(cs2, -90, 200); mv(bat, -40, 236); mv(cs1, -90, 232); }],
         [0.6, () => chuchote(D.camera.intro)],
-        [1.4, () => det('cheminee', 'CHEMINÉE – ÉTEINTE', 25, 40, 50, 43, 'bas')],
+        [1.4, () => det('cheminee', C.cachetteEtiquette, 25, 40, 50, 43, 'bas')],
         [2.6, () => { mv(cs2, 40, 200); mv(bat, 90, 236); SON.play('pas'); }],
         [4.6, () => det('souris', 'PETITE SOURIS', 10, 66, 20, 20)],
         [6.2, () => { mv(cs2, 70, 56); mv(bat, 120, 92); SON.play('pas'); rm('cheminee'); }],
@@ -371,7 +370,7 @@
         [14.5, () => { cs2.classList.remove('coucou'); mv(cs2, -90, 200); SON.play('pas'); rm('souris'); }],
         [16, () => { salon.setAttribute('hidden', ''); chambre.removeAttribute('hidden'); nom.textContent = 'CAM 2 · CHAMBRE'; dets.innerHTML = ''; SON.play('bip'); chuchote(D.camera.chambre); }],
         [17, () => det('clem', (C.enfant + ' – DORT').toUpperCase(), 16, 46, 58, 20)],
-        [18.2, () => det('nico', (C.poupee + ' – DORT AUSSI').toUpperCase(), 45, 40, 9, 17)],
+        [18.2, () => { if (C.aDoudou) det('nico', (C.poupee + ' – DORT AUSSI').toUpperCase(), 45, 40, 9, 17); }],
         [19.6, () => { mv(cs1, 60, 232); SON.play('pas'); }],
         [21.6, () => det('souris', 'PETITE SOURIS', 14, 76, 20, 20)],
         [23.4, () => { mv(cs1, 62, 122); SON.play('pas'); }],
@@ -379,7 +378,7 @@
         [26.6, () => { dent.classList.add('prise'); chuchote(D.camera.dent); }],
         [27.4, () => det('dent', 'DENT – TROUVÉE', 30, 54, 5, 6, 'droite')],
         [29.4, () => { mot.classList.add('pose'); SON.play('papier'); rm('dent'); det('mot', 'PETIT MOT – SOUS L\'OREILLER', 28, 54, 8, 7, 'droite'); }],
-        [31.6, () => det('nico', (C.poupee + ' – RONFLE UN PEU').toUpperCase(), 45, 40, 9, 17)],
+        [31.6, () => { if (C.aDoudou) det('nico', (C.poupee + ' – RONFLE UN PEU').toUpperCase(), 45, 40, 9, 17); }],
         [33.4, () => { mv(cs1, 220, 236); SON.play('pas'); rm('mot'); det('souris', 'PETITE SOURIS', 55, 78, 18, 18); }],
         [35.4, () => det('lit', 'SOUS LE LIT – MONSTRES : 0', 8, 79, 20, 6)],
         [37.4, () => det('chaussette', 'CHAUSSETTE – PERDUE DEPUIS MARDI', 4, 86, 12, 10, 'droite')],
@@ -415,7 +414,7 @@
   // ---------- Chapitre 4 : la lettre ----------
   const Ch4 = {
     lignes() {
-      const l = D.lettre.map(T).filter(Boolean);
+      const l = D.lettre.map(T).filter(Boolean); // une ligne sans version adaptée (null) est omise
       l.push(T(D.signature)); l.push(D.heureLettre); l.push(T(D.ps));
       return l;
     },

@@ -32,6 +32,19 @@ Page `parents.html`, accessible depuis le menu Préférences de l'histoire (et d
 
 À la fin : le QR code, avec « Imprimer le mot de la souris », « Télécharger le QR code », « Partager le lien » et « Lancer l'histoire ici ». La saisie en cours est gardée sur l'appareil.
 
+## Le récit adaptatif
+
+L'histoire se raconte selon le profil (`src/lib/recit.ts`) :
+
+- **La dent** : trois histoires. Toute première dent (une place neuve l'attend au château), dent dont la jumelle est déjà tombée (les retrouvailles, texte d'origine quand une seule dent attendait), ou dent suivante (elle rejoint la collection). Le rang (« ta troisième dent »), le type de dent et le schéma des 20 dents du diplôme suivent.
+- **Le billet** : sa valeur dans les textes et sur les dessins, et sa couleur (5 € gris, 10 € rouge, 20 € bleu, 50 € orange).
+- **La cachette** : « sur ta cheminée, bien éteinte », « sur ton bureau »… dans la Meuse, la caméra, la lettre et le mot A6.
+- **Fille ou garçon** : « Chère / Cher », « Amie / Ami de Quenotte », « Exploratrice / Explorateur », « Collectionneuse / Collectionneur ».
+- **Doudou** : présent ou non (sans doudou, le témoin du diplôme est la lune).
+- **Frère ou sœur** : dans la même chambre ou non (fenêtre d'Aiglemont, Pantoufle, caméra, lettre, témoin).
+
+Dans `src/legacy/data.js`, un texte peut avoir plusieurs versions, choisies par aiguillage : `{ variante: { premiere, jumelle, suite } }`, `{ deja: { une, plusieurs } }`, `{ doudou: { oui, non } }`, `{ fratrie: { aCote, ailleurs, non } }` (une branche `null` omet la ligne). Les mots du profil s'écrivent entre accolades : `{ordinal}`, `{euros}`, `{cachetteNom}`, `{Chere}`, `{frere}`… Avec le profil d'exemple, les textes sont identiques mot pour mot à ceux de la première histoire.
+
 ## Arborescence
 
 | Dossier | Rôle |
@@ -44,6 +57,8 @@ Page `parents.html`, accessible depuis le menu Préférences de l'histoire (et d
 | `src/parents/` | L'espace parents (Svelte) : formulaire, schéma des dents, choix de la ville, QR code. |
 | `src/lib/profil.ts` | Le profil de l'enfant : vérification, encodage pour le QR, dents et variantes d'histoire. |
 | `src/lib/qr.ts` | QR codes en SVG et en PNG, générés hors ligne. |
+| `src/lib/recit.ts` | Vocabulaire de l'histoire et choix des versions de texte. |
+| `src/lib/geometrieDents.ts`, `src/lib/machoire.ts` | Schéma des 20 dents (formulaire et diplôme). |
 | `src/styles/`, `src/assets/` | Styles et polices (licence OFL). |
 | `public/` | Icônes et manifeste de la web app. |
 | `capacitor.config.ts` | Réglages de la future appli native. |
@@ -71,7 +86,7 @@ Réglage à faire une fois sur github.com : dépôt → **Settings** → **Pages
 1. Socle technique ✓
 2. Profil de l'enfant et QR code ✓
 3. Espace parents ✓
-4. Récit adaptatif (dents, billet, endroit du cadeau, frère ou sœur, accords)
+4. Récit adaptatif (dents, billet, endroit du cadeau, frère ou sœur, accords) ✓
 5. Nouveaux dessins (montgolfière, doudous, endroits, billets)
 6. Hors connexion, mode surprise, tests
 7. Appli des stores (Capacitor)

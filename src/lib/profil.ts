@@ -1,6 +1,7 @@
 // Le profil de l'enfant : ce que les parents renseignent, et que le QR code transporte.
 // Il voyage après le « # » de l'adresse (#p=…), compressé : il n'est jamais envoyé à un serveur.
 import LZString from 'lz-string';
+import { vocabulaire } from './recit';
 
 export type Genre = 'f' | 'g';
 export type TypeDoudou = 'ours' | 'lapin' | 'chat' | 'chien' | 'bebe' | 'licorne' | 'dinosaure' | 'aucun';
@@ -224,5 +225,6 @@ export function configDepuisProfil(p: Profil, url: string) {
     billet: { lieu: LIEU_CACHETTE[p.cachette], valeur: p.billet },
     secret: true,
     profil: p,
+    ...vocabulaire(p),
   };
 }

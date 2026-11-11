@@ -1,27 +1,13 @@
 <script lang="ts">
   // Schéma des 20 dents de lait, vu de face (la droite de l'enfant est à gauche du schéma).
   // Deux modes : choisir la dent tombée cette nuit, ou cocher celles déjà tombées.
-  import { arcade, nomDent, rangDent, varianteDent } from '../lib/profil';
+  import { nomDent, rangDent, varianteDent } from '../lib/profil';
+  import { PLACES, ETOILE } from '../lib/geometrieDents';
 
   let { nuit = $bindable(), deja = $bindable() }: { nuit: number | null; deja: number[] } = $props();
   let mode = $state<'nuit' | 'deja'>(nuit == null ? 'nuit' : 'deja');
 
-  // Ordre de gauche à droite sur le schéma (vu de face)
-  const HAUT = [55, 54, 53, 52, 51, 61, 62, 63, 64, 65];
-  const BAS = [85, 84, 83, 82, 81, 71, 72, 73, 74, 75];
-  const LARGEUR = [0, 22, 18, 18, 24, 28]; // par numéro de dent (1 = incisive centrale… 5 = 2e molaire)
-  const CX = 170, RX = 132, RY = 92;
-
-  // Position de chaque dent sur son arcade : les incisives au centre, les molaires sur les côtés
-  function place(d: number, i: number) {
-    const theta = ((i - 4.5) / 4.5) * 78 * (Math.PI / 180);
-    const haut = arcade(d) === 'haut';
-    const x = CX + RX * Math.sin(theta);
-    const y = haut ? 134 - RY * Math.cos(theta) : 166 + RY * Math.cos(theta);
-    const angle = (theta * 180) / Math.PI * (haut ? 1 : -1);
-    return { x, y, angle, l: LARGEUR[d % 10], h: d % 10 >= 4 ? 26 : 30 };
-  }
-  const DENTS = [...HAUT.map((d, i) => ({ d, ...place(d, i) })), ...BAS.map((d, i) => ({ d, ...place(d, i) }))];
+  const DENTS = PLACES;
 
   function toucher(d: number) {
     if (mode === 'nuit') {
@@ -78,7 +64,7 @@
         onkeydown={(e) => clavier(e, t.d)}
       >
         <rect x={-t.l / 2} y={-t.h / 2} width={t.l} height={t.h} rx="7" />
-        {#if etat(t.d) === 'nuit'}<path class="etoile" d="M0 -8l2.4 5 5.4.6-4 3.7 1.1 5.3L0 3.9l-4.9 2.7 1.1-5.3-4-3.7 5.4-.6z" />{/if}
+        {#if etat(t.d) === 'nuit'}<path class="etoile" d={ETOILE} />{/if}
       </g>
     {/each}
   </svg>

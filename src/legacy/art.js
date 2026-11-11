@@ -49,6 +49,7 @@ window.ART = (function () {
 
   // ---------- Symboles réutilisés partout ----------
   function symboles() {
+    const C = window.CONFIG, V = C.euros, K = C.billetCouleurs; // valeur et couleurs du billet (5 gris, 10 rouge, 20 bleu, 50 orange)
     return `<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
 <radialGradient id="glow" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#FFC857" stop-opacity=".6"/><stop offset="1" stop-color="#FFC857" stop-opacity="0"/></radialGradient>
 <radialGradient id="halo-or" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#FFF4D6" stop-opacity=".75"/><stop offset=".6" stop-color="#FFC857" stop-opacity=".35"/><stop offset="1" stop-color="#FFC857" stop-opacity="0"/></radialGradient>
@@ -86,7 +87,7 @@ window.ART = (function () {
 <symbol id="souris-side" viewBox="0 0 130 100">
   <path d="M18 70 C -4 72, -2 44, 22 52" fill="none" stroke="#A79E95" stroke-width="5" stroke-linecap="round"/>
   <ellipse cx="38" cy="56" rx="15" ry="18" fill="#8B5A3C"/>
-  <g transform="rotate(-18 38 40)"><rect x="29" y="33" width="19" height="11" rx="1.5" fill="#B9C4B0" stroke="#7f8c7a" stroke-width="1"/><text x="38.5" y="41.5" font-family="Share Tech Mono, monospace" font-size="7" fill="#4a5a4a" text-anchor="middle">5€</text></g>
+  <g transform="rotate(-18 38 40)"><rect x="29" y="33" width="19" height="11" rx="1.5" fill="${K.moyen}" stroke="${K.fonce}" stroke-width="1"/><text x="38.5" y="41.5" font-family="Share Tech Mono, monospace" font-size="${V.length > 1 ? 6 : 7}" fill="${K.fonce}" text-anchor="middle">${V}€</text></g>
   <path d="M26 44 q12 -6 24 0" fill="none" stroke="#6E4630" stroke-width="3" stroke-linecap="round"/>
   <ellipse cx="60" cy="64" rx="38" ry="25" fill="#A79E95"/>
   <ellipse cx="66" cy="72" rx="24" ry="14" fill="#EFE8DD"/>
@@ -119,8 +120,8 @@ window.ART = (function () {
 
 <symbol id="dent" viewBox="0 0 24 24"><path d="M7 3.5 q5 -3 10 0 q3.5 2.5 1.5 9 q-1 8 -3.5 8.5 q-2 0 -3 -4.5 q-1 4.5 -3 4.5 q-2.5 -.5 -3.5 -8.5 q-2 -6.5 1.5 -9z" fill="#fff" stroke="#cfd3ee" stroke-width=".8"/></symbol>
 <symbol id="dent-cam" viewBox="0 0 24 24"><path d="M7 3.5 q5 -3 10 0 q3.5 2.5 1.5 9 q-1 8 -3.5 8.5 q-2 0 -3 -4.5 q-1 4.5 -3 4.5 q-2.5 -.5 -3.5 -8.5 q-2 -6.5 1.5 -9z" fill="#9fff8a" stroke="#39FF14" stroke-width="1.2"/></symbol>
-<symbol id="billet" viewBox="0 0 64 34"><rect x="1" y="1" width="62" height="32" rx="3" fill="#B9C4B0" stroke="#7f8c7a" stroke-width="1.5"/><rect x="6" y="6" width="52" height="22" rx="2" fill="none" stroke="#8fa08a" stroke-width="1"/><circle cx="32" cy="17" r="7" fill="#CBD3C4" stroke="#8fa08a"/><text x="13" y="22" font-family="Share Tech Mono, monospace" font-size="10" fill="#4a5a4a">5</text><text x="46" y="22" font-family="Share Tech Mono, monospace" font-size="10" fill="#4a5a4a">€</text></symbol>
-<symbol id="bateau" viewBox="0 0 64 34"><path d="M2 20 L62 20 L52 32 L12 32 Z" fill="#AEB8A6" stroke="#7f8c7a" stroke-width="1"/><path d="M14 20 L32 3 L50 20 Z" fill="#CBD3C4" stroke="#7f8c7a" stroke-width="1"/><path d="M32 3 L32 20" stroke="#7f8c7a" stroke-width="1"/><text x="20" y="29" font-family="Share Tech Mono, monospace" font-size="8" fill="#4a5a4a">5</text><text x="40" y="29" font-family="Share Tech Mono, monospace" font-size="8" fill="#4a5a4a">€</text></symbol>
+<symbol id="billet" viewBox="0 0 64 34"><rect x="1" y="1" width="62" height="32" rx="3" fill="${K.moyen}" stroke="${K.fonce}" stroke-width="1.5"/><rect x="6" y="6" width="52" height="22" rx="2" fill="none" stroke="${K.fonce}" stroke-width="1" opacity=".55"/><circle cx="32" cy="17" r="7" fill="${K.clair}" stroke="${K.fonce}" opacity=".9"/><text x="${V.length > 1 ? 10 : 13}" y="22" font-family="Share Tech Mono, monospace" font-size="10" fill="${K.fonce}">${V}</text><text x="46" y="22" font-family="Share Tech Mono, monospace" font-size="10" fill="${K.fonce}">€</text></symbol>
+<symbol id="bateau" viewBox="0 0 64 34"><path d="M2 20 L62 20 L52 32 L12 32 Z" fill="${K.moyen}" stroke="${K.fonce}" stroke-width="1"/><path d="M14 20 L32 3 L50 20 Z" fill="${K.clair}" stroke="${K.fonce}" stroke-width="1"/><path d="M32 3 L32 20" stroke="${K.fonce}" stroke-width="1"/><text x="${V.length > 1 ? 18 : 20}" y="29" font-family="Share Tech Mono, monospace" font-size="8" fill="${K.fonce}">${V}</text><text x="40" y="29" font-family="Share Tech Mono, monospace" font-size="8" fill="${K.fonce}">€</text></symbol>
 <symbol id="bateau-cam" viewBox="0 0 64 34"><path d="M2 20 L62 20 L52 32 L12 32 Z" fill="#0f4a1b" stroke="#39FF14" stroke-width="2"/><path d="M14 20 L32 3 L50 20 Z" fill="#0f4a1b" stroke="#39FF14" stroke-width="2"/><path d="M32 3 L32 20" stroke="#39FF14" stroke-width="2"/></symbol>
 <symbol id="mot-cam" viewBox="0 0 40 30"><rect x="1" y="1" width="38" height="28" rx="2" fill="#0f4a1b" stroke="#39FF14" stroke-width="2"/><g fill="#39FF14"><rect x="6" y="6" width="5" height="5"/><rect x="13" y="6" width="3" height="3"/><rect x="6" y="13" width="3" height="3"/><rect x="11" y="12" width="4" height="4"/><rect x="6" y="19" width="5" height="5"/><rect x="13" y="20" width="3" height="3"/></g><path d="M22 9h12M22 15h12M22 21h8" stroke="#39FF14" stroke-width="1.5"/></symbol>
 <symbol id="patte" viewBox="0 0 24 24"><ellipse cx="7" cy="8" rx="2.2" ry="3"/><ellipse cx="12" cy="6" rx="2.2" ry="3"/><ellipse cx="17" cy="8" rx="2.2" ry="3"/><path d="M12 11 q6 0 6 6 q0 4 -6 4 q-6 0 -6 -4 q0 -6 6 -6z"/></symbol>

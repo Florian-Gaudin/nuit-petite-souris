@@ -5,6 +5,7 @@
 // Expose ensuite window.CONFIG (lu par le moteur), window.PROFIL, son code et son identifiant.
 import { stockage } from './stockage';
 import { plateforme } from './plateforme';
+import { resoudre, type Texte } from './recit';
 import {
   type Profil, PROFIL_EXEMPLE, codeDepuisAdresse, configDepuisProfil, decoderProfil, encoderProfil, idProfil,
 } from './profil';
@@ -42,13 +43,14 @@ export function chargerProfil(): ProfilCourant {
 }
 
 declare global {
-  interface Window { CONFIG: ReturnType<typeof configDepuisProfil>; PROFIL: ProfilCourant }
+  interface Window { CONFIG: ReturnType<typeof configDepuisProfil>; PROFIL: ProfilCourant; RECIT: { resoudre: (t: Texte) => ReturnType<typeof resoudre> } }
 }
 
 export function installerProfil(): ProfilCourant {
   const pc = chargerProfil();
   window.PROFIL = pc;
   window.CONFIG = configDepuisProfil(pc.profil, baseHistoire() + '#p=' + pc.code);
+  window.RECIT = { resoudre: (t: Texte) => resoudre(t, window.CONFIG) };
   if (pc.erreur) console.warn('Profil de l\'adresse ignoré :', pc.erreur);
   // Un nouveau QR scanné dans le même onglet : on recharge pour raconter le nouveau profil
   window.addEventListener('hashchange', () => { if (codeDepuisAdresse(location.hash)) location.reload(); });

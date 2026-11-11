@@ -26,7 +26,7 @@ window.SCENES = (function () {
   // À la fin de certaines scènes, avant le « pont »
   const FIN = { place() { const g = $('.tap[data-el="marionnettiste"]', svg); if (g) g.classList.add('montre'); } };
   const T = s => ctx.T(s);
-  const bulle = b => b ? { txt: T(b.txt), expr: b.expr } : null;
+  const bulle = b0 => { const b = window.RECIT.resoudre(b0); return b ? { txt: T(b.txt), expr: b.expr } : null; };
 
   // ---------- Ce qui se passe à l'écran quand on touche un élément ----------
   const ACTIONS = {

@@ -18,5 +18,6 @@ await import('./legacy/audio.js');
 await import('./legacy/musique.js');
 await import('./legacy/narration.js');
 await import('./legacy/scenes.js');
+await import('./lib/machoire');
 await import('./legacy/certificat.js');
 await import('./legacy/app.js');

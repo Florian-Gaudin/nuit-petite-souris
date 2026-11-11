@@ -17,18 +17,32 @@ window.DATA = {
   scenes: [
     {
       id: "chateau", titre: "Le château", heure: "00:45", ambiance: "chateau",
-      intro: { txt: "Au fond de la forêt des Ardennes, mon château dort sous les étoiles. Dans ma boîte à trésors, il n'y a qu'une seule dent de lait : ta toute première, celle du bas. Elle est bien triste, toute seule.", expr: "triste" },
+      intro: { variante: {
+        premiere: { txt: "Au fond de la forêt des Ardennes, mon château dort sous les étoiles. Dans ma boîte à trésors, il y a une petite place toute neuve, avec ton prénom écrit dessus. Elle attend ta toute première dent !", expr: "sourire" },
+        jumelle: { deja: {
+          une: { txt: "Au fond de la forêt des Ardennes, mon château dort sous les étoiles. Dans ma boîte à trésors, il n'y a qu'une seule dent de lait : ta toute première, celle du {arcadePremiere}. Elle est bien triste, toute seule.", expr: "triste" },
+          plusieurs: { txt: "Au fond de la forêt des Ardennes, mon château dort sous les étoiles. Dans ma boîte à trésors, il y a déjà {nbDeja} de tes dents de lait. Mais l'une d'elles est bien triste : sa jumelle n'est pas encore arrivée.", expr: "triste" },
+        } },
+        suite: { txt: "Au fond de la forêt des Ardennes, mon château dort sous les étoiles. Dans ma boîte à trésors, il y a déjà {nbDeja} de tes dents de lait. Elles se racontent des histoires en attendant la suivante.", expr: "sourire" },
+      } },
       oblig: ["lanterne"], bonus: ["feuillage", "sac"],
       elements: {
         lanterne: {
-          demande: { txt: "Mais j'ai reçu un message : ta deuxième dent est tombée ! C'est la jumelle de la première. Je dois aller la chercher cette nuit. Allume ma lanterne, il fait si noir !", expr: "surprise" },
+          demande: { variante: {
+            premiere: { txt: "Et ce soir, j'ai reçu un message : ta toute première dent est tombée ! C'est un grand jour. Je dois aller la chercher cette nuit. Allume ma lanterne, il fait si noir !", expr: "surprise" },
+            jumelle: { deja: {
+              une: { txt: "Mais j'ai reçu un message : ta {ordinal} dent est tombée ! C'est la jumelle de la première. Je dois aller la chercher cette nuit. Allume ma lanterne, il fait si noir !", expr: "surprise" },
+              plusieurs: { txt: "Mais j'ai reçu un message : ta {ordinal} dent est tombée ! C'est la jumelle de celle qui attend. Je dois aller la chercher cette nuit. Allume ma lanterne, il fait si noir !", expr: "surprise" },
+            } },
+            suite: { txt: "Et ce soir, j'ai reçu un message : ta {ordinal} dent est tombée ! Une nouvelle petite sœur pour la collection. Je dois aller la chercher cette nuit. Allume ma lanterne, il fait si noir !", expr: "surprise" },
+          } },
           reponse: { txt: "Merci {enfant} ! Avec ma lanterne, je vois comme en plein jour.", expr: "joie" },
         },
         feuillage: {
           bulle: { txt: "Hou hou ! C'est la hulotte, ma voisine. Elle sort la tête des feuilles pour me dire : « Bon voyage, {souris} ! » Touche-la encore : elle va s'envoler !", expr: "surprise" },
           bulle2: { txt: "Et hop, elle s'envole chasser dans la forêt. À bientôt, hulotte !", expr: "joie" },
         },
-        sac: { bulle: { txt: "Regarde dans mon sac : j'ai un cadeau pour toi ! C'est un billet de 5 euros, pour te remercier de ta dent.", expr: "clin" } },
+        sac: { bulle: { txt: "Regarde dans mon sac : j'ai un cadeau pour toi ! C'est un billet de {euros} euros, pour te remercier de ta dent.", expr: "clin" } },
       },
       pont: { txt: "C'est parti, direction la forêt !", expr: "joie" },
     },
@@ -53,9 +67,9 @@ window.DATA = {
       oblig: ["billet"], bonus: ["bulles", "reflet"],
       elements: {
         billet: {
-          demande: { txt: "J'ai une idée ! J'ai un billet de 5 euros pour toi, et je vais le plier pour en faire un bateau. Aide-moi : touche le billet pour le plier.", expr: "clin" },
+          demande: { txt: "J'ai une idée ! J'ai un billet de {euros} euros pour toi, et je vais le plier pour en faire un bateau. Aide-moi : touche le billet pour le plier.", expr: "clin" },
           etapes: ["Un pli…", "Deux plis…", "Trois plis… Le bateau est prêt !"],
-          reponse: { txt: "Je monte à bord et hop, je traverse ! Le bateau se balance sous la lune. Oh, quelques gouttes ont mouillé le billet. Ne t'inquiète pas, je le ferai sécher au chaud, sur ta cheminée.", expr: "joie" },
+          reponse: { txt: "Je monte à bord et hop, je traverse ! Le bateau se balance sous la lune. Oh, quelques gouttes ont mouillé le billet. Ne t'inquiète pas, je le ferai sécher{auChaud} sur {cachetteNom}.", expr: "joie" },
         },
         bulles: { bulle: { txt: "Splash ! Un poisson me dit bonjour. Il a l'air de bien s'amuser, lui.", expr: "surprise" } },
         reflet: { bulle: { txt: "Regarde, la lune se baigne dans la Meuse. Quand on la touche, elle fait des ronds dans l'eau !", expr: "sourire" } },
@@ -86,7 +100,11 @@ window.DATA = {
           reponse: { txt: "Elle tourne, elle tourne… elle s'arrête. Ta maison est par là !", expr: "joie" },
         },
         lampadaire: { bulle: { txt: "Ce lampadaire grésille comme s'il ronflait. Dors bien, lampadaire !", expr: "clin" } },
-        fenetre: { bulle: { txt: "Là-haut, une petite lumière : la veilleuse de ta chambre. Je vois {poupee}, bien au chaud à côté de toi.", expr: "chuchote" } },
+        fenetre: { bulle: { fratrie: {
+          aCote: { txt: "Là-haut, une petite lumière : la veilleuse de ta chambre. Je vois {frere} qui dort à côté de toi. Chut !", expr: "chuchote" },
+          ailleurs: { doudou: { oui: { txt: "Là-haut, une petite lumière : la veilleuse de ta chambre. Je vois {poupee}, bien au chaud à côté de toi.", expr: "chuchote" }, non: { txt: "Là-haut, une petite lumière : la veilleuse de ta chambre. Tu dors bien au chaud.", expr: "chuchote" } } },
+          non: { doudou: { oui: { txt: "Là-haut, une petite lumière : la veilleuse de ta chambre. Je vois {poupee}, bien au chaud à côté de toi.", expr: "chuchote" }, non: { txt: "Là-haut, une petite lumière : la veilleuse de ta chambre. Tu dors bien au chaud.", expr: "chuchote" } } },
+        } } },
       },
       pont: { txt: "J'y suis presque ! Il ne reste que le jardin à traverser.", expr: "sourire" },
     },
@@ -96,7 +114,11 @@ window.DATA = {
       oblig: ["yeux", "quenotte"], bonus: ["fleurs", "fenetre"],
       elements: {
         yeux: {
-          reponse: { txt: "C'est {chat}, le chat du voisin ! Il dort sur le seuil et il a l'oreille fine. Si je le réveille, il va miauler, et {poupee} va se réveiller. Je ne veux surtout pas ça.", expr: "surprise" },
+          reponse: { fratrie: {
+            aCote: { txt: "C'est {chat}, le chat du voisin ! Il dort sur le seuil et il a l'oreille fine. Si je le réveille, il va miauler, et {tonFrere} va se réveiller. Je ne veux surtout pas ça.", expr: "surprise" },
+            ailleurs: { doudou: { oui: { txt: "C'est {chat}, le chat du voisin ! Il dort sur le seuil et il a l'oreille fine. Si je le réveille, il va miauler, et {poupee} va se réveiller. Je ne veux surtout pas ça.", expr: "surprise" }, non: { txt: "C'est {chat}, le chat du voisin ! Il dort sur le seuil et il a l'oreille fine. Si je le réveille, il va miauler, et toute la maison va se réveiller. Je ne veux surtout pas ça.", expr: "surprise" } } },
+            non: { doudou: { oui: { txt: "C'est {chat}, le chat du voisin ! Il dort sur le seuil et il a l'oreille fine. Si je le réveille, il va miauler, et {poupee} va se réveiller. Je ne veux surtout pas ça.", expr: "surprise" }, non: { txt: "C'est {chat}, le chat du voisin ! Il dort sur le seuil et il a l'oreille fine. Si je le réveille, il va miauler, et toute la maison va se réveiller. Je ne veux surtout pas ça.", expr: "surprise" } } },
+          } },
         },
         quenotte: {
           demande: { txt: "Je sais, je sais… j'ai un plan. Touche-moi, je t'explique !", expr: "chuchote" },
@@ -132,22 +154,39 @@ window.DATA = {
   // ---------- Chapitre 3 : la caméra (Quenotte chuchote) ----------
   camera: {
     intro: { txt: "Chut… J'ai mis ma petite caméra en marche. Je suis entrée par la chatière, {chat} n'a rien entendu.", expr: "chuchote" },
-    cheminee: { txt: "Voilà ta cheminée, bien éteinte. Je pose ton billet dessus : il va sécher au chaud jusqu'au matin.", expr: "chuchote" },
-    chambre: { txt: "Te voilà ! Tu dors comme une marmotte. Et {poupee} dort aussi, tout contre toi.", expr: "chuchote" },
-    dent: { txt: "Sous l'oreiller… la voilà, ta deuxième dent ! À la place, je glisse un petit mot pour toi.", expr: "joie" },
+    cheminee: { txt: "Voilà {cachetteNom}{eteint}. Je pose ton billet dessus : il va sécher{auChaudFin} jusqu'au matin.", expr: "chuchote" },
+    chambre: { fratrie: {
+      aCote: { doudou: { oui: { txt: "Te voilà ! Tu dors comme une marmotte. {poupee} dort tout contre toi, et {frere} ronfle tout doucement dans son lit.", expr: "chuchote" }, non: { txt: "Te voilà ! Tu dors comme une marmotte. Et {frere} ronfle tout doucement dans son lit.", expr: "chuchote" } } },
+      ailleurs: { doudou: { oui: { txt: "Te voilà ! Tu dors comme une marmotte. Et {poupee} dort aussi, tout contre toi.", expr: "chuchote" }, non: { txt: "Te voilà ! Tu dors comme une marmotte, bien au chaud sous ta couette.", expr: "chuchote" } } },
+      non: { doudou: { oui: { txt: "Te voilà ! Tu dors comme une marmotte. Et {poupee} dort aussi, tout contre toi.", expr: "chuchote" }, non: { txt: "Te voilà ! Tu dors comme une marmotte, bien au chaud sous ta couette.", expr: "chuchote" } } },
+    } },
+    dent: { variante: {
+      premiere: { txt: "Sous l'oreiller… la voilà, ta toute première dent ! À la place, je glisse un petit mot pour toi.", expr: "joie" },
+      jumelle: { txt: "Sous l'oreiller… la voilà, ta {ordinal} dent ! À la place, je glisse un petit mot pour toi.", expr: "joie" },
+      suite: { txt: "Sous l'oreiller… la voilà, ta {ordinal} dent ! À la place, je glisse un petit mot pour toi.", expr: "joie" },
+    } },
     fin: { txt: "Mission accomplie ! Je repars au château avec ta dent. Bonne nuit, {enfant}.", expr: "clin" },
     bouton: "Lire ma lettre",
   },
 
   // ---------- Chapitre 4 : la lettre ----------
   lettreIntro: { txt: "Je t'ai laissé une lettre avant de partir. Touche le cachet de cire pour l'ouvrir.", expr: "sourire" },
-  lettreFin: { txt: "Lis-la bien, et va vite voir sur la cheminée !", expr: "clin" },
+  lettreFin: { txt: "Lis-la bien, et va vite voir {lieuBillet} !", expr: "clin" },
   lettre: [
-    "Chère {enfant},",
+    "{Chere} {enfant},",
     "Merci pour ton aide cette nuit ! Sans toi, je serais encore devant {chat}.",
-    "Je suis entrée tout doucement. {poupee} dormait contre toi, et je n'ai pas fait un bruit.",
-    "J'ai pris ta deuxième dent. Au château, elle a retrouvé sa jumelle. Elles ne se quittent plus !",
-    "Ton billet de 5 euros a traversé la Meuse en bateau. Il sèche {lieuBillet} : va vite le chercher !",
+    { fratrie: {
+      aCote: "Je suis entrée tout doucement, pour ne réveiller ni toi ni {frere}. Je n'ai pas fait un bruit.",
+      ailleurs: { doudou: { oui: "Je suis entrée tout doucement. {poupee} dormait contre toi, et je n'ai pas fait un bruit.", non: "Je suis entrée tout doucement, et je n'ai pas fait un bruit." } },
+      non: { doudou: { oui: "Je suis entrée tout doucement. {poupee} dormait contre toi, et je n'ai pas fait un bruit.", non: "Je suis entrée tout doucement, et je n'ai pas fait un bruit." } },
+    } },
+    { variante: {
+      premiere: "J'ai pris ta toute première dent. Au château, elle a sa place à elle, juste à côté de mon lit. Elle brille comme une étoile !",
+      jumelle: "J'ai pris ta {ordinal} dent. Au château, elle a retrouvé sa jumelle. Elles ne se quittent plus !",
+      suite: "J'ai pris ta {ordinal} dent. Au château, elle a rejoint ses sœurs. Elles font la fête !",
+    } },
+    "Ton billet de {euros} euros a traversé la Meuse en bateau. Il sèche {lieuBillet} : va vite le chercher !",
+    { fratrie: { aCote: "Fais un gros bisou à {frere} de ma part.", ailleurs: "Fais un gros bisou à {frere} de ma part.", non: null } },
     "Brosse bien tes dents, le matin et le soir. Les nouvelles vont pousser grandes et fortes.",
     "À la prochaine dent !",
   ],
@@ -162,21 +201,24 @@ window.DATA = {
 
   // ---------- Chapitre secret : la 13e scène du Grand Marionnettiste ----------
   scene13: [
-    "Scène treize : la nuit de la deuxième dent de {enfant}.",
+    { variante: { premiere: "Scène treize : la nuit de la toute première dent de {enfant}.", jumelle: "Scène treize : la nuit de la {ordinal} dent de {enfant}.", suite: "Scène treize : la nuit de la {ordinal} dent de {enfant}." } },
     "Le chat {chat} ronfle. {enfant} a aidé la souris à passer.",
-    "Les deux dents jumelles sont réunies au château.",
+    { variante: { premiere: "La première dent brille dans la boîte à trésors du château.", jumelle: "Les deux dents jumelles sont réunies au château.", suite: "La collection du château compte une dent de plus." } },
   ],
 
   // ---------- Badges du diplôme ----------
   badges: [
     // obtenu : ce que dit le diplôme quand le badge est gagné ; aGagner : comment l'obtenir
     { id: "detective", nom: "Détective de nuit", chapitre: 1, obtenu: "Tu as guidé {souris} de son château jusqu'à ta maison.", aGagner: "Guide {souris} de son château jusqu'à ta maison." },
-    { id: "exploratrice", nom: "Exploratrice", etoiles: 6, obtenu: "Tu as trouvé au moins 6 étoiles cachées dans les images.", aGagner: "Trouve 6 étoiles cachées dans les images du voyage." },
+    { id: "exploratrice", nom: "{Exploratrice}", etoiles: 6, obtenu: "Tu as trouvé au moins 6 étoiles cachées dans les images.", aGagner: "Trouve 6 étoiles cachées dans les images du voyage." },
     { id: "lynx", nom: "Œil de lynx", etoiles: 12, obtenu: "Tu as trouvé les 12 étoiles cachées. Rien ne t'échappe !", aGagner: "Trouve les 12 étoiles cachées dans les images du voyage." },
     { id: "passechat", nom: "Passe-Chat", chapitre: 2, obtenu: "Tu as aidé {souris} à passer devant {chat} sans le réveiller.", aGagner: "Aide {souris} à passer devant {chat} sans le réveiller." },
     { id: "hibou", nom: "Œil de hibou", chapitre: 3, obtenu: "Tu as regardé le film de la caméra de {souris} jusqu'au bout.", aGagner: "Regarde le film de la caméra de {souris} jusqu'au bout." },
-    { id: "amie", nom: "Amie de {souris}", chapitre: 4, obtenu: "Tu as lu la lettre que {souris} t'a laissée.", aGagner: "Lis la lettre que {souris} t'a laissée." },
-    { id: "jumelle", nom: "Dent jumelle", chapitre: 5, obtenu: "Ta deuxième dent a retrouvé sa jumelle au château.", aGagner: "Ta deuxième dent doit retrouver sa jumelle au château." },
+    { id: "amie", nom: "{Amie} de {souris}", chapitre: 4, obtenu: "Tu as lu la lettre que {souris} t'a laissée.", aGagner: "Lis la lettre que {souris} t'a laissée." },
+    { id: "jumelle", chapitre: 5,
+      nom: { variante: { premiere: "Première dent", jumelle: "Dent jumelle", suite: "{Collectionneuse}" } },
+      obtenu: { variante: { premiere: "Ta toute première dent est arrivée au château.", jumelle: "Ta {ordinal} dent a retrouvé sa jumelle au château.", suite: "Ta {ordinal} dent a rejoint ta collection au château." } },
+      aGagner: { variante: { premiere: "Ta toute première dent doit arriver au château.", jumelle: "Ta {ordinal} dent doit retrouver sa jumelle au château.", suite: "Ta {ordinal} dent doit rejoindre ta collection au château." } } },
     { id: "billet", nom: "Billet trouvé", bouton: true, obtenu: "Tu as trouvé le billet qui séchait {lieuBillet}.", aGagner: "Trouve le billet qui sèche {lieuBillet}, puis touche « J'ai trouvé mon billet ! » à la fin de la lettre." },
     { id: "scene13", nom: "Scène 13", secret: true, obtenu: "Tu as découvert la 13e scène secrète du Grand Marionnettiste !", aGagner: "Un secret bien caché…" },
   ],

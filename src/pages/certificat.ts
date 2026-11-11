@@ -9,6 +9,7 @@ await initStockage();
 const pc = installerProfil();
 await import('../legacy/data.js');
 await import('../legacy/art.js');
+await import('../lib/machoire');
 await import('../legacy/certificat.js');
 
 const W = window as any;

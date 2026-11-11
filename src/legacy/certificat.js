@@ -3,27 +3,6 @@ window.CERTIFICAT = (function () {
   'use strict';
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
-  // Mâchoire du bas : 10 dents de lait sur un arc, les incisives centrales marquées
-  function machoireSVG(dents) {
-    const C = window.CONFIG;
-    const parPosition = {};
-    (dents || C.dents).forEach(d => { parPosition[d.position] = d.numero; });
-    let out = `<svg class="machoire" viewBox="0 0 220 104" role="img" aria-label="Schéma de la mâchoire du bas : dix dents de lait, les deux incisives centrales marquées">`;
-    out += `<path d="M18 16q92 150 184 0" fill="none" stroke="#C9A227" stroke-width="1.5"/>`;
-    const noms = ['molaire', 'molaire', 'canine', 'incisive', 'bas-centrale-gauche', 'bas-centrale-droite', 'incisive', 'canine', 'molaire', 'molaire'];
-    for (let i = 0; i < 10; i++) {
-      const x = 30 + i * 17.8;
-      const y = 20 + 62 * (1 - Math.pow((x - 110) / 86, 2));
-      const w = (i === 4 || i === 5) ? 15 : (i >= 3 && i <= 6 ? 13 : 16), h = (i === 4 || i === 5) ? 18 : 15;
-      const num = parPosition[noms[i]];
-      const tombee = !!num;
-      out += `<rect x="${(x - w / 2).toFixed(1)}" y="${(y - h / 2).toFixed(1)}" width="${w}" height="${h}" rx="4" fill="${tombee ? '#D64045' : '#fff'}" stroke="${tombee ? '#9a2a32' : '#7a6220'}" stroke-width="1"/>`;
-      if (tombee) out += `<text x="${x.toFixed(1)}" y="${(y + h / 2 + 11).toFixed(1)}" text-anchor="middle" font-family="Baloo 2, sans-serif" font-weight="800" font-size="9" fill="#D64045">${num}<tspan font-size="6" dy="-3">${num === 1 ? 're' : 'e'}</tspan></text>`;
-    }
-    out += `</svg><div class="machoire-legende">Mâchoire du bas, vue de face : les deux incisives centrales sont tombées.</div>`;
-    return out;
-  }
-
   function tamponSVG() {
     return `<svg class="tampon" viewBox="0 0 120 120" aria-hidden="true">
 <defs><path id="cercleTxt" d="M60 60m-44 0a44 44 0 1 1 88 0a44 44 0 1 1 -88 0"/></defs>
@@ -36,7 +15,7 @@ window.CERTIFICAT = (function () {
   // opts : { badges: [ids], secret: bool, nuitTexte: "nuit du …", dents, etoiles: n, total: n }
   function html(opts) {
     const C = window.CONFIG, D = window.DATA;
-    const T = s => s.replace(/\{(\w+)\}/g, (m, k) => k === 'lieuBillet' ? C.billet.lieu : (C[k] != null ? C[k] : m));
+    const T = s0 => { const s = window.RECIT.resoudre(s0); return s == null ? '' : String(s).replace(/\{(\w+)\}/g, (m, k) => (C[k] != null ? C[k] : m)); };
     const gagnes = opts.badges || [];
     const visibles = D.badges.filter(b => !b.secret || opts.secret);
     const nbGagnes = visibles.filter(b => gagnes.indexOf(b.id) >= 0).length;
@@ -44,8 +23,8 @@ window.CERTIFICAT = (function () {
       const ok = gagnes.indexOf(b.id) >= 0, msg = T(ok ? b.obtenu : b.aGagner);
       return `<button type="button" class="badge-dip ${ok ? '' : 'off'}" data-nom="${esc(T(b.nom))}" data-ok="${ok ? 1 : 0}" data-info="${esc(msg)}" title="${esc(msg)}">${window.ART.badgeIcone(b.id, 46)}<span>${esc(T(b.nom))}</span></button>`;
     }).join('');
-    const derniere = C.dents[C.dents.length - 1];
-    const ordinal = derniere.numero === 1 ? '1<sup>re</sup>' : derniere.numero + '<sup>e</sup>';
+    // Témoin : le doudou, sinon le frère ou la sœur de la chambre, sinon la lune
+    const temoin = C.aDoudou ? C.poupee + ' (dormait)' : C.fratrieACote ? C.frere + ' (dormait)' : 'la lune (veillait)';
     const total = opts.total || D.scenes.reduce((n, s) => n + s.bonus.length, 0);
     const etoiles = Math.max(0, Math.min(total, opts.etoiles || 0));
     let etoilesSVG = '';
@@ -57,10 +36,10 @@ window.CERTIFICAT = (function () {
     <div class="dip-sous">de dent de lait perdue</div>
     <div class="dip-decerne">décerné à</div>
     <div class="dip-nom">${esc(C.enfant)}</div>
-    <p class="dip-texte">qui a perdu sa <b>${ordinal} dent de lait</b>, une incisive centrale du bas, qui a guidé ${esc(C.souris)} jusqu'à sa maison et l'a aidée à passer devant le chat ${esc(C.chat)}.<br>Son billet de 5 € a traversé la Meuse en bateau.</p>
+    <p class="dip-texte">qui a perdu sa <b>${C.ordinalHtml} dent de lait</b>, ${esc(C.dentNom)}, qui a guidé ${esc(C.souris)} jusqu'à sa maison et l'a aidée à passer devant le chat ${esc(C.chat)}.<br>Son billet de ${C.euros} € a traversé la Meuse en bateau.</p>
     <div class="dip-etoiles" aria-label="${etoiles} étoiles découvertes sur ${total}">${etoilesSVG}<span>${etoiles} étoile${etoiles > 1 ? 's' : ''} découverte${etoiles > 1 ? 's' : ''} sur ${total}</span></div>
     <div class="dip-milieu">
-      <div class="dip-machoire">${machoireSVG(opts.dents)}</div>
+      <div class="dip-machoire">${window.MACHOIRE(C.profil)}</div>
       <div class="dip-badges-bloc">
         <div class="dip-badges-titre">Mes badges <span class="dip-compte">${nbGagnes}/${visibles.length}</span></div>
         <div class="dip-badges">${badges}</div>
@@ -70,7 +49,7 @@ window.CERTIFICAT = (function () {
     <div class="dip-pied">
       <div class="dip-date">Fait à ${esc(C.ville)},<br>${esc(opts.nuitTexte || '')}</div>
       <div class="dip-tampon">${tamponSVG()}</div>
-      <div class="dip-sign"><span class="sign">${esc(C.souris)}</span><small>Petite Souris des Ardennes</small><small>Témoin officiel : ${esc(C.poupee)} (dormait)</small></div>
+      <div class="dip-sign"><span class="sign">${esc(C.souris)}</span><small>Petite Souris des Ardennes</small><small>Témoin officiel : ${esc(temoin)}</small></div>
     </div>
   </div>
 </div>`;
@@ -88,7 +67,7 @@ window.CERTIFICAT = (function () {
       b.addEventListener('focus', () => montre(b));
     });
   }
-  return { html, machoireSVG, tamponSVG, brancher };
+  return { html, tamponSVG, brancher };
 })();
 
 // Module ES (chargé par src/main.ts) : le contenu reste un script qui expose ses objets sur window.

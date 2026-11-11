@@ -16,6 +16,10 @@
 .dip-milieu{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;align-items:center;margin-top:14px}
 .dip-machoire{flex:0 1 260px;max-width:100%}
 .machoire{width:100%;height:auto;display:block}
+.dip-machoire{flex:0 1 220px}
+.pastille-dent{display:inline-block;width:10px;height:12px;border-radius:3px;vertical-align:-1px;border:1px solid #9a2a32}
+.pastille-dent.rouge{background:#D64045}
+.pastille-dent.rose{background:#F2A3B5;border-color:#c46a7e}
 .machoire-legende{font-size:.72rem;color:#7a6220;font-style:italic;text-align:center;margin-top:2px}
 .dip-badges-bloc{flex:1 1 260px;display:flex;flex-direction:column;align-items:center;gap:6px}
 .dip-badges-titre{font-family:'Baloo 2',sans-serif;font-weight:800;font-size:1.05rem;color:#7a6220;letter-spacing:.04em}
