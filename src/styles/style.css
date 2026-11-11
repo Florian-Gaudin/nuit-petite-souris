@@ -1,0 +1,488 @@
+/* La nuit de la Petite Souris — styles (tablette et téléphone d'abord) */
+@font-face{font-family:'Baloo 2';src:url('../assets/fonts/baloo2.woff2') format('woff2');font-weight:400 800;font-display:swap}
+@font-face{font-family:'Patrick Hand';src:url('../assets/fonts/patrickhand.woff2') format('woff2');font-display:swap}
+@font-face{font-family:'Share Tech Mono';src:url('../assets/fonts/sharetechmono.woff2') format('woff2');font-display:swap}
+@font-face{font-family:'Libre Baskerville';src:url('../assets/fonts/librebaskerville.woff2') format('woff2');font-display:swap}
+@font-face{font-family:'Libre Baskerville';src:url('../assets/fonts/librebaskerville-italic.woff2') format('woff2');font-style:italic;font-display:swap}
+
+:root{
+  --nuit:#141A3A; --nuit2:#273066; --nuit3:#1b2250; --encre:#1F2235; --papier:#FFF6E0; --papier2:#f7ecd0;
+  --lanterne:#FFC857; --lanterne2:#b9801a; --rouge:#D64045; --rouge2:#9a2a32; --rose:#F2A3B5; --souris:#A79E95;
+  --foret:#2F5D50; --meuse:#3E7C8F; --cam:#39FF14; --cam2:#2fbf2f; --cambg:#06180B; --or:#C9A227; --clair:#F3EFE6; --muet:#cfd3ee;
+  --display:'Baloo 2','Trebuchet MS',sans-serif; --hand:'Patrick Hand','Segoe Print','Comic Sans MS',cursive; --mono:'Share Tech Mono',Consolas,monospace; --serif:'Libre Baskerville',Georgia,serif;
+  --fil-h:64px; --bandeau-h:170px;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;overscroll-behavior:none;background:var(--nuit);color:var(--clair);font-family:var(--display);font-size:18px;line-height:1.4;overflow-x:hidden;min-height:100%}
+button,a.btn{font-family:inherit}
+h1,h2,h3{line-height:1.15;margin:0;text-wrap:balance}
+p{margin:.4rem 0}
+.ico{width:1.25em;height:1.25em;flex:none}
+[hidden]{display:none!important}
+:focus-visible{outline:3px solid var(--lanterne);outline-offset:2px}
+
+/* ---------- Fil rouge (en-tête) ---------- */
+.fil{position:sticky;top:0;z-index:20;background:rgba(20,26,58,.92);backdrop-filter:blur(6px);border-bottom:1px solid #2e3768;padding-top:env(safe-area-inset-top,0px)}
+.fil-in{display:flex;align-items:center;gap:10px;max-width:960px;margin:0 auto;height:var(--fil-h);padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px))}
+.ruban{position:relative;flex:1;height:44px;min-width:0}
+.perle{position:absolute;top:50%;width:34px;height:34px;margin:-17px 0 0 -17px;border-radius:50%;border:3px solid #3d4a95;background:var(--nuit3);color:var(--muet);font:700 .85rem var(--display);padding:0;cursor:pointer}
+.perle.maison{left:5%;background:var(--rouge);border-color:var(--rouge);display:grid;place-items:center}
+.perle.maison svg{width:18px;height:18px}
+.perle.maison.active{background:var(--lanterne);border-color:var(--lanterne)}
+.perle.maison.active svg path{fill:#3b2a00}
+.perle[data-n="1"]{left:21%}.perle[data-n="2"]{left:37.5%}.perle[data-n="3"]{left:54%}.perle[data-n="4"]{left:70.5%}.perle[data-n="5"]{left:87%}
+/* Étapes déjà parcourues en jaune, étape en cours en jaune entourée de blanc */
+.perle.faite{background:var(--lanterne);border-color:var(--lanterne);color:#3b2a00}
+.perle.active{background:var(--lanterne);border-color:#fff;color:#3b2a00;transform:scale(1.18);box-shadow:0 0 0 4px rgba(255,200,87,.3)}
+.perle.maison,.perle.maison.faite{background:var(--rouge);border-color:var(--rouge)}
+.perle.maison.active{background:var(--lanterne);border-color:#fff}
+.perle:not(.ouverte){opacity:.55}
+.fil-souris{position:absolute;top:50%;left:5%;width:38px;height:30px;margin:-34px 0 0 -19px;transition:left .8s cubic-bezier(.4,0,.2,1);pointer-events:none;filter:drop-shadow(0 2px 2px rgba(0,0,0,.5))}
+.fil-souris svg{width:100%;height:100%}
+/* Préférences */
+.prefs{position:relative;flex:none}
+.prefs-menu{position:absolute;right:0;top:calc(100% + 8px);z-index:45;min-width:250px;background:var(--papier);color:var(--encre);border-radius:16px;box-shadow:0 12px 30px rgba(0,0,0,.45);padding:6px;display:flex;flex-direction:column;gap:2px}
+.prefs-menu button{display:flex;align-items:center;gap:10px;min-height:48px;width:100%;border:0;border-radius:12px;background:none;color:inherit;font:700 1rem var(--display);text-align:left;padding:0 12px;cursor:pointer}
+.prefs-menu button:hover,.prefs-menu button:focus-visible{background:#f3e3bd}
+.prefs-menu .ico{width:22px;height:22px}
+.prefs-menu .danger{color:var(--rouge2)}
+.prefs-menu .danger.confirme{background:var(--rouge);color:#fff}
+.btn-ico{width:48px;height:48px;border-radius:50%;border:2px solid #3d4a95;background:#1b2250;color:#fff;display:grid;place-items:center;cursor:pointer;padding:0}
+.btn-ico .ico{width:26px;height:26px}
+@media (max-width:440px){
+  .fil-in{gap:6px}
+  .btn-ico{width:40px;height:40px}
+  .btn-ico .ico{width:22px;height:22px}
+  .perle{width:30px;height:30px;margin:-15px 0 0 -15px;font-size:.85rem;border-width:2.5px}
+  .perle.maison svg{width:15px;height:15px}
+  .fil-souris{width:32px;height:25px;margin:-29px 0 0 -16px}
+}
+
+/* ---------- Mise en page générale ---------- */
+.scene{max-width:960px;margin:0 auto;padding:10px max(14px,env(safe-area-inset-left,0px)) calc(var(--bandeau-h) + 24px) max(14px,env(safe-area-inset-right,0px))}
+.barre{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 12px;margin:2px 0 8px}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.decor-titre{display:flex;flex-wrap:wrap;row-gap:4px;align-items:center;gap:10px;font-size:clamp(1.2rem,4.2vw,1.6rem);font-weight:800;margin:4px 0 8px;color:var(--clair)}
+.decor-heure{font-family:var(--mono);font-weight:400;font-size:.8em;color:var(--lanterne);background:var(--nuit3);border:1px solid #3d4a95;border-radius:999px;padding:2px 10px;white-space:nowrap}
+.consigne{color:var(--muet);font-size:1.05rem;margin:0 0 10px}
+.fin{display:flex;flex-direction:column;align-items:center;gap:12px;margin:16px 0 8px}
+
+/* Boutons : gros, pour le pouce */
+.btn{min-height:60px;font:700 1.15rem var(--display);border-radius:18px;padding:0 1.2rem;border:0;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:.5rem;text-decoration:none;color:inherit;-webkit-tap-highlight-color:transparent;transition:transform .12s,box-shadow .12s}
+.btn:active{transform:translateY(3px)}
+.btn-grand{width:100%;max-width:520px;min-height:74px;font-size:1.4rem}
+.btn-or{background:var(--lanterne);color:#3b2a00;box-shadow:0 6px 0 var(--lanterne2)}
+.btn-or:active{box-shadow:0 3px 0 var(--lanterne2)}
+.btn-rouge{background:var(--rouge);color:#fff;box-shadow:0 6px 0 var(--rouge2)}
+.btn-rouge:active{box-shadow:0 3px 0 var(--rouge2)}
+.btn-petit{min-height:46px;font-size:1rem;background:#1b2250;color:#fff;border:2px solid #3d4a95;border-radius:14px;padding:0 .9rem}
+.btn-petit.on{background:#3d4a95}
+.btn small{font-size:.75em;font-weight:500;opacity:.8}
+.btn.pop{animation:pop .4s ease-out}
+@keyframes pop{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* ---------- Bandeau de narration (Quenotte parle) ---------- */
+.bandeau{position:fixed;left:0;right:0;bottom:0;z-index:25;max-height:42vh;background:rgba(255,246,224,.94);color:var(--encre);border-top:3px solid var(--lanterne);box-shadow:0 -10px 30px rgba(0,0,0,.35);backdrop-filter:blur(8px);padding:7px max(12px,env(safe-area-inset-left,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-right,0px));transition:transform .5s cubic-bezier(.4,0,.2,1);cursor:pointer}
+.bandeau.cache{transform:translateY(110%)}
+.bandeau-in{max-width:960px;margin:0 auto;display:grid;grid-template-columns:44px 1fr;grid-template-rows:108px 44px;grid-template-areas:"texte texte" "portrait actions";gap:4px 10px;align-items:center}
+.bandeau-portrait{grid-area:portrait;position:relative;width:44px;height:44px}
+.portrait{width:100%;height:100%;display:block;filter:drop-shadow(0 3px 4px rgba(0,0,0,.25))}
+.portrait.hop{animation:hop .5s ease-out}
+@keyframes hop{0%{transform:scale(1)}40%{transform:scale(1.1) rotate(-4deg)}100%{transform:scale(1)}}
+.bandeau-bulle{position:absolute;right:-8px;top:-6px;min-width:22px;height:22px;padding:0 6px;border-radius:12px;background:#fff;border:2px solid var(--lanterne);color:var(--rouge);font:800 .8rem var(--display);display:none;align-items:center;justify-content:center;box-shadow:0 2px 4px rgba(0,0,0,.2)}
+.bandeau-bulle.on{display:inline-flex;animation:pop .3s ease-out}
+/* Hauteur fixe : tout l'écran reste visible, un texte trop long défile dans le cadre */
+.bandeau-texte{grid-area:texte;margin:0;font-size:1.05rem;font-weight:600;line-height:1.36;word-spacing:.06em;letter-spacing:.005em;height:108px;overflow:hidden;align-self:start;text-wrap:pretty}
+.bandeau-actions{min-height:40px}
+.bandeau.chuchote .bandeau-texte{font-style:italic;color:#3a3550}
+.bandeau-texte .mot{opacity:0;transition:opacity .35s ease-out}
+.bandeau-texte .mot.vu{opacity:1}
+.bandeau-suite{grid-area:actions;display:none;justify-self:end;align-items:center;gap:6px;min-height:40px;padding:0 16px 0 18px;border-radius:999px;background:var(--lanterne);color:#3b2a00;font-size:1.05rem;font-weight:800;box-shadow:0 4px 0 var(--lanterne2);animation:suite 1.2s ease-in-out infinite}
+.bandeau-suite b{font-size:1.3em;line-height:1}
+.bandeau.attente{border-top-color:#ffdc8a}
+.bandeau.attente .bandeau-suite{display:inline-flex}
+.bandeau.attente .bandeau-actions:not(:empty):not([hidden])~.bandeau-suite{display:none}
+@keyframes suite{0%,100%{transform:translateX(0) scale(1)}50%{transform:translateX(4px) scale(1.05)}}
+.bandeau-actions{grid-area:actions;display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
+.bandeau-actions:empty{display:none}
+.bandeau-actions .btn{min-height:40px;font-size:1.05rem;width:100%;max-width:420px;border-radius:14px}
+/* Expressions du portrait */
+.portrait .yeux-grands,.portrait .yeux-doux,.portrait .oeil-clin,.portrait .bouche-joie,.portrait .bouche-o,.portrait .bouche-triste,.portrait .patte-chut{display:none}
+.portrait[data-expr="joie"] .bouche-sourire{display:none}.portrait[data-expr="joie"] .bouche-joie{display:block}
+.portrait[data-expr="surprise"] .yeux-ouverts,.portrait[data-expr="surprise"] .bouche-sourire{display:none}
+.portrait[data-expr="surprise"] .yeux-grands,.portrait[data-expr="surprise"] .bouche-o{display:block}
+.portrait[data-expr="surprise"] .sourcils{transform:translateY(-5px)}
+.portrait[data-expr="chuchote"] .yeux-ouverts{display:none}
+.portrait[data-expr="chuchote"] .yeux-doux,.portrait[data-expr="chuchote"] .patte-chut{display:block}
+.portrait[data-expr="clin"] .yeux-ouverts{display:none}.portrait[data-expr="clin"] .oeil-clin{display:block}
+.portrait[data-expr="triste"] .yeux-ouverts,.portrait[data-expr="triste"] .bouche-sourire{display:none}
+.portrait[data-expr="triste"] .yeux-doux,.portrait[data-expr="triste"] .bouche-triste{display:block}
+.portrait[data-expr="triste"] .sg{transform:rotate(12deg)}.portrait[data-expr="triste"] .sd{transform:rotate(-12deg)}
+.portrait .sg,.portrait .sd{transform-box:fill-box;transform-origin:center}
+.portrait .sourcils{transition:transform .3s}
+
+/* ---------- Chapitre 0 ---------- */
+.scene.ch-0{height:calc(100vh - var(--fil-h) - 1px - env(safe-area-inset-top,0px));height:calc(100dvh - var(--fil-h) - 1px - env(safe-area-inset-top,0px));padding-bottom:calc(var(--bandeau-h) + 8px);display:flex;flex-direction:column;overflow:hidden}
+.scene.ch-0 .ch0{flex:1;min-height:0}
+.ch0{position:relative;min-height:calc(100vh - var(--fil-h) - var(--bandeau-h) - 34px);display:flex;flex-direction:column;justify-content:flex-start;margin:-10px calc(-1 * max(14px,env(safe-area-inset-left,0px))) 0 calc(-1 * max(14px,env(safe-area-inset-right,0px)));padding:0 max(16px,env(safe-area-inset-left,0px)) 16px;border-radius:0 0 18px 18px;overflow:hidden}
+.ch0 .ciel{position:absolute;inset:0;overflow:hidden;z-index:0}
+.ciel-svg{width:100%;height:100%;display:block}
+.ch0-texte{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;padding:18px 0 36px;background:linear-gradient(rgba(20,26,58,.8) 55%,transparent)}
+.titre{font-size:clamp(1.8rem,6.5vw,3rem);font-weight:800;text-shadow:0 3px 12px rgba(0,0,0,.5);max-width:14ch}
+.sous{color:var(--muet);font-size:1.05rem;margin:0}
+.ciel-svg .chemin0,.ciel-svg .qui{opacity:0;transition:opacity 1s}
+.ch0.allume .ciel-svg .chemin0,.ch0.allume .ciel-svg .qui{opacity:1}
+.ciel-svg .fenetre{animation:lueur 3s ease-in-out infinite alternate}
+.ciel-svg .fumee circle{animation:fumee 4s ease-in-out infinite}
+.ciel-svg .fumee circle:nth-child(2){animation-delay:1.3s}.ciel-svg .fumee circle:nth-child(3){animation-delay:2.6s}
+@keyframes lueur{from{opacity:.75}to{opacity:1}}
+@keyframes fumee{0%{opacity:0;transform:translateY(0)}30%{opacity:.5}100%{opacity:0;transform:translateY(-18px)}}
+.etoile{animation:scintille-etoile 4s ease-in-out infinite}
+@keyframes scintille-etoile{0%,100%{opacity:.35}50%{opacity:1}}
+
+/* ---------- Chapitre 1 : frise et décors ---------- */
+.frise{display:flex;align-items:center;justify-content:center;gap:4px;margin:0 0 8px}
+.pastille{width:40px;height:40px;border-radius:50%;border:2px solid #3d4a95;background:var(--nuit3);color:var(--muet);display:grid;place-items:center;padding:0;cursor:pointer;flex:none;transition:transform .2s}
+.pastille svg{width:24px;height:24px}
+.pastille.faite{background:var(--rouge);border-color:var(--rouge);color:#fff}
+.pastille.active{background:var(--lanterne);border-color:var(--lanterne);color:#3b2a00;transform:scale(1.15)}
+.pastille:disabled{opacity:.4;cursor:default}
+.frise-trait{flex:0 1 26px;height:3px;background:#3d4a95;border-radius:2px}
+.decor-wrap{position:relative;border-radius:16px;overflow:hidden;border:2px solid #2e3768;background:var(--nuit);touch-action:manipulation;-webkit-user-select:none;user-select:none}
+.decor-wrap .decor-titre{position:absolute;left:10px;top:8px;z-index:2;margin:0;font-size:clamp(1rem,3.4vw,1.3rem);text-shadow:0 2px 6px rgba(0,0,0,.7);pointer-events:none}
+.decor{width:100%;height:auto;display:block;margin:0 auto}
+.decor-wrap.bouge .decor{animation:bouge .5s ease-out}
+@keyframes bouge{0%,100%{transform:none}30%{transform:translateX(-5px) rotate(-.3deg)}70%{transform:translateX(5px) rotate(.3deg)}}
+
+/* Éléments à toucher, halos, main qui montre */
+.tap{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.tap:focus{outline:none}
+.decor.secret .tap.cible .halo{animation:none;opacity:.3}
+.tap.refus{animation:refus .4s ease-in-out}
+.depart{transition:transform 1.5s ease-in}
+.depart.part{transform:translateX(1150px)}
+.decor-meuse.arrive .lueur{opacity:0}
+.decor-place .tap.montre .geant .bras-d{animation:none;transform:rotate(-62deg);transition:transform .6s}
+.decor-wrap .decor-titre{flex-wrap:wrap;row-gap:4px;max-width:calc(100% - 96px)}
+@keyframes refus{0%,100%{transform:translateX(0)}30%{transform:translateX(-4px)}70%{transform:translateX(4px)}}
+.decor .noir,.decor .dore,.decor .lueur,.decor .lueur-maison,.decor .lampe-lueur,.decor .champi-lueur,.decor .brume,.decor .main-aide,.decor .navire,.decor .etoile{pointer-events:none}
+.tap .halo{opacity:0;transform-box:fill-box;transform-origin:center;pointer-events:all}
+.tap.bonus .halo{opacity:.55;animation:scintille 2.6s ease-in-out infinite}
+.tap.cible .halo{opacity:1;animation:pulse-halo 1.4s ease-in-out infinite}
+.tap.cible.grand .halo{animation:pulse-grand 1.4s ease-in-out infinite}
+.tap.vu .halo,.tap.deja .halo,.tap.fait .halo{opacity:0;animation:none}
+.tap.deja:not(.vu) .halo{opacity:.18;animation:none}
+@keyframes scintille{0%,100%{opacity:.35;transform:scale(.92)}50%{opacity:.75;transform:scale(1.06)}}
+@keyframes pulse-halo{0%,100%{opacity:.75;transform:scale(.95)}50%{opacity:1;transform:scale(1.15)}}
+@keyframes pulse-grand{0%,100%{opacity:.8;transform:scale(1.3)}50%{opacity:1;transform:scale(1.7)}}
+.indice{pointer-events:none;filter:drop-shadow(0 0 4px #FFC857)}
+.indice use{transform-box:view-box;transform-origin:0 0;animation:indice 1.6s ease-in-out infinite}
+.tap.vu .indice,.tap.deja .indice{display:none}
+@keyframes indice{0%,100%{opacity:.35;transform:scale(.7) rotate(-10deg)}50%{opacity:1;transform:scale(1.15) rotate(10deg)}}
+.secrets{position:absolute;right:10px;top:8px;z-index:2;display:flex;align-items:center;gap:4px;background:rgba(20,26,58,.75);border:1px solid #3d4a95;border-radius:999px;padding:3px 10px 3px 6px;font-weight:800;font-size:.9rem;color:var(--lanterne);pointer-events:none}
+.secrets svg{width:18px;height:18px}
+.main-aide{opacity:0;pointer-events:none;transition:opacity .4s}
+.main-aide.on{opacity:1}
+.main-aide use{filter:drop-shadow(0 3px 3px rgba(0,0,0,.5))}
+.main-aide.on use{animation:montre 1s ease-in-out infinite}
+@keyframes montre{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-8px,-10px) scale(.92)}}
+.lueur{opacity:.9;transition:opacity 1s}
+.quenotte.trotte use{animation:trotte .5s ease-in-out infinite}
+@keyframes trotte{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+.decor .z{font-family:var(--display);font-weight:800;font-size:30px;fill:#F3EFE6}
+.decor .z.petit{font-size:22px}
+
+/* Château */
+.decor-chateau .noir{transition:opacity 1.4s}
+.decor-chateau.allume .noir{opacity:0}
+.decor-chateau .lueur{opacity:0}
+.decor-chateau.allume .lueur{opacity:1}
+.decor-chateau .tresor circle{animation:lueur 2s ease-in-out infinite alternate}
+.decor-chateau .feuillage{transform-box:fill-box;transform-origin:50% 90%;animation:feuille 4s ease-in-out infinite}
+.decor-chateau .tap.secoue .feuillage{animation:secoue .25s ease-in-out 6}
+@keyframes feuille{0%,100%{transform:rotate(0)}50%{transform:rotate(1.5deg)}}
+@keyframes secoue{0%,100%{transform:rotate(0)}50%{transform:rotate(-4deg)}}
+.decor-chateau .hulotte{opacity:0;transform:translateY(40px) scale(.5);transform-box:view-box;transform-origin:0 0;transition:transform .8s cubic-bezier(.3,1.4,.5,1),opacity .4s}
+.decor-chateau .tap.vu .hulotte{opacity:1;transform:translateY(-62px)}
+.decor-chateau .hulotte .aile{transform-box:view-box;transition:transform .3s}
+.decor-chateau .aile.ag{transform-origin:-16px 6px}.decor-chateau .aile.ad{transform-origin:16px 6px}
+.decor-chateau .tap.envol .hulotte{animation:envol 2.6s ease-in forwards}
+.decor-chateau .tap.vu.encore .halo{opacity:.8;animation:pulse-halo 1.4s ease-in-out infinite}
+.decor-chateau .tap.encore .indice{display:block}
+.decor-chateau .tap.envol .indice,.decor-chateau .tap.envol .halo{display:none}
+.decor-chateau .tap.envol .aile.ag{animation:aile-g .25s ease-in-out 10}
+.decor-chateau .tap.envol .aile.ad{animation:aile-d .25s ease-in-out 10}
+@keyframes envol{0%{transform:translateY(-62px);opacity:1}30%{transform:translate(-60px,-140px) scale(.95)}100%{transform:translate(-520px,-560px) scale(.55);opacity:0}}
+@keyframes aile-g{0%,100%{transform:rotate(0)}50%{transform:rotate(55deg)}}
+@keyframes aile-d{0%,100%{transform:rotate(0)}50%{transform:rotate(-55deg)}}
+.decor-chateau .billet-sac{transition:transform .8s cubic-bezier(.3,1.3,.5,1)}
+.decor-chateau .tap.vu .billet-sac{transform:translateY(-38px)}
+
+/* Forêt */
+.decor-foret .champi .chapeau,.decor-foret .champi rect{transition:fill .5s}
+.decor-foret .champi.allume .chapeau{fill:#FFC857}
+.decor-foret .champi.allume .pois{fill:#FFF4D6}
+.decor-foret .champi.allume rect{fill:#FFF4D6}
+.decor-foret .champi-lueur{opacity:0;transition:opacity .8s}
+.decor-foret .champi.allume .champi-lueur{opacity:1}
+.decor-foret .dore{transition:opacity 1.6s}
+.decor-foret.dore .dore{opacity:.22}
+.decor-foret .buisson{transform-box:fill-box;transform-origin:50% 100%;animation:tremble-buisson 2.4s ease-in-out infinite}
+.decor-foret .tap.vu .buisson{animation:none}
+@keyframes tremble-buisson{0%,70%,100%{transform:rotate(0)}75%{transform:rotate(-3deg)}80%{transform:rotate(3deg)}85%{transform:rotate(-2deg)}90%{transform:rotate(2deg)}}
+.decor-foret .renard{opacity:0;transition:transform 1.1s cubic-bezier(.3,1,.4,1),opacity .5s}
+.decor-foret .tap.vu .renard{opacity:1;transform:translateX(-100px)}
+.decor-foret .tap[data-el="luciole"] .lum{animation:luciole 1.6s ease-in-out infinite}
+.decor-foret .tap.vole .lum{animation-duration:.5s}
+@keyframes luciole{0%,100%{opacity:.5;transform:scale(.8)}50%{opacity:1;transform:scale(1.3)}}
+.decor-foret .brume ellipse{animation:brume 9s ease-in-out infinite alternate}
+@keyframes brume{from{transform:translateX(-20px)}to{transform:translateX(20px)}}
+
+/* Meuse */
+.decor-meuse .vagues path{animation:vague 4s linear infinite}
+.decor-meuse .vagues path:nth-child(2){animation-duration:5.5s}
+.decor-meuse .vagues path:nth-child(3){animation-duration:7s}
+@keyframes vague{from{transform:translateX(0)}to{transform:translateX(80px)}}
+.decor-meuse .reflet{animation:reflet 3s ease-in-out infinite alternate}
+@keyframes reflet{from{opacity:.45;transform:scaleX(.92)}to{opacity:.75;transform:scaleX(1.06)}}
+.decor-meuse .ronds ellipse{opacity:0;transform-box:fill-box;transform-origin:center}
+.decor-meuse .tap.ondule .ronds ellipse{animation:rond 2s ease-out}
+.decor-meuse .tap.ondule .ronds ellipse:nth-child(2){animation-delay:.4s}
+.decor-meuse .tap.ondule .ronds ellipse:nth-child(3){animation-delay:.8s}
+@keyframes rond{0%{opacity:.9;transform:scale(.6)}100%{opacity:0;transform:scale(3.2)}}
+.decor-meuse .bulles-eau circle{animation:bulle 3.2s ease-in infinite}
+.decor-meuse .bulles-eau circle:nth-child(2){animation-delay:1s}.decor-meuse .bulles-eau circle:nth-child(3){animation-delay:2s}
+@keyframes bulle{0%{opacity:0;transform:translateY(10px)}30%{opacity:.9}100%{opacity:0;transform:translateY(-26px)}}
+.decor-meuse .poisson{opacity:0;transform:translate(470px,480px)}
+.decor-meuse .tap.saute .poisson{animation:saut-poisson 1.5s ease-out}
+@keyframes saut-poisson{0%{opacity:0;transform:translate(470px,480px) rotate(-35deg)}25%{opacity:1}50%{transform:translate(470px,392px) rotate(0)}80%{opacity:1}100%{opacity:0;transform:translate(470px,485px) rotate(40deg)}}
+.decor-meuse .pli{display:none}
+.decor-meuse .tap[data-etape="0"] .pli0,.decor-meuse .tap[data-etape="1"] .pli1,.decor-meuse .tap[data-etape="2"] .pli2,.decor-meuse .tap[data-etape="3"] .pli3{display:block;animation:pop .35s ease-out}
+.decor-meuse .tap.parti{opacity:0;transition:opacity .4s}
+/* Le billet reste dans le sac de Quenotte, puis en sort quand il faut le plier */
+.decor-meuse .tap[data-el="billet"]:not(.devant){opacity:0;pointer-events:none}
+.decor-meuse .billet-in{transform-box:view-box;transform-origin:0 0}
+.decor-meuse .tap.devant .billet-in{animation:sort-du-sac 1s cubic-bezier(.3,1.25,.5,1)}
+@keyframes sort-du-sac{0%{opacity:0;transform:translate(-158px,22px) scale(.12) rotate(-25deg)}35%{opacity:1}100%{opacity:1;transform:none}}
+.decor-meuse .navire{opacity:0;transition:opacity .4s}
+.decor-meuse .navire.on{opacity:1}
+.decor-meuse .rive-g{transition:opacity .4s}
+.decor-meuse .rive-g.cache{opacity:0}
+.decor-meuse .rive-d{opacity:0;transition:opacity .6s}
+.decor-meuse .rive-d.on{opacity:1}
+.decor-meuse .lumieres{opacity:.3;transition:opacity 1.6s}
+.decor-meuse.arrive .lumieres{opacity:1}
+
+/* Place Ducale */
+.decor-place .vitre{animation:clignote 1.9s steps(2) infinite}
+.decor-place .tap.vu .vitre{animation:none;opacity:1}
+@keyframes clignote{0%,100%{opacity:1}50%{opacity:.25}}
+.decor-place .pigeon{opacity:0;transform:translateY(10px) scale(.3);transform-box:fill-box;transform-origin:center;transition:transform .6s cubic-bezier(.3,1.4,.5,1),opacity .3s}
+.decor-place .tap.vu .pigeon{opacity:1;transform:none}
+.decor-place .pantin{opacity:0;transform:translateY(-60px);transform-box:fill-box;transform-origin:50% 0}
+.decor-place .tap.danse .pantin{animation:pantin 2.6s ease-in-out forwards}
+@keyframes pantin{0%{opacity:0;transform:translateY(-60px)}25%{opacity:1;transform:translateY(0) rotate(0)}45%{transform:translateY(-6px) rotate(10deg)}65%{transform:translateY(0) rotate(-10deg)}85%{transform:translateY(-6px) rotate(6deg)}100%{opacity:1;transform:translateY(0)}}
+.decor-place .tap.fait .pantin{opacity:1}
+.decor-place .geant .bras-d{transform-box:fill-box;transform-origin:0 0}
+.decor-place .tap.danse .geant .bras-d{animation:coucou-bras .5s ease-in-out 4}
+@keyframes coucou-bras{0%,100%{transform:rotate(0)}50%{transform:rotate(-70deg)}}
+.decor-place .fromage{transform-box:fill-box;transform-origin:center;transition:transform .5s}
+.decor-place .tap.croque .fromage{transform:scale(.7) translateX(10px)}
+.decor-place .miettes{opacity:0;transition:opacity .4s}
+.decor-place .tap.croque .miettes{opacity:1}
+
+/* Aiglemont */
+.decor-aiglemont .coq{transform-box:fill-box;transform-origin:center}
+.decor-aiglemont .tap.tourne .coq{animation:tourne 2.2s cubic-bezier(.25,.8,.3,1) forwards}
+@keyframes tourne{from{transform:rotate(0)}to{transform:rotate(1080deg)}}
+.decor-aiglemont .lueur-maison{opacity:0;transition:opacity 1.4s}
+.decor-aiglemont.trouve .lueur-maison{opacity:1}
+.decor-aiglemont .ampoule,.decor-aiglemont .lampe-lueur{animation:gresille 1.7s steps(4) infinite}
+.decor-aiglemont .lampe-lueur{opacity:.6}
+.decor-aiglemont .tap.vu .ampoule,.decor-aiglemont .tap.vu .lampe-lueur{animation:none}
+@keyframes gresille{0%,100%{opacity:1}25%{opacity:.3}50%{opacity:.9}75%{opacity:.5}}
+.decor-aiglemont .tap[data-el="fenetre"] .vitre{opacity:.45;transition:opacity .8s}
+.decor-aiglemont .tap[data-el="fenetre"].vu .vitre{opacity:1}
+.decor-aiglemont .nicolas{opacity:0;transition:opacity .8s}
+.decor-aiglemont .tap.vu .nicolas{opacity:1}
+
+/* Pantoufle */
+.decor-pantoufle .fourrure{fill:#20222e;transition:fill 1.2s}
+.decor-pantoufle .queue{stroke:#20222e;transition:stroke 1.2s}
+.decor-pantoufle .revele .fourrure{fill:#E8A552}
+.decor-pantoufle .revele .queue{stroke:#E8A552}
+.decor-pantoufle .rayures,.decor-pantoufle .oreilles,.decor-pantoufle .nez,.decor-pantoufle .bouche{opacity:0;transition:opacity 1.2s}
+.decor-pantoufle .revele .rayures,.decor-pantoufle .revele .oreilles,.decor-pantoufle .revele .nez,.decor-pantoufle .revele .bouche{opacity:1}
+.decor-pantoufle .yeux-brillent{animation:brille 2.2s ease-in-out infinite}
+@keyframes brille{0%,100%{opacity:1}50%{opacity:.5}}
+.decor-pantoufle .yeux-fermes{display:none}
+.decor-pantoufle .revele .yeux-brillent{display:none}
+.decor-pantoufle .revele .yeux-fermes{display:block}
+.decor-pantoufle .zzz{opacity:0;transition:opacity .8s}
+.decor-pantoufle .revele .zzz{opacity:1}
+.decor-pantoufle .revele .z{animation:zz 1.6s ease-in-out infinite}
+.decor-pantoufle .revele .z.petit{animation-delay:.5s}
+.decor-pantoufle .pendule{opacity:0;transform:scale(.4);transform-box:fill-box;transform-origin:center;transition:transform .6s cubic-bezier(.3,1.4,.5,1),opacity .3s}
+.decor-pantoufle .tap.vu .pendule{opacity:1;transform:none}
+.decor-pantoufle .tap[data-el="fenetre"] .vitre{transition:fill .6s}
+.decor-pantoufle .tap[data-el="fenetre"].vu .vitre{fill:#6b5a2a}
+.decor-pantoufle .fleur{transform-box:fill-box;transform-origin:50% 100%}
+.decor-pantoufle .tap.vu .fleur{animation:fleur .7s ease-out}
+.decor-pantoufle .tap.vu .fleur:nth-child(3){animation-delay:.1s}.decor-pantoufle .tap.vu .fleur:nth-child(4){animation-delay:.2s}
+@keyframes fleur{0%{transform:scale(1)}40%{transform:scale(1.35) rotate(-8deg)}70%{transform:scale(1.1) rotate(6deg)}100%{transform:scale(1)}}
+.decor-pantoufle .moustaches{transform-box:fill-box;transform-origin:center}
+.decor-pantoufle .tap.vu .moustaches{animation:fretille .2s ease-in-out 6}
+@keyframes fretille{0%,100%{transform:rotate(0)}50%{transform:rotate(3deg)}}
+.decor-pantoufle .battant{transform-box:fill-box;transform-origin:0 50%;transition:transform .9s ease-in-out}
+.decor-pantoufle .tap.vu .battant{transform:scaleX(.86) skewY(3deg)}
+
+/* ---------- Chapitre 3 : la caméra tient dans l'écran ---------- */
+.scene.ch-3{height:calc(100vh - var(--fil-h) - 1px - env(safe-area-inset-top,0px));height:calc(100dvh - var(--fil-h) - 1px - env(safe-area-inset-top,0px));padding-bottom:calc(var(--bandeau-h) + 10px);display:flex;flex-direction:column;overflow:hidden}
+.ch3{flex:1;min-height:0;display:flex;flex-direction:column}
+.ch3 .barre{flex:none;margin:2px 0 6px}
+.cam-wrap{flex:1;min-height:0;container-type:size;display:flex;align-items:center;justify-content:center}
+.cam-wrap .cam{width:min(100cqw,133.3cqh);max-width:none;max-height:none;margin:0}
+
+/* ---------- Chapitre 2 : le jeu ---------- */
+.scene.ch-2{height:calc(100vh - var(--fil-h) - 1px - env(safe-area-inset-top,0px));height:calc(100dvh - var(--fil-h) - 1px - env(safe-area-inset-top,0px));padding-bottom:calc(var(--bandeau-h) + 10px);display:flex;flex-direction:column;overflow:hidden}
+.ch2{flex:1;min-height:0;display:flex;flex-direction:column}
+.ch2 .decor-titre{flex:none;margin:2px 0 6px}
+.ch2 .jeu-wrap{flex:1 1 auto;min-height:90px;display:flex;align-items:center;justify-content:center;background:var(--nuit)}
+.ch2 .jeu{width:100%;height:100%;max-height:none;min-height:0}
+.ch2 .jauge{flex:none;margin:8px 0}
+.ch2 .btn-tenir{flex:none;min-height:76px;width:100%}
+.jeu-wrap{border-radius:16px;overflow:hidden;border:2px solid #2e3768}
+.jeu{width:100%;height:auto;display:block}
+.jeu .z{font-family:var(--display);font-weight:800;font-size:30px;fill:#F3EFE6}
+.jeu .z.petit{font-size:22px}
+.jeu #zzz{opacity:1;transition:opacity .2s}
+.jeu #chat:not([data-etat="dort"]) #zzz{opacity:0}
+.jeu #chat[data-etat="dort"] .z{animation:zz 1.6s ease-in-out infinite}
+.jeu #chat[data-etat="dort"] .z.petit{animation-delay:.5s}
+@keyframes zz{0%{opacity:.3;transform:translateY(0)}50%{opacity:1;transform:translateY(-6px)}100%{opacity:.3;transform:translateY(0)}}
+.jeu #chat[data-etat="reveille"] .oeil-ferme,.jeu #chat:not([data-etat="reveille"]) .oeil-ouvert{display:none}
+.jeu #chat:not([data-etat="baille"]) .bouche-ouverte,.jeu #chat[data-etat="baille"] .bouche-fermee{display:none}
+.jeu #queue{transform-box:fill-box;transform-origin:100% 50%}
+.jeu #chat[data-etat="baille"] #queue{animation:twitch .22s ease-in-out 5}
+.jeu #chat[data-etat="reveille"] #queue{animation:twitch .35s ease-in-out infinite}
+@keyframes twitch{0%,100%{transform:rotate(0)}50%{transform:rotate(-14deg)}}
+.jeu #bulle{opacity:0;transition:opacity .15s}
+.jeu #bulle.on{opacity:1}
+.jeu .bulle-txt{font-family:var(--display);font-weight:800;font-size:26px;fill:#1F2235;text-anchor:middle}
+.jeu #jeu-souris{transition:transform .15s linear}
+.jeu #jeu-souris.boule use{transform:scale(.85) translate(10px,16px) rotate(-10deg)}
+.jeu #jeu-souris.marche use{animation:trotte .3s ease-in-out infinite}
+.jeu #jeu-souris.saute{animation:saut .6s ease-in-out 3}
+@keyframes saut{0%,100%{translate:0 0}50%{translate:0 -24px}}
+.jauge{position:relative;height:30px;border-radius:15px;background:var(--nuit3);border:2px solid #3d4a95;margin:12px 0;overflow:hidden}
+.jauge-in{height:100%;background:linear-gradient(90deg,#FFC857,#ffdc8a);width:0;transition:width .15s linear}
+.jauge span{position:absolute;inset:0;display:grid;place-items:center;font-weight:700;font-size:.95rem;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.7);padding:0 34px}
+.ch2 .jauge{height:34px;border-radius:17px;overflow:visible}
+.ch2 .jauge-in{border-radius:15px}
+.jauge-porte{position:absolute;right:4px;top:50%;width:24px;height:24px;margin-top:-12px}
+.jauge-souris{position:absolute;top:50%;left:4px;width:36px;height:28px;margin-top:-18px;transition:left .15s linear;filter:drop-shadow(0 1px 1px rgba(0,0,0,.6))}
+.btn-tenir{touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;display:flex;margin:0 auto;flex-direction:column;gap:0;line-height:1.1;min-height:90px}
+.btn-tenir.on{transform:translateY(4px);box-shadow:0 2px 0 var(--lanterne2);background:#ffd978}
+
+/* ---------- Chapitre 3 : la caméra ---------- */
+.cam{position:relative;aspect-ratio:4/3;width:100%;max-width:640px;max-height:calc(100vh - var(--fil-h) - var(--bandeau-h) - 120px);margin:0 auto;background:var(--cambg);border-radius:12px;overflow:hidden;border:3px solid #1d4d26;font-family:var(--mono);color:var(--cam)}
+.cam .camsvg{position:absolute;inset:0;width:100%;height:100%}
+.cam-hud{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;gap:6px;padding:6px 10px;font-size:clamp(.72rem,2.6vw,1rem);z-index:3;text-shadow:0 0 6px rgba(57,255,20,.6)}
+.rec{color:#ff5a5a;animation:blink 1s steps(1) infinite;text-shadow:0 0 6px rgba(255,90,90,.7)}
+@keyframes blink{50%{opacity:.15}}
+.dets{position:absolute;inset:0;z-index:2;pointer-events:none}
+.det{position:absolute;border:2px solid var(--cam);border-radius:3px;box-shadow:0 0 8px rgba(57,255,20,.35);transition:left .9s ease-in-out,top .9s ease-in-out;animation:apparait .3s steps(3)}
+.det span{position:absolute;left:-2px;bottom:100%;background:var(--cam);color:#03230a;font-size:clamp(.58rem,2.2vw,.86rem);padding:1px 5px;white-space:nowrap;font-weight:700;letter-spacing:.02em}
+.det.bas span{bottom:auto;top:100%}
+.det.droite span{left:100%;bottom:auto;top:-2px;margin-left:4px}
+@keyframes apparait{from{opacity:0}to{opacity:1}}
+.cam-souris,.cam-bateau{transition:transform 2.4s ease-in-out}
+.cam.instant .cam-souris,.cam.instant .cam-bateau,.cam.instant .det{transition:none!important;animation:none!important}
+.cam #dent1{transition:transform 1.2s ease-in,opacity 1.2s}
+.cam #dent1.prise{transform:translate(-50px,-40px) scale(.2);opacity:0}
+.cam .cam-mot{opacity:0;transform:translate(-40px,-30px) scale(.4);transition:transform 1s ease-out,opacity .8s}
+.cam .cam-mot.pose{opacity:1;transform:none}
+.cam #cs2.coucou use{animation:coucou .5s ease-in-out 3}
+@keyframes coucou{0%,100%{transform:rotate(0)}50%{transform:rotate(-8deg)}}
+.cam-grain{position:absolute;inset:0;pointer-events:none;z-index:4;background:repeating-linear-gradient(0deg,rgba(0,0,0,.22) 0 2px,transparent 2px 4px);mix-blend-mode:multiply}
+.cam-grain::after{content:"";position:absolute;inset:-60%;background-image:radial-gradient(rgba(57,255,20,.09) 1px,transparent 1.5px);background-size:7px 7px;animation:grain .35s steps(3) infinite;opacity:.9}
+@keyframes grain{0%{transform:translate(0,0)}33%{transform:translate(-9px,6px)}66%{transform:translate(7px,-8px)}100%{transform:translate(-3px,3px)}}
+.cam::before{content:"";position:absolute;inset:0;z-index:5;pointer-events:none;background:radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.55) 100%)}
+.preuve{position:absolute;inset:0;z-index:6;display:none;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:rgba(6,24,11,.35)}
+.cam.fin .preuve{display:flex}
+.preuve-ancien{border:6px solid var(--rouge);color:var(--rouge);font:800 clamp(2rem,9vw,3.2rem) var(--display);padding:2px 20px;transform:rotate(-12deg);background:rgba(6,24,11,.75);letter-spacing:.05em}
+.preuve small{font-size:clamp(.7rem,2.4vw,.95rem);background:rgba(6,24,11,.8);padding:2px 8px}
+
+/* ---------- Chapitre 4 : la lettre ---------- */
+.env-stage{display:flex;flex-direction:column;align-items:center}
+.env{width:min(100%,520px);height:auto;display:block;overflow:visible}
+.env-nom{font-family:var(--hand);font-size:26px;fill:#5c4a1e;text-anchor:middle}
+.env #rabat{transform-box:view-box;transform-origin:200px 60px;transition:transform .7s ease-in-out}
+.env.ouverte #rabat{transform:scaleY(-1)}
+.env #cachet{cursor:pointer;transform-box:fill-box;transform-origin:center;animation:pulse 1.6s ease-in-out infinite;transition:transform .6s ease-in,opacity .6s}
+.env.ouverte #cachet{animation:none;transform:translateY(80px) rotate(35deg);opacity:0}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+.lettre-stage{display:flex;flex-direction:column;align-items:center;animation:pop .5s ease-out}
+.papier{width:min(100%,680px);background:var(--papier);color:var(--encre);font-family:var(--hand);font-size:clamp(1.7rem,6vw,2.5rem);line-height:1.5;border-radius:8px;padding:28px 22px 22px 26px;box-shadow:0 12px 32px rgba(0,0,0,.45);background-image:linear-gradient(90deg,transparent 0 36px,rgba(214,64,69,.25) 36px 37px,transparent 37px)}
+.ligne{margin:0 0 .5em;min-height:1.5em;padding:0 0 0 20px;opacity:.001;transition:opacity .3s;border-radius:6px;word-spacing:.1em}
+.ligne.vue{opacity:1}
+.ligne.sign{text-align:right;margin-top:.5em;font-size:1em;min-height:0}
+.ligne.sign+.ligne.sign{margin-top:0;font-size:.85em;color:#5c4a1e}
+.ligne.ps{font-size:.8em;color:#5c4a1e;margin-top:.5em}
+.lire-avec{display:flex;align-items:center;gap:8px;margin:14px 0 0;font-size:clamp(1.1rem,3.6vw,1.4rem);font-weight:700;color:var(--lanterne)}
+
+/* ---------- Chapitre 5 : le diplôme ---------- */
+.diplome-wrap{display:flex;justify-content:center}
+.diplome-wrap .diplome{width:min(100%,680px)}
+.confettis{position:fixed;inset:0;pointer-events:none;z-index:15;overflow:hidden}
+.confettis i{position:absolute;top:-20px;width:10px;height:16px;border-radius:2px;animation:tombe 4s linear infinite}
+@keyframes tombe{0%{transform:translateY(0) rotate(0);opacity:1}100%{transform:translateY(105vh) rotate(720deg);opacity:.2}}
+
+/* ---------- Chapitre secret ---------- */
+.voile{position:fixed;inset:0;z-index:30;background:rgba(10,12,30,.85);display:grid;place-items:center;padding:12px;opacity:0;transition:opacity .4s}
+.voile.on{opacity:1}
+.scene13{position:relative;width:min(100%,560px);background:var(--nuit3);border-radius:18px;overflow:hidden;border:3px solid var(--rouge)}
+.rideau{position:absolute;top:0;bottom:0;width:52%;background:repeating-linear-gradient(90deg,#D64045 0 18px,#b4323b 18px 36px);z-index:2;transition:transform .9s cubic-bezier(.6,0,.3,1)}
+.rideau.g{left:0}.rideau.d{right:0}
+.voile.ouvert .rideau.g{transform:translateX(-100%)}.voile.ouvert .rideau.d{transform:translateX(100%)}
+.s13-in{padding:14px 16px 16px;display:flex;flex-direction:column;gap:10px;align-items:center}
+.s13-titre{font-weight:800;font-size:1.3rem;color:var(--lanterne)}
+.tableau svg{width:100%;height:auto;border-radius:12px;display:block}
+.tab-txt{font-size:1.2rem;text-align:center;margin:0;min-height:2.6em}
+.tab-actions{display:flex;flex-direction:column;align-items:center;gap:8px;width:100%}
+
+/* ---------- Fondu au noir entre les tableaux ---------- */
+#voile-noir{position:fixed;inset:0;z-index:35;background:#05070f;opacity:0;pointer-events:none;transition:opacity .7s ease-in-out}
+#voile-noir.on{opacity:1;pointer-events:auto}
+
+/* ---------- Toast ---------- */
+#toast{position:fixed;left:0;right:0;top:calc(var(--fil-h) + 12px + env(safe-area-inset-top,0px));display:flex;justify-content:center;pointer-events:none;z-index:40;opacity:0;transform:translateY(-16px);transition:opacity .3s,transform .3s}
+#toast.on{opacity:1;transform:none}
+.toast-in{display:flex;align-items:center;gap:10px;background:var(--papier);color:var(--encre);font-weight:700;border-radius:999px;padding:8px 18px 8px 10px;box-shadow:0 8px 24px rgba(0,0,0,.45);max-width:92vw}
+
+/* ---------- Tablette et plus large ---------- */
+@media (min-width:700px){
+  body{font-size:19px}
+  .bandeau-in{grid-template-columns:84px 1fr auto;grid-template-rows:156px;grid-template-areas:"portrait texte actions";gap:6px 12px;align-items:center}
+  .bandeau-suite{align-self:end}
+  .bandeau-texte{font-size:1.3rem;line-height:1.48;height:156px;align-self:center}
+  .bandeau-actions .btn{min-height:56px;font-size:1.2rem}
+  .bandeau-portrait{width:84px;height:84px}
+  .bandeau-actions .btn{width:auto;min-width:200px}
+  .btn-tenir{max-width:420px}
+  .pastille{width:46px;height:46px}
+  .frise-trait{flex-basis:40px}
+}
+
+/* ---------- Mouvement réduit ---------- */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+  .cam-grain::after{display:none}
+  .rec{opacity:1}
+  .tap.bonus .halo{opacity:.6}.tap.cible .halo{opacity:1}
+  .decor-foret .tap.vu .renard,.decor-chateau .tap.vu .hulotte,.decor-place .tap.vu .pigeon{opacity:1}
+  .decor-place .tap.danse .pantin,.decor-place .tap.fait .pantin{opacity:1;transform:none}
+}
+@media print{.fil,#toast,.btn,.bandeau{display:none!important}}
+html{touch-action:pan-x pan-y}
