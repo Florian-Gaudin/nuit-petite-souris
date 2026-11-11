@@ -3,6 +3,8 @@
 import { defineConfig, devices } from '@playwright/test';
 
 const CI = !!process.env.CI;
+// BASE_URL=https://florian-gaudin.github.io/nuit-petite-souris/ npx playwright test : vérifie le site en ligne
+const BASE = process.env.BASE_URL || 'http://localhost:4173/';
 
 export default defineConfig({
   testDir: 'tests/e2e',
@@ -13,7 +15,7 @@ export default defineConfig({
   reporter: CI ? [['github'], ['list']] : 'list',
   use: {
     ...devices['Pixel 7'],
-    baseURL: 'http://localhost:4173/',
+    baseURL: BASE,
     channel: CI ? undefined : 'chrome',
     // Mouvement réduit : le texte s'affiche d'un coup et les animations sont courtes (tests rapides)
     reducedMotion: 'reduce',
@@ -21,7 +23,7 @@ export default defineConfig({
     timezoneId: 'Europe/Paris',
     trace: 'retain-on-failure',
   },
-  webServer: {
+  webServer: process.env.BASE_URL ? undefined : {
     command: 'npm run build && npx vite preview --port 4173 --strictPort',
     url: 'http://localhost:4173/',
     reuseExistingServer: !CI,

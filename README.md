@@ -63,6 +63,7 @@ Dans `src/legacy/data.js`, un texte peut avoir plusieurs versions, choisies par 
 - `npm test` : tests unitaires (format du profil, QR, récit adaptatif, mode surprise).
 - `npm run test:e2e` : tests de bout en bout avec Playwright, dans un navigateur au format téléphone. Ils couvrent le profil transporté par le QR, le récit adaptatif (avec la comparaison mot pour mot aux textes d'origine, `tests/fixtures/textes-origine.json`), le mode surprise, l'espace parents (service des communes simulé), le hors-connexion et l'histoire complète, de l'accueil au diplôme.
 - `npm run test:tout` : types, tests unitaires et tests de bout en bout.
+- `BASE_URL=https://florian-gaudin.github.io/nuit-petite-souris/ npm run test:e2e` : les mêmes tests sur le site en ligne.
 
 Chaque publication sur GitHub lance toutes ces vérifications ; si l'une échoue, le site n'est pas mis en ligne.
 
