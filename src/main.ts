@@ -6,6 +6,9 @@ import './styles/diplome.css';
 import './lib/plateforme';
 import { initStockage } from './lib/stockage';
 import { installerProfil } from './lib/profilCourant';
+import { activerHorsLigne } from './lib/horsLigne';
+
+activerHorsLigne();
 
 await initStockage();
 installerProfil(); // le profil de l'enfant (QR code, mémoire ou exemple) → window.CONFIG

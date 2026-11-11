@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import qrcode from 'qrcode-generator';
 import {
   type Profil, PROFIL_EXEMPLE, DENTS_DE_LAIT, adresseProfil, codeDepuisAdresse, configDepuisProfil,
-  decoderProfil, encoderProfil, idProfil, verifierProfil, jumelle, varianteDent, rangDent, nomDent, nuitParDefaut,
+  decoderProfil, encoderProfil, idProfil, verifierProfil, jumelle, varianteDent, rangDent, nomDent, nuitParDefaut, surpriseActive, reveil,
 } from './profil';
 import LZString from 'lz-string';
 
@@ -130,5 +130,16 @@ describe('profil', () => {
   it('accepte les très longs noms de communes', () => {
     expect(verifierProfil(avec(p => { p.ville.nom = 'Saint-Remy-en-Bouzemont-Saint-Genest-et-Isson'; }))).toEqual([]);
     expect(verifierProfil(avec(p => { p.ville.nom = "L'Haÿ-les-Roses"; }))).toEqual([]);
+  });
+
+  it('mode surprise : l’histoire se découvre le lendemain de la nuit, à partir de 5 h', () => {
+    const p = { nuit: '2026-11-10' };
+    expect(reveil('2026-11-10').toString()).toBe(new Date('2026-11-11T05:00:00').toString());
+    expect(surpriseActive(p, new Date('2026-11-10T20:00:00'))).toBe(true);  // le soir même
+    expect(surpriseActive(p, new Date('2026-11-11T03:00:00'))).toBe(true);  // en pleine nuit
+    expect(surpriseActive(p, new Date('2026-11-11T05:00:00'))).toBe(false); // au réveil
+    expect(surpriseActive(p, new Date('2026-11-20T10:00:00'))).toBe(false); // des jours après
+    expect(surpriseActive({ nuit: null }, new Date('2026-11-10T20:00:00'))).toBe(false); // pas de date : pas de surprise
+    expect(surpriseActive({ nuit: '2026-12-31' }, new Date('2027-01-01T06:00:00'))).toBe(false); // changement d'année
   });
 });

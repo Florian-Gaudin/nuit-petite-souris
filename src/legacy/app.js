@@ -165,7 +165,7 @@
   <div class="ciel">${A.cielSVG(State.nuit)}</div>
   <div class="ch0-texte">
     <h1 class="titre">La nuit de la Petite Souris</h1>
-    <p class="sous">${esc(C.ville)} · ${esc(nuitTexte())}</p>
+    <p class="sous">${window.PROFIL.surprise ? 'Rendez-vous ' + esc(C.reveilTexte) + ' !' : esc(C.ville) + ' · ' + esc(nuitTexte())}</p>
     ${window.PROFIL.origine === 'exemple' ? `<a class="lien-parents" href="parents.html">Vous êtes parent ? Créez l’histoire de votre enfant</a>` : ''}
   </div>
 </section>`;
@@ -182,6 +182,12 @@
         svgC.setAttribute('preserveAspectRatio', 'xMidYMax meet');
       };
       this.cadre(); window.addEventListener('resize', this.cadre);
+      if (window.PROFIL.surprise) {
+        // Trop tôt : Quenotte n'est pas encore passée. Pas de bouton pour commencer.
+        $('.ch0', r).classList.add('surprise');
+        NARR.dire(B(D.surprise));
+        return;
+      }
       NARR.dire(B(D.accueil));
       NARR.action(A.icone('lanterne') + ' ' + T(D.accueil.bouton), async () => {
         SON.unlock(); SON.play('lanterne');

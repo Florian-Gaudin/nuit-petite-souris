@@ -122,6 +122,19 @@ export function nuitParDefaut(maintenant = new Date()): string {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 }
 
+// ---------- Mode surprise ----------
+// L'histoire se découvre au réveil : le lendemain de la nuit choisie, à partir de 5 h du matin.
+export const HEURE_DU_REVEIL = 5;
+export function reveil(nuit: string): Date {
+  const d = new Date(nuit + 'T12:00:00');
+  d.setDate(d.getDate() + 1);
+  d.setHours(HEURE_DU_REVEIL, 0, 0, 0);
+  return d;
+}
+export function surpriseActive(p: Pick<Profil, 'nuit'>, maintenant = new Date()): boolean {
+  return !!p.nuit && maintenant < reveil(p.nuit);
+}
+
 // ---------- Encodage compact ----------
 // Format à séparateurs, puis compression (lz-string, synchrone : pas de complication dans l'appli native).
 // Les choix fixes deviennent des chiffres, les dents déjà tombées un masque de 20 bits, la date AAAAMMJJ.

@@ -1,0 +1,170 @@
+{
+  "source": "Petite-souris (premier site), profil de Clémentine",
+  "textes": [
+    {
+      "chemin": [
+        "scenes",
+        0,
+        "intro"
+      ],
+      "texte": "Au fond de la forêt des Ardennes, mon château dort sous les étoiles. Dans ma boîte à trésors, il n'y a qu'une seule dent de lait : ta toute première, celle du bas. Elle est bien triste, toute seule."
+    },
+    {
+      "chemin": [
+        "scenes",
+        0,
+        "elements",
+        "lanterne",
+        "demande"
+      ],
+      "texte": "Mais j'ai reçu un message : ta deuxième dent est tombée ! C'est la jumelle de la première. Je dois aller la chercher cette nuit. Allume ma lanterne, il fait si noir !"
+    },
+    {
+      "chemin": [
+        "scenes",
+        0,
+        "elements",
+        "sac",
+        "bulle"
+      ],
+      "texte": "Regarde dans mon sac : j'ai un cadeau pour toi ! C'est un billet de 5 euros, pour te remercier de ta dent."
+    },
+    {
+      "chemin": [
+        "scenes",
+        2,
+        "elements",
+        "billet",
+        "demande"
+      ],
+      "texte": "J'ai une idée ! J'ai un billet de 5 euros pour toi, et je vais le plier pour en faire un bateau. Aide-moi : touche le billet pour le plier."
+    },
+    {
+      "chemin": [
+        "scenes",
+        2,
+        "elements",
+        "billet",
+        "reponse"
+      ],
+      "texte": "Je monte à bord et hop, je traverse ! Le bateau se balance sous la lune. Oh, quelques gouttes ont mouillé le billet. Ne t'inquiète pas, je le ferai sécher au chaud, sur ta cheminée."
+    },
+    {
+      "chemin": [
+        "scenes",
+        5,
+        "elements",
+        "fenetre",
+        "bulle"
+      ],
+      "texte": "Là-haut, une petite lumière : la veilleuse de ta chambre. Je vois Nicolas, bien au chaud à côté de toi."
+    },
+    {
+      "chemin": [
+        "scenes",
+        6,
+        "elements",
+        "yeux",
+        "reponse"
+      ],
+      "texte": "C'est Pantoufle, le chat du voisin ! Il dort sur le seuil et il a l'oreille fine. Si je le réveille, il va miauler, et Nicolas va se réveiller. Je ne veux surtout pas ça."
+    },
+    {
+      "chemin": [
+        "camera",
+        "cheminee"
+      ],
+      "texte": "Voilà ta cheminée, bien éteinte. Je pose ton billet dessus : il va sécher au chaud jusqu'au matin."
+    },
+    {
+      "chemin": [
+        "camera",
+        "chambre"
+      ],
+      "texte": "Te voilà ! Tu dors comme une marmotte. Et Nicolas dort aussi, tout contre toi."
+    },
+    {
+      "chemin": [
+        "camera",
+        "dent"
+      ],
+      "texte": "Sous l'oreiller… la voilà, ta deuxième dent ! À la place, je glisse un petit mot pour toi."
+    },
+    {
+      "chemin": [
+        "lettreFin"
+      ],
+      "texte": "Lis-la bien, et va vite voir sur la cheminée !"
+    },
+    {
+      "chemin": [
+        "lettre",
+        0
+      ],
+      "texte": "Chère Clémentine,"
+    },
+    {
+      "chemin": [
+        "lettre",
+        1
+      ],
+      "texte": "Merci pour ton aide cette nuit ! Sans toi, je serais encore devant Pantoufle."
+    },
+    {
+      "chemin": [
+        "lettre",
+        2
+      ],
+      "texte": "Je suis entrée tout doucement. Nicolas dormait contre toi, et je n'ai pas fait un bruit."
+    },
+    {
+      "chemin": [
+        "lettre",
+        3
+      ],
+      "texte": "J'ai pris ta deuxième dent. Au château, elle a retrouvé sa jumelle. Elles ne se quittent plus !"
+    },
+    {
+      "chemin": [
+        "lettre",
+        4
+      ],
+      "texte": "Ton billet de 5 euros a traversé la Meuse en bateau. Il sèche sur la cheminée : va vite le chercher !"
+    },
+    {
+      "chemin": [
+        "lettre",
+        5
+      ],
+      "texte": "Brosse bien tes dents, le matin et le soir. Les nouvelles vont pousser grandes et fortes."
+    },
+    {
+      "chemin": [
+        "lettre",
+        6
+      ],
+      "texte": "À la prochaine dent !"
+    },
+    {
+      "chemin": [
+        "scene13",
+        0
+      ],
+      "texte": "Scène treize : la nuit de la deuxième dent de Clémentine."
+    },
+    {
+      "chemin": [
+        "scene13",
+        1
+      ],
+      "texte": "Le chat Pantoufle ronfle. Clémentine a aidé la souris à passer."
+    },
+    {
+      "chemin": [
+        "scene13",
+        2
+      ],
+      "texte": "Les deux dents jumelles sont réunies au château."
+    }
+  ]
+}

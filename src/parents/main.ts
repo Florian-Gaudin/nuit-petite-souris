@@ -5,6 +5,9 @@ import { mount } from 'svelte';
 import '../lib/plateforme';
 import { initStockage } from '../lib/stockage';
 import App from './App.svelte';
+import { activerHorsLigne } from '../lib/horsLigne';
+
+activerHorsLigne();
 
 await initStockage();
 mount(App, { target: document.getElementById('app')! });

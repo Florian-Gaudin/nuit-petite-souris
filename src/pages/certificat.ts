@@ -4,6 +4,9 @@ import '../styles/diplome.css';
 import '../lib/plateforme';
 import { initStockage, stockage } from '../lib/stockage';
 import { installerProfil } from '../lib/profilCourant';
+import { activerHorsLigne } from '../lib/horsLigne';
+
+activerHorsLigne();
 
 await initStockage();
 const pc = installerProfil();

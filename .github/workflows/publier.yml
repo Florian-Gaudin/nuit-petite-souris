@@ -28,6 +28,15 @@ jobs:
       - run: npm run verifier
       - run: npm test
       - run: npm run build
+      # Tests de bout en bout dans un vrai navigateur (format téléphone)
+      - run: npx playwright install --with-deps chromium
+      - run: npx playwright test
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rapport-tests
+          path: test-results/
+          retention-days: 7
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

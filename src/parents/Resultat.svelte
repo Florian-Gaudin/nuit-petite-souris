@@ -2,6 +2,7 @@
   // L'écran final : le QR code de l'histoire et ce qu'on peut en faire.
   import { type Profil, encoderProfil, nomDent, rangDent, LIEU_CACHETTE } from '../lib/profil';
   import { baseHistoire } from '../lib/profilCourant';
+  import { surpriseActive } from '../lib/profil';
   import { svgQr, pngQr } from '../lib/qr';
   import { DOUDOUS } from './icones';
 
@@ -11,6 +12,7 @@
   const url = $derived(baseHistoire() + '#p=' + code);
   const qr = $derived(svgQr(url));
   let info = $state('');
+  const surprise = $derived(surpriseActive(profil));
 
   const rang = $derived(rangDent(profil.dents));
   const lieu = $derived(LIEU_CACHETTE[profil.cachette].replace(/ta/, 'sa').replace(/ton/, 'son'));
@@ -53,8 +55,9 @@
     <a class="btn btn-or" href={'mot.html#p=' + code} target="_blank" rel="noopener">Imprimer le mot de la souris</a>
     <button class="btn" type="button" onclick={telecharger}>Télécharger le QR code</button>
     <button class="btn" type="button" onclick={partager}>Partager le lien</button>
-    <a class="btn" href={'index.html#p=' + code}>Lancer l'histoire ici</a>
+    <a class="btn" href={'index.html?apercu=1#p=' + code}>{surprise ? "Voir l'aperçu de l'histoire" : "Lancer l'histoire ici"}</a>
   </div>
+  {#if surprise}<p class="note">Avant le grand matin, l'histoire reste secrète : si {profil.prenom} scanne le QR code trop tôt, Quenotte lui dira de revenir à son réveil. Vous, vous pouvez la voir dès maintenant en aperçu.</p>{/if}
   {#if info}<p class="info" role="status">{info}</p>{/if}
 
   <div class="conseil">
@@ -74,6 +77,7 @@
   .recap { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; font-size: .98rem; color: #4a3f22; }
   .actions { display: grid; gap: 10px; width: 100%; max-width: 420px; }
   .info { margin: 0; color: #2F5D50; font-weight: 700; }
+  .note { margin: 0; font-size: .9rem; color: #6b5a2a; max-width: 30em; }
   .conseil { text-align: left; background: #fff; border: 1px solid #e2d3ad; border-radius: 12px; padding: 12px 14px; font-size: .95rem; line-height: 1.45; max-width: 520px; }
   .lien { background: none; border: 0; color: var(--rouge2); font: 700 1rem var(--display); text-decoration: underline; cursor: pointer; min-height: 44px; }
 </style>

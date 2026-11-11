@@ -53,6 +53,19 @@ Dans `src/legacy/data.js`, un texte peut avoir plusieurs versions, choisies par 
 - **L'enfant endormi** : cheveux longs ou courts selon fille ou garçon.
 - **Le frère ou la sœur** : un petit lit dans la chambre, et son nom détecté par la caméra, s'il dort dans la même chambre.
 
+## Le grand matin : surprise et hors connexion
+
+- **Mode surprise** : l'histoire se découvre le lendemain de la nuit choisie, à partir de 5 h. Scanné plus tôt, le QR code affiche Quenotte qui chuchote « reviens me voir demain matin, à ton réveil ». Dans l'espace parents, « Voir l'aperçu de l'histoire » (`?apercu=1`) l'ouvre tout de suite.
+- **Hors connexion** : un service worker (généré à la construction par `outils/service-worker.ts`) garde tout le site en mémoire dès la première visite. Au réveil, l'histoire, le diplôme et l'espace parents s'ouvrent même sans réseau. Seules les suggestions de communes demandent une connexion.
+
+## Les tests
+
+- `npm test` : tests unitaires (format du profil, QR, récit adaptatif, mode surprise).
+- `npm run test:e2e` : tests de bout en bout avec Playwright, dans un navigateur au format téléphone. Ils couvrent le profil transporté par le QR, le récit adaptatif (avec la comparaison mot pour mot aux textes d'origine, `tests/fixtures/textes-origine.json`), le mode surprise, l'espace parents (service des communes simulé), le hors-connexion et l'histoire complète, de l'accueil au diplôme.
+- `npm run test:tout` : types, tests unitaires et tests de bout en bout.
+
+Chaque publication sur GitHub lance toutes ces vérifications ; si l'une échoue, le site n'est pas mis en ligne.
+
 ## Arborescence
 
 | Dossier | Rôle |
@@ -67,6 +80,8 @@ Dans `src/legacy/data.js`, un texte peut avoir plusieurs versions, choisies par 
 | `src/lib/qr.ts` | QR codes en SVG et en PNG, générés hors ligne. |
 | `src/lib/recit.ts` | Vocabulaire de l'histoire et choix des versions de texte. |
 | `src/lib/dessins.ts` | Dessins personnalisés : doudous, cachettes, enfant, frère ou sœur. |
+| `src/lib/horsLigne.ts`, `outils/service-worker.ts` | Hors connexion. |
+| `tests/e2e/` | Tests de bout en bout (Playwright). |
 | `src/lib/geometrieDents.ts`, `src/lib/machoire.ts` | Schéma des 20 dents (formulaire et diplôme). |
 | `src/styles/`, `src/assets/` | Styles et polices (licence OFL). |
 | `public/` | Icônes et manifeste de la web app. |
@@ -97,5 +112,5 @@ Réglage à faire une fois sur github.com : dépôt → **Settings** → **Pages
 3. Espace parents ✓
 4. Récit adaptatif (dents, billet, endroit du cadeau, frère ou sœur, accords) ✓
 5. Nouveaux dessins (montgolfière, doudous, endroits, billets) ✓
-6. Hors connexion, mode surprise, tests
+6. Hors connexion, mode surprise, tests ✓
 7. Appli des stores (Capacitor)

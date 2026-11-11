@@ -9,6 +9,8 @@ window.DATA = {
     expr: "joie",
     bouton: "Viens, je te raconte !",
   },
+  // Mode surprise : l'histoire a été ouverte avant le matin prévu
+  surprise: { txt: "Chut… Coucou {enfant} ! Je ne suis pas encore passée chez toi. Ferme vite les yeux, et reviens me voir {reveilTexte}, à ton réveil !", expr: "chuchote" },
   accueilDepart: { txt: "Tout a commencé au château, bien avant d'arriver chez toi…", expr: "clin" },
 
   // ---------- Chapitre 1 : six scènes ----------
