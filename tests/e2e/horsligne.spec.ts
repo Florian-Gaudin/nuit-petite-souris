@@ -15,9 +15,9 @@ test('l\'histoire fonctionne au réveil, même sans réseau', async ({ page, con
   // Le QR scanné au réveil, sans réseau
   await ouvrir(page, '#p=' + code(LEO));
   await expect(bandeau(page)).toContainText('Coucou Léo');
-  await page.goto('certificat.html#p=' + code(LEO));
+  await page.goto('certificat/#p=' + code(LEO));
   await expect(page.locator('.dip-nom')).toHaveText('Léo');
-  await page.goto('parents.html');
+  await page.goto('parents/');
   await expect(page.locator('.tenir, form.carte').first()).toBeVisible();
   await context.setOffline(false);
 });

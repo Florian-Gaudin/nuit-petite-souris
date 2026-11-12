@@ -1,4 +1,4 @@
-// Le diplôme, utilisé à l'écran (chapitre 5) et sur la page d'impression (certificat.html).
+// Le diplôme, utilisé à l'écran (chapitre 5) et sur la page d'impression (certificat/).
 window.CERTIFICAT = (function () {
   'use strict';
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));

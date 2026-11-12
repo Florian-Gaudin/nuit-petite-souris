@@ -81,14 +81,14 @@
         <span>Maintenez ce bouton 3 secondes</span>
       </button>
       <p class="petit">Un petit verrou pour que les enfants ne tombent pas dessus par hasard.</p>
-      <a class="retour" href="index.html">Retour à l'histoire</a>
+      <a class="retour" href="../">Retour à l'histoire</a>
     </div>
   </main>
 {:else}
   <main class="parents">
     <header>
       <h1>Espace parents</h1>
-      <a class="retour" href="index.html">Retour à l'histoire</a>
+      <a class="retour" href="../">Retour à l'histoire</a>
     </header>
 
     {#if !fini}

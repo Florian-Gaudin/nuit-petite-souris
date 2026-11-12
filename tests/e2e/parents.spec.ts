@@ -5,7 +5,7 @@ import { toucher } from './aide';
 const COMMUNES = [{ nom: 'Charleville-Mézières', codesPostaux: ['08000'], codeDepartement: '08' }, { nom: 'Charleville', codesPostaux: ['51120'], codeDepartement: '51' }];
 
 async function deverrouiller(page: Page) {
-  await page.goto('parents.html');
+  await page.goto('parents/');
   const b = (await page.locator('.tenir').boundingBox())!;
   await page.mouse.move(b.x + b.width / 2, b.y + b.height / 2);
   await page.mouse.down();
@@ -61,13 +61,13 @@ test('création complète d\'un profil jusqu\'au QR code', async ({ page }) => {
   await expect(page.locator('.resultat .qr svg path')).toHaveCount(1);
   const recap = page.locator('.recap');
   for (const mot of ['Pompon', '20 €', 'radiateur', 'Charleville-Mézières', '24 décembre']) await expect(recap).toContainText(mot);
-  const histoire = await page.locator('a[href^="index.html?apercu"]').getAttribute('href');
-  const mot = await page.locator('a[href^="mot.html#p="]').getAttribute('href');
+  const histoire = await page.locator('a[href^="../?apercu"]').getAttribute('href');
+  const mot = await page.locator('a[href^="../mot/#p="]').getAttribute('href');
   expect(histoire).toContain('apercu=1');
   expect(histoire!.split('#')[1]).toBe(mot!.split('#')[1]);
 
   // L'histoire, ouverte depuis l'aperçu
-  await page.goto(histoire!);
+  await page.goto(new URL(histoire!, page.url()).href);
   await page.waitForFunction(() => !!(window as any).APP);
   const p = await page.evaluate(() => (window as any).PROFIL.profil);
   expect(p).toMatchObject({ prenom: 'Léa', genre: 'f', doudou: { type: 'lapin', nom: 'Pompon' }, fratrie: { prenom: 'Tom', genre: 'g', dortACote: true }, chat: 'Félix', billet: 20, cachette: 'radiateur', nuit: '2026-12-24' });
@@ -77,7 +77,7 @@ test('création complète d\'un profil jusqu\'au QR code', async ({ page }) => {
 
 test('ville : service lent ou coupé, le nom tapé est gardé', async ({ page }) => {
   await page.route('https://geo.api.gouv.fr/**', () => { /* ne répond jamais */ });
-  await page.goto('parents.html');
+  await page.goto('parents/');
   await page.evaluate(() => {
     sessionStorage.setItem('souris.parents', '1');
     localStorage.setItem('souris.parents.brouillon', JSON.stringify({ prenom: 'Léa', genre: 'f', doudouType: 'lapin', doudouNom: 'Pompon', dentNuit: 51, dentsDeja: [61], billet: 20, cachette: 'radiateur' }));

@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>La nuit de la Petite Souris</title>
+<style>
+  html,body{height:100%;margin:0}
+  body{display:flex;align-items:center;justify-content:center;background:linear-gradient(#141A3A,#2b3470);color:#FFF4D6;font:1.2rem/1.5 system-ui,sans-serif;text-align:center;padding:16px;box-sizing:border-box}
+  a{color:#FFC857;font-weight:700}
+</style>
+<script>
+// Anciennes adresses (…/parents.html) → nouvelles (…/parents/), en gardant ?… et #… (le profil de l'enfant).
+// Toute autre adresse inconnue → l'accueil de l'histoire.
+(function () {
+  var l = location, chemin = l.pathname;
+  // Sur GitHub Pages, le site vit dans un sous-dossier (/nuit-petite-souris/)
+  var racine = /\.github\.io$/.test(l.hostname) ? '/' + chemin.split('/')[1] + '/' : '/';
+  var ancien = chemin.match(/^(.*\/)(parents|mot|certificat|index)\.html$/);
+  var cible = ancien ? ancien[1] + (ancien[2] === 'index' ? '' : ancien[2] + '/') : racine;
+  l.replace(cible + l.search + l.hash);
+})();
+</script>
+</head>
+<body>
+<p>Cette page n'existe pas. <a href="/">Retour à l'histoire</a></p>
+</body>
+</html>

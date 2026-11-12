@@ -55,10 +55,13 @@ export function serviceWorker(): Plugin {
     configResolved(c) { dossierPublic = c.publicDir; },
     generateBundle(_options, bundle) {
       // Les pages HTML sont ajoutées explicitement : elles sont parfois produites après ce plugin
-      const pages = ['index.html', 'parents.html', 'mot.html', 'certificat.html'];
+      // Chaque page annexe est gardée sous ses deux adresses : son dossier (…/parents/) et son fichier
+      const annexes = ['parents', 'mot', 'certificat'];
+      const pages = ['index.html', ...annexes.flatMap(a => [a + '/', a + '/index.html'])];
       const construits = [...new Set([...Object.keys(bundle).filter(f => !f.endsWith('.map')), ...pages])];
       const publics = fichiersPublics(dossierPublic);
-      const fichiers = ['./', ...[...construits, ...publics].sort().map(f => './' + f)];
+      // Sans doublon : cache.addAll refuse deux fois la même adresse
+      const fichiers = ['./', ...[...new Set([...construits, ...publics])].sort().map(f => './' + f)];
       const version = createHash('sha256').update(fichiers.join('|')).digest('hex').slice(0, 12);
       this.emitFile({ type: 'asset', fileName: 'sw.js', source: SW(version, fichiers) });
     },

@@ -19,9 +19,20 @@ Le profil (`src/lib/profil.ts`) voyage après le « # » de l'adresse : `…/nui
 - **Sécurité** : chaque valeur est vérifiée ; les noms n'acceptent que lettres, chiffres, espaces et ponctuation simple. Un QR abîmé ou falsifié est ignoré.
 - **Mémoire** : le dernier profil scanné est retenu sur l'appareil ; la progression est mémorisée par profil (plusieurs enfants, plusieurs dents sur la même tablette). Sans profil, l'histoire raconte l'exemple de Clémentine.
 
+## L'accueil
+
+- **Écran de lancement** : le logo sur le fond de sa couleur, au moins 1,2 s, une seule fois par visite (inscrit dans `index.html`, il s'affiche avant tout chargement).
+- **Écran de choix** : à l'ouverture sans QR code (`…/nuit-petite-souris/`), trois cartes : « Reprendre l'histoire de… » (si un profil a déjà été scanné sur l'appareil), « Débuter le voyage avec Quenotte » (l'exemple de Clémentine, adresse `#exemple`) et « Je suis un parent ». Le menu Préférences propose « Changer d'histoire » pour y revenir.
+- **Par le QR code ou le lien des parents** (`#p=…`) : directement l'accueil personnalisé (prénom, ville, date).
+- **La carte de France** (`src/lib/carte.ts`) : entre l'accueil et le château, hors de la frise des scènes. Quenotte explique qu'elle part toujours de son château des Ardennes ; l'enfant touche l'étoile de sa ville (chef-lieu de son département, encadré pour l'outre-mer) et un chemin courbe en pointillés se dessine jusqu'à elle.
+
+## Les adresses
+
+Chaque page a son dossier, sans « .html » : `…/parents/`, `…/mot/`, `…/certificat/`. Les anciennes adresses (`parents.html`…) sont redirigées par `public/404.html`.
+
 ## L'espace parents
 
-Page `parents.html`, accessible depuis le menu Préférences de l'histoire (et depuis l'accueil tant qu'aucun profil n'est créé).
+Page `…/parents/`, accessible depuis l'écran de choix et depuis le menu Préférences de l'histoire.
 
 1. **Verrou** : maintenir un bouton 3 secondes, pour que les enfants n'y tombent pas par hasard.
 2. **L'enfant** : prénom, fille ou garçon, doudou (8 choix), frère ou sœur.
@@ -61,7 +72,7 @@ Dans `src/legacy/data.js`, un texte peut avoir plusieurs versions, choisies par 
 ## Les tests
 
 - `npm test` : tests unitaires (format du profil, QR, récit adaptatif, mode surprise).
-- `npm run test:e2e` : tests de bout en bout avec Playwright, dans un navigateur au format téléphone. Ils couvrent le profil transporté par le QR, le récit adaptatif (avec la comparaison mot pour mot aux textes d'origine, `tests/fixtures/textes-origine.json`), le mode surprise, l'espace parents (service des communes simulé), le hors-connexion et l'histoire complète, de l'accueil au diplôme.
+- `npm run test:e2e` : tests de bout en bout avec Playwright, dans un navigateur au format téléphone. Ils couvrent le profil transporté par le QR, le récit adaptatif (avec la comparaison mot pour mot aux textes d'origine, `tests/fixtures/textes-origine.json`), l'accueil (lancement, choix, carte), le mode surprise, l'espace parents (service des communes simulé), le hors-connexion et l'histoire complète, de l'accueil au diplôme.
 - `npm run test:tout` : types, tests unitaires et tests de bout en bout.
 - `BASE_URL=https://florian-gaudin.github.io/nuit-petite-souris/ npm run test:e2e` : les mêmes tests sur le site en ligne.
 
@@ -80,6 +91,7 @@ Chaque publication sur GitHub lance toutes ces vérifications ; si l'une échoue
 | `src/lib/profil.ts` | Le profil de l'enfant : vérification, encodage pour le QR, dents et variantes d'histoire. |
 | `src/lib/qr.ts` | QR codes en SVG et en PNG, générés hors ligne. |
 | `src/lib/recit.ts` | Vocabulaire de l'histoire et choix des versions de texte. |
+| `src/lib/carte.ts` | La carte de France de l'accueil : contour, château, chef-lieu de chaque département. |
 | `src/lib/dessins.ts` | Dessins personnalisés : doudous, cachettes, enfant, frère ou sœur. |
 | `src/lib/horsLigne.ts`, `outils/service-worker.ts` | Hors connexion. |
 | `tests/e2e/` | Tests de bout en bout (Playwright). |

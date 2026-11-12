@@ -32,8 +32,11 @@ async function jouerScene(page: Page): Promise<string> {
 }
 
 test('de l\'accueil au diplôme', async ({ page }) => {
-  await ouvrir(page, '?reset=1');
+  await ouvrir(page, '?reset=1#exemple');
   await page.locator('#bandeau-actions button').click(); // « Viens, je te raconte ! »
+  // La carte de France : l'étoile de la ville, puis « En route ! »
+  await page.locator('.etoile-ville').click();
+  await page.locator('#bandeau-actions button', { hasText: 'En route' }).click();
   // Les sept scènes du voyage
   const vues: string[] = [];
   for (let i = 0; i < 7; i++) {

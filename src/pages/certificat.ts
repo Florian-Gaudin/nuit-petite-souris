@@ -51,5 +51,5 @@ zone.innerHTML = CERTIFICAT.html({ badges: badges.concat(badges.indexOf('jumelle
 CERTIFICAT.brancher(zone);
 (document.getElementById('btn-print') as HTMLElement).onclick = () => window.print();
 // Retour à l'histoire, avec le même profil
-const retour = document.querySelector<HTMLAnchorElement>('a[href^="index.html"]');
-if (retour) retour.href = 'index.html#p=' + pc.code;
+const retour = document.querySelector<HTMLAnchorElement>('#retour');
+if (retour) retour.href = '../#p=' + pc.code;

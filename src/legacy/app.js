@@ -109,7 +109,8 @@
         <div class="prefs-menu" id="prefs-menu" role="menu" hidden>
           <button role="menuitem" id="pref-son"></button>
           ${PLEIN.api && !PLEIN.appli ? `<button role="menuitem" id="pref-plein"></button>` : ''}
-          <a role="menuitem" id="pref-parents" href="parents.html">${A.icone('reglages')} Espace parents</a>
+          <a role="menuitem" id="pref-changer" href="./">${A.icone('changer')} Changer d'histoire</a>
+          <a role="menuitem" id="pref-parents" href="parents/">${A.icone('famille')} Espace parents</a>
           <button role="menuitem" id="pref-reset" class="danger">${A.icone('recommencer')} Recommencer l'histoire</button>
         </div>
       </div>
@@ -166,7 +167,6 @@
   <div class="ch0-texte">
     <h1 class="titre">La nuit de la Petite Souris</h1>
     <p class="sous">${window.PROFIL.surprise ? 'Rendez-vous ' + esc(C.reveilTexte) + ' !' : esc(C.ville) + ' · ' + esc(nuitTexte())}</p>
-    ${window.PROFIL.origine === 'exemple' ? `<a class="lien-parents" href="parents.html">Vous êtes parent ? Créez l’histoire de votre enfant</a>` : ''}
   </div>
 </section>`;
     },
@@ -191,19 +191,118 @@
       NARR.dire(B(D.accueil));
       NARR.action(A.icone('lanterne') + ' ' + T(D.accueil.bouton), async () => {
         SON.unlock(); SON.play('lanterne');
-        $('.ch0', r).classList.add('allume'); NARR.action(null);
-        NARR.dire(B(D.accueilDepart), { vite: true });
-        await wait(RM ? 150 : 1000);
-        // Quenotte suit le chemin jusqu'à la maison, puis le rideau tombe
-        const am = $('#am0', r); if (am && !RM) { try { am.beginElement(); } catch (e) { } }
-        for (let i = 0; i < 6 && !RM; i++) { await wait(420); SON.play('pas'); }
-        await wait(RM ? 100 : 600);
-        complete(0);
-        await fondu(() => show(1, { scene: State.unlocked > 1 ? 0 : State.scene }), 900);
+        NARR.action(null);
+        await wait(RM ? 50 : 350);
+        // Avant le château : la carte de France, d'où part Quenotte et où elle va cette nuit
+        await fondu(() => { this.unmount(); this.carte(r); }, 700);
       });
     },
-    unmount() { window.removeEventListener('resize', this.cadre); },
+    unmount() { window.removeEventListener('resize', this.cadre); clearTimeout(this.tCarte); },
+
+    // ---------- La carte de France (hors de la frise des scènes) ----------
+    // Le château dans les Ardennes, une étoile sur le département de l'enfant : un toucher sur l'étoile
+    // trace le chemin de la nuit (une courbe en pointillés), puis « En route ! » ouvre le château.
+    carte(r) {
+      const K = window.CARTE, ville = window.PROFIL.profil.ville;
+      let et = K.etoileDepartement(ville.departement);
+      const [cx, cy] = K.CHATEAU;
+      // Tout près du château (les Ardennes) : l'étoile est un peu décalée pour rester visible
+      if (et && Math.hypot(et.x - cx, et.y - cy) < 70) et = { x: cx + 40, y: cy + 80, outreMer: false };
+      let trajet = '';
+      if (et && Math.hypot(et.x - cx, et.y - cy) < 200) {
+        // Trajet court : une boucle par l'ouest, pour que le chemin se voie
+        trajet = `M${cx} ${cy}C${cx - 140} ${cy - 10} ${et.x - 170} ${et.y + 70} ${et.x} ${et.y}`;
+      } else if (et) {
+        // Arc de vol : le point de contrôle est décalé perpendiculairement au trajet, toujours vers le haut
+        const dx = et.x - cx, dy = et.y - cy, d = Math.hypot(dx, dy) || 1;
+        let nx = -dy / d, ny = dx / d; if (ny > 0) { nx = -nx; ny = -ny; }
+        const h = Math.max(70, d * 0.38), borne = v => Math.max(10, Math.min(860, v));
+        trajet = `M${cx} ${cy}Q${borne((cx + et.x) / 2 + nx * h).toFixed(0)} ${borne((cy + et.y) / 2 + ny * h).toFixed(0)} ${et.x} ${et.y}`;
+      }
+      const nomX = et ? Math.max(170, Math.min(730, et.x)) : 0, nomY = et ? (et.y > 220 ? et.y - 52 : et.y + 82) : 0;
+      const versGauche = et && et.x < cx;
+      r.className = 'scene ch-0';
+      r.innerHTML = `<section class="ch origine${et ? '' : ' sans-etoile'}">
+  <p class="origine-aide">${esc(T(D.origine.aide))}</p>
+  <svg class="carte-france" viewBox="0 0 900 870" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Carte de France : le château de Quenotte, dans les Ardennes${et ? ', et ' + esc(ville.nom) : ''}">
+    ${trajet ? `<defs><mask id="masque-trajet" maskUnits="userSpaceOnUse" x="0" y="0" width="900" height="870"><path class="trace" d="${trajet}" fill="none" stroke="#fff" stroke-width="16" stroke-linecap="round"/></mask></defs>` : ''}
+    <path class="pays" d="${K.CONTOUR_FRANCE}"/><path class="pays" d="${K.CONTOUR_CORSE}"/>
+    ${et && et.outreMer ? `<g class="outre-mer"><rect x="40" y="722" width="140" height="116" rx="16"/><text x="110" y="862">Outre-mer</text></g>` : ''}
+    ${trajet ? `<path class="trajet" d="${trajet}" mask="url(#masque-trajet)"/>` : ''}
+    <g class="chateau" transform="translate(${cx},${cy})">
+      <circle r="58" cy="-22" fill="url(#glow)"/>
+      <path d="M-30 0V-34h8v6h6v-6h8v6h6v-6h8v6h6v-6h8V0z M-12 -34V-56h-5l17-18 17 18h-5v22z" fill="#d8cfe6" stroke="#5b5480" stroke-width="2.5" stroke-linejoin="round"/>
+      <path d="M-5 0v-12a5 5 0 0 1 10 0V0z" fill="#3b2a55"/><rect x="-3" y="-50" width="6" height="8" rx="3" fill="#FFC857"/>
+      <path d="M0 -74v-14l12 4-12 4" fill="#D64045"/>
+    </g>
+    <text class="nom-chateau" x="${cx}" y="${cy - 100}">Château de ${esc(C.souris)}</text>
+    ${et ? `<g class="etoile-ville" role="button" tabindex="0" aria-label="L'étoile de ${esc(ville.nom)}" transform="translate(${et.x},${et.y})">
+      <circle class="halo" r="54" fill="url(#glow)"/><circle class="cible" r="48" fill="transparent"/>
+      <use href="#etoile5" x="-26" y="-26" width="52" height="52"/>
+    </g>
+    <text class="nom-ville" x="${nomX}" y="${nomY}">${esc(ville.nom)}</text>
+    <g class="main-aide" transform="translate(${et.x + 16},${et.y + 18})" aria-hidden="true"><use href="#main" x="-20" y="-6" width="60" height="70"/></g>
+    <g class="voyageuse" aria-hidden="true"><g transform="scale(${versGauche ? -1 : 1} 1)"><circle cx="0" cy="-8" r="30" fill="url(#glow)"/><use href="#souris-side" x="-34" y="-40" width="68" height="52"/></g>
+      <animateMotion id="vol-carte" begin="indefinite" dur="2.4s" fill="freeze" calcMode="spline" keySplines="0.4 0 0.6 1" keyTimes="0;1" path="${trajet}"/></g>` : ''}
+  </svg>
+</section>`;
+      const ensuite = async () => {
+        await NARR.dire(B(D.origineVille));
+        NARR.action(A.icone('suite') + ' ' + T(D.origineVille.bouton), async () => {
+          SON.unlock(); SON.play('clic'); NARR.action(null);
+          complete(0);
+          await fondu(() => show(1, { scene: State.unlocked > 1 ? 0 : State.scene }), 900);
+        });
+      };
+      const dit = NARR.dire(B(D.origine));
+      if (!et) { dit.then(() => { this.tCarte = setTimeout(ensuite, RM ? 0 : 600); }); return; }
+      const sec = $('.origine', r), etoile = $('.etoile-ville', r);
+      dit.then(() => { if (!sec.classList.contains('trace-fait')) $('.main-aide', r).classList.add('on'); });
+      let touche = false;
+      const toucher = async () => {
+        if (touche) return; touche = true;
+        SON.unlock(); SON.play('filante');
+        sec.classList.add('trace-fait'); $('.main-aide', r).classList.remove('on');
+        // Le chemin se dessine du château jusqu'à l'étoile, Quenotte le suit
+        const trace = $('.trace', r), L = trace.getTotalLength();
+        if (!RM) {
+          trace.style.strokeDasharray = L + ' ' + L; trace.style.strokeDashoffset = L;
+          trace.getBoundingClientRect();
+          trace.style.transition = 'stroke-dashoffset 2.4s cubic-bezier(.4,0,.6,1)'; trace.style.strokeDashoffset = 0;
+          try { $('#vol-carte', r).beginElement(); } catch (e) { }
+        }
+        sec.classList.add(RM ? 'arrive' : 'vole');
+        await wait(RM ? 50 : 2400);
+        sec.classList.add('arrive'); SON.play('etoile');
+        ensuite();
+      };
+      etoile.addEventListener('click', toucher);
+      etoile.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toucher(); } });
+    },
   };
+
+  // ---------- Écran de choix (ouverture sans QR code) ----------
+  // Les parents, l'histoire d'exemple, ou la reprise de la dernière histoire scannée sur cet appareil
+  const ETOILES_CHOIX = [[40, 60, 2.2], [120, 140, 1.6], [330, 50, 2.6], [370, 190, 1.8], [60, 260, 1.5], [250, 110, 1.4], [300, 330, 2], [30, 480, 1.8], [370, 560, 2.2], [200, 40, 1.6], [90, 700, 2], [340, 740, 1.5], [180, 620, 1.3]]
+    .map(([x, y, r], i) => `<circle class="etoile" cx="${x}" cy="${y}" r="${r}" fill="#fff" style="animation-delay:${(i * 0.37).toFixed(2)}s"/>`).join('')
+    + '<path d="M330 120a34 34 0 1 0 0 68a26 26 0 1 1 0-68z" fill="#FFF4D6" opacity=".9"/>';
+  function afficherChoix() {
+    document.body.classList.add('mode-choix');
+    const m = window.PROFIL.memoire, exemple = window.PROFIL.profil.prenom;
+    root.className = 'scene choix-scene';
+    root.innerHTML = `<section class="choix">
+  <svg class="choix-ciel" viewBox="0 0 400 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${ETOILES_CHOIX}</svg>
+  <div class="choix-haut">
+    <img class="choix-logo" src="icones/icone.svg" alt="" width="128" height="128">
+    <h1 class="titre">La nuit de la Petite Souris</h1>
+  </div>
+  <nav class="choix-cartes" aria-label="Choisir son parcours">
+    ${m ? `<a class="carte-choix reprendre" href="#p=${m.code}"><span class="ic">${A.icone('lanterne')}</span><span><b>Reprendre l'histoire de ${esc(m.prenom)}</b><small>Retrouver Quenotte là où on l'a laissée</small></span></a>` : ''}
+    <a class="carte-choix voyage" href="#exemple"><span class="ic">${A.icone('etoile')}</span><span><b>Débuter le voyage avec Quenotte</b><small>Découvre l'histoire de ${esc(exemple)}</small></span></a>
+    <a class="carte-choix parents" href="parents/"><span class="ic">${A.icone('famille')}</span><span><b>Je suis un parent</b><small>Préparer l'histoire de mon enfant</small></span></a>
+  </nav>
+</section>`;
+  }
 
   // ---------- Chapitre 1 : le voyage en six scènes ----------
   const Ch1 = {
@@ -477,7 +576,7 @@
   <div class="confettis" aria-hidden="true"></div>
   <div class="diplome-wrap">${window.CERTIFICAT.html({ badges: State.badges.concat(State.badges.indexOf('jumelle') < 0 ? ['jumelle'] : []), secret: State.secret, nuitTexte: nuitTexte(), etoiles: nbEtoiles(), total: totalEtoiles })}</div>
   <div class="fin">
-    <a class="btn btn-grand btn-or" id="btn-imprimer" href="certificat.html?${qs}#p=${window.PROFIL.code}" target="_blank" rel="noopener">${A.icone('imprimer')} Imprimer le diplôme</a>
+    <a class="btn btn-grand btn-or" id="btn-imprimer" href="certificat/?${qs}#p=${window.PROFIL.code}" target="_blank" rel="noopener">${A.icone('imprimer')} Imprimer le diplôme</a>
     <button class="btn btn-petit" id="btn-revoir5">Revoir l'histoire</button>
   </div>
 </section>`;
@@ -517,7 +616,8 @@
   ['fullscreenchange', 'webkitfullscreenchange'].forEach(n => document.addEventListener(n, boutonPlein));
 
   // Le « # » de l'adresse porte le profil de l'enfant ; on démarre toujours par l'accueil (ou ?chapitre=n pour tester)
-  if (demande != null) show(demande); else show(0);
+  // Ouverture sans QR code ni #exemple : l'écran de choix du parcours
+  if (demande != null) show(demande); else if (window.PROFIL.origine === 'choix') afficherChoix(); else show(0);
 
   // Exposé pour les tests
   window.APP = { show, state: State, nuitTexte };

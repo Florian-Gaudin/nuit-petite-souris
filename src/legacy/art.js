@@ -132,6 +132,8 @@ window.ART = (function () {
 
   // Petites icônes de boutons (trait blanc)
   const ICONES = {
+    changer: '<path d="M4 8h14l-3.5-3.5M20 16H6l3.5 3.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>',
+    famille: '<circle cx="8.5" cy="7" r="3" fill="none" stroke="currentColor" stroke-width="1.9"/><circle cx="16.5" cy="9.5" r="2.4" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M3 20a5.5 5.5 0 0 1 11 0M13 20a3.6 3.6 0 0 1 7.5 0" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/>',
     lanterne: '<path d="M9 3h6l1 3H8z M8 6h8v9a4 4 0 0 1-8 0z M12 21v-3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="11" r="2" fill="currentColor"/>',
     vite: '<path d="M4 5l8 7-8 7zM12 5l8 7-8 7z" fill="currentColor"/>',
     suite: '<path d="M5 12h12M12 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>',

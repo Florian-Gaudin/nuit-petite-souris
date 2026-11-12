@@ -5,13 +5,19 @@ window.DATA = {
 
   // ---------- Chapitre 0 : accueil ----------
   accueil: {
-    txt: "Coucou {enfant} ! Moi, c'est {souris}, la souris des dents de lait. Cette nuit, j'ai eu besoin de toi. Viens, je vais te raconter mon voyage, depuis mon château jusqu'à ta maison.",
+    txt: "Coucou {enfant} ! Moi, c'est {souris}, la souris des dents de lait. Cette nuit, j'ai eu besoin de toi. Viens, je te raconte !",
     expr: "joie",
     bouton: "Viens, je te raconte !",
   },
   // Mode surprise : l'histoire a été ouverte avant le matin prévu
   surprise: { txt: "Chut… Coucou {enfant} ! Je ne suis pas encore passée chez toi. Ferme vite les yeux, et reviens me voir {reveilTexte}, à ton réveil !", expr: "chuchote" },
-  accueilDepart: { txt: "Tout a commencé au château, bien avant d'arriver chez toi…", expr: "clin" },
+  // La carte de France : d'où part Quenotte, et où elle va cette nuit
+  origine: {
+    txt: "Je vis dans un château caché au fond de la forêt des Ardennes. Chaque nuit, je pars chercher les dents de lait des enfants, partout en France.",
+    expr: "joie",
+    aide: "Touche l'étoile qui brille !",
+  },
+  origineVille: { txt: "Ce soir, c'est ta dent que je viens chercher, à {ville} !", expr: "clin", bouton: "En route !" },
 
   // ---------- Chapitre 1 : six scènes ----------
   // Chaque scène : une bulle d'arrivée (intro), un élément obligatoire (ou une chaîne d'éléments)

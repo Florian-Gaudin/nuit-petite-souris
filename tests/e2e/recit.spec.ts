@@ -6,7 +6,7 @@ import { LEO, INES, code, ouvrir, rendu } from './aide';
 const ORIGINE: { textes: { chemin: (string | number)[]; texte: string }[] } = JSON.parse(readFileSync(new URL('../fixtures/textes-origine.json', import.meta.url), 'utf8'));
 
 test('Clémentine : textes identiques mot pour mot à la première histoire', async ({ page }) => {
-  await ouvrir(page, '?reset=1');
+  await ouvrir(page, '?reset=1#exemple');
   const ecarts: string[] = [];
   for (const { chemin, texte } of ORIGINE.textes) {
     const nouveau = chemin[0] === 'lettre' || chemin[0] === 'scene13'
@@ -26,7 +26,7 @@ test('Léo : première dent, garçon, sans doudou, 50 € sur le bureau', async 
   expect(await rendu(page, ['scenes', 6, 'elements', 'yeux', 'reponse'])).toContain('toute la maison va se réveiller');
   expect(await rendu(page, ['lettre', 0])).toBe('Cher Léo,');
   expect(await rendu(page, ['badges', 6, 'nom'])).toBe('Première dent');
-  await page.goto('certificat.html#p=' + code(LEO));
+  await page.goto('certificat/#p=' + code(LEO));
   await expect(page.locator('.dip-texte')).toContainText('1re dent de lait');
   await expect(page.locator('.dip-texte')).toContainText('50 €');
   await expect(page.locator('.dip-sign')).toContainText('la lune');
@@ -39,7 +39,7 @@ test('Inès : troisième dent, licorne, frère Tom dans la chambre, 10 € sur l
   expect(await rendu(page, ['scenes', 6, 'elements', 'yeux', 'reponse'])).toContain('ton frère Tom va se réveiller');
   expect(await rendu(page, ['camera', 'cheminee'])).toMatch(/^Voilà ton radiateur, bien éteint\..*au chaud/);
   expect(await rendu(page, ['badges', 6, 'nom'])).toBe('Collectionneuse');
-  await page.goto('certificat.html#p=' + code(INES));
+  await page.goto('certificat/#p=' + code(INES));
   await expect(page.locator('.dip-texte')).toContainText('3e dent de lait, une incisive latérale du bas');
   await expect(page.locator('.dip-sign')).toContainText('Paillette');
   await expect(page.locator('.machoire rect[fill="#D64045"]')).toHaveCount(1);

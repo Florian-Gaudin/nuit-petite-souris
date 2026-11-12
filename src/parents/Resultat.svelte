@@ -52,10 +52,10 @@
   </ul>
 
   <div class="actions">
-    <a class="btn btn-or" href={'mot.html#p=' + code} target="_blank" rel="noopener">Imprimer le mot de la souris</a>
+    <a class="btn btn-or" href={'../mot/#p=' + code} target="_blank" rel="noopener">Imprimer le mot de la souris</a>
     <button class="btn" type="button" onclick={telecharger}>Télécharger le QR code</button>
     <button class="btn" type="button" onclick={partager}>Partager le lien</button>
-    <a class="btn" href={'index.html?apercu=1#p=' + code}>{surprise ? "Voir l'aperçu de l'histoire" : "Lancer l'histoire ici"}</a>
+    <a class="btn" href={'../?apercu=1#p=' + code}>{surprise ? "Voir l'aperçu de l'histoire" : "Lancer l'histoire ici"}</a>
   </div>
   {#if surprise}<p class="note">Avant le grand matin, l'histoire reste secrète : si {profil.prenom} scanne le QR code trop tôt, Quenotte lui dira de revenir à son réveil. Vous, vous pouvez la voir dès maintenant en aperçu.</p>{/if}
   {#if info}<p class="info" role="status">{info}</p>{/if}

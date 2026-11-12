@@ -13,9 +13,9 @@ export default defineConfig({
     rollupOptions: {
       input: {
         index: resolve(import.meta.dirname, 'index.html'),
-        mot: resolve(import.meta.dirname, 'mot.html'),
-        certificat: resolve(import.meta.dirname, 'certificat.html'),
-        parents: resolve(import.meta.dirname, 'parents.html'),
+        mot: resolve(import.meta.dirname, 'mot/index.html'),
+        certificat: resolve(import.meta.dirname, 'certificat/index.html'),
+        parents: resolve(import.meta.dirname, 'parents/index.html'),
       },
     },
   },
