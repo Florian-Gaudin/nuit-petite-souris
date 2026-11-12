@@ -32,11 +32,19 @@ test('par le QR code : directement l\'accueil personnalisé, sans écran de choi
 });
 
 test('« Changer d\'histoire » ramène à l\'écran de choix', async ({ page }) => {
+  // Depuis l'accueil : le lien sous le titre
   await ouvrir(page, '#p=' + code(LEO));
+  await page.locator('.retour-choix').click();
+  await expect(page.locator('.choix')).toBeVisible();
+  await expect(page.locator('.carte-choix.reprendre')).toContainText('Léo');
+  // En pleine histoire : le menu Préférences
+  await ouvrir(page, '?chapitre=1&scene=2#p=' + code(LEO));
   await page.locator('#btn-prefs').click();
   await page.locator('#pref-changer').click();
   await expect(page.locator('.choix')).toBeVisible();
-  await expect(page.locator('.carte-choix.reprendre')).toContainText('Léo');
+  // L'histoire de Léo reprend où elle en était
+  await page.locator('.carte-choix.reprendre').click();
+  await expect.poll(() => page.evaluate(() => (window as any).APP?.state.scene).catch(() => null)).toBe(2);
 });
 
 test('la carte : le château des Ardennes, l\'étoile de Lyon, un chemin courbe, puis le château', async ({ page }) => {

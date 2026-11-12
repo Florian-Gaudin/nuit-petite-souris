@@ -167,6 +167,7 @@
   <div class="ch0-texte">
     <h1 class="titre">La nuit de la Petite Souris</h1>
     <p class="sous">${window.PROFIL.surprise ? 'Rendez-vous ' + esc(C.reveilTexte) + ' !' : esc(C.ville) + ' · ' + esc(nuitTexte())}</p>
+    <a class="retour-choix" href="./">${A.icone('changer')} Changer d'histoire</a>
   </div>
 </section>`;
     },

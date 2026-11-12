@@ -133,6 +133,10 @@ p{margin:.4rem 0}
 .ch0-texte{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;padding:18px 0 36px;background:linear-gradient(rgba(20,26,58,.8) 55%,transparent)}
 .titre{font-size:clamp(1.8rem,6.5vw,3rem);font-weight:800;text-shadow:0 3px 12px rgba(0,0,0,.5);max-width:14ch}
 .sous{color:var(--muet);font-size:1.05rem;margin:0}
+/* Retour à l'écran de choix (aussi dans le menu Préférences) */
+.retour-choix{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 16px;border-radius:999px;background:rgba(20,26,58,.7);border:1.5px solid #3d4a95;color:var(--clair);font-weight:700;font-size:.95rem;text-decoration:none}
+.retour-choix .ico{width:20px;height:20px;color:var(--lanterne)}
+.retour-choix:hover,.retour-choix:focus-visible{border-color:var(--lanterne)}
 .ciel-svg .chemin0,.ciel-svg .qui{opacity:0;transition:opacity 1s}
 .ch0.allume .ciel-svg .chemin0,.ch0.allume .ciel-svg .qui{opacity:1}
 .ciel-svg .fenetre{animation:lueur 3s ease-in-out infinite alternate}
