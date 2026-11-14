@@ -105,3 +105,21 @@ test('dessins personnalisés : billet, doudou, cachette, frère dans la caméra'
   expect(await page.locator('#doudou').evaluate(g => g.childElementCount)).toBe(0);
   await expect(page.locator('#fratrie')).toHaveCount(0);
 });
+
+test("le conseil des secrets ne s'affiche pas si l'enfant a déjà trouvé une étoile", async ({ page }) => {
+  await ouvrir(page, '?reset=1#exemple');
+  await ouvrir(page, '?chapitre=1&scene=0#exemple');
+  // Pendant l'introduction, l'enfant touche le sac : une étoile secrète
+  await page.locator('.tap[data-el="sac"]').click();
+  await expect.poll(() => page.evaluate(() => (window as any).APP.state.etoiles.chateau?.length ?? 0)).toBe(1);
+  // On avance jusqu'à la demande de la lanterne : jamais de conseil en chemin
+  const vus: string[] = [];
+  for (let i = 0; i < 40; i++) {
+    vus.push((await page.locator('#bandeau-texte').textContent()) || '');
+    if (vus[vus.length - 1].includes('Allume ma lanterne')) break;
+    if (await page.locator('#bandeau.attente .bandeau-suite').isVisible()) await page.locator('.bandeau-suite').click();
+    await page.waitForTimeout(250);
+  }
+  expect(vus.some(t => t.includes('Allume ma lanterne'))).toBe(true);
+  expect(vus.some(t => t.includes('Un conseil'))).toBe(false);
+});

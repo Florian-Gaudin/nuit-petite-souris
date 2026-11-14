@@ -242,7 +242,7 @@ window.DATA = {
 
   // ---------- Chapitre 4 : la lettre ----------
   lettreIntro: { txt: "Je t'ai laissé une lettre avant de partir. Touche le cachet de cire pour l'ouvrir.", expr: "sourire" },
-  lettreFin: { txt: "Lis-la bien, et va vite voir {lieuBillet} !", expr: "clin" },
+  lettreFin: { txt: "Lis-la bien, et va vite regarder {lieuBillet} !", expr: "clin" },
   lettre: [
     "{Chere} {enfant},",
     "Merci pour ton aide cette nuit ! Sans toi, je serais encore devant {chat}.",

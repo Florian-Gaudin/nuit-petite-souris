@@ -74,7 +74,7 @@
   function etoile(sceneId, el) {
     const liste = State.etoiles[sceneId] || (State.etoiles[sceneId] = []);
     if (liste.indexOf(el) >= 0) return;
-    liste.push(el); save();
+    liste.push(el); State.indices = true; save(); // une étoile trouvée : le conseil des secrets n'est plus utile
     const n = nbEtoiles();
     const sc = D.scenes.find(s => s.id === sceneId);
     toast((sc && liste.length >= sc.bonus.length ? D.etoilesToutes : D.etoile) + ' (' + n + '/' + totalEtoiles + ')', `<svg class="badge-ico" width="34" height="34" viewBox="0 0 24 24"><use href="#etoile5"/></svg>`);

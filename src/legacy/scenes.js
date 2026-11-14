@@ -204,9 +204,11 @@ window.SCENES = (function () {
     NARR.action(null); compteSecrets();
     await NARR.dire(derniere = bulle(sc.intro));
     if (mien !== jeton) return;
-    const direct = !sc.elements[chaine[0]].demande && !(courant === 0 && !ctx.state.indices);
+    // Le conseil des secrets : une seule fois, et jamais si l'enfant a déjà trouvé une étoile tout seul
+    const conseil = () => courant === 0 && !ctx.state.indices && !Object.keys(ctx.state.etoiles || {}).some(k => (ctx.state.etoiles[k] || []).length);
+    const direct = !sc.elements[chaine[0]].demande && !conseil();
     if (!direct) { const ok = await NARR.attendre(); if (mien !== jeton || !ok) return; }
-    if (courant === 0 && !ctx.state.indices) {
+    if (conseil()) {
       // Première scène : Quenotte explique les secrets à découvrir
       await NARR.dire(derniere = bulle(D.indices)); if (mien !== jeton) return;
       mainsIndices(true);
