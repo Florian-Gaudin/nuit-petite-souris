@@ -164,7 +164,8 @@
         {:else if etape === 2}
           <h2>Le cadeau</h2>
           <fieldset>
-            <legend>Le billet laissé par Quenotte</legend>
+            <legend>La somme que vous souhaitez offrir à votre enfant</legend>
+            <p class="aide">Quenotte la laissera en billet, à l'endroit choisi juste en dessous.</p>
             <div class="choix billets">
               {#each BILLETS as v}
                 <label class="option billet" class:choisi={b.billet === v}>
