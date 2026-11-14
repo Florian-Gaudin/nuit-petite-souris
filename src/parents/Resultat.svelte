@@ -1,6 +1,6 @@
 <script lang="ts">
   // L'écran final : le QR code de l'histoire et ce qu'on peut en faire.
-  import { type Profil, encoderProfil, nomDent, rangDent, LIEU_CACHETTE } from '../lib/profil';
+  import { type Profil, encoderProfil, nomDent, rangDent, LIEU_CACHETTE_PARENTS } from '../lib/profil';
   import { baseHistoire } from '../lib/profilCourant';
   import { surpriseActive } from '../lib/profil';
   import { svgQr, pngQr } from '../lib/qr';
@@ -15,7 +15,8 @@
   const surprise = $derived(surpriseActive(profil));
 
   const rang = $derived(rangDent(profil.dents));
-  const lieu = $derived(LIEU_CACHETTE[profil.cachette].replace(/ta/, 'sa').replace(/ton/, 'son'));
+  const lieu = $derived(LIEU_CACHETTE_PARENTS[profil.cachette]);
+  const eteint = $derived(profil.cachette === 'cheminee' ? ' (bien éteinte !)' : profil.cachette === 'radiateur' ? ' (bien éteint !)' : '');
   const date = $derived(new Intl.DateTimeFormat('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }).format(new Date(profil.nuit + 'T12:00:00')));
 
   async function telecharger() {
@@ -63,8 +64,8 @@
 
   <div class="conseil">
     <strong>Pour le grand matin :</strong> imprimez le mot de la souris et glissez-le sous l'oreiller, à la place de la dent.
-    Posez {profil.billet <= 2 ? 'la vraie pièce' : 'le vrai billet'} de {profil.billet} € {lieu}{profil.cachette === 'cheminee' || profil.cachette === 'radiateur' ? ' (bien éteint !)' : ''}.
-    Au réveil, {profil.prenom} scanne le QR code avec la tablette.
+    Posez {profil.billet <= 2 ? 'la vraie pièce' : 'le vrai billet'} de {profil.billet} € {lieu}{eteint}.
+    Au réveil, scannez le QR code avec un téléphone ou une tablette : {profil.prenom} découvre le voyage de Quenotte.
   </div>
 
   <button class="lien" type="button" onclick={modifier}>Modifier les informations</button>

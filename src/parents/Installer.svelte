@@ -1,5 +1,5 @@
 <script lang="ts">
-  // Aide à l'installation : l'histoire sur l'écran d'accueil de la tablette, sans store
+  // Aide à l'installation : l'histoire sur l'écran d'accueil du téléphone ou de la tablette, sans store
   import { appareil, installable, installer, surChangement, lienChrome, vientDEtreInstallee } from '../lib/installation';
 
   const quoi = appareil();
@@ -39,7 +39,7 @@
       {/if}
     {:else if !peutInstaller}
       <p>Sur ordinateur, avec Chrome ou Edge : l'icône d'installation se trouve à droite de la barre d'adresse.
-        Pour la tablette de l'enfant, ouvrez cette page directement sur la tablette.</p>
+        Pour le téléphone ou la tablette de l'enfant, ouvrez cette page directement dessus.</p>
     {/if}
   {/if}
 </details>

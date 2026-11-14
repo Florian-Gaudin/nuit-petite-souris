@@ -66,6 +66,11 @@ test('création complète d\'un profil jusqu\'au QR code', async ({ page }) => {
   await expect(page.locator('.resultat .qr svg path')).toHaveCount(1);
   const recap = page.locator('.recap');
   for (const mot of ['Pompon', '20 €', 'radiateur', 'Charleville-Mézières', '24 décembre']) await expect(recap).toContainText(mot);
+  // Le conseil du grand matin s'adresse aux parents : « sur le radiateur », pas « sur ton radiateur »
+  const conseil = page.locator('.conseil');
+  await expect(conseil).toContainText('Posez le vrai billet de 20 € sur le radiateur (bien éteint !).');
+  await expect(conseil).toContainText('avec un téléphone ou une tablette');
+  await expect(conseil).not.toContainText(' ton ');
   const histoire = await page.locator('a[href^="../?apercu"]').getAttribute('href');
   const mot = await page.locator('a[href^="../mot/#p="]').getAttribute('href');
   expect(histoire).toContain('apercu=1');

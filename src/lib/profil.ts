@@ -49,6 +49,15 @@ export const LIEU_CACHETTE: Record<Cachette, string> = {
   'etagere': 'sur ton étagère',
   'coffre': 'sur ton coffre à jouets',
 };
+// Le même lieu, dit aux parents (espace parents)
+export const LIEU_CACHETTE_PARENTS: Record<Cachette, string> = {
+  'cheminee': 'sur la cheminée',
+  'radiateur': 'sur le radiateur',
+  'table-de-nuit': 'sur la table de nuit',
+  'bureau': 'sur le bureau',
+  'etagere': "sur l'étagère",
+  'coffre': 'sur le coffre à jouets',
+};
 
 // Le profil d'exemple (celui de la première histoire), utilisé tant qu'aucun profil n'a été créé
 export const PROFIL_EXEMPLE: Profil = {
