@@ -94,3 +94,17 @@ test.describe('Samsung Internet, invitation reçue', () => {
     expect(await page.locator('.installer a', { hasText: 'Ouvrir dans Chrome' }).getAttribute('href')).toContain('/parents/?installer#Intent');
   });
 });
+
+for (const [nom, ua] of [['Chrome', undefined], ['Samsung Internet', SAMSUNG]] as const) {
+  test.describe(nom, () => {
+    if (ua) test.use({ userAgent: ua });
+    test(`le bouton d'installation est centré (${nom})`, async ({ page }) => {
+      await espaceParents(page);
+      const ecarts = await page.evaluate(() => {
+        const b = document.querySelector('.installer .btn')!.getBoundingClientRect(), d = document.querySelector('.installer')!.getBoundingClientRect();
+        return [b.left - d.left, d.right - b.right];
+      });
+      expect(Math.abs(ecarts[0] - ecarts[1])).toBeLessThan(3);
+    });
+  });
+}
