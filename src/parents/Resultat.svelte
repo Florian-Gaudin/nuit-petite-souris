@@ -19,11 +19,14 @@
   const eteint = $derived(profil.cachette === 'cheminee' ? ' (bien éteinte !)' : profil.cachette === 'radiateur' ? ' (bien éteint !)' : '');
   const date = $derived(new Intl.DateTimeFormat('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }).format(new Date(profil.nuit + 'T12:00:00')));
 
+  // « Léa » → « lea » : sans accents (lettres décomposées, puis signes diacritiques U+0300 à U+036F retirés)
+  const nomFichier = (s: string) => [...s.toLowerCase().normalize('NFD')].filter(c => c.charCodeAt(0) < 0x300 || c.charCodeAt(0) > 0x36f).join('').replace(/[^a-z0-9]+/g, '-');
+
   async function telecharger() {
     const blob = await pngQr(url, { titre: 'Pour ' + profil.prenom, icone: baseHistoire() + 'icones/icone.svg' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = `petite-souris-${profil.prenom.toLowerCase().normalize('NFD').replace(/[^a-z0-9]+/g, '-')}.png`;
+    a.download = `petite-souris-${nomFichier(profil.prenom)}.png`;
     a.click();
     setTimeout(() => URL.revokeObjectURL(a.href), 2000);
     info = 'QR code téléchargé.';
