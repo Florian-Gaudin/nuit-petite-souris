@@ -75,4 +75,7 @@ legend { font-weight: 800; font-size: 1.05rem; padding: 0; margin-bottom: 6px; }
 .don h2 { display: flex; align-items: center; gap: 8px; font-size: 1.2rem; }
 .don h2 svg { width: 24px; height: 24px; flex: none; }
 .don p { margin: 0; line-height: 1.45; }
-.don .btn { align-self: flex-start; }
+.don { align-items: center; text-align: center; }
+.don h2 { justify-content: center; }
+.don .btn { align-self: center; }
+.installer .secours { background: #f3ead2; border-radius: 10px; padding: 10px 12px; }

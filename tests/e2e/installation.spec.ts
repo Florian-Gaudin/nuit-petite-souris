@@ -31,10 +31,14 @@ test.describe('iPad', () => {
   });
 });
 
-test('Chrome sur Android : pas d\'avertissement', async ({ page }) => {
+test("Chrome sur Android : toujours un bouton, l'explication seulement après le clic", async ({ page }) => {
   await espaceParents(page);
-  await expect(page.locator('.installer .attention')).toHaveCount(0);
-  await expect(page.locator('.installer')).toContainText('Ajouter à l\'écran d\'accueil');
+  const bouton = page.locator('.installer button', { hasText: "Installer l'appli" });
+  await expect(bouton).toBeVisible();
+  await expect(page.locator('.installer')).not.toContainText('menu');
+  // Chrome ne propose pas l'installation (déjà installée, ou refusée récemment) : l'explication vient après le clic
+  await bouton.click();
+  await expect(page.locator('.installer .secours')).toContainText("Ajouter à l'écran d'accueil");
 });
 
 test("dans le navigateur : l'aide reste proposée ; lancée depuis l'icône : appli reconnue", async ({ page }) => {
