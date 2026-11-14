@@ -666,7 +666,8 @@
       // Sous la lettre : l'aperçu du dessin (comme sous le diplôme) et le bouton pour le faire ou le modifier
       const majDessin = () => {
         const z = $('#dessin-lettre', r), d = lireDessin();
-        z.innerHTML = (d ? `<figure class="dessin-enfant"><figcaption>Ton dessin pour ${esc(C.souris)}</figcaption><img src="${d}" alt="Le dessin de ${esc(C.enfant)} pour ${esc(C.souris)}"></figure>` : '')
+        z.innerHTML = `<h3 class="dessin-titre">${A.icone('crayon')} ${esc(T(d ? D.dessin.titreAvec : D.dessin.titreSans))}</h3><p class="dessin-texte">${esc(T(d ? D.dessin.texteAvec : D.dessin.texteSans))}</p>`
+          + (d ? `<figure class="dessin-enfant"><img src="${d}" alt="Le dessin de ${esc(C.enfant)} pour ${esc(C.souris)}"></figure>` : '')
           + `<button class="btn btn-petit" id="btn-dessin">${A.icone('crayon')} ${esc(T(d ? D.dessin.modifier : D.dessin.bouton))}</button>`;
         $('#btn-dessin', z).onclick = () => { SON.play('clic'); atelier(majDessin); };
       };

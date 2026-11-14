@@ -343,11 +343,15 @@ window.DATA = {
 
   // ---------- Répondre à Quenotte : un dessin, gardé sur l'appareil et imprimé avec le diplôme ----------
   dessin: {
-    bouton: "Répondre à Quenotte",
+    bouton: "Faire mon dessin",
     invite: { txt: "Tu veux me répondre ? Fais-moi un dessin, je l'emporterai au château !", expr: "joie" },
     consigne: "Dessine avec ton doigt dans le cadre blanc, puis touche « Envoyer ».",
     ici: "Dessine ici avec ton doigt",
     feuille: "Ta feuille de dessin",
+    titreSans: "Réponds à Quenotte",
+    texteSans: "Fais-lui un dessin : touche le bouton, puis dessine avec ton doigt dans la feuille blanche.",
+    titreAvec: "Ta réponse à Quenotte",
+    texteAvec: "Voici ton dessin. Tu peux encore le modifier.",
     modifier: "Modifier mon dessin",
     faire: "Faire un dessin pour Quenotte",
     merci: "Quenotte a bien reçu ton dessin !",
