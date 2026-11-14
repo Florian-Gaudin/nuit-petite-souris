@@ -8,23 +8,26 @@ export type Appareil = 'installee' | 'ios' | 'android-chrome' | 'android-autre' 
 // L'invitation du navigateur (Chrome, Edge…), gardée pour le bouton « Installer l'appli »
 interface InvitationInstallation extends Event { prompt(): Promise<void>; userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }> }
 let invitation: InvitationInstallation | null = null;
+let installeeIci = false;
 const abonnes = new Set<() => void>();
 const prevenir = () => abonnes.forEach(f => f());
 if (typeof window !== 'undefined') {
   window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); invitation = e as InvitationInstallation; prevenir(); });
-  window.addEventListener('appinstalled', () => { invitation = null; prevenir(); });
+  window.addEventListener('appinstalled', () => { invitation = null; installeeIci = true; prevenir(); });
 }
 
 export function surChangement(f: () => void): () => void { abonnes.add(f); return () => abonnes.delete(f); }
 export const installable = () => invitation !== null;
+export const vientDEtreInstallee = () => installeeIci;
 
-export async function installer(): Promise<boolean> {
-  if (!invitation) return false;
+// Ouvre la fenêtre d'installation du navigateur. « Accepter » ne garantit pas l'installation :
+// la confirmation vient de l'événement « appinstalled » (voir vientDEtreInstallee).
+export async function installer(): Promise<void> {
+  if (!invitation) return;
   const inv = invitation;
   await inv.prompt();
   const { outcome } = await inv.userChoice;
-  invitation = null; prevenir();
-  return outcome === 'accepted';
+  if (outcome === 'accepted') { invitation = null; prevenir(); }
 }
 
 // Lancée depuis l'icône de l'écran d'accueil ? L'appli installée démarre sur « ?source=appli » (manifeste) :
@@ -56,8 +59,9 @@ export function appareil(ua = navigator.userAgent): Appareil {
   return 'ordinateur';
 }
 
-// Ouvre l'histoire dans Chrome depuis un autre navigateur Android (lien « intent »)
+// Ouvre l'espace parents dans Chrome depuis un autre navigateur Android (lien « intent ») :
+// le bouton « Installer l'appli » y attend
 export function lienChrome(): string {
-  const u = new URL(racineSite());
+  const u = new URL('parents/', racineSite());
   return `intent://${u.host}${u.pathname}#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=${encodeURIComponent(u.href)};end`;
 }

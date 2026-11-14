@@ -15,9 +15,10 @@ test.describe('Samsung Internet', () => {
   test.use({ userAgent: SAMSUNG });
   test('conseille Chrome, avec un lien qui l\'ouvre', async ({ page }) => {
     await espaceParents(page);
-    await expect(page.locator('.installer .attention')).toContainText('Appli non sécurisée bloquée');
+    await expect(page.locator('.installer')).toContainText("ouvrez l'espace parents dans Chrome");
+    await expect(page.locator('.installer')).not.toContainText('sécurisée');
     const lien = await page.locator('.installer a', { hasText: 'Ouvrir dans Chrome' }).getAttribute('href');
-    expect(lien).toMatch(/^intent:\/\/.+;package=com\.android\.chrome;/);
+    expect(lien).toMatch(/^intent:\/\/.+\/parents\/#Intent;scheme=https;package=com\.android\.chrome;/);
   });
 });
 
@@ -46,4 +47,19 @@ test("dans le navigateur : l'aide reste proposée ; lancée depuis l'icône : ap
   expect(new URL(page.url()).search).toBe('');
   await page.goto('parents/');
   await expect(page.locator('.installer')).toContainText('déjà installée');
+});
+
+test("le message « C'est fait » attend la vraie installation", async ({ page }) => {
+  await espaceParents(page);
+  // Une invitation d'installation simulée : la fenêtre du navigateur est acceptée…
+  await page.evaluate(() => {
+    const e: any = new Event('beforeinstallprompt', { cancelable: true });
+    e.prompt = async () => {}; e.userChoice = Promise.resolve({ outcome: 'accepted' });
+    window.dispatchEvent(e);
+  });
+  await page.locator('.installer button', { hasText: "Installer l'appli" }).click();
+  // … mais tant que le navigateur n'a pas confirmé, pas de message
+  await expect(page.locator('.installer .ok')).toHaveCount(0);
+  await page.evaluate(() => window.dispatchEvent(new Event('appinstalled')));
+  await expect(page.locator('.installer .ok')).toContainText("C'est fait");
 });
