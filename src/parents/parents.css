@@ -69,3 +69,10 @@ legend { font-weight: 800; font-size: 1.05rem; padding: 0; margin-bottom: 6px; }
 .installer .btn { align-self: flex-start; }
 .installer .attention { background: #fde8c8; border-left: 4px solid var(--lanterne2); border-radius: 10px; padding: 10px 12px; }
 .installer .ok { color: #2f6b3a; font-weight: 700; }
+
+/* Le don : une carte chaleureuse, sans insister */
+.don { margin-top: 18px; gap: 10px; }
+.don h2 { display: flex; align-items: center; gap: 8px; font-size: 1.2rem; }
+.don h2 svg { width: 24px; height: 24px; flex: none; }
+.don p { margin: 0; line-height: 1.45; }
+.don .btn { align-self: flex-start; }

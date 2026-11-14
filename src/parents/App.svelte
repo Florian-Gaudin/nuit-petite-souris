@@ -9,6 +9,7 @@
   import ChoixVille from './ChoixVille.svelte';
   import Resultat from './Resultat.svelte';
   import Installer from './Installer.svelte';
+  import Don from './Don.svelte';
   import { pageInstallation } from '../lib/installation';
 
   // Arrivée depuis « Ouvrir dans Chrome » : seulement l'installation, sans le verrou ni le formulaire
@@ -32,6 +33,9 @@
       }
     }, 150);
   }
+  $effect(() => {
+    if (deverrouille && location.hash === '#don') requestAnimationFrame(() => document.getElementById('don')?.scrollIntoView({ behavior: 'smooth' }));
+  });
   function relacher() { clearInterval(minuteur); if (!deverrouille) progression = 0; }
 
   // ---------- Formulaire ----------
@@ -228,6 +232,7 @@
       <div class="carte"><Resultat {profil} modifier={() => aller(0)} /></div>
     {/if}
 
+    <Don />
     <Installer />
 
     <p class="vie-privee">Aucune donnée personnelle n'est collectée : tout reste sur votre appareil. Les informations voyagent uniquement dans le QR code obtenu à la fin du formulaire.</p>
