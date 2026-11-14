@@ -4,7 +4,7 @@
   "description": "Le voyage de Quenotte, la Petite Souris, raconté pour Clémentine.",
   "lang": "fr",
   "id": "./",
-  "start_url": "./",
+  "start_url": "./?source=appli",
   "scope": "./",
   "display": "fullscreen",
   "display_override": ["fullscreen", "standalone"],

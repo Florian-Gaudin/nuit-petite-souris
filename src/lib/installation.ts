@@ -27,10 +27,26 @@ export async function installer(): Promise<boolean> {
   return outcome === 'accepted';
 }
 
+// Lancée depuis l'icône de l'écran d'accueil ? L'appli installée démarre sur « ?source=appli » (manifeste) :
+// la marque est retenue pour toute la visite. On ne se fie pas au seul « display-mode: fullscreen »,
+// qui est vrai aussi dans un navigateur passé en plein écran par l'histoire.
+const CLE_APPLI = 'souris.appli';
+export function noterLancement(): void {
+  const p = new URLSearchParams(location.search);
+  if (p.get('source') !== 'appli') return;
+  try { sessionStorage.setItem(CLE_APPLI, '1'); } catch { /* navigation privée */ }
+  p.delete('source');
+  const reste = p.toString();
+  try { history.replaceState(null, '', location.pathname + (reste ? '?' + reste : '') + location.hash); } catch { /* adresse inchangée */ }
+}
+export function estAppliInstallee(): boolean {
+  let marque = false;
+  try { marque = sessionStorage.getItem(CLE_APPLI) === '1'; } catch { /* navigation privée */ }
+  return marque || matchMedia('(display-mode: standalone)').matches || (navigator as Navigator & { standalone?: boolean }).standalone === true;
+}
+
 export function appareil(ua = navigator.userAgent): Appareil {
-  const autonome = matchMedia('(display-mode: standalone)').matches || matchMedia('(display-mode: fullscreen)').matches
-    || (navigator as Navigator & { standalone?: boolean }).standalone === true;
-  if (autonome) return 'installee';
+  if (estAppliInstallee()) return 'installee';
   // iPadOS se présente comme un Mac : on le reconnaît à l'écran tactile
   if (/iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1)) return 'ios';
   if (/Android/.test(ua)) {

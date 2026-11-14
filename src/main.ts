@@ -7,6 +7,7 @@ import './lib/plateforme';
 import { initStockage } from './lib/stockage';
 import { installerProfil } from './lib/profilCourant';
 import { activerHorsLigne } from './lib/horsLigne';
+import { noterLancement, estAppliInstallee } from './lib/installation';
 
 // L'écran de lancement (index.html) reste au moins 1,2 s, puis s'efface en fondu
 const DUREE_LANCEMENT = 1200;
@@ -21,6 +22,8 @@ function finLancement(): void {
 }
 
 activerHorsLigne();
+noterLancement(); // lancée depuis l'icône de l'écran d'accueil ?
+(window as Window & { APPLI_INSTALLEE?: boolean }).APPLI_INSTALLEE = estAppliInstallee();
 
 try {
   await initStockage();

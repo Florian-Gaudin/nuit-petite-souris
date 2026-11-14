@@ -87,7 +87,7 @@
   // Sur iPhone, l'API n'existe pas : il faut « Ajouter à l'écran d'accueil » (web app).
   const PLEIN = {
     api: !window.PLATEFORME.natif && !!(document.fullscreenEnabled || document.webkitFullscreenEnabled), // dans l'appli native, le plein écran est géré par le système
-    appli: !!((window.matchMedia && window.matchMedia('(display-mode: fullscreen), (display-mode: standalone)').matches) || navigator.standalone),
+    appli: !!window.APPLI_INSTALLEE, // voir src/lib/installation.ts
     actif() { return !!(document.fullscreenElement || document.webkitFullscreenElement); },
     entrer() {
       const el = document.documentElement;

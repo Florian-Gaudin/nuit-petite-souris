@@ -35,3 +35,15 @@ test('Chrome sur Android : pas d\'avertissement', async ({ page }) => {
   await expect(page.locator('.installer .attention')).toHaveCount(0);
   await expect(page.locator('.installer')).toContainText('Ajouter à l\'écran d\'accueil');
 });
+
+test("dans le navigateur : l'aide reste proposée ; lancée depuis l'icône : appli reconnue", async ({ page }) => {
+  // Dans le navigateur (même passé en plein écran par l'histoire), l'appli n'est pas « installée »
+  await espaceParents(page);
+  await expect(page.locator('.installer')).not.toContainText('déjà installée');
+  // Lancée depuis l'icône (adresse de démarrage du manifeste) : reconnue pour toute la visite
+  await page.goto('./?source=appli#exemple');
+  await page.waitForFunction(() => !!(window as any).APP);
+  expect(new URL(page.url()).search).toBe('');
+  await page.goto('parents/');
+  await expect(page.locator('.installer')).toContainText('déjà installée');
+});
