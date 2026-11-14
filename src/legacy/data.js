@@ -347,6 +347,7 @@ window.DATA = {
     invite: { txt: "Tu veux me répondre ? Fais-moi un dessin, je l'emporterai au château !", expr: "joie" },
     consigne: "Dessine avec ton doigt dans le cadre blanc, puis touche « Envoyer ».",
     ici: "Dessine ici avec ton doigt",
+    feuille: "Ta feuille de dessin",
     modifier: "Modifier mon dessin",
     faire: "Faire un dessin pour Quenotte",
     merci: "Quenotte a bien reçu ton dessin !",

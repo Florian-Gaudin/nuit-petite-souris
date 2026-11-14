@@ -174,7 +174,7 @@
   <div class="atelier-in">
     <h2>${A.icone('crayon')} Un dessin pour ${esc(C.souris)}</h2>
     <p class="consigne-dessin">${esc(T(D.dessin.consigne))}</p>
-    <div class="toile-wrap"><canvas class="toile" width="960" height="720"></canvas><p class="toile-invite" aria-hidden="true">${A.icone('crayon')} ${esc(T(D.dessin.ici))}</p></div>
+    <div class="toile-wrap"><span class="toile-titre">${A.icone('crayon')} ${esc(T(D.dessin.feuille))}</span><canvas class="toile" width="960" height="720"></canvas><p class="toile-invite" aria-hidden="true">${A.icone('crayon')} ${esc(T(D.dessin.ici))}</p></div>
     <div class="outils-dessin">
       ${COULEURS.map((c, i) => `<button class="couleur${i === 0 ? ' choisie' : ''}" data-c="${c}" style="background:${c}" aria-label="Couleur"></button>`).join('')}
       <button class="trait-taille" data-t="8" aria-label="Crayon fin">●</button><button class="trait-taille choisie" data-t="18" aria-label="Gros crayon">⬤</button>
