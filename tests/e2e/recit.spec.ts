@@ -79,6 +79,13 @@ test('Noé : une pièce de 1 euro, posée sur le coffre à jouets', async ({ pag
   expect(await rendu(page, ['camera', 'cheminee'])).toBe('Voilà ton coffre à jouets. Je pose ta pièce dessus : elle va sécher jusqu\'au matin.');
   expect(await rendu(page, ['lettre', 4])).toBe('Ta pièce de 1 euro a traversé la rivière en bateau. Elle sèche sur ton coffre à jouets : va vite la chercher !');
   expect(await rendu(page, ['boutonLettre'])).toBe("J'ai trouvé ma pièce !");
+  // Le bouton de la fin de la lettre : le texte et l'icône de la pièce
+  await ouvrir(page, '?chapitre=4#p=' + code(NOE));
+  await page.locator('#cachet').click();
+  await page.locator('#btn-tout').click();
+  const bouton = page.locator('#bandeau-actions button', { hasText: "J'ai trouvé ma pièce" });
+  await expect(bouton).toBeVisible();
+  await expect(bouton.locator('circle')).toHaveCount(2);
   expect(await rendu(page, ['badges', 7, 'nom'])).toBe('Pièce trouvée');
   // Les dessins : la pièce, puis la coquille de noix sur la rivière
   await ouvrir(page, '?chapitre=1&scene=4#p=' + code(NOE));

@@ -562,7 +562,7 @@
       let ecrit = false;
       const n = lignes.length;
       const els = lignes.map((l, i) => { const p = document.createElement('p'); p.className = 'ligne' + (i === n - 3 || i === n - 2 ? ' sign' : '') + (i === n - 1 ? ' ps' : ''); p.dataset.txt = l; papier.appendChild(p); return p; });
-      const termine = () => { $('#btn-tout', r).hidden = true; NARR.cacher(false); NARR.dire(B(D.lettreFin)); NARR.action(A.icone('billet') + ' ' + T(D.boutonLettre), () => { complete(4); badge('amie'); badge('billet'); show(5); }); };
+      const termine = () => { $('#btn-tout', r).hidden = true; NARR.cacher(false); NARR.dire(B(D.lettreFin)); NARR.action(A.icone(C.cadeau === 'piece' ? 'piece' : 'billet') + ' ' + T(D.boutonLettre), () => { complete(4); badge('amie'); badge('billet'); show(5); }); };
       const montreTout = () => { if (ecrit) return; ecrit = true; clearTimeout(self.t); els.forEach(p => { p.textContent = p.dataset.txt; p.classList.add('vue'); }); termine(); };
       // La lettre s'écrit lentement, mot par mot, en très gros caractères
       const ecrire = () => {
