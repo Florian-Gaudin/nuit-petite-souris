@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 
 // L'adresse réglée dans src/lib/don.ts (lue dans le fichier : le module, lui, a besoin d'un navigateur)
-const LIEN_DON = /export const LIEN_DON = '([^']*)'/.exec(readFileSync(new URL('../../src/lib/don.ts', import.meta.url), 'utf8'))![1];
+const LIEN_DON = /export const LIEN_DON(?:: string)? = '([^']*)'/.exec(readFileSync(new URL('../../src/lib/don.ts', import.meta.url), 'utf8'))![1];
 import { ouvrir } from './aide';
 
 test('le don : discret sur l\'accueil, complet dans l\'espace parents', async ({ page }) => {

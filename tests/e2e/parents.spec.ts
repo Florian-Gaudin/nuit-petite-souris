@@ -93,5 +93,5 @@ test('ville : service lent ou coupé, le nom tapé est gardé', async ({ page })
   await expect(page.locator('.ville .message')).toContainText('Recherche');
   await expect(page.locator('.ville .message')).toContainText('lentement', { timeout: 10_000 });
   await page.locator('.etapes button').nth(4).click();
-  await expect(page.locator('.carte h2')).toHaveText('La nuit');
+  await expect(page.locator('form.carte h2')).toHaveText('La nuit');
 });

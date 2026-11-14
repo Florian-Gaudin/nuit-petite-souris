@@ -2,7 +2,7 @@
 // Tant qu'elle est vide, rien ne s'affiche : ni la carte de l'espace parents, ni le petit bouton de l'accueil.
 import { plateforme } from './plateforme';
 
-export const LIEN_DON = ''; // par exemple 'https://ko-fi.com/votre-nom'
+export const LIEN_DON: string = 'https://ko-fi.com/floriangaudin';
 
 // Dans l'appli native, pas de lien de don pour l'instant : les stores encadrent strictement les paiements
 // hors de leur système, surtout dans les applis pour enfants (à revoir à l'étape des stores).
