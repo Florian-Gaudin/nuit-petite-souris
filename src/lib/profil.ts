@@ -4,7 +4,8 @@ import LZString from 'lz-string';
 import { vocabulaire } from './recit';
 
 export type Genre = 'f' | 'g';
-export type TypeDoudou = 'ours' | 'lapin' | 'chat' | 'chien' | 'bebe' | 'licorne' | 'dinosaure' | 'aucun';
+export type TypeDoudou = 'ours' | 'lapin' | 'chat' | 'chien' | 'bebe' | 'licorne' | 'dinosaure' | 'linge' | 'aucun';
+export type Logement = 'maison' | 'appartement';
 export type Cachette = 'cheminee' | 'radiateur' | 'table-de-nuit' | 'bureau' | 'etagere';
 export type Billet = 5 | 10 | 20 | 50;
 
@@ -23,10 +24,16 @@ export interface Profil {
   billet: Billet;
   cachette: Cachette;
   ville: { nom: string; codePostal: string; departement: string };
+  logement: Logement;
+  riviere: string; // « la Seine », « le Rhône »… (avec son article) ; vide : « la rivière »
   nuit: string | null; // AAAA-MM-JJ : le soir du passage ; null = calculée au premier lancement
 }
 
-export const TYPES_DOUDOU: readonly TypeDoudou[] = ['ours', 'lapin', 'chat', 'chien', 'bebe', 'licorne', 'dinosaure', 'aucun'];
+// L'ordre compte pour les QR codes déjà imprimés (le type est codé par sa position) : on ajoute à la fin
+export const TYPES_DOUDOU: readonly TypeDoudou[] = ['ours', 'lapin', 'chat', 'chien', 'bebe', 'licorne', 'dinosaure', 'aucun', 'linge'];
+// L'ordre d'affichage dans le formulaire
+export const ORDRE_DOUDOUS: readonly TypeDoudou[] = ['ours', 'lapin', 'chat', 'chien', 'bebe', 'licorne', 'dinosaure', 'linge', 'aucun'];
+export const LOGEMENTS: readonly Logement[] = ['maison', 'appartement'];
 export const CACHETTES: readonly Cachette[] = ['cheminee', 'radiateur', 'table-de-nuit', 'bureau', 'etagere'];
 export const BILLETS: readonly Billet[] = [5, 10, 20, 50];
 
@@ -50,6 +57,8 @@ export const PROFIL_EXEMPLE: Profil = {
   billet: 5,
   cachette: 'cheminee',
   ville: { nom: 'Aiglemont', codePostal: '08090', departement: '08' },
+  logement: 'maison',
+  riviere: 'la Meuse',
   nuit: null,
 };
 
@@ -85,6 +94,8 @@ export function verifierProfil(p: Profil): string[] {
   if (!villeValide(p.ville?.nom)) e.push('ville');
   if (typeof p.ville?.codePostal !== 'string' || !/^(\d{5})?$/.test(p.ville.codePostal)) e.push('code postal');
   if (typeof p.ville?.departement !== 'string' || !/^(\d{2,3}|2A|2B)?$/.test(p.ville.departement)) e.push('département');
+  if (!LOGEMENTS.includes(p.logement)) e.push('logement');
+  if (typeof p.riviere !== 'string' || (p.riviere !== '' && !nomValide(p.riviere))) e.push("cours d'eau");
   if (p.nuit !== null && !dateValide(p.nuit)) e.push('date');
   return e;
 }
@@ -140,6 +151,8 @@ export function surpriseActive(p: Pick<Profil, 'nuit'>, maintenant = new Date())
 // Les choix fixes deviennent des chiffres, les dents déjà tombées un masque de 20 bits, la date AAAAMMJJ.
 // Les noms ne peuvent contenir ni « | » ni « ~ » (voir NOM), qui servent donc de séparateurs.
 //   1|prénom|genre|doudou|nom du doudou|chat|dent de la nuit|masque des dents|billet|cachette|ville|cp|département|date|fratrie
+//   puis, seulement s'ils ne sont pas ceux par défaut (maison, sans cours d'eau) : |logement|cours d'eau
+//   (ainsi les QR codes imprimés avant leur ajout restent lisibles, et les progressions déjà enregistrées gardent leur identifiant)
 const VERSION = '1';
 const indexDent = (d: number) => (Math.floor(d / 10) - 5) * 5 + (d % 10) - 1;
 
@@ -160,12 +173,13 @@ export function compacter(p: Profil): string {
     p.dents.nuit, masqueDents(p.dents.deja), p.billet, CACHETTES.indexOf(p.cachette),
     p.ville.nom, p.ville.codePostal, p.ville.departement, p.nuit ? p.nuit.replace(/-/g, '') : '',
     p.fratrie ? [p.fratrie.prenom, p.fratrie.genre, p.fratrie.dortACote ? 1 : 0].join('~') : '',
+    ...(p.logement !== 'maison' || p.riviere ? [LOGEMENTS.indexOf(p.logement), p.riviere] : []),
   ].join('|');
 }
 
 function decompacter(s: string): Profil | null {
   const c = s.split('|');
-  if (c.length !== 15 || c[0] !== VERSION) return null;
+  if ((c.length !== 15 && c.length !== 17) || c[0] !== VERSION) return null;
   const entier = (x: string) => (/^\d+$/.test(x) ? parseInt(x, 10) : -1);
   const f = c[14] ? c[14].split('~') : null;
   return {
@@ -174,6 +188,8 @@ function decompacter(s: string): Profil | null {
     dents: { nuit: entier(c[6]), deja: dentsDuMasque(c[7]) },
     billet: entier(c[8]) as Billet, cachette: CACHETTES[entier(c[9])],
     ville: { nom: c[10], codePostal: c[11], departement: c[12] },
+    logement: c.length === 17 ? LOGEMENTS[entier(c[15])] : 'maison',
+    riviere: c.length === 17 ? c[16] : '',
     nuit: c[13] ? (/^\d{8}$/.test(c[13]) ? c[13].slice(0, 4) + '-' + c[13].slice(4, 6) + '-' + c[13].slice(6) : 'invalide') : null,
     fratrie: f ? (f.length === 3 && (f[2] === '0' || f[2] === '1') ? { prenom: f[0], genre: f[1] as Genre, dortACote: f[2] === '1' } : { prenom: '', genre: 'x' as Genre, dortACote: false }) : null,
   };

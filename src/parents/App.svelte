@@ -2,9 +2,9 @@
   // L'espace parents : verrou anti-enfant, formulaire en cinq étapes, puis le QR code.
   import { stockage } from '../lib/stockage';
   import { chargerProfil } from '../lib/profilCourant';
-  import { TYPES_DOUDOU, BILLETS, CACHETTES } from '../lib/profil';
+  import { ORDRE_DOUDOUS, BILLETS, CACHETTES, LOGEMENTS } from '../lib/profil';
   import { type Brouillon, nouveauBrouillon, depuisProfil, versProfil, erreursEtape, erreursProfil, ETAPES } from './brouillon';
-  import { DOUDOUS, CACHETTES_INFO, svgBillet } from './icones';
+  import { DOUDOUS, CACHETTES_INFO, LOGEMENTS_INFO, svgBillet } from './icones';
   import SchemaDents from './SchemaDents.svelte';
   import ChoixVille from './ChoixVille.svelte';
   import Resultat from './Resultat.svelte';
@@ -126,7 +126,7 @@
           <fieldset>
             <legend>Son doudou</legend>
             <div class="choix grille">
-              {#each TYPES_DOUDOU as t}
+              {#each ORDRE_DOUDOUS as t}
                 <label class="option icone" class:choisi={b.doudouType === t}>
                   <input type="radio" bind:group={b.doudouType} value={t} />
                   {@html DOUDOUS[t].svg}<span>{DOUDOUS[t].nom}</span>
@@ -182,12 +182,27 @@
             </div>
           </fieldset>
         {:else if etape === 3}
-          <h2>La maison</h2>
+          <h2>Le logement</h2>
+          <fieldset>
+            <legend>{accord === 'elle' ? 'Elle' : accord === 'il' ? 'Il' : "L'enfant"} habite…</legend>
+            <div class="choix deux">
+              {#each LOGEMENTS as l}
+                <label class="option icone" class:choisi={b.logement === l}>
+                  <input type="radio" bind:group={b.logement} value={l} />
+                  {@html LOGEMENTS_INFO[l].svg}<span>{LOGEMENTS_INFO[l].nom}</span>
+                </label>
+              {/each}
+            </div>
+          </fieldset>
           <div class="champ">
             <span class="libelle">La ville où {accord} habite</span>
             <ChoixVille bind:ville={b.ville} />
-            <p class="aide">Quenotte y arrive en montgolfière. Seul le nom tapé est envoyé au service public des communes, pour proposer des suggestions.</p>
+            <p class="aide">Seul le nom tapé est envoyé au service public des communes, pour proposer des suggestions.</p>
           </div>
+          <label>Le cours d'eau le plus proche <small>(facultatif)</small>
+            <input type="text" bind:value={b.riviere} maxlength="40" autocomplete="off" placeholder="la Seine, le Rhône, l'Ill…" />
+          </label>
+          <p class="aide">La montgolfière de Quenotte se pose au bord de ce cours d'eau, puis un lièvre l'emmène jusqu'à la ville. Écrivez-le avec son article. Sans réponse, Quenotte traverse « la rivière ».</p>
           <label>Le chat du voisin, qui dort devant la porte
             <input type="text" bind:value={b.chat} maxlength="40" autocomplete="off" autocapitalize="words" />
           </label>

@@ -24,6 +24,9 @@ const CACHETTE: Record<Cachette, { nom: string; eteint: string; etiquette: strin
   'etagere': { nom: 'ton étagère', eteint: '', etiquette: 'ÉTAGÈRE' },
 };
 
+const riviere = (p: Profil) => p.riviere || 'la rivière';
+const majuscule = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+
 // Les mots de l'histoire, utilisables dans les textes sous la forme {mot}
 export function vocabulaire(p: Profil) {
   const f = p.genre === 'f';
@@ -59,6 +62,10 @@ export function vocabulaire(p: Profil) {
     auChaudFin: p.cachette === 'cheminee' || p.cachette === 'radiateur' ? ' au chaud' : '', // « sécher au chaud jusqu'au matin »
     cachetteEtiquette: CACHETTE[p.cachette].etiquette,       // pour la caméra
     billetCouleurs: COULEURS_BILLET[p.billet],
+    logement: p.logement,                                    // « maison » ou « appartement »
+    surLeSeuil: p.logement === 'appartement' ? 'sur le paillasson' : 'sur le seuil', // où dort le chat
+    riviere: riviere(p),                                     // « la Seine » (ou « la rivière »)
+    Riviere: majuscule(riviere(p)),                          // « La Seine », en début de phrase
   };
 }
 export type Vocabulaire = ReturnType<typeof vocabulaire>;
@@ -69,17 +76,19 @@ export type Vocabulaire = ReturnType<typeof vocabulaire>;
 //   { doudou: { oui, non } }                       selon qu'il y a un doudou
 //   { fratrie: { aCote, ailleurs, non } }          frère ou sœur dans la même chambre, ailleurs, ou pas
 //   { deja: { une, plusieurs } }                   une seule dent déjà au château, ou plusieurs
+//   { logement: { maison, appartement } }          selon le logement de l'enfant
 // Une branche absente ou null : le texte est omis.
 type Bulle = { txt: string; expr?: string };
-export type Texte = string | Bulle | null | undefined | { variante: Partial<Record<Variante, Texte>> } | { doudou: { oui?: Texte; non?: Texte } } | { fratrie: { aCote?: Texte; ailleurs?: Texte; non?: Texte } } | { deja: { une?: Texte; plusieurs?: Texte } };
+export type Texte = string | Bulle | null | undefined | { variante: Partial<Record<Variante, Texte>> } | { doudou: { oui?: Texte; non?: Texte } } | { fratrie: { aCote?: Texte; ailleurs?: Texte; non?: Texte } } | { deja: { une?: Texte; plusieurs?: Texte } } | { logement: { maison?: Texte; appartement?: Texte } };
 
-export function resoudre(t: Texte, v: Pick<Vocabulaire, 'variante' | 'aDoudou' | 'aFratrie' | 'fratrieACote' | 'nbDejaChiffre'>): string | Bulle | null {
+export function resoudre(t: Texte, v: Pick<Vocabulaire, 'variante' | 'aDoudou' | 'aFratrie' | 'fratrieACote' | 'nbDejaChiffre' | 'logement'>): string | Bulle | null {
   for (let garde = 0; garde < 10; garde++) {
     if (t == null) return null;
     if (typeof t === 'string') return t;
     if ('txt' in t) return t as Bulle;
     if ('variante' in t) { t = t.variante[v.variante]; continue; }
     if ('doudou' in t) { t = v.aDoudou ? t.doudou.oui : t.doudou.non; continue; }
+    if ('logement' in t) { t = t.logement[v.logement]; continue; }
     if ('deja' in t) { t = v.nbDejaChiffre === 1 ? t.deja.une : t.deja.plusieurs; continue; }
     if ('fratrie' in t) { t = !v.aFratrie ? t.fratrie.non : v.fratrieACote ? (t.fratrie.aCote ?? t.fratrie.ailleurs) : t.fratrie.ailleurs; continue; }
     return null;

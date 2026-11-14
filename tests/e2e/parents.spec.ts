@@ -45,11 +45,16 @@ test('création complète d\'un profil jusqu\'au QR code', async ({ page }) => {
   await page.locator('.option.icone', { hasText: 'Le radiateur' }).click();
   await suivant.click();
 
-  // 4. La maison
+  // 4. Le logement : un appartement, au bord de la Meuse (l'article est exigé)
+  await page.locator('.option.icone', { hasText: 'Un appartement' }).click();
   await page.locator('.ville input').fill('Charleville');
   await page.locator('#liste-villes li button').first().click();
   await expect(page.locator('.choisie')).toContainText('Charleville-Mézières (08000)');
   await page.getByLabel('Le chat du voisin, qui dort devant la porte').fill('Félix');
+  await page.getByLabel(/Le cours d'eau le plus proche/).fill('Meuse');
+  await suivant.click();
+  await expect(page.locator('.erreurs')).toContainText('avec son article');
+  await page.getByLabel(/Le cours d'eau le plus proche/).fill('la Meuse');
   await suivant.click();
 
   // 5. La nuit
@@ -70,7 +75,7 @@ test('création complète d\'un profil jusqu\'au QR code', async ({ page }) => {
   await page.goto(new URL(histoire!, page.url()).href);
   await page.waitForFunction(() => !!(window as any).APP);
   const p = await page.evaluate(() => (window as any).PROFIL.profil);
-  expect(p).toMatchObject({ prenom: 'Léa', genre: 'f', doudou: { type: 'lapin', nom: 'Pompon' }, fratrie: { prenom: 'Tom', genre: 'g', dortACote: true }, chat: 'Félix', billet: 20, cachette: 'radiateur', nuit: '2026-12-24' });
+  expect(p).toMatchObject({ prenom: 'Léa', genre: 'f', doudou: { type: 'lapin', nom: 'Pompon' }, fratrie: { prenom: 'Tom', genre: 'g', dortACote: true }, chat: 'Félix', billet: 20, cachette: 'radiateur', nuit: '2026-12-24', logement: 'appartement', riviere: 'la Meuse' });
   expect(p.dents).toEqual({ nuit: 51, deja: [61] });
   expect(p.ville).toEqual({ nom: 'Charleville-Mézières', codePostal: '08000', departement: '08' });
 });

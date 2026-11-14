@@ -246,6 +246,28 @@ p{margin:.4rem 0}
 @keyframes brume{from{transform:translateX(-20px)}to{transform:translateX(20px)}}
 
 /* Meuse */
+/* Le lièvre : il dort, ouvre un œil, dresse les oreilles, puis file au galop avec Quenotte sur le dos */
+.decor-lievre .oeil-ouvert,.decor-lievre .oreilles-hautes{opacity:0;transition:opacity .3s}
+.decor-lievre .tap[data-etape="1"] .oeil-ouvert,.decor-lievre .tap[data-etape="2"] .oeil-ouvert,.decor-lievre .tap[data-etape="3"] .oeil-ouvert,.decor-lievre.galop .oeil-ouvert{opacity:1}
+.decor-lievre .tap[data-etape="1"] .oeil-ferme,.decor-lievre .tap[data-etape="2"] .oeil-ferme,.decor-lievre .tap[data-etape="3"] .oeil-ferme,.decor-lievre.galop .oeil-ferme{opacity:0}
+.decor-lievre .tap[data-etape="2"] .oreilles-hautes,.decor-lievre .tap[data-etape="3"] .oreilles-hautes,.decor-lievre.galop .oreilles-hautes{opacity:1}
+.decor-lievre .tap[data-etape="2"] .oreilles-couchees,.decor-lievre .tap[data-etape="3"] .oreilles-couchees,.decor-lievre.galop .oreilles-couchees{opacity:0}
+.decor-lievre .tap:not([data-etape="0"]) .zzz{display:none}
+.decor-lievre .monture{transform-box:view-box;transition:transform 2.6s cubic-bezier(.4,0,.6,1)}
+.decor-lievre.galop .monture{transform:translate(330px,0)}
+.decor-lievre.galop .monture-in>*{animation:bond-lievre .43s ease-in-out infinite}
+@keyframes bond-lievre{0%,100%{transform:translateY(0)}50%{transform:translateY(-36px)}}
+.decor-lievre .cavaliere{opacity:0}
+.decor-lievre.galop .cavaliere{opacity:1}
+.decor-lievre.galop .quenotte,.decor-lievre.galop .lueur{opacity:0;transition:opacity .3s}
+.decor-lievre .herisson-in{transform-box:view-box}
+.decor-lievre .tap.trottine .herisson-in{animation:trottine 1.6s ease-in-out}
+@keyframes trottine{0%,100%{transform:translateX(0)}50%{transform:translateX(26px)}}
+.decor-lievre .chapeau{transform-box:fill-box;transform-origin:center bottom}
+.decor-lievre .tap.salue .chapeau{animation:salue 1.2s ease-in-out}
+@keyframes salue{0%,100%{transform:translateY(0) rotate(0)}40%{transform:translateY(-22px) rotate(-14deg)}70%{transform:translateY(-10px) rotate(8deg)}}
+.decor-lievre .zzz .z{font:700 22px var(--display);fill:#cfd3ee}
+.decor-lievre .zzz .petit{font-size:15px}
 .decor-meuse .vagues path{animation:vague 4s linear infinite}
 .decor-meuse .vagues path:nth-child(2){animation-duration:5.5s}
 .decor-meuse .vagues path:nth-child(3){animation-duration:7s}
@@ -356,6 +378,9 @@ p{margin:.4rem 0}
 .decor-pantoufle .revele .z.petit{animation-delay:.5s}
 .decor-pantoufle .pendule{opacity:0;transform:scale(.4);transform-box:fill-box;transform-origin:center;transition:transform .6s cubic-bezier(.3,1.4,.5,1),opacity .3s}
 .decor-pantoufle .tap.vu .pendule{opacity:1;transform:none}
+/* Sur le palier, l'horloge est au mur : toujours visible, elle sautille quand on la touche */
+.decor-pantoufle.palier .pendule{opacity:1;transform:none}
+.decor-pantoufle.palier .tap.vu .pendule{animation:pop .5s ease-out}
 .decor-pantoufle .tap[data-el="fenetre"] .vitre{transition:fill .6s}
 .decor-pantoufle .tap[data-el="fenetre"].vu .vitre{fill:#6b5a2a}
 .decor-pantoufle .fleur{transform-box:fill-box;transform-origin:50% 100%}
@@ -511,8 +536,8 @@ p{margin:.4rem 0}
 /* ---------- Écran de choix (ouverture sans QR code) ---------- */
 body.mode-choix .fil,body.mode-choix .bandeau{display:none}
 .scene.choix-scene{max-width:none;padding:0;display:flex;min-height:100vh;min-height:100dvh}
-.choix{position:relative;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;padding:max(24px,env(safe-area-inset-top,0px)) 16px max(24px,env(safe-area-inset-bottom,0px));overflow:hidden}
-.choix{background:radial-gradient(ellipse at 50% 30%,#2b3470 0,var(--nuit) 75%)}
+.ecran-choix{position:relative;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;padding:max(24px,env(safe-area-inset-top,0px)) 16px max(24px,env(safe-area-inset-bottom,0px));overflow:hidden}
+.ecran-choix{background:radial-gradient(ellipse at 50% 30%,#2b3470 0,var(--nuit) 75%)}
 .choix-ciel{position:absolute;inset:0;width:100%;height:100%;z-index:0}
 .choix-haut,.choix-cartes{position:relative;z-index:1}
 .choix-haut{display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center}

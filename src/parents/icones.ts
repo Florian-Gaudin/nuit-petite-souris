@@ -1,6 +1,6 @@
 // Petits dessins des choix du formulaire (doudous, cachettes, billets). Les dessins de l'histoire
 // elle-même (doudou dans la chambre, cachette filmée…) viendront à l'étape 5.
-import type { Billet, Cachette, TypeDoudou } from '../lib/profil';
+import type { Billet, Cachette, Logement, TypeDoudou } from '../lib/profil';
 
 const svg = (contenu: string) => `<svg viewBox="0 0 48 48" aria-hidden="true">${contenu}</svg>`;
 
@@ -12,7 +12,13 @@ export const DOUDOUS: Record<TypeDoudou, { nom: string; svg: string }> = {
   bebe: { nom: 'Bébé, poupée', svg: svg('<path d="M10 22a14 14 0 0 1 28 0z" fill="#F2A3B5"/><circle cx="24" cy="26" r="12" fill="#F6D7C3"/><path d="M14 20q10-8 20 0" fill="none" stroke="#F2A3B5" stroke-width="5"/><circle cx="19.5" cy="26" r="1.7" fill="#2B2B33"/><circle cx="28.5" cy="26" r="1.7" fill="#2B2B33"/><path d="M21 31q3 2 6 0" fill="none" stroke="#c46a6a" stroke-width="1.5" stroke-linecap="round"/><circle cx="17" cy="30" r="2" fill="#F2A3B5" opacity=".6"/><circle cx="31" cy="30" r="2" fill="#F2A3B5" opacity=".6"/>') },
   licorne: { nom: 'Licorne', svg: svg('<path d="M24 3l3 12h-6z" fill="#FFC857"/><path d="M14 14l-2-7 7 5M34 14l2-7-7 5" fill="#F3EFE6"/><circle cx="24" cy="26" r="13" fill="#F3EFE6"/><path d="M12 22q-4 10 2 18M14 18q-6 4-4 12" fill="none" stroke="#B48ADB" stroke-width="3" stroke-linecap="round"/><circle cx="20" cy="25" r="1.8" fill="#2B2B33"/><circle cx="29" cy="25" r="1.8" fill="#2B2B33"/><ellipse cx="25" cy="32" rx="5" ry="3" fill="#F2A3B5"/>') },
   dinosaure: { nom: 'Dinosaure', svg: svg('<path d="M14 14l3-6 3 5 3-6 3 6 3-5 3 6" fill="#3E9A6B"/><circle cx="24" cy="26" r="13" fill="#5CB98A"/><ellipse cx="26" cy="31" rx="8" ry="5" fill="#8FD6B0"/><circle cx="19" cy="23" r="1.8" fill="#2B2B33"/><circle cx="29" cy="23" r="1.8" fill="#2B2B33"/><path d="M21 33l2 2 2-2 2 2 2-2" fill="none" stroke="#fff" stroke-width="1.5"/>') },
+  linge: { nom: 'Linge (lange, serviette)', svg: svg('<path d="M8 13q16-7 32 0l-3 27q-13 6-26 0z" fill="#F4E9D2" stroke="#C9A86A" stroke-width="2" stroke-linejoin="round"/><path d="M10 18q14-5 28 0M11 35q13 5 25 0" fill="none" stroke="#7FB8C7" stroke-width="2"/><path d="M17 15q3 12 1 24M31 14q-2 13 0 25" fill="none" stroke="#D9C49A" stroke-width="1.5"/><circle cx="38" cy="11" r="4.5" fill="#F4E9D2" stroke="#C9A86A" stroke-width="2"/>') },
   aucun: { nom: 'Pas de doudou', svg: svg('<circle cx="24" cy="24" r="15" fill="none" stroke="#9aa0b5" stroke-width="3"/><path d="M14 34L34 14" stroke="#9aa0b5" stroke-width="3" stroke-linecap="round"/>') },
+};
+
+export const LOGEMENTS_INFO: Record<Logement, { nom: string; svg: string }> = {
+  maison: { nom: 'Une maison', svg: svg('<path d="M6 24L24 9l18 15" fill="none" stroke="#D64045" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/><rect x="11" y="22" width="26" height="20" fill="#E9E2D6"/><rect x="21" y="30" width="7" height="12" fill="#8B5A3C"/><rect x="14" y="26" width="5" height="5" fill="#FFC857"/><rect x="30" y="26" width="5" height="5" fill="#2b3470"/>') },
+  appartement: { nom: 'Un appartement', svg: svg('<rect x="12" y="6" width="24" height="36" fill="#E3DBCF"/><rect x="10" y="4" width="28" height="4" fill="#8a8395"/><g fill="#2b3470"><rect x="15" y="11" width="6" height="6"/><rect x="27" y="11" width="6" height="6"/><rect x="27" y="21" width="6" height="6"/></g><rect x="15" y="21" width="6" height="6" fill="#FFC857"/><rect x="21" y="32" width="6" height="10" fill="#4a3324"/>') },
 };
 
 export const CACHETTES_INFO: Record<Cachette, { nom: string; conseil: string; svg: string }> = {

@@ -19,6 +19,8 @@ const MAXIMAL: Profil = {
   billet: 50,
   cachette: 'table-de-nuit',
   ville: { nom: 'Saint-Rémy-de-Provence', codePostal: '13210', departement: '13' },
+  logement: 'appartement',
+  riviere: 'le canal des Alpilles',
   nuit: '2026-11-10',
 };
 
@@ -39,7 +41,8 @@ describe('profil', () => {
   });
 
   it('aller-retour sans perte', () => {
-    for (const p of [PROFIL_EXEMPLE, MAXIMAL, avec(p => { p.fratrie = null; p.nuit = null; p.doudou = { type: 'aucun', nom: '' }; })]) {
+    for (const p of [PROFIL_EXEMPLE, MAXIMAL, avec(p => { p.fratrie = null; p.nuit = null; p.doudou = { type: 'aucun', nom: '' }; }),
+      avec(p => { p.logement = 'maison'; p.riviere = ''; p.doudou = { type: 'linge', nom: 'Doudou' }; })]) {
       const l = decoderProfil(encoderProfil(p));
       expect(l.ok).toBe(true);
       if (l.ok) expect(l.profil).toEqual(normal(p));
@@ -55,6 +58,19 @@ describe('profil', () => {
     expect(l.ok && l.profil.prenom).toBe('Marie-Charlotte-Eugénie');
     expect(codeDepuisAdresse('#3')).toBeNull();
     expect(codeDepuisAdresse('')).toBeNull();
+  });
+
+  it("les QR codes imprimés avant le logement et le cours d'eau restent lisibles", () => {
+    // Ancien format : 15 champs, sans logement ni cours d'eau
+    const ancien = LZString.compressToEncodedURIComponent('1|Léo|g|7||Pantoufle|81|0|50|3|Lyon|69001|69|20261110|');
+    const l = decoderProfil(ancien);
+    expect(l.ok).toBe(true);
+    if (l.ok) { expect(l.profil.logement).toBe('maison'); expect(l.profil.riviere).toBe(''); expect(l.profil.doudou.type).toBe('aucun'); }
+    // Un profil « maison, sans cours d'eau » s'écrit toujours sur 15 champs : son identifiant ne change pas
+    const p = avec(p => { p.logement = 'maison'; p.riviere = ''; });
+    expect(LZString.decompressFromEncodedURIComponent(encoderProfil(p)).split('|')).toHaveLength(15);
+    // Un cours d'eau invalide est refusé
+    expect(verifierProfil(avec(p => { p.riviere = '<script>'; })).length).toBeGreaterThan(0);
   });
 
   it('le QR code reste petit et lisible en A6 même pour un profil maximal', () => {

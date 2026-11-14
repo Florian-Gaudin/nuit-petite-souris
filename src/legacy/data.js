@@ -19,7 +19,7 @@ window.DATA = {
   },
   origineVille: { txt: "Ce soir, c'est ta dent que je viens chercher, à {ville} !", expr: "clin", bouton: "En route !" },
 
-  // ---------- Chapitre 1 : six scènes ----------
+  // ---------- Chapitre 1 : huit scènes ----------
   // Chaque scène : une bulle d'arrivée (intro), un élément obligatoire (ou une chaîne d'éléments)
   // avec une demande avant le toucher et une réponse après, deux éléments bonus, puis le « pont ».
   scenes: [
@@ -67,25 +67,10 @@ window.DATA = {
         buisson: { bulle: { txt: "Bonsoir, petite souris ! Je suis le renard. Je veille sur la forêt pendant que tout le monde dort. Je sais où tu vas : continue tout droit, tu vas entendre l'eau.", expr: "surprise" } },
         luciole: { bulle: { txt: "Cette luciole connaît tous les raccourcis ! Elle fait des zigzags pour me montrer la route.", expr: "clin" } },
       },
-      pont: { txt: "J'entends de l'eau qui coule… ça doit être la Meuse !", expr: "sourire" },
+      pont: { txt: "Au bout du chemin, j'aperçois les lumières de Charleville !", expr: "sourire" },
     },
     {
-      id: "meuse", titre: "La Meuse", heure: "01:30", ambiance: "meuse",
-      intro: { txt: "Voilà la Meuse, la grande rivière des Ardennes. Elle est large, large, large, et il n'y a pas de pont pour les souris. Comment faire ?", expr: "surprise" },
-      oblig: ["billet"], bonus: ["bulles", "reflet"],
-      elements: {
-        billet: {
-          demande: { txt: "J'ai une idée ! J'ai un billet de {euros} euros pour toi, et je vais le plier pour en faire un bateau. Aide-moi : touche le billet pour le plier.", expr: "clin" },
-          etapes: ["Un pli…", "Deux plis…", "Trois plis… Le bateau est prêt !"],
-          reponse: { txt: "Je monte à bord et hop, je traverse ! Le bateau se balance sous la lune. Oh, quelques gouttes ont mouillé le billet. Ne t'inquiète pas, je le ferai sécher{auChaud} sur {cachetteNom}.", expr: "joie" },
-        },
-        bulles: { bulle: { txt: "Splash ! Un poisson me dit bonjour. Il a l'air de bien s'amuser, lui.", expr: "surprise" } },
-        reflet: { bulle: { txt: "Regarde, la lune se baigne dans la Meuse. Quand on la touche, elle fait des ronds dans l'eau !", expr: "sourire" } },
-      },
-      pont: { txt: "Sur l'autre rive, je vois briller les lumières de Charleville.", expr: "joie" },
-    },
-    {
-      id: "place", titre: "La place Ducale", heure: "01:50", ambiance: "place",
+      id: "place", titre: "La place Ducale", heure: "01:30", ambiance: "place",
       intro: { txt: "Quelle belle place ! C'est la place Ducale, avec ses grandes arcades. Je me faufile d'arcade en arcade sans faire de bruit.", expr: "sourire" },
       oblig: ["marionnettiste"], bonus: ["fenetre", "fromage"],
       elements: {
@@ -99,7 +84,7 @@ window.DATA = {
       pont: { txt: "Le Grand Marionnettiste m'indique le chemin : au bout de la place, une montgolfière m'attend !", expr: "sourire" },
     },
     {
-      id: "montgolfiere", titre: "Au-dessus des Ardennes", heure: "02:00", ambiance: "montgolfiere",
+      id: "montgolfiere", titre: "Au-dessus des Ardennes", heure: "01:50", ambiance: "montgolfiere",
       intro: { txt: "Au bout de la place, une petite montgolfière rouge et jaune m'attend, posée dans l'herbe. Je grimpe dans la nacelle avec ma lanterne et mon sac. Mais pour décoller, il faut réchauffer l'air du ballon.", expr: "joie" },
       oblig: ["bruleur"], bonus: ["etoile", "oies"],
       elements: {
@@ -111,16 +96,54 @@ window.DATA = {
         etoile: { bulle: { txt: "Une étoile filante ! Vite, fais un vœu. Moi, j'ai fait le mien : que ta dent arrive bien au château.", expr: "surprise" } },
         oies: { bulle: { txt: "Des oies sauvages volent à côté de moi. Elles cancanent « Bon voyage, {souris} ! » et filent vers le sud.", expr: "surprise" } },
       },
-      pont: { txt: "La montgolfière redescend tout doucement… J'aperçois les toits de {ville} !", expr: "sourire" },
+      pont: { txt: "La montgolfière redescend tout doucement… J'aperçois {riviere} qui brille sous la lune !", expr: "sourire" },
     },
     {
-      id: "aiglemont", titre: "{ville}", heure: "02:10", ambiance: "aiglemont",
-      intro: { txt: "La montgolfière se pose sans bruit dans un champ. Me voici à {ville}. Toutes les maisons dorment et les volets sont fermés. Mais laquelle est la tienne ?", expr: "surprise" },
+      // Le cours d'eau près de chez l'enfant (« la rivière » si les parents n'en ont pas indiqué)
+      id: "meuse", titre: "{Riviere}", heure: "02:10", ambiance: "meuse",
+      intro: { txt: "La montgolfière se pose au bord de l'eau. Voilà {riviere} ! Pour une petite souris, c'est grand comme la mer, et il n'y a pas de pont pour les souris. Comment faire ?", expr: "surprise" },
+      oblig: ["billet"], bonus: ["bulles", "reflet"],
+      elements: {
+        billet: {
+          demande: { txt: "J'ai une idée ! J'ai un billet de {euros} euros pour toi, et je vais le plier pour en faire un bateau. Aide-moi : touche le billet pour le plier.", expr: "clin" },
+          etapes: ["Un pli…", "Deux plis…", "Trois plis… Le bateau est prêt !"],
+          reponse: { txt: "Je monte à bord et hop, je traverse ! Le bateau se balance sous la lune. Oh, quelques gouttes ont mouillé le billet. Ne t'inquiète pas, je le ferai sécher{auChaud} sur {cachetteNom}.", expr: "joie" },
+        },
+        bulles: { bulle: { txt: "Splash ! Un poisson me dit bonjour. Il a l'air de bien s'amuser, lui.", expr: "surprise" } },
+        reflet: { bulle: { txt: "Regarde, la lune se baigne dans {riviere}. Quand on la touche, elle fait des ronds dans l'eau !", expr: "sourire" } },
+      },
+      pont: { txt: "Me voilà sur l'autre rive. Mais {ville} est encore loin, derrière les champs…", expr: "surprise" },
+    },
+    {
+      // Du bord de l'eau jusqu'à la ville : le cours d'eau peut être à quelques kilomètres de chez l'enfant
+      id: "lievre", titre: "En route vers {ville}", heure: "02:18", ambiance: "lievre",
+      intro: { txt: "Dans le champ, quelque chose dort, roulé en boule dans l'herbe. Deux grandes oreilles… c'est un lièvre ! Les lièvres courent plus vite que le vent.", expr: "surprise" },
+      oblig: ["lievre"], bonus: ["herisson", "epouvantail"],
+      elements: {
+        lievre: {
+          demande: { txt: "Il connaît le chemin de {ville}. Touche-le pour le réveiller, tout doucement !", expr: "clin" },
+          etapes: ["Il ouvre un œil…", "Il dresse les oreilles…", "Il est prêt : en selle !"],
+          reponse: { txt: "Je grimpe sur son dos, et hop, hop, hop ! Trois grands bonds par-dessus les sillons, et nous filons à travers les champs.", expr: "joie" },
+        },
+        herisson: { bulle: { txt: "Un hérisson trottine dans l'herbe. Il cherche des vers de terre pour son dîner de minuit. Bon appétit, hérisson !", expr: "sourire" } },
+        epouvantail: { bulle: { txt: "Un épouvantail ! Il fait peur aux corbeaux, mais pas aux souris. Il a même un chapeau à ma taille.", expr: "clin" } },
+      },
+      pont: { txt: "Le lièvre s'arrête devant un panneau. C'est écrit {ville} : on y est !", expr: "joie" },
+    },
+    {
+      id: "aiglemont", titre: "{ville}", heure: "02:25", ambiance: "aiglemont",
+      intro: { logement: {
+        maison: { txt: "Merci, lièvre ! Me voici à {ville}. Toutes les maisons dorment et les volets sont fermés. Mais laquelle est la tienne ?", expr: "surprise" },
+        appartement: { txt: "Merci, lièvre ! Me voici à {ville}. Tous les immeubles dorment et les fenêtres sont éteintes. Mais lequel est le tien ?", expr: "surprise" },
+      } },
       oblig: ["girouette"], bonus: ["lampadaire", "fenetre"],
       elements: {
         girouette: {
           demande: { txt: "Tu vois la girouette, sur le toit ? Fais-la tourner, elle va me guider !", expr: "clin" },
-          reponse: { txt: "Elle tourne, elle tourne… elle s'arrête. Ta maison est par là !", expr: "joie" },
+          reponse: { logement: {
+            maison: { txt: "Elle tourne, elle tourne… elle s'arrête. Ta maison est par là !", expr: "joie" },
+            appartement: { txt: "Elle tourne, elle tourne… elle s'arrête. Ton immeuble est par là !", expr: "joie" },
+          } },
         },
         lampadaire: { bulle: { txt: "Ce lampadaire grésille comme s'il ronflait. Dors bien, lampadaire !", expr: "clin" } },
         fenetre: { bulle: { fratrie: {
@@ -129,26 +152,38 @@ window.DATA = {
           non: { doudou: { oui: { txt: "Là-haut, une petite lumière : la veilleuse de ta chambre. Je vois {poupee}, bien au chaud à côté de toi.", expr: "chuchote" }, non: { txt: "Là-haut, une petite lumière : la veilleuse de ta chambre. Tu dors bien au chaud.", expr: "chuchote" } } },
         } } },
       },
-      pont: { txt: "J'y suis presque ! Il ne reste que le jardin à traverser.", expr: "sourire" },
+      pont: { logement: {
+        maison: { txt: "J'y suis presque ! Il ne reste que le jardin à traverser.", expr: "sourire" },
+        appartement: { txt: "J'y suis presque ! Je me faufile dans l'immeuble et je monte l'escalier, marche après marche.", expr: "sourire" },
+      } },
     },
     {
       id: "pantoufle", titre: "{chat}", heure: "02:31", ambiance: "pantoufle",
-      intro: { txt: "Le jardin est tout calme… Chut ! Il y a quelque chose devant la porte. Deux grands yeux brillent dans le noir. Touche-les, doucement.", expr: "chuchote" },
+      intro: { logement: {
+        maison: { txt: "Le jardin est tout calme… Chut ! Il y a quelque chose devant la porte. Deux grands yeux brillent dans le noir. Touche-les, doucement.", expr: "chuchote" },
+        appartement: { txt: "Le palier est tout calme… Chut ! Il y a quelque chose devant ta porte. Deux grands yeux brillent dans le noir. Touche-les, doucement.", expr: "chuchote" },
+      } },
       oblig: ["yeux", "quenotte"], bonus: ["fleurs", "fenetre"],
       elements: {
         yeux: {
           reponse: { fratrie: {
-            aCote: { txt: "C'est {chat}, le chat du voisin ! Il dort sur le seuil et il a l'oreille fine. Si je le réveille, il va miauler, et {tonFrere} va se réveiller. Je ne veux surtout pas ça.", expr: "surprise" },
-            ailleurs: { doudou: { oui: { txt: "C'est {chat}, le chat du voisin ! Il dort sur le seuil et il a l'oreille fine. Si je le réveille, il va miauler, et {poupee} va se réveiller. Je ne veux surtout pas ça.", expr: "surprise" }, non: { txt: "C'est {chat}, le chat du voisin ! Il dort sur le seuil et il a l'oreille fine. Si je le réveille, il va miauler, et toute la maison va se réveiller. Je ne veux surtout pas ça.", expr: "surprise" } } },
-            non: { doudou: { oui: { txt: "C'est {chat}, le chat du voisin ! Il dort sur le seuil et il a l'oreille fine. Si je le réveille, il va miauler, et {poupee} va se réveiller. Je ne veux surtout pas ça.", expr: "surprise" }, non: { txt: "C'est {chat}, le chat du voisin ! Il dort sur le seuil et il a l'oreille fine. Si je le réveille, il va miauler, et toute la maison va se réveiller. Je ne veux surtout pas ça.", expr: "surprise" } } },
+            aCote: { txt: "C'est {chat}, le chat du voisin ! Il dort {surLeSeuil} et il a l'oreille fine. Si je le réveille, il va miauler, et {tonFrere} va se réveiller. Je ne veux surtout pas ça.", expr: "surprise" },
+            ailleurs: { doudou: { oui: { txt: "C'est {chat}, le chat du voisin ! Il dort {surLeSeuil} et il a l'oreille fine. Si je le réveille, il va miauler, et {poupee} va se réveiller. Je ne veux surtout pas ça.", expr: "surprise" }, non: { txt: "C'est {chat}, le chat du voisin ! Il dort {surLeSeuil} et il a l'oreille fine. Si je le réveille, il va miauler, et toute la maison va se réveiller. Je ne veux surtout pas ça.", expr: "surprise" } } },
+            non: { doudou: { oui: { txt: "C'est {chat}, le chat du voisin ! Il dort {surLeSeuil} et il a l'oreille fine. Si je le réveille, il va miauler, et {poupee} va se réveiller. Je ne veux surtout pas ça.", expr: "surprise" }, non: { txt: "C'est {chat}, le chat du voisin ! Il dort {surLeSeuil} et il a l'oreille fine. Si je le réveille, il va miauler, et toute la maison va se réveiller. Je ne veux surtout pas ça.", expr: "surprise" } } },
           } },
         },
         quenotte: {
           demande: { txt: "Je sais, je sais… j'ai un plan. Touche-moi, je t'explique !", expr: "chuchote" },
           reponse: { txt: "{enfant}, j'ai besoin de toi. Quand {chat} dort, j'avance. Quand il ouvre les yeux, je m'arrête. Tu m'aides ?", expr: "sourire" },
         },
-        fleurs: { bulle: { txt: "Un pot de fleurs sur le pas de la porte… Elles sentent bon ! Je m'y cache une seconde : personne ne voit une souris entre les pétales.", expr: "clin" } },
-        fenetre: { bulle: { txt: "Par la fenêtre, j'aperçois la pendule du salon : il est 2 h 31. Vite, il ne faut pas traîner !", expr: "surprise" } },
+        fleurs: { bulle: { logement: {
+          maison: { txt: "Un pot de fleurs sur le pas de la porte… Elles sentent bon ! Je m'y cache une seconde : personne ne voit une souris entre les pétales.", expr: "clin" },
+          appartement: { txt: "Une grande plante verte sur le palier… Je m'y cache une seconde : personne ne voit une souris entre les feuilles.", expr: "clin" },
+        } } },
+        fenetre: { bulle: { logement: {
+          maison: { txt: "Par la fenêtre, j'aperçois la pendule du salon : il est 2 h 31. Vite, il ne faut pas traîner !", expr: "surprise" },
+          appartement: { txt: "Sur le palier, une horloge fait tic-tac : il est 2 h 31. Vite, il ne faut pas traîner !", expr: "surprise" },
+        } } },
       },
       pont: null,
       bouton: "Aider {souris} !",
@@ -176,7 +211,10 @@ window.DATA = {
 
   // ---------- Chapitre 3 : la caméra (Quenotte chuchote) ----------
   camera: {
-    intro: { txt: "Chut… J'ai mis ma petite caméra en marche. Je suis entrée par la chatière, {chat} n'a rien entendu.", expr: "chuchote" },
+    intro: { logement: {
+      maison: { txt: "Chut… J'ai mis ma petite caméra en marche. Je suis entrée par la chatière, {chat} n'a rien entendu.", expr: "chuchote" },
+      appartement: { txt: "Chut… J'ai mis ma petite caméra en marche. Je me suis glissée sous la porte, {chat} n'a rien entendu.", expr: "chuchote" },
+    } },
     cheminee: { txt: "Voilà {cachetteNom}{eteint}. Je pose ton billet dessus : il va sécher{auChaudFin} jusqu'au matin.", expr: "chuchote" },
     chambre: { fratrie: {
       aCote: { doudou: { oui: { txt: "Te voilà ! Tu dors comme une marmotte. {poupee} dort tout contre toi, et {frere} ronfle tout doucement dans son lit.", expr: "chuchote" }, non: { txt: "Te voilà ! Tu dors comme une marmotte. Et {frere} ronfle tout doucement dans son lit.", expr: "chuchote" } } },
@@ -208,7 +246,7 @@ window.DATA = {
       jumelle: "J'ai pris ta {ordinal} dent. Au château, elle a retrouvé sa jumelle. Elles ne se quittent plus !",
       suite: "J'ai pris ta {ordinal} dent. Au château, elle a rejoint ses sœurs. Elles font la fête !",
     } },
-    "Ton billet de {euros} euros a traversé la Meuse en bateau. Il sèche {lieuBillet} : va vite le chercher !",
+    "Ton billet de {euros} euros a traversé {riviere} en bateau. Il sèche {lieuBillet} : va vite le chercher !",
     { fratrie: { aCote: "Fais un gros bisou à {frere} de ma part.", ailleurs: "Fais un gros bisou à {frere} de ma part.", non: null } },
     "Brosse bien tes dents, le matin et le soir. Les nouvelles vont pousser grandes et fortes.",
     "À la prochaine dent !",
@@ -232,9 +270,9 @@ window.DATA = {
   // ---------- Badges du diplôme ----------
   badges: [
     // obtenu : ce que dit le diplôme quand le badge est gagné ; aGagner : comment l'obtenir
-    { id: "detective", nom: "Détective de nuit", chapitre: 1, obtenu: "Tu as guidé {souris} de son château jusqu'à ta maison.", aGagner: "Guide {souris} de son château jusqu'à ta maison." },
+    { id: "detective", nom: "Détective de nuit", chapitre: 1, obtenu: "Tu as guidé {souris} de son château jusque chez toi.", aGagner: "Guide {souris} de son château jusque chez toi." },
     { id: "exploratrice", nom: "{Exploratrice}", etoiles: 6, obtenu: "Tu as trouvé au moins 6 étoiles cachées dans les images.", aGagner: "Trouve 6 étoiles cachées dans les images du voyage." },
-    { id: "lynx", nom: "Œil de lynx", etoiles: 14, obtenu: "Tu as trouvé les 14 étoiles cachées. Rien ne t'échappe !", aGagner: "Trouve les 14 étoiles cachées dans les images du voyage." },
+    { id: "lynx", nom: "Œil de lynx", etoiles: 16, obtenu: "Tu as trouvé les 16 étoiles cachées. Rien ne t'échappe !", aGagner: "Trouve les 16 étoiles cachées dans les images du voyage." },
     { id: "passechat", nom: "Passe-Chat", chapitre: 2, obtenu: "Tu as aidé {souris} à passer devant {chat} sans le réveiller.", aGagner: "Aide {souris} à passer devant {chat} sans le réveiller." },
     { id: "hibou", nom: "Œil de hibou", chapitre: 3, obtenu: "Tu as regardé le film de la caméra de {souris} jusqu'au bout.", aGagner: "Regarde le film de la caméra de {souris} jusqu'au bout." },
     { id: "amie", nom: "{Amie} de {souris}", chapitre: 4, obtenu: "Tu as lu la lettre que {souris} t'a laissée.", aGagner: "Lis la lettre que {souris} t'a laissée." },

@@ -1,6 +1,6 @@
 // Le formulaire des parents : un « brouillon » souple pendant la saisie, converti en profil vérifié à la fin.
 import {
-  type Billet, type Cachette, type Genre, type Profil, type TypeDoudou,
+  type Billet, type Cachette, type Genre, type Logement, type Profil, type TypeDoudou,
   nomValide, villeValide, verifierProfil, nuitParDefaut, DENTS_DE_LAIT,
 } from '../lib/profil';
 
@@ -19,6 +19,8 @@ export interface Brouillon {
   billet: Billet;
   cachette: Cachette;
   ville: { nom: string; codePostal: string; departement: string } | null;
+  logement: Logement;
+  riviere: string;
   nuit: string;
 }
 
@@ -27,7 +29,7 @@ export function nouveauBrouillon(): Brouillon {
     prenom: '', genre: '', doudouType: 'ours', doudouNom: '',
     fratrie: false, fratriePrenom: '', fratrieGenre: '', fratrieACote: true,
     chat: 'Pantoufle', dentNuit: null, dentsDeja: [], billet: 5, cachette: 'cheminee',
-    ville: null, nuit: nuitParDefaut(),
+    ville: null, logement: 'maison', riviere: '', nuit: nuitParDefaut(),
   };
 }
 
@@ -36,7 +38,7 @@ export function depuisProfil(p: Profil): Brouillon {
     prenom: p.prenom, genre: p.genre, doudouType: p.doudou.type, doudouNom: p.doudou.nom,
     fratrie: !!p.fratrie, fratriePrenom: p.fratrie?.prenom ?? '', fratrieGenre: p.fratrie?.genre ?? '', fratrieACote: p.fratrie?.dortACote ?? true,
     chat: p.chat, dentNuit: p.dents.nuit, dentsDeja: [...p.dents.deja], billet: p.billet, cachette: p.cachette,
-    ville: { ...p.ville }, nuit: p.nuit ?? nuitParDefaut(),
+    ville: { ...p.ville }, logement: p.logement, riviere: p.riviere, nuit: p.nuit ?? nuitParDefaut(),
   };
 }
 
@@ -50,11 +52,15 @@ export function versProfil(b: Brouillon): Profil {
     dents: { nuit: b.dentNuit as number, deja: DENTS_DE_LAIT.filter(d => b.dentsDeja.includes(d)) },
     billet: b.billet, cachette: b.cachette,
     ville: b.ville ? { nom: b.ville.nom.trim(), codePostal: b.ville.codePostal, departement: b.ville.departement } : { nom: '', codePostal: '', departement: '' },
+    logement: b.logement, riviere: b.riviere.trim(),
     nuit: b.nuit,
   };
 }
 
-export const ETAPES = ["L'enfant", 'La dent', 'Le cadeau', 'La maison', 'La nuit'] as const;
+export const ETAPES = ["L'enfant", 'La dent', 'Le cadeau', 'Le logement', 'La nuit'] as const;
+
+// Le cours d'eau s'écrit avec son article : Quenotte dit « Voilà la Seine ! »
+const ARTICLE = /^(la |le |les |l['’])/i;
 
 const NOM_AIDE = 'lettres, espaces, tirets ou apostrophes, 40 caractères au plus';
 
@@ -76,6 +82,9 @@ export function erreursEtape(b: Brouillon, n: number): string[] {
   if (n === 3) {
     if (!b.ville || !villeValide(b.ville.nom.trim())) e.push('Choisissez la ville où habite l\'enfant.');
     if (!nomValide(b.chat.trim())) e.push(`Donnez un nom au chat du voisin (${NOM_AIDE}).`);
+    const r = b.riviere.trim();
+    if (r && !nomValide(r)) e.push(`Le cours d'eau : ${NOM_AIDE}.`);
+    else if (r && !ARTICLE.test(r)) e.push("Écrivez le cours d'eau avec son article : « la Seine », « le Rhône », « l'Ill », « les Gaves ».");
   }
   if (n === 4) {
     if (!/^\d{4}-\d{2}-\d{2}$/.test(b.nuit)) e.push('Choisissez la date de la nuit.');

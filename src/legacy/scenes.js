@@ -1,4 +1,4 @@
-// Chapitre 1 : les six scènes interactives. Chaque scène a un élément obligatoire (ou une chaîne
+// Chapitre 1 : les huit scènes interactives. Chaque scène a un élément obligatoire (ou une chaîne
 // d'éléments) qui débloque « Continuer », et deux éléments bonus qui donnent des étoiles.
 window.SCENES = (function () {
   'use strict';
@@ -7,13 +7,14 @@ window.SCENES = (function () {
   const $ = (s, r) => (r || document).querySelector(s);
   const $$ = (s, r) => Array.prototype.slice.call((r || document).querySelectorAll(s));
   const wait = ms => new Promise(r => setTimeout(r, ms));
-  const DESSINS = { chateau: DEC.chateau, foret: DEC.foret, meuse: DEC.meuse, place: DEC.place, montgolfiere: DEC.montgolfiere, aiglemont: DEC.aiglemont, pantoufle: DEC.pantoufle };
+  const DESSINS = { chateau: DEC.chateau, foret: DEC.foret, meuse: DEC.meuse, place: DEC.place, montgolfiere: DEC.montgolfiere, lievre: DEC.lievre, aiglemont: DEC.aiglemont, pantoufle: DEC.pantoufle };
   const ICONES_FRISE = {
     chateau: '<path d="M5 20V9h3V6h2v3h4V6h2v3h3v11zM10 20v-5h4v5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>',
     foret: '<path d="M12 3l6 9h-3l4 6H5l4-6H6zM12 18v3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>',
     meuse: '<path d="M3 10q3-3 6 0t6 0 6 0M3 15q3-3 6 0t6 0 6 0" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>',
     place: '<path d="M4 20v-8a4 4 0 0 1 8 0v8M12 20v-8a4 4 0 0 1 8 0v8M3 20h18M4 8h16" fill="none" stroke="currentColor" stroke-width="1.8"/>',
     montgolfiere: '<path d="M12 3a7 7 0 0 0-7 7c0 4 4 7 5 9h4c1-2 5-5 5-9a7 7 0 0 0-7-7zM10 19h4v3h-4z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>',
+    lievre: '<path d="M8 21c-3 0-5-2-5-5s2-5 5-5c-1-3-1-6 0-8 1 0 2 3 3 7 0-4 1-7 2-7 1 2 1 5 0 8 3 0 5 2 5 5s-2 5-5 5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>',
     aiglemont: '<path d="M4 11l8-7 8 7v9H4zM10 20v-5h4v5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>',
     pantoufle: '<path d="M6 10l-1-5 4 3h6l4-3-1 5a6 6 0 0 1-12 0z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="10" cy="11" r="1" fill="currentColor"/><circle cx="14" cy="11" r="1" fill="currentColor"/>',
   };
@@ -22,7 +23,7 @@ window.SCENES = (function () {
   let chaine = [], idx = 0, derniere = null, aideT1 = null, aideT2 = null, raf = null, bougeT = null, secretTaps = 0, secretT = null;
   let occupe = false, enSecret = false;
   // Partie utile de chaque décor (en largeur) : sur un écran en hauteur, on recadre dessus plutôt que d'ajouter du ciel
-  const ZONES = { chateau: [260, 890], foret: [100, 930], meuse: [0, 1000], place: [230, 910], montgolfiere: [130, 780], aiglemont: [20, 860], pantoufle: [90, 960] };
+  const ZONES = { chateau: [260, 890], foret: [100, 930], meuse: [0, 1000], place: [230, 910], montgolfiere: [130, 780], lievre: [0, 1000], aiglemont: [20, 860], pantoufle: [90, 960] };
   const heureTexte = h => { const [hh, mm] = h.split(':'); return 'La nuit dernière à ' + parseInt(hh, 10) + ' h ' + mm; };
   // À la fin de certaines scènes, avant le « pont »
   const FIN = { place() { const g = $('.tap[data-el="marionnettiste"]', svg); if (g) g.classList.add('montre'); } };
@@ -60,6 +61,12 @@ window.SCENES = (function () {
       etoile(g) { g.classList.remove('file'); void g.getBBox(); g.classList.add('file'); SON.play('filante'); },
       oies(g) { g.classList.remove('passe'); void g.getBBox(); g.classList.add('passe'); SON.play('oies'); },
     },
+    lievre: {
+      // Trois touchers : il ouvre un œil, dresse les oreilles, se lève (data-etape sur le groupe)
+      lievre(g, sub, etape) { SON.play(etape >= 3 ? 'allume' : 'mmh'); },
+      herisson(g) { g.classList.remove('trottine'); void g.getBBox(); g.classList.add('trottine'); SON.play('buisson'); },
+      epouvantail(g) { g.classList.remove('salue'); void g.getBBox(); g.classList.add('salue'); SON.play('grince'); },
+    },
     aiglemont: {
       girouette(g) { g.classList.remove('tourne'); void g.getBBox(); g.classList.add('tourne'); SON.play('girouette'); },
       lampadaire() { SON.play('gresille'); },
@@ -78,6 +85,12 @@ window.SCENES = (function () {
     meuse: { billet: traversee },
     place: { marionnettiste: () => wait(RM ? 100 : 900) },
     montgolfiere: { bruleur: async () => { svg.classList.add('vole'); SON.play('bruleur'); await wait(RM ? 100 : 3800); } },
+    lievre: { lievre: async () => {
+      // Quenotte grimpe sur son dos, et ils filent en bondissant jusqu'au panneau de la ville
+      svg.classList.add('galop');
+      for (let i = 0; i < 6 && !RM; i++) { SON.play('pas'); await wait(430); }
+      await wait(RM ? 100 : 300);
+    } },
     aiglemont: { girouette: async () => { await wait(RM ? 100 : 2300); svg.classList.add('trouve'); SON.play('allume'); await wait(400); } },
     pantoufle: { yeux: () => wait(RM ? 100 : 900) },
   };

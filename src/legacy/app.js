@@ -291,7 +291,7 @@
     document.body.classList.add('mode-choix');
     const m = window.PROFIL.memoire, exemple = window.PROFIL.profil.prenom;
     root.className = 'scene choix-scene';
-    root.innerHTML = `<section class="choix">
+    root.innerHTML = `<section class="ecran-choix">
   <svg class="choix-ciel" viewBox="0 0 400 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${ETOILES_CHOIX}</svg>
   <div class="choix-haut">
     <img class="choix-logo" src="icones/icone.svg" alt="" width="128" height="128">
@@ -300,7 +300,7 @@
   <nav class="choix-cartes" aria-label="Choisir son parcours">
     ${m ? `<a class="carte-choix reprendre" href="#p=${m.code}"><span class="ic">${A.icone('lanterne')}</span><span><b>Reprendre l'histoire de ${esc(m.prenom)}</b><small>Retrouver Quenotte là où on l'a laissée</small></span></a>` : ''}
     <a class="carte-choix voyage" href="#exemple"><span class="ic">${A.icone('etoile')}</span><span><b>Débuter le voyage avec Quenotte</b><small>Découvre l'histoire de ${esc(exemple)}</small></span></a>
-    <a class="carte-choix parents" href="parents/"><span class="ic">${A.icone('famille')}</span><span><b>Je suis un parent</b><small>Préparer l'histoire de mon enfant</small></span></a>
+    <a class="carte-choix parents" href="parents/"><span class="ic">${A.icone('famille')}</span><span><b>Je suis un parent</b><small>Préparer l'histoire personnalisée pour mon enfant</small></span></a>
   </nav>
 </section>`;
   }
@@ -468,28 +468,20 @@
         [0.6, () => chuchote(D.camera.intro)],
         [1.4, () => det('cheminee', C.cachetteEtiquette, 25, 40, 50, 43, 'bas')],
         [2.6, () => { mv(cs2, 40, 200); mv(bat, 90, 236); SON.play('pas'); }],
-        [4.6, () => det('souris', 'PETITE SOURIS', 10, 66, 20, 20)],
         [6.2, () => { mv(cs2, 70, 56); mv(bat, 120, 92); SON.play('pas'); rm('cheminee'); }],
-        [8.2, () => { mv(bat, 160, 84); det('souris', 'PETITE SOURIS', 17, 18, 20, 20); }],
+        [8.2, () => { mv(bat, 160, 84); }],
         [9.6, () => { det('bateau', 'BATEAU BILLET – SÈCHE ' + lieu, 38, 26, 30, 12); chuchote(D.camera.cheminee); }],
-        [12.5, () => { cs2.classList.add('coucou'); det('souris', 'PETITE SOURIS (COUCOU)', 17, 18, 20, 20); }],
-        [14.5, () => { cs2.classList.remove('coucou'); mv(cs2, -90, 200); SON.play('pas'); rm('souris'); }],
+        [12.5, () => { cs2.classList.add('coucou'); }],
+        [14.5, () => { cs2.classList.remove('coucou'); mv(cs2, -90, 200); SON.play('pas'); rm('bateau'); }],
         [16, () => { salon.setAttribute('hidden', ''); chambre.removeAttribute('hidden'); nom.textContent = 'CAM 2 · CHAMBRE'; dets.innerHTML = ''; SON.play('bip'); chuchote(D.camera.chambre); }],
-        [17, () => det('clem', (C.enfant + ' – DORT').toUpperCase(), 16, 46, 58, 20)],
-        [18.2, () => { if (C.aDoudou) det('nico', (C.poupee + ' – DORT AUSSI').toUpperCase(), 45, 40, 9, 17); }],
-        [18.9, () => { if (C.fratrieACote) det('frere', (C.frere + ' – DORT AUSSI').toUpperCase(), 79, 55, 20, 24, 'gauche'); }],
         [19.6, () => { mv(cs1, 60, 232); SON.play('pas'); }],
-        [21.6, () => det('souris', 'PETITE SOURIS', 14, 76, 20, 20)],
         [23.4, () => { mv(cs1, 62, 122); SON.play('pas'); }],
-        [25.4, () => det('souris', 'PETITE SOURIS', 15, 40, 18, 18, 'bas')],
         [26.6, () => { dent.classList.add('prise'); chuchote(D.camera.dent); }],
         [27.4, () => det('dent', 'DENT – TROUVÉE', 30, 54, 5, 6, 'droite')],
         [29.4, () => { mot.classList.add('pose'); SON.play('papier'); rm('dent'); det('mot', 'PETIT MOT – SOUS L\'OREILLER', 28, 54, 8, 7, 'droite'); }],
-        [31.6, () => { if (C.aDoudou) det('nico', (C.poupee + ' – RONFLE UN PEU').toUpperCase(), 45, 40, 9, 17); }],
-        [33.4, () => { mv(cs1, 220, 236); SON.play('pas'); rm('mot'); det('souris', 'PETITE SOURIS', 55, 78, 18, 18); }],
+        [33.4, () => { mv(cs1, 220, 236); SON.play('pas'); rm('mot'); }],
         [35.4, () => det('lit', 'SOUS LE LIT – MONSTRES : 0', 8, 79, 20, 6)],
-        [37.4, () => det('chaussette', 'CHAUSSETTE – PERDUE DEPUIS MARDI', 4, 86, 12, 10, 'droite')],
-        [39.4, () => { mv(cs1, -90, 236); SON.play('pas'); rm('souris'); chuchote(D.camera.fin); }],
+        [39.4, () => { mv(cs1, -90, 236); SON.play('pas'); rm('lit'); chuchote(D.camera.fin); }],
         [42, () => { cam.classList.add('fin'); $('#btn-revoir', r).hidden = false; SON.play('alerte'); heure('02:52'); NARR.action(T(D.camera.bouton) + ' ' + A.icone('suite'), () => { complete(3); badge('hibou'); show(4); }); }],
       ];
       const finAt = evenements[evenements.length - 1][0];

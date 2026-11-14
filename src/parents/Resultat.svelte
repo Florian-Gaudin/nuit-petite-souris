@@ -47,7 +47,8 @@
     <li>Doudou : {profil.doudou.type === 'aucun' ? 'pas de doudou' : `${profil.doudou.nom} (${DOUDOUS[profil.doudou.type].nom.toLowerCase()})`}</li>
     <li>Dent : {nomDent(profil.dents.nuit)}, {rang === 1 ? '1re' : rang + 'e'} dent</li>
     <li>Cadeau : un billet de {profil.billet} € qui sèchera {lieu}</li>
-    <li>Ville : {profil.ville.nom}</li>
+    <li>Ville : {profil.ville.nom}, {profil.logement === 'appartement' ? 'en appartement' : 'dans une maison'}</li>
+    <li>Cours d'eau : {profil.riviere || 'la rivière (sans nom)'}</li>
     <li>Nuit du {date}</li>
   </ul>
 

@@ -21,7 +21,7 @@ test('le QR de Léo : profil lu, mémorisé, progression séparée', async ({ pa
   await ouvrir(page, '#p=' + code(LEO));
   expect(await origine(page)).toBe('adresse');
   await expect(bandeau(page)).toContainText('Coucou Léo');
-  await expect(page.locator('.choix')).toHaveCount(0);
+  await expect(page.locator('.ecran-choix')).toHaveCount(0);
   // Sans « # » : l'écran de choix propose de reprendre l'histoire de Léo
   await ouvrir(page, './');
   expect(await origine(page)).toBe('choix');

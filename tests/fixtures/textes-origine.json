@@ -32,7 +32,7 @@
     {
       "chemin": [
         "scenes",
-        2,
+        4,
         "elements",
         "billet",
         "demande"
@@ -42,7 +42,7 @@
     {
       "chemin": [
         "scenes",
-        2,
+        4,
         "elements",
         "billet",
         "reponse"
@@ -52,7 +52,7 @@
     {
       "chemin": [
         "scenes",
-        5,
+        6,
         "elements",
         "fenetre",
         "bulle"
@@ -62,7 +62,7 @@
     {
       "chemin": [
         "scenes",
-        6,
+        7,
         "elements",
         "yeux",
         "reponse"

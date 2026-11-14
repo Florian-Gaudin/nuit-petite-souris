@@ -204,8 +204,11 @@ ${etoiles(60, 800, 480, 7)}
 <g fill="#1E3F36"><path d="M0 400l30-90 30 90zM50 400l36-110 36 110zM120 400l30-90 30 90zM660 400l30-90 30 90zM720 400l36-110 36 110z"/></g>
 <g id="chateau0" transform="translate(40,230)"><rect x="0" y="40" width="22" height="80" fill="#F3EFE6"/><rect x="68" y="40" width="22" height="80" fill="#F3EFE6"/><rect x="18" y="66" width="54" height="54" fill="#F3EFE6"/><path d="M11 40l-13 0 13-24 13 24zM79 40l-13 0 13-24 13 24z" fill="#D64045"/><rect x="38" y="86" width="14" height="22" rx="7" fill="#FFC857" class="fenetre"/></g>
 <path d="M0 480V420Q180 350 400 286Q560 240 800 360V480Z" fill="#24483E"/>
-<g id="maison0" transform="translate(-75,-80)"><rect x="470" y="298" width="90" height="62" fill="#F3EFE6"/><path d="M460 298l55-44 55 44z" fill="#D64045"/><rect x="532" y="262" width="12" height="26" fill="#A79E95"/><rect x="496" y="318" width="20" height="22" rx="2" fill="#FFC857" class="fenetre"/><rect x="528" y="330" width="16" height="30" fill="#6E4630"/>
-<g class="fumee" fill="#cfd3ee" opacity=".5"><circle cx="540" cy="250" r="5"/><circle cx="546" cy="238" r="7"/><circle cx="554" cy="224" r="9"/></g></g>
+${window.CONFIG.logement === 'appartement'
+  // Un appartement : un petit immeuble, une seule fenêtre allumée (celle de l'enfant)
+  ? `<g id="maison0" transform="translate(-75,-80)"><rect x="474" y="226" width="84" height="134" fill="#F3EFE6"/><rect x="468" y="218" width="96" height="10" fill="#A79E95"/>${[0, 1, 2].map(l => [0, 1, 2].map(c => `<rect x="${484 + c * 24}" y="${238 + l * 32}" width="16" height="20" rx="2" fill="${l === 1 && c === 0 ? '#FFC857' : '#2b3470'}"${l === 1 && c === 0 ? ' class="fenetre"' : ''}/>`).join('')).join('')}<rect x="506" y="334" width="20" height="26" fill="#6E4630"/></g>`
+  : `<g id="maison0" transform="translate(-75,-80)"><rect x="470" y="298" width="90" height="62" fill="#F3EFE6"/><path d="M460 298l55-44 55 44z" fill="#D64045"/><rect x="532" y="262" width="12" height="26" fill="#A79E95"/><rect x="496" y="318" width="20" height="22" rx="2" fill="#FFC857" class="fenetre"/><rect x="528" y="330" width="16" height="30" fill="#6E4630"/>
+<g class="fumee" fill="#cfd3ee" opacity=".5"><circle cx="540" cy="250" r="5"/><circle cx="546" cy="238" r="7"/><circle cx="554" cy="224" r="9"/></g></g>`}
 <path class="chemin0" d="M85 466 C 165 450, 285 370, 420 292" fill="none" stroke="#D64045" stroke-width="4" stroke-dasharray="10 10" stroke-linecap="round"/>
 <g class="qui"><animateMotion id="am0" dur="2.6s" begin="indefinite" fill="freeze" calcMode="spline" keySplines="0.4 0 0.6 1" keyTimes="0;1" path="M0 0 C 80 -16, 200 -96, 335 -174"/><circle cx="134" cy="455" r="30" fill="url(#glow)"/><use href="#souris-side" x="30" y="392" width="104" height="80"/></g>
 </svg>`;

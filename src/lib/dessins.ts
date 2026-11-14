@@ -21,6 +21,8 @@ export function doudouCam(type: TypeDoudou): string {
     bebe: `<path d="M186 166q12-22 24 0z" ${forme()}/>${tete}<path d="M184 134q11-16 23 0" fill="${FOND2}" ${trait(2)}/><circle cx="195.5" cy="124" r="3" ${forme(1.5)}/><path d="M192 145q3.5 2 7 0" fill="none" ${trait(1.5)} stroke-linecap="round"/>${yeux}${patte}`,
     licorne: `${corps}<path d="M195 112l3 15h-6z" fill="${FOND2}" ${trait(1.6)}/><path d="M186 130l1-9 6 6M205 130l-1-9-6 6" ${forme(1.6)}/>${tete}<path d="M184 132q-6 8-3 16M186 128q-8 2-8 10" fill="none" ${trait(1.6)} stroke-linecap="round"/><ellipse cx="197" cy="144" rx="5" ry="3" fill="${FOND2}" ${trait(1.3)}/>${yeux}${patte}`,
     dinosaure: `${corps}<path d="M184 128l3-7 3 6 3-8 3 8 3-6 3 7" fill="none" ${trait(1.6)} stroke-linejoin="round"/><ellipse cx="196" cy="138" rx="14" ry="11" ${forme()}/><path d="M188 143l2 2 2-2 2 2 2-2 2 2" fill="none" ${trait(1.2)}/>${yeux}${patte}`,
+    // Le linge (lange, serviette) : un tissu doux tout chiffonné contre l'enfant, noué à un coin
+    linge: `<path d="M180 132q9-7 19-3t19-1l-3 31q-10 6-19 2t-15 1z" ${forme()} stroke-linejoin="round"/><path d="M188 134q4 11 1 23M205 132q-3 12 0 25" fill="none" ${trait(1.2)}/><path d="M182 140q15-5 33-2" fill="none" ${trait(1)} stroke-dasharray="3 3"/><circle cx="217" cy="129" r="4.5" ${forme(1.5)}/>`,
     aucun: '',
   };
   return `<g id="doudou">${dessins[type]}</g>`;
@@ -38,9 +40,12 @@ export function silhouetteFenetre(o: { type: TypeDoudou; fratrie: boolean }): st
     bebe: `<path d="M-8-6q8-12 16 0z" ${c}/>`,
     licorne: `<path d="M0-22l2 10h-4z" ${c}/><path d="M-7-9l1-6 4 3zM7-9l-1-6-4 3z" ${c}/>`,
     dinosaure: `<path d="M-6-11l2-5 2 4 2-5 2 5 2-4" fill="none" stroke="#2b2b33" stroke-width="2"/>`,
+    linge: '',
     aucun: '',
   };
   if (o.type === 'aucun') return '<g class="nicolas"></g>';
+  // Le linge : un tissu suspendu, noué à un coin
+  if (o.type === 'linge') return `<g class="nicolas"><path d="M-12-12q12-5 24 0l-3 32q-9 4-18 0z" ${c}/><circle cx="11" cy="-14" r="3.5" ${c}/></g>`;
   return `<g class="nicolas">${oreilles[o.type]}<circle cx="0" cy="-4" r="8" ${c}/><rect x="-8" y="4" width="16" height="20" rx="5" ${c}/><path d="M-8 10l-6 8M8 10l6 8" stroke="#2b2b33" stroke-width="4" stroke-linecap="round"/></g>`;
 }
 

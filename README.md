@@ -14,10 +14,17 @@ Site : **https://florian-gaudin.github.io/nuit-petite-souris/**
 
 Le profil (`src/lib/profil.ts`) voyage après le « # » de l'adresse : `…/nuit-petite-souris/#p=CODE`. Cette partie de l'adresse n'est jamais envoyée au serveur.
 
-- **Contenu** : prénom, fille ou garçon, doudou (type et nom), frère ou sœur, nom du chat, dent de la nuit et dents déjà tombées (les 20 dents de lait), valeur du billet, cachette du cadeau, ville, date de la nuit.
+- **Contenu** : prénom, fille ou garçon, doudou (type et nom, dont le linge : lange ou serviette), frère ou sœur, nom du chat, dent de la nuit et dents déjà tombées (les 20 dents de lait), valeur du billet, cachette du cadeau, ville, maison ou appartement, cours d'eau le plus proche (facultatif), date de la nuit.
+- **Compatibilité** : le logement et le cours d'eau ne sont écrits dans le code que s'ils diffèrent de « maison, sans cours d'eau ». Les QR codes imprimés avant leur ajout restent lisibles, et les progressions déjà enregistrées gardent leur identifiant.
 - **Format** : champs séparés par « | », choix fixes en chiffres, dents en masque, puis compression. Un profil complet tient en 260 caractères environ, soit un QR de 65 modules, lisible en A6.
 - **Sécurité** : chaque valeur est vérifiée ; les noms n'acceptent que lettres, chiffres, espaces et ponctuation simple. Un QR abîmé ou falsifié est ignoré.
 - **Mémoire** : le dernier profil scanné est retenu sur l'appareil ; la progression est mémorisée par profil (plusieurs enfants, plusieurs dents sur la même tablette). Sans profil, l'histoire raconte l'exemple de Clémentine.
+
+## Le voyage en huit scènes
+
+Château → forêt → place Ducale → montgolfière → **le cours d'eau de l'enfant** (le billet devient bateau) → **le lièvre** (à travers les champs jusqu'au panneau de la ville) → arrivée (maison ou immeuble, la girouette) → le chat (jardin ou palier).
+
+Quenotte reste dans les Ardennes jusqu'à la montgolfière ; le cours d'eau peut donc être n'importe lequel, même à quelques kilomètres de chez l'enfant. Sans cours d'eau indiqué, l'histoire dit « la rivière ».
 
 ## L'accueil
 

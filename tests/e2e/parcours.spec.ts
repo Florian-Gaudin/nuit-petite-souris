@@ -1,4 +1,4 @@
-// L'histoire de bout en bout, comme un enfant : les sept scènes, le mini-jeu, la caméra, la lettre, le diplôme
+// L'histoire de bout en bout, comme un enfant : les huit scènes, le mini-jeu, la caméra, la lettre, le diplôme
 import { test, expect, type Page } from '@playwright/test';
 import { ouvrir, toucher } from './aide';
 
@@ -9,6 +9,7 @@ const CIBLES: Record<string, string> = {
   marionnettiste: '.tap[data-el="marionnettiste"] .geant',
   bruleur: '.tap[data-el="bruleur"] .flamme',
   girouette: '.tap[data-el="girouette"] .coq',
+  lievre: '.tap[data-el="lievre"] .corps-lievre',
   yeux: '.tap[data-el="yeux"] .yeux-brillent',
   quenotte: '.tap[data-el="quenotte"] use',
 };
@@ -37,16 +38,16 @@ test('de l\'accueil au diplôme', async ({ page }) => {
   // La carte de France : l'étoile de la ville, puis « En route ! »
   await page.locator('.etoile-ville').click();
   await page.locator('#bandeau-actions button', { hasText: 'En route' }).click();
-  // Les sept scènes du voyage
+  // Les huit scènes du voyage
   const vues: string[] = [];
-  for (let i = 0; i < 7; i++) {
+  for (let i = 0; i < 8; i++) {
     await page.waitForFunction(n => document.querySelectorAll('.pastille.active').length === 1 && (document.querySelector('.pastille.active') as HTMLElement).dataset.n === String(n), i);
     vues.push((await page.locator('svg.decor').getAttribute('class'))!.replace('decor decor-', '').split(' ')[0]);
     const fin = await jouerScene(page);
-    if (i < 6) expect(fin).toContain('Scène suivante'); else expect(fin).toContain('Aider');
+    if (i < 7) expect(fin).toContain('Scène suivante'); else expect(fin).toContain('Aider');
     await page.locator('#bandeau-actions button').click();
   }
-  expect(vues).toEqual(['chateau', 'foret', 'meuse', 'place', 'montgolfiere', 'aiglemont', 'pantoufle']);
+  expect(vues).toEqual(['chateau', 'foret', 'place', 'montgolfiere', 'meuse', 'lievre', 'aiglemont', 'pantoufle']);
 
   // Le mini-jeu : rester appuyé jusqu'à la porte
   await expect(page.locator('#btn-avancer')).toBeVisible();

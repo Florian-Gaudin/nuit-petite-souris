@@ -28,7 +28,7 @@
         <li>Choisissez <b>« Sur l'écran d'accueil »</b>, puis <b>Ajouter</b>.</li>
       </ol>
     {:else if quoi === 'android-autre'}
-      <p>Pour installer l'appli, passez par <b>Chrome</b> : un seul toucher suffira.</p>
+      <p>Pour installer l'appli, passez par <b>Chrome</b> : un seul clic suffira.</p>
       <a class="btn btn-or" href={lienChrome()}>Ouvrir dans Chrome</a>
     {:else if quoi === 'android-chrome'}
       {#if !peutInstaller}

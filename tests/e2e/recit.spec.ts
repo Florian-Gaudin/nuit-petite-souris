@@ -22,8 +22,8 @@ test('Léo : première dent, garçon, sans doudou, 50 € sur le bureau', async 
   await ouvrir(page, '#p=' + code(LEO));
   expect(await rendu(page, ['scenes', 0, 'intro'])).toContain('Elle attend ta toute première dent');
   expect(await rendu(page, ['scenes', 0, 'elements', 'sac', 'bulle'])).toContain('billet de 50 euros');
-  expect(await rendu(page, ['scenes', 2, 'elements', 'billet', 'reponse'])).toContain('je le ferai sécher sur ton bureau.');
-  expect(await rendu(page, ['scenes', 6, 'elements', 'yeux', 'reponse'])).toContain('toute la maison va se réveiller');
+  expect(await rendu(page, ['scenes', 4, 'elements', 'billet', 'reponse'])).toContain('je le ferai sécher sur ton bureau.');
+  expect(await rendu(page, ['scenes', 7, 'elements', 'yeux', 'reponse'])).toContain('toute la maison va se réveiller');
   expect(await rendu(page, ['lettre', 0])).toBe('Cher Léo,');
   expect(await rendu(page, ['badges', 6, 'nom'])).toBe('Première dent');
   await page.goto('certificat/#p=' + code(LEO));
@@ -35,8 +35,8 @@ test('Léo : première dent, garçon, sans doudou, 50 € sur le bureau', async 
 test('Inès : troisième dent, licorne, frère Tom dans la chambre, 10 € sur le radiateur', async ({ page }) => {
   await ouvrir(page, '#p=' + code(INES));
   expect(await rendu(page, ['scenes', 0, 'elements', 'lanterne', 'demande'])).toContain('ta troisième dent est tombée');
-  expect(await rendu(page, ['scenes', 5, 'elements', 'fenetre', 'bulle'])).toContain('Je vois Tom qui dort à côté de toi');
-  expect(await rendu(page, ['scenes', 6, 'elements', 'yeux', 'reponse'])).toContain('ton frère Tom va se réveiller');
+  expect(await rendu(page, ['scenes', 6, 'elements', 'fenetre', 'bulle'])).toContain('Je vois Tom qui dort à côté de toi');
+  expect(await rendu(page, ['scenes', 7, 'elements', 'yeux', 'reponse'])).toContain('ton frère Tom va se réveiller');
   expect(await rendu(page, ['camera', 'cheminee'])).toMatch(/^Voilà ton radiateur, bien éteint\..*au chaud/);
   expect(await rendu(page, ['badges', 6, 'nom'])).toBe('Collectionneuse');
   await page.goto('certificat/#p=' + code(INES));
@@ -44,6 +44,30 @@ test('Inès : troisième dent, licorne, frère Tom dans la chambre, 10 € sur l
   await expect(page.locator('.dip-sign')).toContainText('Paillette');
   await expect(page.locator('.machoire rect[fill="#D64045"]')).toHaveCount(1);
   await expect(page.locator('.machoire rect[fill="#F2A3B5"]')).toHaveCount(2);
+});
+
+test('Jade : appartement au bord de la Seine, doudou linge', async ({ page }) => {
+  const JADE = { ...structuredClone(LEO), prenom: 'Jade', genre: 'f' as const, logement: 'appartement' as const, riviere: 'la Seine', doudou: { type: 'linge' as const, nom: 'Lange' } };
+  await ouvrir(page, '#p=' + code(JADE));
+  expect(await rendu(page, ['scenes', 4, 'titre'])).toBe('La Seine');
+  expect(await rendu(page, ['scenes', 4, 'intro'])).toContain('Voilà la Seine !');
+  expect(await rendu(page, ['scenes', 5, 'pont'])).toContain('C\'est écrit Lyon');
+  expect(await rendu(page, ['scenes', 6, 'intro'])).toContain('Tous les immeubles dorment');
+  expect(await rendu(page, ['scenes', 6, 'elements', 'girouette', 'reponse'])).toContain('Ton immeuble est par là');
+  expect(await rendu(page, ['scenes', 7, 'intro'])).toContain('Le palier est tout calme');
+  expect(await rendu(page, ['scenes', 7, 'elements', 'yeux', 'reponse'])).toContain('Il dort sur le paillasson');
+  expect(await rendu(page, ['camera', 'intro'])).toContain('glissée sous la porte');
+  expect(await rendu(page, ['lettre', 4])).toContain('a traversé la Seine en bateau');
+  // Les dessins : immeubles, palier, panneau de la ville, doudou linge dans la caméra
+  await ouvrir(page, '?chapitre=1&scene=5#p=' + code(JADE));
+  await expect(page.locator('.decor-lievre .panneau text')).toHaveText('Lyon');
+  await ouvrir(page, '?chapitre=1&scene=7#p=' + code(JADE));
+  await expect(page.locator('svg.decor-pantoufle.palier')).toHaveCount(1);
+  await ouvrir(page, '?chapitre=3&t=34#p=' + code(JADE));
+  expect(await page.locator('#doudou').evaluate(g => g.childElementCount)).toBeGreaterThan(2);
+  // Sans cours d'eau indiqué : « la rivière »
+  await ouvrir(page, '#p=' + code({ ...JADE, riviere: '' }));
+  expect(await rendu(page, ['scenes', 4, 'intro'])).toContain('Voilà la rivière !');
 });
 
 test('dessins personnalisés : billet, doudou, cachette, frère dans la caméra', async ({ page }) => {

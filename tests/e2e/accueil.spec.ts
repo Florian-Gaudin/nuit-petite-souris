@@ -26,7 +26,7 @@ test('écran de lancement : le logo au moins un instant, une seule fois par visi
 
 test('par le QR code : directement l\'accueil personnalisé, sans écran de choix', async ({ page }) => {
   await ouvrir(page, '#p=' + code(LEO));
-  await expect(page.locator('.choix')).toHaveCount(0);
+  await expect(page.locator('.ecran-choix')).toHaveCount(0);
   await expect(page.locator('.sous')).toContainText('Lyon');
   await expect(bandeau(page)).toHaveText("Coucou Léo ! Moi, c'est Quenotte, la souris des dents de lait. Cette nuit, j'ai eu besoin de toi. Viens, je te raconte !");
 });
@@ -35,13 +35,13 @@ test('« Changer d\'histoire » ramène à l\'écran de choix', async ({ page })
   // Depuis l'accueil : le lien sous le titre
   await ouvrir(page, '#p=' + code(LEO));
   await page.locator('.retour-choix').click();
-  await expect(page.locator('.choix')).toBeVisible();
+  await expect(page.locator('.ecran-choix')).toBeVisible();
   await expect(page.locator('.carte-choix.reprendre')).toContainText('Léo');
   // En pleine histoire : le menu Préférences
   await ouvrir(page, '?chapitre=1&scene=2#p=' + code(LEO));
   await page.locator('#btn-prefs').click();
   await page.locator('#pref-changer').click();
-  await expect(page.locator('.choix')).toBeVisible();
+  await expect(page.locator('.ecran-choix')).toBeVisible();
   // L'histoire de Léo reprend où elle en était
   await page.locator('.carte-choix.reprendre').click();
   await expect.poll(() => page.evaluate(() => (window as any).APP?.state.scene).catch(() => null)).toBe(2);
