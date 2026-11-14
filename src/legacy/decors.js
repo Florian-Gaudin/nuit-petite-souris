@@ -1,4 +1,4 @@
-// Les huit décors illustrés du chapitre 1 (SVG 1000 × 600, sol vers y = 480).
+// Les neuf décors illustrés du chapitre 1 (SVG 1000 × 600, sol vers y = 480).
 // Chaque élément à toucher est un <g class="tap" data-el="…"> qui commence par un halo.
 window.DECORS = (function () {
   'use strict';
@@ -252,25 +252,45 @@ ${tap('lievre', 'Un lièvre endormi', `${halo(10, -50, 90)}${lievreDessin}`, 'da
 </svg>`;
   }
 
+  // ---------- Au milieu des étoiles : la constellation-dent ----------
+  // Sept étoiles à relier dans l'ordre ; celle à toucher clignote. À la fin, la dent s'illumine.
+  const POINTS_DENT = [[420, 110], [700, 110], [740, 250], [660, 450], [560, 330], [460, 450], [380, 250]];
+  function etoilesDecor(nuit) {
+    const P = POINTS_DENT;
+    const traits = P.map((p, i) => { const q = P[(i + 1) % P.length]; return `<line class="trait trait-${i + 1}" x1="${p[0]}" y1="${p[1]}" x2="${q[0]}" y2="${q[1]}"/>`; }).join('');
+    const points = P.map((p, i) => `<g class="pt pt-${i + 1}" data-sub="${i + 1}" transform="translate(${p[0]},${p[1]})"><circle r="34" fill="transparent"/><circle class="pt-lueur" r="22" fill="url(#halo-or)"/><use href="#etoile5" x="-14" y="-14" width="28" height="28"/><text y="-24" class="pt-num">${i + 1}</text></g>`).join('');
+    const dent = 'M' + P.map(p => p.join(' ')).join('L') + 'Z';
+    return `<svg class="decor decor-etoiles" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet" role="img" aria-label="La montgolfière au milieu des étoiles, sept étoiles à relier">
+${A.fond(nuit, 97, null)}
+<rect width="1000" height="600" fill="#0e1330" opacity=".35"/>${A.etoiles(120, 1000, 600, 98)}
+${tap('lune', 'La lune', `${halo(860, 470, 62)}<g class="lune-visage"><circle cx="860" cy="470" r="42" fill="#FFF4D6"/><circle cx="846" cy="462" r="5" fill="#c9b98f"/><path class="oeil-lune" d="M868 458q6-5 12 0" fill="none" stroke="#8a7a52" stroke-width="3" stroke-linecap="round"/><circle class="oeil-lune-ouvert" cx="874" cy="460" r="4" fill="#8a7a52"/><path d="M846 484q12 8 24 0" fill="none" stroke="#8a7a52" stroke-width="3" stroke-linecap="round"/></g>`)}
+${tap('mouton', 'Un nuage en forme de mouton', `${halo(230, 190, 70)}<g class="mouton"><g fill="#cfd3ee" opacity=".9"><circle cx="200" cy="190" r="26"/><circle cx="230" cy="176" r="30"/><circle cx="262" cy="190" r="26"/><circle cx="232" cy="206" r="26"/></g><ellipse cx="284" cy="186" rx="14" ry="11" fill="#2b3470"/><circle cx="288" cy="183" r="2" fill="#fff"/><path d="M212 228v14M248 228v14" stroke="#2b3470" stroke-width="5" stroke-linecap="round"/></g>`)}
+<g class="ballon-flotte" transform="translate(190,575) scale(.82)"><g class="flotte-in">${enveloppe}${nacelle}</g></g>
+${tap('constellation', 'Les étoiles à relier', `<circle class="halo" cx="${P[0][0]}" cy="${P[0][1]}" r="46" fill="url(#halo-or)"/><path class="dent-ciel" d="${dent}"/><g class="traits">${traits}</g>${points}`, 'data-etape="0"')}
+</svg>`;
+  }
+
   // ---------- 5. La montgolfière, au-dessus des Ardennes ----------
+  // ---------- La montgolfière (dessin partagé : la scène du décollage et celle des étoiles) ----------
+  // Enveloppe rayée rouge et jaune, aux couleurs de l'écharpe de Quenotte
+  const enveloppe = '<g class="enveloppe">'
+    + '<path d="M-40 -95C-112 -150-112 -300 0 -312C112 -300 112 -150 40 -95Z" fill="#D64045" stroke="#9a2a32" stroke-width="3"/>'
+    + '<path d="M-14 -95C-40 -160-36 -292 0 -312C36 -292 40 -160 14 -95Z" fill="#FFC857"/>'
+    + '<path d="M-31 -96C-80 -160-80 -290-18 -309M31 -96C80 -160 80 -290 18 -309" fill="none" stroke="#FFC857" stroke-width="7"/>'
+    + '<ellipse cx="0" cy="-305" rx="22" ry="7" fill="#9a2a32" opacity=".6"/>'
+    + '<path d="M-60 -250C-72 -210-66 -160-50 -130" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".25"/>'
+    + '</g>';
+  const nacelle = '<path d="M-26 -42L-38 -94M26 -42L38 -94M-10 -42L-14 -94M10 -42L14 -94" stroke="#6b4a32" stroke-width="2"/>'
+    + '<rect x="-12" y="-104" width="24" height="10" rx="2" fill="#7d8597"/>'
+    + '<g class="flamme"><path d="M0 -150C-14 -128-10 -110 0 -104C10 -110 14 -128 0 -150Z" fill="#FFC857"/><path d="M0 -136C-6 -124-4 -112 0 -108C4 -112 6 -124 0 -136Z" fill="#fff4d6"/></g>'
+    + A.souris(-46, -88, 92)
+    + '<rect x="-30" y="-44" width="60" height="44" rx="5" fill="#B07A4F" stroke="#6b4a32" stroke-width="3"/>'
+    + '<path d="M-30 -30h60M-30 -16h60M-15 -44v44M0 -44v44M15 -44v44" stroke="#8B5A3C" stroke-width="2" opacity=".7"/>';
+
   function montgolfiere(nuit) {
     let lumieresCharleville = '', lumieresVille = '';
     for (let i = 0; i < 12; i++) lumieresCharleville += '<rect x="' + (40 + i * 13) + '" y="' + (486 - (i % 3) * 6) + '" width="4" height="5" fill="#FFC857"/>';
     for (let i = 0; i < 7; i++) lumieresVille += '<rect x="' + (850 + i * 14) + '" y="' + (452 - (i % 2) * 5) + '" width="4" height="5" fill="#FFC857"/>';
-    // Enveloppe rayée rouge et jaune, aux couleurs de l'écharpe de Quenotte
-    const enveloppe = '<g class="enveloppe">'
-      + '<path d="M-40 -95C-112 -150-112 -300 0 -312C112 -300 112 -150 40 -95Z" fill="#D64045" stroke="#9a2a32" stroke-width="3"/>'
-      + '<path d="M-14 -95C-40 -160-36 -292 0 -312C36 -292 40 -160 14 -95Z" fill="#FFC857"/>'
-      + '<path d="M-31 -96C-80 -160-80 -290-18 -309M31 -96C80 -160 80 -290 18 -309" fill="none" stroke="#FFC857" stroke-width="7"/>'
-      + '<ellipse cx="0" cy="-305" rx="22" ry="7" fill="#9a2a32" opacity=".6"/>'
-      + '<path d="M-60 -250C-72 -210-66 -160-50 -130" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".25"/>'
-      + '</g>';
-    const nacelle = '<path d="M-26 -42L-38 -94M26 -42L38 -94M-10 -42L-14 -94M10 -42L14 -94" stroke="#6b4a32" stroke-width="2"/>'
-      + '<rect x="-12" y="-104" width="24" height="10" rx="2" fill="#7d8597"/>'
-      + '<g class="flamme"><path d="M0 -150C-14 -128-10 -110 0 -104C10 -110 14 -128 0 -150Z" fill="#FFC857"/><path d="M0 -136C-6 -124-4 -112 0 -108C4 -112 6 -124 0 -136Z" fill="#fff4d6"/></g>'
-      + A.souris(-46, -88, 92)
-      + '<rect x="-30" y="-44" width="60" height="44" rx="5" fill="#B07A4F" stroke="#6b4a32" stroke-width="3"/>'
-      + '<path d="M-30 -30h60M-30 -16h60M-15 -44v44M0 -44v44M15 -44v44" stroke="#8B5A3C" stroke-width="2" opacity=".7"/>';
     return '<svg class="decor decor-montgolfiere" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Une montgolfière rouge et jaune au-dessus des Ardennes, la nuit">'
       + A.fond(nuit, 81, { x: 860, y: 96, r: 30 })
       // le paysage vu d'en haut : collines, forêt, la Meuse qui brille, Charleville et la ville d'arrivée au loin
@@ -291,7 +311,7 @@ ${tap('lievre', 'Un lièvre endormi', `${halo(10, -50, 90)}${lievreDessin}`, 'da
       + '</svg>';
   }
 
-  return { chateau, foret, meuse, place, montgolfiere, lievre, aiglemont, pantoufle };
+  return { chateau, foret, meuse, place, montgolfiere, etoiles: etoilesDecor, POINTS_DENT, lievre, aiglemont, pantoufle };
 })();
 
 // Module ES (chargé par src/main.ts) : le contenu reste un script qui expose ses objets sur window.

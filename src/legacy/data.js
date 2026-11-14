@@ -19,7 +19,7 @@ window.DATA = {
   },
   origineVille: { txt: "Ce soir, c'est ta dent que je viens chercher, à {ville} !", expr: "clin", bouton: "En route !" },
 
-  // ---------- Chapitre 1 : huit scènes ----------
+  // ---------- Chapitre 1 : neuf scènes ----------
   // Chaque scène : une bulle d'arrivée (intro), un élément obligatoire (ou une chaîne d'éléments)
   // avec une demande avant le toucher et une réponse après, deux éléments bonus, puis le « pont ».
   scenes: [
@@ -95,6 +95,22 @@ window.DATA = {
         },
         etoile: { bulle: { txt: "Une étoile filante ! Vite, fais un vœu. Moi, j'ai fait le mien : que ta dent arrive bien au château.", expr: "surprise" } },
         oies: { bulle: { txt: "Des oies sauvages volent à côté de moi. Elles cancanent « Bon voyage, {souris} ! » et filent vers le sud.", expr: "surprise" } },
+      },
+      pont: { txt: "La montgolfière monte, monte… jusqu'au milieu des étoiles !", expr: "surprise" },
+    },
+    {
+      // La constellation : un décor entièrement consacré au mini-jeu (relier les étoiles qui dessinent une dent)
+      id: "etoiles", titre: "Au milieu des étoiles", heure: "02:00", ambiance: "etoiles",
+      intro: { txt: "Que c'est beau, là-haut ! La montgolfière flotte au milieu des étoiles. Regarde : certaines brillent plus fort que les autres…", expr: "surprise" },
+      oblig: ["constellation"], bonus: ["lune", "mouton"],
+      elements: {
+        constellation: {
+          demande: { txt: "Relie-les du doigt, en commençant par celle qui clignote. On dirait qu'elles veulent dessiner quelque chose !", expr: "clin" },
+          etapes: ["Une…", "Deux…", "Trois…", "Quatre…", "Cinq…", "Six…", "Sept… Oh ! Regarde ce qu'elles dessinent !"],
+          reponse: { txt: "Une dent ! Les étoiles dessinent une dent dans le ciel : c'est le signe que je suis sur la bonne route. Merci, {enfant} !", expr: "joie" },
+        },
+        lune: { bulle: { txt: "La lune me fait un clin d'œil ! Elle veille sur tous les enfants qui dorment, et sur toi aussi.", expr: "clin" } },
+        mouton: { bulle: { txt: "Un nuage en forme de mouton ! Les enfants qui comptent les moutons pour s'endormir, c'est lui qu'ils voient.", expr: "sourire" } },
       },
       pont: { txt: "La montgolfière redescend tout doucement… J'aperçois {riviere} qui brille sous la lune !", expr: "sourire" },
     },
@@ -282,7 +298,7 @@ window.DATA = {
     // obtenu : ce que dit le diplôme quand le badge est gagné ; aGagner : comment l'obtenir
     { id: "detective", nom: "Détective de nuit", chapitre: 1, obtenu: "Tu as guidé {souris} de son château jusque chez toi.", aGagner: "Guide {souris} de son château jusque chez toi." },
     { id: "exploratrice", nom: "{Exploratrice}", etoiles: 6, obtenu: "Tu as trouvé au moins 6 étoiles cachées dans les images.", aGagner: "Trouve 6 étoiles cachées dans les images du voyage." },
-    { id: "lynx", nom: "Œil de lynx", etoiles: 16, obtenu: "Tu as trouvé les 16 étoiles cachées. Rien ne t'échappe !", aGagner: "Trouve les 16 étoiles cachées dans les images du voyage." },
+    { id: "lynx", nom: "Œil de lynx", etoiles: 18, obtenu: "Tu as trouvé les 18 étoiles cachées. Rien ne t'échappe !", aGagner: "Trouve les 18 étoiles cachées dans les images du voyage." },
     { id: "passechat", nom: "Passe-Chat", chapitre: 2, obtenu: "Tu as aidé {souris} à passer devant {chat} sans le réveiller.", aGagner: "Aide {souris} à passer devant {chat} sans le réveiller." },
     { id: "hibou", nom: "Œil de hibou", chapitre: 3, obtenu: "Tu as regardé le film de la caméra de {souris} jusqu'au bout.", aGagner: "Regarde le film de la caméra de {souris} jusqu'au bout." },
     { id: "amie", nom: "{Amie} de {souris}", chapitre: 4, obtenu: "Tu as lu la lettre que {souris} t'a laissée.", aGagner: "Lis la lettre que {souris} t'a laissée." },

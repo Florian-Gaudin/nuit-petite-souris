@@ -153,7 +153,12 @@ input,textarea,[contenteditable]{-webkit-user-select:text;user-select:text;-webk
 @keyframes scintille-etoile{0%,100%{opacity:.35}50%{opacity:1}}
 
 /* ---------- Chapitre 1 : frise et décors ---------- */
-.frise{display:flex;align-items:center;justify-content:center;gap:4px;margin:0 0 8px}
+/* La frise des scènes : centrée si elle tient, sinon elle défile et glisse jusqu'à la scène en cours */
+.frise{display:flex;align-items:center;gap:4px;margin:0 0 8px;padding:6px 14px;overflow-x:auto;scrollbar-width:none;--g:#000;--d:#000;-webkit-mask-image:linear-gradient(90deg,var(--g),#000 26px,#000 calc(100% - 26px),var(--d));mask-image:linear-gradient(90deg,var(--g),#000 26px,#000 calc(100% - 26px),var(--d))}
+/* Le fondu seulement du côté où il reste des scènes à voir */
+.frise.plus-gauche{--g:transparent}.frise.plus-droite{--d:transparent}
+.frise::-webkit-scrollbar{display:none}
+.frise>:first-child{margin-left:auto}.frise>:last-child{margin-right:auto}
 .pastille{width:40px;height:40px;border-radius:50%;border:2px solid #3d4a95;background:var(--nuit3);color:var(--muet);display:grid;place-items:center;padding:0;cursor:pointer;flex:none;transition:transform .2s}
 .pastille svg{width:24px;height:24px}
 .pastille.faite{background:var(--rouge);border-color:var(--rouge);color:#fff}
@@ -251,6 +256,33 @@ input,textarea,[contenteditable]{-webkit-user-select:text;user-select:text;-webk
 @keyframes brume{from{transform:translateX(-20px)}to{transform:translateX(20px)}}
 
 /* Meuse */
+/* La constellation : l'étoile à toucher clignote, les traits se dessinent, la dent s'illumine */
+.decor-etoiles .pt{cursor:pointer}
+.decor-etoiles .pt use{transform-box:fill-box;transform-origin:center;opacity:.55;transition:opacity .3s}
+.decor-etoiles .pt-lueur{opacity:0;transition:opacity .3s}
+.decor-etoiles .pt-num{font:800 18px var(--display);fill:#cfd3ee;text-anchor:middle;opacity:.7}
+.decor-etoiles .pt.prochaine use{opacity:1;animation:battement 1.1s ease-in-out infinite}
+.decor-etoiles .pt.prochaine .pt-lueur{opacity:.8}
+.decor-etoiles .pt.allume use{opacity:1}
+.decor-etoiles .pt.allume .pt-lueur{opacity:.55}
+.decor-etoiles .pt.allume .pt-num{opacity:0}
+.decor-etoiles .trait{stroke:#FFF4D6;stroke-width:4;stroke-linecap:round;stroke-dasharray:400;stroke-dashoffset:400;opacity:.85;transition:stroke-dashoffset .7s ease-out}
+.decor-etoiles .trait.on{stroke-dashoffset:0}
+.decor-etoiles .dent-ciel{fill:#FFF4D6;opacity:0;transition:opacity 1.2s}
+.decor-etoiles .tap.dessine .dent-ciel{opacity:.22}
+.decor-etoiles .tap.dessine .trait{stroke:#FFC857;filter:drop-shadow(0 0 6px #FFC857)}
+.decor-etoiles .tap.fait .halo{display:none}
+.decor-etoiles .flotte-in{animation:flotte 4s ease-in-out infinite}
+@keyframes flotte{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+.decor-etoiles .oeil-lune-ouvert{opacity:1}.decor-etoiles .oeil-lune{opacity:0}
+.decor-etoiles .tap.clin .oeil-lune{animation:clin-lune 1.4s ease-in-out}
+.decor-etoiles .tap.clin .oeil-lune-ouvert{animation:clin-lune-ouvert 1.4s ease-in-out}
+@keyframes clin-lune{0%,100%{opacity:0}20%,70%{opacity:1}}
+@keyframes clin-lune-ouvert{0%,100%{opacity:1}20%,70%{opacity:0}}
+.decor-etoiles .mouton{transform-box:fill-box;transform-origin:center}
+.decor-etoiles .tap.saute .mouton{animation:saute-mouton 1s ease-out}
+@keyframes saute-mouton{0%,100%{transform:translateY(0)}40%{transform:translateY(-30px) rotate(-6deg)}}
+
 /* Le lièvre : il dort, ouvre un œil, dresse les oreilles, puis file au galop avec Quenotte sur le dos */
 .decor-lievre .oeil-ouvert,.decor-lievre .oreilles-hautes{opacity:0;transition:opacity .3s}
 .decor-lievre .tap[data-etape="1"] .oeil-ouvert,.decor-lievre .tap[data-etape="2"] .oeil-ouvert,.decor-lievre .tap[data-etape="3"] .oeil-ouvert,.decor-lievre.galop .oeil-ouvert{opacity:1}
