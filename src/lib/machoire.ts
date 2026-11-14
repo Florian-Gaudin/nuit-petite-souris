@@ -21,3 +21,7 @@ export function svgMachoire(p: Profil): string {
 
 declare global { interface Window { MACHOIRE: (p: Profil) => string } }
 window.MACHOIRE = svgMachoire;
+// Pour l'épilogue (la boîte à trésors) et l'album des dents
+declare global { interface Window { PLACES_DENTS: typeof PLACES; NOM_DENT: typeof nomDent } }
+window.PLACES_DENTS = PLACES;
+window.NOM_DENT = nomDent;

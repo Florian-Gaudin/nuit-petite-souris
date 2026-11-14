@@ -349,7 +349,7 @@ ${A.souris(sx, sy, sw, 'class="quenotte"')}
       + '</svg>';
   }
 
-  return { chateau, foret, meuse, place, montgolfiere, etoiles: etoilesDecor, POINTS_DENT, lievre, aiglemont, fenetre: fenetreDecor, pantoufle };
+  return { ballonSVG: () => enveloppe + nacelle, chateau, foret, meuse, place, montgolfiere, etoiles: etoilesDecor, POINTS_DENT, lievre, aiglemont, fenetre: fenetreDecor, pantoufle };
 })();
 
 // Module ES (chargé par src/main.ts) : le contenu reste un script qui expose ses objets sur window.

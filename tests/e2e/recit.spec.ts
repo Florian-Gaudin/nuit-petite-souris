@@ -152,3 +152,17 @@ test("la grande fenêtre embuée : on frotte la buée, la chambre apparaît", as
   await expect(page.locator('.tap[data-el="vitre"].fait')).toHaveCount(1);
   await expect(page.locator('#bandeau-texte')).toContainText("C'est bien ta chambre");
 });
+
+test("la constellation : l'étoile suivante clignote, le compte s'affiche, la dent s'illumine", async ({ page }) => {
+  await ouvrir(page, '?reset=1#exemple');
+  await ouvrir(page, '?chapitre=1&scene=4#exemple');
+  for (let i = 0; i < 20 && !(await page.locator('.tap[data-el="constellation"].cible').count()); i++) {
+    if (await page.locator('#bandeau.attente .bandeau-suite').isVisible()) await page.locator('.bandeau-suite').click();
+    await page.waitForTimeout(250);
+  }
+  await page.locator('.pt-1 use').click();
+  await expect(page.locator('.pt-2')).toHaveClass(/prochaine/);
+  await expect(page.locator('#bandeau-texte')).toContainText('Une…');
+  for (let n = 2; n <= 7; n++) { await page.waitForFunction(() => !(window as any).NARR.lit); await page.locator(`.pt-${n} use`).click(); }
+  await expect(page.locator('.tap[data-el="constellation"]')).toHaveClass(/dessine/);
+});

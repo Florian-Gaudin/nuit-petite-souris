@@ -308,6 +308,26 @@ window.DATA = {
   ps: "P.-S. J'ai laissé un bout de fromage à {chat}. Ne lui dis pas que c'est moi.",
   boutonLettre: "J'ai trouvé {monCadeau} !",
 
+  // ---------- L'épilogue : le retour au château, puis la boîte à trésors ----------
+  epilogue: {
+    intro: { txt: "Pendant que tu lis ma lettre, je rentre au château en montgolfière. Aide-moi à éviter les nuages : glisse ton doigt vers le haut ou vers le bas !", expr: "joie" },
+    evite: ["Ouf, évité !", "Bravo, on passe !", "Encore un, et c'est le château !"],
+    pouf: { txt: "Pouf ! Un nuage tout doux… Ce n'est rien, on continue !", expr: "clin" },
+    arrivee: { txt: "Voilà mon château ! Ouvrons vite ma boîte à trésors.", expr: "joie" },
+    bouton: "Ouvrir la boîte à trésors",
+    boite: { variante: {
+      premiere: { txt: "Voici ma boîte à trésors. Fais glisser ta dent jusqu'à sa place, celle qui brille !", expr: "sourire" },
+      jumelle: { txt: "Voici ma boîte à trésors : tes autres dents t'attendent déjà. Fais glisser la nouvelle jusqu'à sa place, celle qui brille !", expr: "sourire" },
+      suite: { txt: "Voici ma boîte à trésors : tes autres dents t'attendent déjà. Fais glisser la nouvelle jusqu'à sa place, celle qui brille !", expr: "sourire" },
+    } },
+    rangee: { variante: {
+      premiere: { txt: "Elle est à sa place ! La toute première dent de ma boîte à trésors, à ton nom.", expr: "joie" },
+      jumelle: { txt: "Elle a retrouvé sa jumelle ! Elles brillent côte à côte dans ma boîte à trésors.", expr: "joie" },
+      suite: { txt: "Elle a rejoint ses sœurs ! Ta collection brille de plus en plus.", expr: "joie" },
+    } },
+    diplome: "Voir mon diplôme",
+  },
+
   // ---------- Chapitre 5 : le diplôme ----------
   diplome: { txt: "Bravo {enfant} ! Voici ton diplôme officiel, signé de ma patte. Tu peux l'imprimer avec un grand.", expr: "joie" },
   billetTrouve: { txt: "Tu l'as {trouvee} ? {Il} est {sec} maintenant. {Il} est à toi !", expr: "joie" },

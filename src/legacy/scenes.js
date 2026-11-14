@@ -74,7 +74,7 @@ window.SCENES = (function () {
         if (etape >= P.length) { const t = $(`.trait-${P.length}`, g); if (t) t.classList.add('on'); g.classList.add('dessine'); SON.play('fanfare'); return; }
         const suivant = P[etape], h = $('.halo', g);
         if (h) { h.setAttribute('cx', suivant[0]); h.setAttribute('cy', suivant[1]); }
-        $('.pt', g).forEach(p => p.classList.toggle('prochaine', p.classList.contains(`pt-${etape + 1}`)));
+        $$('.pt', g).forEach(p => p.classList.toggle('prochaine', p.classList.contains(`pt-${etape + 1}`)));
       },
       lune(g) { g.classList.remove('clin'); void g.getBBox(); g.classList.add('clin'); SON.play('ronds'); },
       mouton(g) { g.classList.remove('saute'); void g.getBBox(); g.classList.add('saute'); SON.play('mmh'); },

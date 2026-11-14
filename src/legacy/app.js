@@ -620,7 +620,92 @@
 
   // ---------- Chapitre 5 : le certificat ----------
   const Ch5 = {
+    // L'épilogue, joué une fois avant le premier diplôme : le retour en montgolfière, puis la boîte à trésors
+    epilogueHTML() {
+      return `<section class="ch ch5 epilogue"><h2 class="decor-titre"><span class="decor-heure">La nuit dernière à 3 h 20</span>Retour au château</h2><div class="epi-wrap" id="epi"></div></section>`;
+    },
+    retour(r) {
+      const self = this, zone = $('#epi', r);
+      heure('03:20'); MUS.ambiance('montgolfiere');
+      zone.innerHTML = `<svg class="retour" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet" role="img" aria-label="La montgolfière rentre au château entre les nuages">
+${A.fond(State.nuit, 111, { x: 880, y: 90, r: 28 })}
+<path d="M0 560Q250 520 500 545T1000 530V600H0Z" fill="#1E3F36"/><rect x="-600" y="598" width="2200" height="900" fill="#1E3F36"/>
+<g class="ret-chateau" transform="translate(1250,560)"><rect x="-70" y="-150" width="40" height="150" fill="#F3EFE6"/><rect x="30" y="-150" width="40" height="150" fill="#F3EFE6"/><rect x="-32" y="-100" width="64" height="100" fill="#F3EFE6"/><path d="M-76-150h52l-26-44zM24-150h52l-26-44z" fill="#D64045"/><rect x="-10" y="-60" width="20" height="30" rx="10" fill="#FFC857"/></g>
+${[0, 1, 2].map(i => `<g class="nuage" data-n="${i}" transform="translate(-400,0)"><g fill="#cfd3ee" opacity=".92"><circle cx="-40" cy="0" r="36"/><circle cx="0" cy="-18" r="44"/><circle cx="44" cy="0" r="36"/><ellipse cx="0" cy="16" rx="80" ry="24"/></g></g>`).join('')}
+<g class="ret-ballon" transform="translate(230,330) scale(.75)">${window.DECORS.ballonSVG()}</g>
+</svg>`;
+      const svg = $('svg.retour', zone), ballon = $('.ret-ballon', svg), chateau = $('.ret-chateau', svg), nuages = $$('.nuage', svg);
+      NARR.dire(B(D.epilogue.intro));
+      const borne = v => Math.max(140, Math.min(460, v));
+      let y = 330, cible = 330, k = 0, x = 1150, ny = 220, touche = false, dernier = null, doigtT = 0, base = null, fini = false;
+      const point = e => { const pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); };
+      // Le doigt (n'importe où sur l'image) ou l'inclinaison du téléphone
+      svg.addEventListener('pointerdown', e => { e.preventDefault(); SON.unlock(); cible = borne(point(e).y); doigtT = performance.now(); });
+      svg.addEventListener('pointermove', e => { if (e.buttons || e.pointerType === 'touch') { cible = borne(point(e).y); doigtT = performance.now(); } });
+      self.incline = e => { if (e.beta == null || performance.now() - doigtT < 2000) return; if (base == null) base = e.beta; cible = borne(330 + (e.beta - base) * 9); };
+      window.addEventListener('deviceorientation', self.incline);
+      const nouveauNuage = () => { x = 1150; touche = false; ny = 160 + Math.random() * 280; nuages[k].classList.remove('pouf'); };
+      nouveauNuage();
+      const arrivee = () => {
+        fini = true; nuages.forEach(n => n.setAttribute('transform', 'translate(-400,0)'));
+        chateau.classList.add('arrive'); cible = 400;
+        setTimeout(async () => {
+          SON.play('allume'); await NARR.dire(B(D.epilogue.arrivee));
+          NARR.action(A.icone('etoile') + ' ' + T(D.epilogue.bouton), () => { SON.play('clic'); NARR.action(null); fondu(() => self.boite(r), 600); });
+        }, RM ? 100 : 1800);
+      };
+      const boucle = ts => {
+        if (dernier == null) dernier = ts; const dt = Math.min(60, ts - dernier); dernier = ts;
+        y += (cible - y) * Math.min(1, dt / 160);
+        ballon.setAttribute('transform', `translate(230,${y.toFixed(1)}) scale(.75)`);
+        if (!fini) {
+          x -= dt * 0.38;
+          nuages[k].setAttribute('transform', `translate(${x.toFixed(0)},${ny.toFixed(0)})`);
+          // Un nuage touché : « pouf », il s'efface (on ne perd jamais)
+          if (!touche && Math.abs(x - 230) < 95 && Math.abs(ny - (y - 120)) < 80) { touche = true; nuages[k].classList.add('pouf'); SON.play('plouf'); NARR.dire(B(D.epilogue.pouf), { vite: true }); }
+          if (x < -160) {
+            if (!touche) NARR.dire({ txt: T(D.epilogue.evite[Math.min(k, 2)]), expr: 'joie' }, { vite: true });
+            k++;
+            if (k >= nuages.length) arrivee(); else nouveauNuage();
+          }
+        }
+        self.raf = requestAnimationFrame(boucle);
+      };
+      self.raf = requestAnimationFrame(boucle);
+    },
+    boite(r) {
+      cancelAnimationFrame(this.raf); window.removeEventListener('deviceorientation', this.incline);
+      const zone = $('#epi', r), places = window.PLACES_DENTS, P = window.PROFIL.profil;
+      const deja = new Set(P.dents.deja), cible = places.find(t => t.d === P.dents.nuit);
+      const dent = t => `<g transform="translate(${t.x.toFixed(1)} ${t.y.toFixed(1)}) rotate(${t.angle.toFixed(1)})"><rect x="${-t.l / 2}" y="${-t.h / 2}" width="${t.l}" height="${t.h}" rx="7" ${t.d === P.dents.nuit ? 'class="place-nuit" fill="none" stroke="#FFC857" stroke-width="2.5" stroke-dasharray="5 4"' : deja.has(t.d) ? 'class="deja" fill="#fff" stroke="#F2A3B5" stroke-width="2"' : 'fill="none" stroke="#6b4a6e" stroke-width="1.5" opacity=".6"'}/></g>`;
+      zone.innerHTML = `<svg class="boite" viewBox="0 0 340 400" role="img" aria-label="La boîte à trésors : fais glisser ta dent jusqu'à sa place">
+<rect x="6" y="20" width="328" height="290" rx="22" fill="#6E4630" stroke="#4a2e1e" stroke-width="5"/><rect x="20" y="34" width="300" height="262" rx="16" fill="#3a1f3d"/>
+<g class="paillettes" fill="#FFC857">${[[40, 60], [300, 70], [60, 270], [290, 260], [170, 150]].map(([a, b]) => `<circle cx="${a}" cy="${b}" r="2"/>`).join('')}</g>
+${places.map(dent).join('')}
+<text x="170" y="155" text-anchor="middle" font-family="Baloo 2, sans-serif" font-size="15" font-weight="800" fill="#FFC857">${esc(C.enfant)}</text>
+<g class="dent-a-ranger" tabindex="0" role="button" aria-label="Ta dent : fais-la glisser jusqu'à sa place" transform="translate(170,355)"><circle r="34" fill="url(#glow)"/><use href="#dent" x="-20" y="-20" width="40" height="40"/></g>
+</svg>`;
+      const svg = $('svg.boite', zone), d = $('.dent-a-ranger', svg), place = $('.place-nuit', svg);
+      NARR.dire(B(D.epilogue.boite));
+      const point = e => { const pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); };
+      let tire = false, range = false;
+      const pose = (px, py) => d.setAttribute('transform', `translate(${px.toFixed(1)},${py.toFixed(1)})`);
+      const ranger = () => {
+        range = true; tire = false; pose(cible.x, cible.y); d.classList.add('rangee'); place.classList.add('rangee');
+        SON.play('fanfare'); NARR.dire(B(D.epilogue.rangee));
+        NARR.action(A.icone('suite') + ' ' + T(D.epilogue.diplome), () => { State.epilogue = true; save(); SON.play('clic'); fondu(() => show(5), 700); });
+      };
+      d.addEventListener('pointerdown', e => { if (range) return; e.preventDefault(); tire = true; SON.unlock(); SON.play('clic'); try { d.setPointerCapture(e.pointerId); } catch (er) { } });
+      d.addEventListener('pointermove', e => { if (!tire) return; const p = point(e); pose(p.x, p.y); });
+      d.addEventListener('pointerup', e => {
+        if (!tire || range) return; tire = false;
+        const p = point(e);
+        if (Math.hypot(p.x - cible.x, p.y - cible.y) < 34) ranger(); else { pose(170, 355); SON.play('toc'); }
+      });
+      d.addEventListener('keydown', e => { if (!range && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); ranger(); } });
+    },
     render() {
+      if (!State.epilogue) return this.epilogueHTML();
       const qs = 'badges=' + encodeURIComponent(State.badges.join(',')) + '&secret=' + (State.secret ? 1 : 0) + '&nuit=' + State.nuit + '&etoiles=' + nbEtoiles();
       return `<section class="ch ch5">
   <h2 class="decor-titre"><span class="decor-heure">La nuit dernière à 3 h 40</span>Bravo ${esc(C.enfant)} !</h2>
@@ -633,6 +718,7 @@
 </section>`;
     },
     mount(r) {
+      if (!State.epilogue) { this.retour(r); return; }
       heure('03:40'); MUS.ambiance('diplome');
       const premiere = !State.fini;
       complete(5); if (premiere) { State.fini = true; save(); }
@@ -643,6 +729,7 @@
       window.CERTIFICAT.brancher($('.diplome-wrap', r));
       $('#btn-revoir5', r).onclick = () => show(1, { scene: 0 });
     },
+    unmount() { cancelAnimationFrame(this.raf); window.removeEventListener('deviceorientation', this.incline); },
   };
 
   const Chapitres = [Ch0, Ch1, Ch2, Ch3, Ch4, Ch5];

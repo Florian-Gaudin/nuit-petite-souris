@@ -40,6 +40,7 @@ async function jouerScene(page: Page): Promise<string> {
 }
 
 test('de l\'accueil au diplôme', async ({ page }) => {
+  test.setTimeout(420_000); // toute l'histoire, mini-jeux compris
   await ouvrir(page, '?reset=1#exemple');
   await page.locator('#bandeau-actions button').click(); // « Viens, je te raconte ! »
   // La carte de France : l'étoile de la ville, puis « En route ! »
@@ -87,6 +88,16 @@ test('de l\'accueil au diplôme', async ({ page }) => {
   await page.locator('#btn-tout').click();
   await expect(page.locator('.papier')).toContainText('Chère Clémentine');
   await page.locator('#bandeau-actions button', { hasText: 'billet' }).click();
+  // L'épilogue : le retour en montgolfière (les nuages passent), puis la dent rangée dans la boîte à trésors
+  await page.locator('#bandeau-actions button', { hasText: 'boîte à trésors' }).click({ timeout: 60_000 });
+  await expect(page.locator('#voile-noir.on')).toHaveCount(0); // la fin du fondu au noir
+  await page.waitForTimeout(300);
+  const dent = (await page.locator('.dent-a-ranger').boundingBox())!, place = (await page.locator('.place-nuit').boundingBox())!;
+  await page.mouse.move(dent.x + dent.width / 2, dent.y + dent.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(place.x + place.width / 2, place.y + place.height / 2, { steps: 10 });
+  await page.mouse.up();
+  await page.locator('#bandeau-actions button', { hasText: 'Voir mon diplôme' }).click();
 
   // Le diplôme
   await expect(page.locator('.diplome .dip-nom')).toHaveText('Clémentine');

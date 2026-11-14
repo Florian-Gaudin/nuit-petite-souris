@@ -681,3 +681,21 @@ html{touch-action:pan-x pan-y}
 .decor-fenetre .escargot-in{transform-box:view-box}
 .decor-fenetre .tap.rampe .escargot-in{animation:rampe 2.4s ease-in-out}
 @keyframes rampe{0%,100%{transform:translateX(0)}50%{transform:translateX(-24px)}}
+
+/* ---------- L'épilogue : le retour en montgolfière, la boîte à trésors ---------- */
+.epilogue{flex:1;min-height:0;display:flex;flex-direction:column}
+.epi-wrap{flex:1 1 auto;min-height:200px;display:flex;align-items:center;justify-content:center;border-radius:16px;overflow:hidden;border:2px solid #2e3768;background:var(--nuit)}
+.retour{width:100%;height:100%;touch-action:none}
+.retour .nuage.pouf{opacity:0;transition:opacity .5s}
+.retour .ret-chateau{transition:transform 2s cubic-bezier(.3,0,.3,1)}
+.retour .ret-chateau.arrive{transform:translate(780px,560px)}
+.boite{width:100%;height:100%;max-height:70vh;touch-action:none}
+.boite .place-nuit{animation:clignote-place 1.2s ease-in-out infinite}
+@keyframes clignote-place{0%,100%{opacity:.4}50%{opacity:1}}
+.boite .place-nuit.rangee{animation:none;opacity:0}
+.boite .deja{filter:drop-shadow(0 0 4px #F2A3B5)}
+.boite .dent-a-ranger{cursor:grab}
+.boite .dent-a-ranger.rangee{filter:drop-shadow(0 0 8px #FFC857)}
+/* L'épilogue occupe toute la hauteur, comme le mini-jeu (le diplôme, lui, défile) */
+.scene.ch-5:has(.epilogue){height:calc(100vh - var(--fil-h) - 1px - env(safe-area-inset-top,0px));height:calc(100dvh - var(--fil-h) - 1px - env(safe-area-inset-top,0px));padding-bottom:calc(var(--bandeau-h) + 10px);display:flex;flex-direction:column;overflow:hidden}
+.epilogue .decor-titre{flex:none;margin:2px 0 6px}
