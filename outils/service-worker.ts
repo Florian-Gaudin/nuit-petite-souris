@@ -32,11 +32,27 @@ self.addEventListener('activate', e => {
     .then(() => self.clients.claim()));
 });
 
+// Une promesse qui abandonne au bout de ms millisecondes (réseau trop lent : on prend la mémoire)
+const avecDelai = (p, ms) => new Promise((ok, ko) => {
+  const t = setTimeout(() => ko(new Error('réseau trop lent')), ms);
+  p.then(r => { clearTimeout(t); ok(r); }, err => { clearTimeout(t); ko(err); });
+});
+
 self.addEventListener('fetch', e => {
   const req = e.request;
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
   if (url.origin !== location.origin) return; // suggestions de communes : toujours en ligne
+  // Les pages : le réseau d'abord (la dernière version s'affiche tout de suite), la mémoire hors connexion.
+  // Elles désignent des fichiers dont le nom change à chaque version : ceux-là peuvent venir de la mémoire.
+  if (req.mode === 'navigate') {
+    e.respondWith(avecDelai(fetch(req), 4000).then(rep => {
+      if (rep.ok) { const copie = rep.clone(); caches.open(CACHE).then(c => c.put(url.origin + url.pathname, copie)); }
+      return rep;
+    }).catch(() => caches.match(req, { ignoreSearch: true, ignoreVary: true })
+      .then(enCache => enCache || caches.match('./index.html', { ignoreVary: true }))));
+    return;
+  }
   e.respondWith(
     // ignoreVary : les scripts du site sont demandés en mode « cors » (en-tête Origin) alors qu'ils ont été
     // mis en cache sans ; une réponse « Vary: Origin » ne serait sinon jamais retrouvée hors connexion.
