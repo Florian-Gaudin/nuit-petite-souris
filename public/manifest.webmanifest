@@ -3,6 +3,7 @@
   "short_name": "Petite Souris",
   "description": "Le voyage de Quenotte, la Petite Souris, raconté pour Clémentine.",
   "lang": "fr",
+  "id": "./",
   "start_url": "./",
   "scope": "./",
   "display": "fullscreen",

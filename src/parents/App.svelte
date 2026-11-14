@@ -8,6 +8,7 @@
   import SchemaDents from './SchemaDents.svelte';
   import ChoixVille from './ChoixVille.svelte';
   import Resultat from './Resultat.svelte';
+  import Installer from './Installer.svelte';
 
   const CLE_BROUILLON = 'souris.parents.brouillon';
 
@@ -202,6 +203,8 @@
     {:else if profil}
       <div class="carte"><Resultat {profil} modifier={() => aller(0)} /></div>
     {/if}
+
+    <Installer />
 
     <p class="vie-privee">Rien n'est enregistré sur un serveur : les informations voyagent dans le QR code, et restent sur cet appareil.</p>
   </main>

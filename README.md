@@ -26,6 +26,14 @@ Le profil (`src/lib/profil.ts`) voyage après le « # » de l'adresse : `…/nui
 - **Par le QR code ou le lien des parents** (`#p=…`) : directement l'accueil personnalisé (prénom, ville, date).
 - **La carte de France** (`src/lib/carte.ts`) : entre l'accueil et le château, hors de la frise des scènes. Quenotte explique qu'elle part toujours de son château des Ardennes ; l'enfant touche l'étoile de sa ville (chef-lieu de son département, encadré pour l'outre-mer) et un chemin courbe en pointillés se dessine jusqu'à elle.
 
+## Installer l'appli sans store
+
+Le site s'installe comme une appli (icône, plein écran, hors connexion), gratuitement. L'espace parents explique comment faire selon l'appareil (`src/parents/Installer.svelte`, `src/lib/installation.ts`) :
+
+- **Chrome, Edge** : bouton « Installer l'appli ».
+- **iPhone, iPad** : Safari, Partager, « Sur l'écran d'accueil ».
+- **Autres navigateurs Android** (Samsung Internet…) : ils fabriquent une appli que Play Protect bloque (« Appli non sécurisée bloquée »). L'aide propose d'ouvrir la page dans Chrome.
+
 ## Les adresses
 
 Chaque page a son dossier, sans « .html » : `…/parents/`, `…/mot/`, `…/certificat/`. Les anciennes adresses (`parents.html`…) sont redirigées par `public/404.html`.
