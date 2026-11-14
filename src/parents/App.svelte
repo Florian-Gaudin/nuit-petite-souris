@@ -230,6 +230,6 @@
 
     <Installer />
 
-    <p class="vie-privee">Rien n'est enregistré sur un serveur : les informations voyagent dans le QR code, et restent sur cet appareil.</p>
+    <p class="vie-privee">Aucune donnée personnelle n'est collectée : tout reste sur votre appareil. Les informations voyagent uniquement dans le QR code obtenu à la fin du formulaire.</p>
   </main>
 {/if}
