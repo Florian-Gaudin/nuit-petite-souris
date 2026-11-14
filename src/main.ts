@@ -9,6 +9,7 @@ import { installerProfil } from './lib/profilCourant';
 import { activerHorsLigne } from './lib/horsLigne';
 import { noterLancement, estAppliInstallee } from './lib/installation';
 import { donPossible } from './lib/don';
+import { PROFIL_EXEMPLE } from './lib/profil';
 
 // L'écran de lancement (index.html) reste au moins 1,2 s, puis s'efface en fondu
 const DUREE_LANCEMENT = 1200;
@@ -26,6 +27,7 @@ activerHorsLigne();
 noterLancement(); // lancée depuis l'icône de l'écran d'accueil ?
 (window as Window & { APPLI_INSTALLEE?: boolean }).APPLI_INSTALLEE = estAppliInstallee();
 (window as Window & { DON_POSSIBLE?: boolean }).DON_POSSIBLE = donPossible();
+(window as Window & { PRENOM_EXEMPLE?: string }).PRENOM_EXEMPLE = PROFIL_EXEMPLE.prenom;
 
 try {
   await initStockage();

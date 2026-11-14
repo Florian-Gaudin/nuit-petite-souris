@@ -90,6 +90,7 @@
     appli: !!window.APPLI_INSTALLEE, // voir src/lib/installation.ts
     actif() { return !!(document.fullscreenElement || document.webkitFullscreenElement); },
     entrer() {
+      try { sessionStorage.setItem('souris.plein', '1'); } catch (e) { }
       const el = document.documentElement;
       try {
         const p = el.requestFullscreen ? el.requestFullscreen({ navigationUI: 'hide' }) : (el.webkitRequestFullscreen && el.webkitRequestFullscreen());
@@ -127,7 +128,12 @@
     menu.onclick = e => e.stopPropagation();
     document.addEventListener('click', () => { if (!menu.hidden) fermerMenu(); });
     $('#pref-son').onclick = () => { SON.unlock(); const m = SON.toggle(); majPrefs(); toast(m ? 'Son et musique coupés' : 'Son et musique activés'); };
-    if ($('#pref-plein')) $('#pref-plein').onclick = () => { if (PLEIN.actif()) PLEIN.sortir(); else PLEIN.entrer(); fermerMenu(); };
+    if ($('#pref-plein')) $('#pref-plein').onclick = () => {
+      if (PLEIN.actif()) { PLEIN.sortir(); try { sessionStorage.removeItem('souris.plein'); } catch (e) { } } else PLEIN.entrer();
+      fermerMenu();
+    };
+    // Changer d'histoire : sur place, sans recharger la page (le plein écran est gardé)
+    $('#pref-changer').onclick = e => { fermerMenu(); changerHistoire(e); };
     // Recommencer : un second toucher confirme (pour éviter un effacement par erreur)
     $('#pref-reset').onclick = () => {
       const b = $('#pref-reset');
@@ -183,6 +189,7 @@
         svgC.setAttribute('preserveAspectRatio', 'xMidYMax meet');
       };
       this.cadre(); window.addEventListener('resize', this.cadre);
+      $('.retour-choix', r).onclick = changerHistoire;
       if (window.PROFIL.surprise) {
         // Trop tôt : Quenotte n'est pas encore passée. Pas de bouton pour commencer.
         $('.ch0', r).classList.add('surprise');
@@ -289,7 +296,7 @@
     + '<path d="M330 120a34 34 0 1 0 0 68a26 26 0 1 1 0-68z" fill="#FFF4D6" opacity=".9"/>';
   function afficherChoix() {
     document.body.classList.add('mode-choix');
-    const m = window.PROFIL.memoire, exemple = window.PROFIL.profil.prenom;
+    const m = window.PROFIL.memoire, exemple = window.PRENOM_EXEMPLE;
     root.className = 'scene choix-scene';
     root.innerHTML = `<section class="ecran-choix">
   <svg class="choix-ciel" viewBox="0 0 400 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${ETOILES_CHOIX}</svg>
@@ -304,6 +311,28 @@
   </nav>
   ${window.DON_POSSIBLE ? `<p class="don-accueil"><span class="phrase">Gratuite pour toutes les familles, l'appli vit grâce à vos petits dons.</span> <a href="parents/#don"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z" fill="currentColor"/></svg>Faire un don</a></p>` : ''}
 </section>`;
+    // Sans recharger la page (le plein écran est gardé) quand l'histoire choisie est déjà chargée ;
+    // sinon le lien change l'adresse et la page se recharge avec le bon profil
+    const surPlace = (hash, origine) => e => {
+      e.preventDefault();
+      try { history.replaceState(null, '', location.pathname + hash); } catch (er) { }
+      window.PROFIL.origine = origine;
+      document.body.classList.remove('mode-choix');
+      show(0);
+    };
+    const exempleCharge = window.PROFIL.origine === 'choix' || window.PROFIL.origine === 'exemple';
+    if (exempleCharge) $('.carte-choix.voyage', root).onclick = surPlace('#exemple', 'exemple');
+    if (m && m.code === window.PROFIL.code) $('.carte-choix.reprendre', root).onclick = surPlace('#p=' + m.code, 'adresse');
+  }
+
+  // Retour à l'écran de choix, sur place : l'histoire en cours devient « Reprendre l'histoire de… »
+  function changerHistoire(e) {
+    if (e) e.preventDefault();
+    if (courant && courant.unmount) { try { courant.unmount(); } catch (er) { } }
+    courant = null; SON.ronfleStop(); NARR.action(null);
+    if (window.PROFIL.origine === 'adresse' || window.PROFIL.origine === 'memoire') window.PROFIL.memoire = { prenom: window.PROFIL.profil.prenom, code: window.PROFIL.code };
+    try { history.replaceState(null, '', location.pathname); } catch (er) { }
+    afficherChoix(); window.scrollTo(0, 0);
   }
 
   // ---------- Chapitre 1 : le voyage en six scènes ----------

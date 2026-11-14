@@ -20,6 +20,9 @@ h1,h2,h3{line-height:1.15;margin:0;text-wrap:balance}
 p{margin:.4rem 0}
 .ico{width:1.25em;height:1.25em;flex:none}
 [hidden]{display:none!important}
+/* Pas de sélection de texte (un appui long ouvrait parfois la recherche Google « Toucher pour rechercher ») ; les champs de saisie restent sélectionnables */
+html,body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+input,textarea,[contenteditable]{-webkit-user-select:text;user-select:text;-webkit-touch-callout:default}
 :focus-visible{outline:3px solid var(--lanterne);outline-offset:2px}
 
 /* ---------- Fil rouge (en-tête) ---------- */

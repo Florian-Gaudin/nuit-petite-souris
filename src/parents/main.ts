@@ -6,8 +6,10 @@ import '../lib/plateforme';
 import { initStockage } from '../lib/stockage';
 import App from './App.svelte';
 import { activerHorsLigne } from '../lib/horsLigne';
+import { pleinEcranAuPremierToucher } from '../lib/pleinEcran';
 
 activerHorsLigne();
+pleinEcranAuPremierToucher();
 
 await initStockage();
 mount(App, { target: document.getElementById('app')! });

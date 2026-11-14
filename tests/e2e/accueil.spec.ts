@@ -93,3 +93,41 @@ test("l'écran de choix tient sans défiler, avec ses trois cartes et le don", a
     expect(bas, `${w}×${h} : un élément dépasse`).toBeLessThanOrEqual(fenetre);
   }
 });
+
+test('débuter, changer d\'histoire, reprendre : sur place, sans recharger (le plein écran est gardé)', async ({ page }) => {
+  await ouvrir(page, '#p=' + code(LEO));                 // Léo est mémorisé
+  await ouvrir(page, '?reset=1');                        // l'écran de choix, l'exemple chargé en décor
+  await page.evaluate(() => { (window as any).MARQUE = 1; });
+  const marque = () => page.evaluate(() => (window as any).MARQUE);
+  // Débuter le voyage : l'exemple est déjà chargé
+  await page.locator('.carte-choix.voyage').click();
+  await expect(bandeau(page)).toContainText('Coucou Clémentine');
+  expect(new URL(page.url()).hash).toBe('#exemple');
+  expect(await marque()).toBe(1);
+  // Changer d'histoire, puis revenir : toujours la même page
+  await page.locator('.retour-choix').click();
+  await expect(page.locator('.ecran-choix')).toBeVisible();
+  await expect(page.locator('.carte-choix.voyage')).toContainText('Clémentine');
+  expect(await marque()).toBe(1);
+  // Reprendre Léo : un autre profil, la page se recharge (seul cas inévitable)
+  await page.locator('.carte-choix.reprendre').click();
+  await expect(bandeau(page)).toContainText('Coucou Léo');
+  // Puis changer d'histoire et reprendre Léo : sur place cette fois
+  await page.evaluate(() => { (window as any).MARQUE = 2; });
+  await page.locator('.retour-choix').click();
+  await expect(page.locator('.carte-choix.reprendre')).toContainText('Léo');
+  await expect(page.locator('.carte-choix.voyage')).toContainText('Clémentine');
+  await page.locator('.carte-choix.reprendre').click();
+  await expect(bandeau(page)).toContainText('Coucou Léo');
+  expect(await marque()).toBe(2);
+});
+
+test('les textes ne se sélectionnent pas (pas de « Toucher pour rechercher »), les champs de saisie si', async ({ page }) => {
+  await ouvrir(page, '#p=' + code(LEO));
+  expect(await page.evaluate(() => getComputedStyle(document.querySelector('#bandeau-texte')!).userSelect)).toBe('none');
+  await page.goto('parents/');
+  await page.evaluate(() => sessionStorage.setItem('souris.parents', '1'));
+  await page.reload();
+  expect(await page.evaluate(() => getComputedStyle(document.querySelector('h1')!).userSelect)).toBe('none');
+  expect(await page.evaluate(() => getComputedStyle(document.querySelector('input[type=text]')!).userSelect)).toBe('text');
+});
