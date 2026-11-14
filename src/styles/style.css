@@ -606,6 +606,15 @@ body.mode-choix .fil,body.mode-choix .bandeau{display:none}
 .voyageuse{opacity:0}
 .origine.vole .voyageuse{opacity:1}
 
+/* ---------- Les saisons ---------- */
+.saison{pointer-events:none}
+.saison .p{animation:chute linear infinite}
+.saison-automne .p{animation-name:chute-feuille;transform-box:fill-box;transform-origin:center}
+.saison-ete .p{animation:luciole ease-in-out infinite alternate}
+@keyframes chute{from{transform:translate(0,var(--h0))}to{transform:translate(var(--x),var(--h1))}}
+@keyframes chute-feuille{from{transform:translate(0,var(--h0)) rotate(0)}to{transform:translate(var(--x),var(--h1)) rotate(540deg)}}
+@keyframes luciole{0%{opacity:.15;transform:translate(0,0)}50%{opacity:1}100%{opacity:.3;transform:translate(calc(var(--x) / 3),-18px)}}
+
 /* ---------- Mouvement réduit ---------- */
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}

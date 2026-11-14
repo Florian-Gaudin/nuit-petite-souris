@@ -179,6 +179,8 @@ window.SCENES = (function () {
     courant = n; sc = D.scenes[n];
     root.innerHTML = frise(n) + `<div class="decor-wrap" id="decor-wrap"><h2 class="decor-titre"><span class="decor-heure">${heureTexte(sc.heure)}</span>${T(sc.titre)}</h2><div class="secrets" id="secrets" title="Secrets découverts dans cette image"><svg viewBox="0 0 24 24"><use href="#etoile5"/></svg><span id="secrets-n"></span></div>${DESSINS[sc.id](ctx.state.nuit)}</div>`;
     wrap = $('#decor-wrap', root); svg = $('svg.decor', root);
+    // La saison de la nuit (flocons, pétales, lucioles, feuilles), sauf à l'intérieur (le palier d'un immeuble)
+    if (!svg.classList.contains('palier')) svg.insertAdjacentHTML('beforeend', A.saisonSVG(ctx.state.nuit, 1000, 600));
     svg.insertAdjacentHTML('beforeend', `<g class="main-aide" aria-hidden="true"><use href="#main" x="-20" y="-6" width="60" height="70"/></g>`);
     ctx.heure(sc.heure); MUS.ambiance(sc.ambiance);
     cadre(); window.addEventListener('resize', cadre);

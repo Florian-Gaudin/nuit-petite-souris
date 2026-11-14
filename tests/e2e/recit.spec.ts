@@ -123,3 +123,13 @@ test("le conseil des secrets ne s'affiche pas si l'enfant a déjà trouvé une �
   expect(vus.some(t => t.includes('Allume ma lanterne'))).toBe(true);
   expect(vus.some(t => t.includes('Un conseil'))).toBe(false);
 });
+
+test('les saisons suivent la date de la nuit, et restent dehors', async ({ page }) => {
+  for (const [nuit, saison] of [['2026-12-24', 'hiver'], ['2026-04-10', 'printemps'], ['2026-07-14', 'ete'], ['2026-10-31', 'automne']]) {
+    await ouvrir(page, '?chapitre=1&scene=0#p=' + code({ ...structuredClone(LEO), nuit }));
+    await expect(page.locator(`svg.decor .saison-${saison}`)).toHaveCount(1);
+  }
+  // Sur le palier d'un immeuble, pas de neige
+  await ouvrir(page, '?chapitre=1&scene=7#p=' + code({ ...structuredClone(LEO), nuit: '2026-12-24', logement: 'appartement' }));
+  await expect(page.locator('svg.decor .saison')).toHaveCount(0);
+});

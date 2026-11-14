@@ -216,6 +216,7 @@ ${window.CONFIG.logement === 'appartement'
   ? `<g id="maison0" transform="translate(-75,-80)"><rect x="474" y="226" width="84" height="134" fill="#F3EFE6"/><rect x="468" y="218" width="96" height="10" fill="#A79E95"/>${[0, 1, 2].map(l => [0, 1, 2].map(c => `<rect x="${484 + c * 24}" y="${238 + l * 32}" width="16" height="20" rx="2" fill="${l === 1 && c === 0 ? '#FFC857' : '#2b3470'}"${l === 1 && c === 0 ? ' class="fenetre"' : ''}/>`).join('')).join('')}<rect x="506" y="334" width="20" height="26" fill="#6E4630"/></g>`
   : `<g id="maison0" transform="translate(-75,-80)"><rect x="470" y="298" width="90" height="62" fill="#F3EFE6"/><path d="M460 298l55-44 55 44z" fill="#D64045"/><rect x="532" y="262" width="12" height="26" fill="#A79E95"/><rect x="496" y="318" width="20" height="22" rx="2" fill="#FFC857" class="fenetre"/><rect x="528" y="330" width="16" height="30" fill="#6E4630"/>
 <g class="fumee" fill="#cfd3ee" opacity=".5"><circle cx="540" cy="250" r="5"/><circle cx="546" cy="238" r="7"/><circle cx="554" cy="224" r="9"/></g></g>`}
+${saisonSVG(nuit, 800, 480)}
 <path class="chemin0" d="M85 466 C 165 450, 285 370, 420 292" fill="none" stroke="#D64045" stroke-width="4" stroke-dasharray="10 10" stroke-linecap="round"/>
 <g class="qui"><animateMotion id="am0" dur="2.6s" begin="indefinite" fill="freeze" calcMode="spline" keySplines="0.4 0 0.6 1" keyTimes="0;1" path="M0 0 C 80 -16, 200 -96, 335 -174"/><circle cx="134" cy="455" r="30" fill="url(#glow)"/><use href="#souris-side" x="30" y="392" width="104" height="80"/></g>
 </svg>`;
@@ -324,7 +325,33 @@ ${etoiles(40, 1000, 500, 5)}
     return `<svg viewBox="0 0 300 200">${fondT}<rect x="60" y="60" width="180" height="110" rx="10" fill="#F3EFE6"/><rect x="60" y="150" width="180" height="20" fill="#A79E95"/><use href="#dent" x="92" y="86" width="50" height="50"/><use href="#dent" x="158" y="86" width="50" height="50"/><path d="M150 128l-7-7a4 4 0 0 1 7-5 4 4 0 0 1 7 5z" fill="#D64045"/><text x="150" y="80" font-family="Baloo 2" font-weight="800" font-size="12" fill="#1F2235" text-anchor="middle">salle des jumelles</text></svg>`;
   }
 
-  return { symboles, icone, badgeIcone, portrait, cielSVG, jeuSVG, camSVG, enveloppeSVG, tableau13, lune, luneSVG, etoiles, fond, souris, pointSouris, CIEL };
+  // ---------- Les saisons : selon le mois de la nuit, des flocons, des pétales, des lucioles ou des feuilles ----------
+  function saison(nuit) {
+    const m = nuit ? parseInt(String(nuit).slice(5, 7), 10) : (new Date().getMonth() + 1);
+    return m === 12 || m <= 2 ? 'hiver' : m <= 5 ? 'printemps' : m <= 8 ? 'ete' : 'automne';
+  }
+  // Repère w × h (sol vers y = 0,8 h). Chaque particule a sa place fixe (mouvement réduit) et son trajet animé.
+  function saisonSVG(nuit, w, h) {
+    const s = saison(nuit);
+    let graine = 11;
+    const hasard = () => { graine = (graine * 16807) % 2147483647; return graine / 2147483647; };
+    let p = '';
+    const n = s === 'ete' ? 16 : 34;
+    for (let i = 0; i < n; i++) {
+      const x = Math.round(hasard() * w), y = Math.round(s === 'ete' ? h * (0.45 + hasard() * 0.4) : hasard() * h * 0.95);
+      const duree = (s === 'hiver' ? 7 : s === 'ete' ? 3 : 9) + hasard() * 5, retard = -hasard() * duree;
+      // Trajet de chute : depuis le haut de l'image jusqu'en bas, en dérivant un peu
+      const style = `--h0:${-(y + 60)}px;--h1:${h - y + 30}px;--x:${Math.round((hasard() - 0.5) * 120)}px;animation-duration:${duree.toFixed(1)}s;animation-delay:${retard.toFixed(1)}s`;
+      const r = 1 + hasard();
+      if (s === 'hiver') p += `<circle class="p" cx="${x}" cy="${y}" r="${(2.2 * r).toFixed(1)}" fill="#fff" opacity="${(0.55 + hasard() * 0.4).toFixed(2)}" style="${style}"/>`;
+      else if (s === 'printemps') p += `<ellipse class="p" cx="${x}" cy="${y}" rx="${(4 * r).toFixed(1)}" ry="${(2.4 * r).toFixed(1)}" fill="${hasard() > 0.5 ? '#F2A3B5' : '#FBD3DC'}" style="${style}"/>`;
+      else if (s === 'automne') p += `<path class="p" d="M${x} ${y}q6-8 12 0q-6 8-12 0z" fill="${['#C9833A', '#B05E3B', '#D9A441'][i % 3]}" style="${style}"/>`;
+      else p += `<g class="p" style="${style}"><circle cx="${x}" cy="${y}" r="9" fill="url(#glow)"/><circle cx="${x}" cy="${y}" r="2.4" fill="#F4F19A"/></g>`;
+    }
+    return `<g class="saison saison-${s}" aria-hidden="true">${p}</g>`;
+  }
+
+  return { saison, saisonSVG, symboles, icone, badgeIcone, portrait, cielSVG, jeuSVG, camSVG, enveloppeSVG, tableau13, lune, luneSVG, etoiles, fond, souris, pointSouris, CIEL };
 })();
 
 // Module ES (chargé par src/main.ts) : le contenu reste un script qui expose ses objets sur window.
