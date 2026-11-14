@@ -325,6 +325,29 @@ ${etoiles(40, 1000, 500, 5)}
     return `<svg viewBox="0 0 300 200">${fondT}<rect x="60" y="60" width="180" height="110" rx="10" fill="#F3EFE6"/><rect x="60" y="150" width="180" height="20" fill="#A79E95"/><use href="#dent" x="92" y="86" width="50" height="50"/><use href="#dent" x="158" y="86" width="50" height="50"/><path d="M150 128l-7-7a4 4 0 0 1 7-5 4 4 0 0 1 7 5z" fill="#D64045"/><text x="150" y="80" font-family="Baloo 2" font-weight="800" font-size="12" fill="#1F2235" text-anchor="middle">salle des jumelles</text></svg>`;
   }
 
+  // ---------- La lampe de poche : la maison dans le noir, le doigt promène la lumière ----------
+  function lampeSVG() {
+    const C = window.CONFIG, nom = C.enfant;
+    const porte = (x, plaque) => `<g transform="translate(${x},470)"><rect x="-60" y="-250" width="120" height="250" rx="6" fill="#8B5A3C" stroke="#5c3a24" stroke-width="4"/><rect x="-42" y="-228" width="84" height="90" rx="4" fill="#7a4e33"/><rect x="-42" y="-120" width="84" height="100" rx="4" fill="#7a4e33"/><circle cx="44" cy="-118" r="6" fill="#C9A227"/>${plaque || ''}</g>`;
+    const plaque = `<g class="plaque"><rect x="-54" y="-212" width="108" height="46" rx="10" fill="#FFF6E0" stroke="#C9A227" stroke-width="3"/><text x="0" y="-196" text-anchor="middle" font-family="Baloo 2, sans-serif" font-size="13" font-weight="700" fill="#6b5a2a">Chambre de</text><text x="0" y="-176" text-anchor="middle" font-family="Baloo 2, sans-serif" font-size="${nom.length > 10 ? 15 : 19}" font-weight="800" fill="#D64045">${nom}</text></g>`;
+    return `<svg class="lampe" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet" role="img" aria-label="La maison dans le noir : trouve la porte de ta chambre">
+<defs><radialGradient id="g-trou"><stop offset=".55" stop-color="#000"/><stop offset="1" stop-color="#fff"/></radialGradient>
+<mask id="m-lampe" maskUnits="userSpaceOnUse" x="-1000" y="-1000" width="3000" height="2600"><rect x="-1000" y="-1000" width="3000" height="2600" fill="#fff"/><circle class="trou" cx="150" cy="430" r="130" fill="url(#g-trou)"/></mask></defs>
+<rect x="-1000" y="-1000" width="3000" height="1470" fill="#C9B79A"/><rect x="-1000" y="470" width="3000" height="1130" fill="#8a6a4e"/><path d="M-1000 470h3000" stroke="#6b4f39" stroke-width="6"/><path d="M0 470h1000" stroke="#6b4f39" stroke-width="6"/>
+<g fill="#b8a585">${[60, 300, 540, 780].map(x => `<rect x="${x}" y="0" width="6" height="470"/>`).join('')}</g>
+<g transform="translate(70,470)"><path d="M10 0v-210M-20 -200h60" stroke="#5c3a24" stroke-width="7" stroke-linecap="round"/><path d="M-26-196q-14 40 4 90h34q10-50-8-90z" fill="#3E7C8F"/><path d="M30-196q20 30 6 70" fill="none" stroke="#D64045" stroke-width="10" stroke-linecap="round"/></g>
+<g transform="translate(180,470)"><path d="M-30 0q0-20 22-20h18v20zM12 0q0-18 20-18h16v18z" fill="#2b3470"/></g>
+${porte(330, '<path d="M-20-200h40" stroke="#C9A227" stroke-width="4"/>')}
+<g transform="translate(470,250)"><rect x="-70" y="-60" width="140" height="100" fill="#FFF6E0" stroke="#8B5A3C" stroke-width="8"/><path d="M-60 30l40-50 30 35 20-20 40 35" fill="none" stroke="#3E7C8F" stroke-width="6"/><circle cx="30" cy="-30" r="12" fill="#FFC857"/></g>
+<g transform="translate(560,470)"><rect x="-30" y="-36" width="60" height="30" rx="6" fill="#D64045"/><circle cx="-16" cy="-4" r="9" fill="#2B2B33"/><circle cx="16" cy="-4" r="9" fill="#2B2B33"/></g>
+${porte(720, plaque)}
+<g transform="translate(900,470)"><path d="M-24 0l6-50h36l6 50z" fill="#B05E3B"/><path d="M0-50q-34-40-30-90q24 30 30 90zM0-50q30-44 26-96q-22 34-26 96z" fill="#2F5D50"/></g>
+<rect class="noir" x="-1000" y="-1000" width="3000" height="2600" fill="#05060f" mask="url(#m-lampe)"/>
+<rect class="fente" x="666" y="464" width="108" height="8" rx="3" fill="#FFC857"/>
+<g class="lueur-lanterne"><circle class="faisceau" cx="150" cy="430" r="22" fill="url(#glow)"/></g>
+</svg>`;
+  }
+
   // ---------- Les saisons : selon le mois de la nuit, des flocons, des pétales, des lucioles ou des feuilles ----------
   function saison(nuit) {
     const m = nuit ? parseInt(String(nuit).slice(5, 7), 10) : (new Date().getMonth() + 1);
@@ -351,7 +374,7 @@ ${etoiles(40, 1000, 500, 5)}
     return `<g class="saison saison-${s}" aria-hidden="true">${p}</g>`;
   }
 
-  return { saison, saisonSVG, symboles, icone, badgeIcone, portrait, cielSVG, jeuSVG, camSVG, enveloppeSVG, tableau13, lune, luneSVG, etoiles, fond, souris, pointSouris, CIEL };
+  return { lampeSVG, saison, saisonSVG, symboles, icone, badgeIcone, portrait, cielSVG, jeuSVG, camSVG, enveloppeSVG, tableau13, lune, luneSVG, etoiles, fond, souris, pointSouris, CIEL };
 })();
 
 // Module ES (chargé par src/main.ts) : le contenu reste un script qui expose ses objets sur window.

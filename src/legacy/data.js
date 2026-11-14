@@ -19,7 +19,7 @@ window.DATA = {
   },
   origineVille: { txt: "Ce soir, c'est ta dent que je viens chercher, à {ville} !", expr: "clin", bouton: "En route !" },
 
-  // ---------- Chapitre 1 : neuf scènes ----------
+  // ---------- Chapitre 1 : dix scènes ----------
   // Chaque scène : une bulle d'arrivée (intro), un élément obligatoire (ou une chaîne d'éléments)
   // avec une demande avant le toucher et une réponse après, deux éléments bonus, puis le « pont ».
   scenes: [
@@ -172,16 +172,34 @@ window.DATA = {
           } },
         },
         lampadaire: { bulle: { txt: "Ce lampadaire grésille comme s'il ronflait. Dors bien, lampadaire !", expr: "clin" } },
-        fenetre: { bulle: { fratrie: {
-          aCote: { txt: "Là-haut, une petite lumière : la veilleuse de ta chambre. Je vois {frere} qui dort à côté de toi. Chut !", expr: "chuchote" },
-          ailleurs: { doudou: { oui: { txt: "Là-haut, une petite lumière : la veilleuse de ta chambre. Je vois {poupee}, bien au chaud à côté de toi.", expr: "chuchote" }, non: { txt: "Là-haut, une petite lumière : la veilleuse de ta chambre. Tu dors bien au chaud.", expr: "chuchote" } } },
-          non: { doudou: { oui: { txt: "Là-haut, une petite lumière : la veilleuse de ta chambre. Je vois {poupee}, bien au chaud à côté de toi.", expr: "chuchote" }, non: { txt: "Là-haut, une petite lumière : la veilleuse de ta chambre. Tu dors bien au chaud.", expr: "chuchote" } } },
-        } } },
+        fenetre: { bulle: { txt: "Là-haut, une petite lumière : la veilleuse de ta chambre ! Je vais m'approcher pour voir.", expr: "chuchote" } },
       },
       pont: { logement: {
-        maison: { txt: "J'y suis presque ! Il ne reste que le jardin à traverser.", expr: "sourire" },
-        appartement: { txt: "J'y suis presque ! Je me faufile dans l'immeuble et je monte l'escalier, marche après marche.", expr: "sourire" },
+        maison: { txt: "J'y suis presque ! Je traverse le jardin jusqu'à ta fenêtre.", expr: "sourire" },
+        appartement: { txt: "J'y suis presque ! Je me faufile jusqu'à ta fenêtre.", expr: "sourire" },
       } },
+    },
+    {
+      // La grande fenêtre embuée : on frotte la buée, la chambre de l'enfant apparaît
+      id: "fenetre", titre: "Ta fenêtre", heure: "02:28", ambiance: "aiglemont",
+      intro: { logement: {
+        maison: { txt: "Me voici sous ta fenêtre. Mais la vitre est toute embuée : je ne vois rien à l'intérieur…", expr: "surprise" },
+        appartement: { txt: "Je grimpe jusqu'à ta fenêtre, tout là-haut. Mais la vitre est toute embuée : je ne vois rien à l'intérieur…", expr: "surprise" },
+      } },
+      oblig: ["vitre"], bonus: ["escargot", "araignee"],
+      elements: {
+        vitre: {
+          demande: { txt: "Frotte la buée avec ton doigt, pour voir si c'est bien ta chambre !", expr: "clin" },
+          reponse: { fratrie: {
+            aCote: { txt: "C'est bien ta chambre ! Tu dors comme un loir, et {frere} aussi, dans son lit. Je file vers la porte, sur la pointe des pattes.", expr: "chuchote" },
+            ailleurs: { doudou: { oui: { txt: "C'est bien ta chambre ! Tu dors comme un loir, avec {poupee} tout contre toi. Je file vers la porte, sur la pointe des pattes.", expr: "chuchote" }, non: { txt: "C'est bien ta chambre ! Tu dors comme un loir, bien au chaud. Je file vers la porte, sur la pointe des pattes.", expr: "chuchote" } } },
+            non: { doudou: { oui: { txt: "C'est bien ta chambre ! Tu dors comme un loir, avec {poupee} tout contre toi. Je file vers la porte, sur la pointe des pattes.", expr: "chuchote" }, non: { txt: "C'est bien ta chambre ! Tu dors comme un loir, bien au chaud. Je file vers la porte, sur la pointe des pattes.", expr: "chuchote" } } },
+          } },
+        },
+        escargot: { bulle: { txt: "Bonsoir, monsieur l'escargot ! Lui aussi voyage la nuit… mais tout doucement. Il arrivera chez toi demain matin !", expr: "sourire" } },
+        araignee: { bulle: { txt: "Une petite araignée tisse sa toile dans le coin de la fenêtre. Elle brille comme un collier sous la lune.", expr: "surprise" } },
+      },
+      pont: null,
     },
     {
       id: "pantoufle", titre: "{chat}", heure: "02:31", ambiance: "pantoufle",
@@ -233,6 +251,14 @@ window.DATA = {
     trop: "{chat} ronfle trop fort pour entendre quoi que ce soit. Fonce !",
     gagne: { txt: "Passé ! Merci {enfant}, sans toi je serais encore devant lui. Maintenant, chut… je rentre.", expr: "joie" },
     bouton: "Voir ma caméra",
+    entrer: "Entrer dans la maison",
+  },
+
+  // ---------- La lampe de poche : trouver la chambre dans la maison plongée dans le noir ----------
+  lampe: {
+    intro: { txt: "Il fait tout noir dans la maison ! Promène ma lumière avec ton doigt pour m'aider à trouver ta chambre.", expr: "chuchote" },
+    aide: { txt: "Regarde, un peu de lumière passe sous une porte… C'est sûrement ta veilleuse !", expr: "chuchote" },
+    trouve: { txt: "La voilà, ta chambre ! Je mets ma petite caméra en marche, et j'entre sur la pointe des pattes.", expr: "joie" },
   },
 
   // ---------- Chapitre 3 : la caméra (Quenotte chuchote) ----------
@@ -298,7 +324,7 @@ window.DATA = {
     // obtenu : ce que dit le diplôme quand le badge est gagné ; aGagner : comment l'obtenir
     { id: "detective", nom: "Détective de nuit", chapitre: 1, obtenu: "Tu as guidé {souris} de son château jusque chez toi.", aGagner: "Guide {souris} de son château jusque chez toi." },
     { id: "exploratrice", nom: "{Exploratrice}", etoiles: 6, obtenu: "Tu as trouvé au moins 6 étoiles cachées dans les images.", aGagner: "Trouve 6 étoiles cachées dans les images du voyage." },
-    { id: "lynx", nom: "Œil de lynx", etoiles: 18, obtenu: "Tu as trouvé les 18 étoiles cachées. Rien ne t'échappe !", aGagner: "Trouve les 18 étoiles cachées dans les images du voyage." },
+    { id: "lynx", nom: "Œil de lynx", etoiles: 20, obtenu: "Tu as trouvé les 20 étoiles cachées. Rien ne t'échappe !", aGagner: "Trouve les 20 étoiles cachées dans les images du voyage." },
     { id: "passechat", nom: "Passe-Chat", chapitre: 2, obtenu: "Tu as aidé {souris} à passer devant {chat} sans le réveiller.", aGagner: "Aide {souris} à passer devant {chat} sans le réveiller." },
     { id: "hibou", nom: "Œil de hibou", chapitre: 3, obtenu: "Tu as regardé le film de la caméra de {souris} jusqu'au bout.", aGagner: "Regarde le film de la caméra de {souris} jusqu'au bout." },
     { id: "amie", nom: "{Amie} de {souris}", chapitre: 4, obtenu: "Tu as lu la lettre que {souris} t'a laissée.", aGagner: "Lis la lettre que {souris} t'a laissée." },

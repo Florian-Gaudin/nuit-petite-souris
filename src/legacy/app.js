@@ -374,6 +374,35 @@
 
   // ---------- Chapitre 2 : 1, 2, 3, soleil avec le chat ----------
   const Ch2 = {
+    // Dans la maison plongée dans le noir : le doigt promène la lumière jusqu'à la porte de la chambre
+    lampe(r) {
+      const self = this; NARR.action(null); heure('02:42');
+      $('.ch2', r).innerHTML = `<h2 class="decor-titre"><span class="decor-heure">La nuit dernière à 2 h 42</span>Dans le noir</h2><div class="lampe-wrap">${A.lampeSVG()}</div>`;
+      const svg = $('.lampe', r), trou = $('.trou', svg), faisceau = $('.faisceau', svg), plaque = $('.plaque', svg), fente = $('.fente', svg);
+      let trouve = false, dessus = 0;
+      NARR.dire(B(D.lampe.intro));
+      // Coordonnées du doigt dans le dessin
+      const point = e => { const pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); };
+      const bouge = e => {
+        if (trouve) return;
+        const p = point(e);
+        trou.setAttribute('cx', p.x.toFixed(0)); trou.setAttribute('cy', p.y.toFixed(0));
+        faisceau.setAttribute('cx', p.x.toFixed(0)); faisceau.setAttribute('cy', p.y.toFixed(0));
+        // La lumière sur la plaque de la chambre un court instant : trouvée !
+        const b = plaque.getBBox(), cx = 720 + b.x + b.width / 2, cy = 470 + b.y + b.height / 2;
+        if (Math.hypot(p.x - cx, p.y - cy) < 85) { if (!dessus) dessus = performance.now(); else if (performance.now() - dessus > 350) gagne(); } else dessus = 0;
+      };
+      const gagne = () => {
+        if (trouve) return; trouve = true; clearTimeout(self.tAide);
+        svg.classList.add('trouvee'); SON.play('allume');
+        NARR.dire(B(D.lampe.trouve));
+        NARR.action(T(D.jeu.bouton) + ' ' + A.icone('suite'), () => { complete(2); badge('passechat'); show(3); });
+      };
+      svg.addEventListener('pointerdown', e => { e.preventDefault(); SON.unlock(); bouge(e); });
+      svg.addEventListener('pointermove', bouge);
+      // Après un moment : un filet de lumière sous la bonne porte
+      self.tAide = setTimeout(() => { if (!trouve) { fente.classList.add('on'); NARR.dire(B(D.lampe.aide)); } }, 9000);
+    },
     render() {
       return `<section class="ch ch2">
   <h2 class="decor-titre"><span class="decor-heure">La nuit dernière à 2 h 31</span>Chut ! ${esc(C.chat)} dort.</h2>
@@ -420,7 +449,7 @@
         gagne = true; clearTimeout(self.t); SON.ronfleStop(); setEtat('dort'); SON.play('fanfare');
         btn.hidden = true; heure('02:40'); souris.classList.add('saute');
         NARR.dire(B(D.jeu.gagne));
-        NARR.action(T(D.jeu.bouton) + ' ' + A.icone('suite'), () => { complete(2); badge('passechat'); show(3); });
+        NARR.action(T(D.jeu.entrer) + ' ' + A.icone('suite'), () => { SON.play('clic'); fondu(() => self.lampe(r), 600); });
       };
       const boucle = ts => {
         if (gagne) return;
@@ -451,7 +480,7 @@
       self.cadre(); window.addEventListener('resize', self.cadre);
       rendu(); cycle(); self.raf = requestAnimationFrame(boucle);
     },
-    unmount() { window.removeEventListener('resize', this.cadre); clearTimeout(this.t); cancelAnimationFrame(this.raf); SON.ronfleStop(); document.removeEventListener('keydown', this.kd); document.removeEventListener('keyup', this.ku); },
+    unmount() { window.removeEventListener('resize', this.cadre); clearTimeout(this.t); clearTimeout(this.tAide); cancelAnimationFrame(this.raf); SON.ronfleStop(); document.removeEventListener('keydown', this.kd); document.removeEventListener('keyup', this.ku); },
   };
 
   // ---------- Chapitre 3 : la caméra de la souris ----------

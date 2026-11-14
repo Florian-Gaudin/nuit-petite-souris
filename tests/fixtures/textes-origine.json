@@ -57,12 +57,12 @@
         "fenetre",
         "bulle"
       ],
-      "texte": "Là-haut, une petite lumière : la veilleuse de ta chambre. Je vois Nicolas, bien au chaud à côté de toi."
+      "texte": "Là-haut, une petite lumière : la veilleuse de ta chambre ! Je vais m'approcher pour voir."
     },
     {
       "chemin": [
         "scenes",
-        8,
+        9,
         "elements",
         "yeux",
         "reponse"

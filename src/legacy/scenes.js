@@ -1,4 +1,4 @@
-// Chapitre 1 : les neuf scènes interactives. Chaque scène a un élément obligatoire (ou une chaîne
+// Chapitre 1 : les dix scènes interactives. Chaque scène a un élément obligatoire (ou une chaîne
 // d'éléments) qui débloque « Continuer », et deux éléments bonus qui donnent des étoiles.
 window.SCENES = (function () {
   'use strict';
@@ -7,7 +7,7 @@ window.SCENES = (function () {
   const $ = (s, r) => (r || document).querySelector(s);
   const $$ = (s, r) => Array.prototype.slice.call((r || document).querySelectorAll(s));
   const wait = ms => new Promise(r => setTimeout(r, ms));
-  const DESSINS = { chateau: DEC.chateau, foret: DEC.foret, meuse: DEC.meuse, place: DEC.place, montgolfiere: DEC.montgolfiere, etoiles: DEC.etoiles, lievre: DEC.lievre, aiglemont: DEC.aiglemont, pantoufle: DEC.pantoufle };
+  const DESSINS = { chateau: DEC.chateau, foret: DEC.foret, meuse: DEC.meuse, place: DEC.place, montgolfiere: DEC.montgolfiere, etoiles: DEC.etoiles, lievre: DEC.lievre, aiglemont: DEC.aiglemont, fenetre: DEC.fenetre, pantoufle: DEC.pantoufle };
   const ICONES_FRISE = {
     chateau: '<path d="M5 20V9h3V6h2v3h4V6h2v3h3v11zM10 20v-5h4v5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>',
     foret: '<path d="M12 3l6 9h-3l4 6H5l4-6H6zM12 18v3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>',
@@ -17,6 +17,7 @@ window.SCENES = (function () {
     etoiles: '<path d="M7 4l1 2.2 2.3.3-1.7 1.6.4 2.3L7 9.3 4.9 10.4l.4-2.3L3.6 6.5l2.3-.3zM17 12l1 2.2 2.3.3-1.7 1.6.4 2.3-2-1.1-2.1 1.1.4-2.3-1.7-1.6 2.3-.3z" fill="currentColor"/><path d="M8 10l8 4" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2 2"/>',
     lievre: '<path d="M8 21c-3 0-5-2-5-5s2-5 5-5c-1-3-1-6 0-8 1 0 2 3 3 7 0-4 1-7 2-7 1 2 1 5 0 8 3 0 5 2 5 5s-2 5-5 5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>',
     aiglemont: '<path d="M4 11l8-7 8 7v9H4zM10 20v-5h4v5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>',
+    fenetre: '<rect x="4" y="3" width="16" height="17" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 3v17M4 11.5h16" stroke="currentColor" stroke-width="1.6"/><path d="M6.5 6q2 2 0 4M15 14q2 2 0 4" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>',
     pantoufle: '<path d="M6 10l-1-5 4 3h6l4-3-1 5a6 6 0 0 1-12 0z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="10" cy="11" r="1" fill="currentColor"/><circle cx="14" cy="11" r="1" fill="currentColor"/>',
   };
 
@@ -25,7 +26,7 @@ window.SCENES = (function () {
   let occupe = false, enSecret = false;
   let friseX = 0; // position de la frise, gardée d'une scène à l'autre pour la faire glisser
   // Partie utile de chaque décor (en largeur) : sur un écran en hauteur, on recadre dessus plutôt que d'ajouter du ciel
-  const ZONES = { chateau: [260, 890], foret: [100, 930], meuse: [0, 1000], place: [230, 910], montgolfiere: [130, 780], etoiles: [150, 900], lievre: [0, 1000], aiglemont: [20, 860], pantoufle: [90, 960] };
+  const ZONES = { chateau: [260, 890], foret: [100, 930], meuse: [0, 1000], place: [230, 910], montgolfiere: [130, 780], etoiles: [150, 900], lievre: [0, 1000], aiglemont: [20, 860], fenetre: [150, 850], pantoufle: [90, 960] };
   const heureTexte = h => { const [hh, mm] = h.split(':'); return 'La nuit dernière à ' + parseInt(hh, 10) + ' h ' + mm; };
   // À la fin de certaines scènes, avant le « pont »
   const FIN = { place() { const g = $('.tap[data-el="marionnettiste"]', svg); if (g) g.classList.add('montre'); } };
@@ -89,6 +90,11 @@ window.SCENES = (function () {
       lampadaire() { SON.play('gresille'); },
       fenetre() { SON.play('allume'); },
     },
+    fenetre: {
+      vitre() { SON.play('allume'); },
+      escargot(g) { g.classList.remove('rampe'); void g.getBBox(); g.classList.add('rampe'); SON.play('mmh'); },
+      araignee(g) { g.classList.remove('descend'); void g.getBBox(); g.classList.add('descend'); SON.play('luciole'); },
+    },
     pantoufle: {
       yeux() { $('.chat-dort', svg).classList.add('revele'); SON.play('mmh'); },
       quenotte() { SON.play('clic'); },
@@ -138,6 +144,45 @@ window.SCENES = (function () {
     if (mien !== jeton) return;
     nav.classList.remove('on'); rd.classList.add('on'); svg.classList.add('arrive'); SON.play('pas');
     await wait(RM ? 100 : 500);
+  }
+
+  // ---------- La buée de la grande fenêtre : elle s'efface là où passe le doigt ----------
+  // Une grille invisible mesure la part essuyée ; au-delà de 70 %, le reste s'évapore et la scène continue.
+  function frotterBuee() {
+    const vitre = $('.tap[data-el="vitre"]', svg), buee = vitre && $('.buee', vitre), essuyage = $('.essuyage', svg);
+    if (!vitre || !buee || !essuyage) return;
+    const X0 = 290, Y0 = 90, L = 420, H = 315, COL = 14, LIG = 10, R = 46;
+    const essuye = new Set();
+    let frotte = false, fini = false, sonT = 0;
+    const point = e => { const pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); };
+    const surVitre = p => p.x >= X0 && p.x <= X0 + L && p.y >= Y0 && p.y <= Y0 + H;
+    const efface = e => {
+      if (fini) return;
+      const p = point(e);
+      if (p.x < X0 - R || p.x > X0 + L + R || p.y < Y0 - R || p.y > Y0 + H + R) return;
+      essuyage.insertAdjacentHTML('beforeend', `<circle cx="${p.x.toFixed(0)}" cy="${p.y.toFixed(0)}" r="${R}" fill="#000"/>`);
+      for (let c = 0; c < COL; c++) for (let l = 0; l < LIG; l++) {
+        const cx = X0 + (c + 0.5) * L / COL, cy = Y0 + (l + 0.5) * H / LIG;
+        if (Math.hypot(cx - p.x, cy - p.y) < R) essuye.add(c + ',' + l);
+      }
+      if (performance.now() - sonT > 280) { SON.play('papier'); sonT = performance.now(); }
+      if (essuye.size >= COL * LIG * 0.7) termine();
+    };
+    const termine = () => {
+      fini = true; buee.classList.add('evapore'); svg.classList.add('vitre-propre');
+      // On attend que la demande soit posée (élément « cible », texte écrit) avant de valider
+      const valide = () => { if (!svg || !vitre.isConnected) return; if (vitre.classList.contains('cible') && !NARR.lit) vitre.dispatchEvent(new MouseEvent('click', { bubbles: true })); else setTimeout(valide, 250); };
+      setTimeout(valide, RM ? 50 : 700);
+    };
+    // Sur tout le dessin : le doigt peut se poser n'importe où sur la vitre, même sur un autre élément
+    svg.addEventListener('pointerdown', e => {
+      if (fini || !surVitre(point(e))) return;
+      e.preventDefault(); frotte = true; SON.unlock();
+      try { svg.setPointerCapture(e.pointerId); } catch (er) { }
+      efface(e);
+    });
+    svg.addEventListener('pointermove', e => { if (frotte) efface(e); });
+    ['pointerup', 'pointercancel'].forEach(n => svg.addEventListener(n, () => { frotte = false; }));
   }
 
   // ---------- La main qui montre l'élément à toucher ----------
@@ -197,6 +242,7 @@ window.SCENES = (function () {
     courant = n; sc = D.scenes[n];
     root.innerHTML = frise(n) + `<div class="decor-wrap" id="decor-wrap"><h2 class="decor-titre"><span class="decor-heure">${heureTexte(sc.heure)}</span>${T(sc.titre)}</h2><div class="secrets" id="secrets" title="Secrets découverts dans cette image"><svg viewBox="0 0 24 24"><use href="#etoile5"/></svg><span id="secrets-n"></span></div>${DESSINS[sc.id](ctx.state.nuit)}</div>`;
     wrap = $('#decor-wrap', root); svg = $('svg.decor', root);
+    if (sc.id === 'fenetre') frotterBuee();
     if (sc.id === 'etoiles') { const p1 = $('.pt-1', svg); if (p1) p1.classList.add('prochaine'); }
     // La frise glisse depuis sa position précédente jusqu'à centrer la scène en cours
     const fr = $('.frise', root), act = fr && $('.pastille.active', fr);

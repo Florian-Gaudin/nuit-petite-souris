@@ -658,3 +658,26 @@ body.mode-choix .fil,body.mode-choix .bandeau{display:none}
 }
 @media print{.fil,#toast,.btn,.bandeau{display:none!important}}
 html{touch-action:pan-x pan-y}
+
+
+/* ---------- La lampe de poche ---------- */
+.ch2 .lampe-wrap{flex:1 1 auto;min-height:90px;display:flex;align-items:center;justify-content:center;border-radius:16px;overflow:hidden;border:2px solid #2e3768;background:#05060f}
+.lampe{width:100%;height:100%;touch-action:none;cursor:none}
+.lampe .noir{transition:opacity 1.2s}
+.lampe.trouvee .noir{opacity:.15}
+.lampe .fente{opacity:0;transition:opacity 1.5s;filter:drop-shadow(0 0 10px #FFC857)}
+.lampe .fente.on{opacity:.9}
+.lampe.trouvee .plaque rect{stroke:#FFC857;filter:drop-shadow(0 0 8px #FFC857)}
+.lampe .faisceau{pointer-events:none}
+
+/* ---------- La grande fenêtre embuée ---------- */
+.decor-fenetre .buee{cursor:pointer;touch-action:none}
+.decor-fenetre .voile{opacity:.93}
+.decor-fenetre .buee.evapore{opacity:0;transition:opacity 1.2s}
+.decor-fenetre .tap[data-el="vitre"] .halo{pointer-events:none}
+.decor-fenetre .araignee-in{transform-box:view-box}
+.decor-fenetre .tap.descend .araignee-in{animation:fil-araignee 1.6s ease-in-out}
+@keyframes fil-araignee{0%,100%{transform:translateY(0)}50%{transform:translateY(26px)}}
+.decor-fenetre .escargot-in{transform-box:view-box}
+.decor-fenetre .tap.rampe .escargot-in{animation:rampe 2.4s ease-in-out}
+@keyframes rampe{0%,100%{transform:translateX(0)}50%{transform:translateX(-24px)}}

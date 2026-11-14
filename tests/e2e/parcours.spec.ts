@@ -1,4 +1,4 @@
-// L'histoire de bout en bout, comme un enfant : les neuf scènes, le mini-jeu, la caméra, la lettre, le diplôme
+// L'histoire de bout en bout, comme un enfant : les dix scènes, le mini-jeu, la caméra, la lettre, le diplôme
 import { test, expect, type Page } from '@playwright/test';
 import { ouvrir, toucher } from './aide';
 
@@ -22,7 +22,13 @@ async function jouerScene(page: Page): Promise<string> {
     if (await bouton.count()) return (await bouton.textContent()) || '';
     if (await page.locator('#bandeau.attente .bandeau-suite').isVisible()) { await page.locator('.bandeau-suite').click(); continue; }
     const cible = await page.evaluate(() => { const g = document.querySelector('.tap.cible') as HTMLElement | null; return g && !(window as any).NARR.lit ? g.dataset.el : null; });
-    if (cible) {
+    if (cible === 'vitre') {
+      // La buée : on frotte toute la vitre
+      const b = (await page.locator('.decor-fenetre .voile').boundingBox())!;
+      await page.mouse.move(b.x + 10, b.y + 10); await page.mouse.down();
+      for (let i = 0; i < 16; i++) await page.mouse.move(b.x + 10 + (i % 2) * (b.width - 20), b.y + 10 + i * (b.height - 20) / 15, { steps: 6 });
+      await page.mouse.up();
+    } else if (cible) {
       if (cible === 'billet') {
         const etape = await page.locator('.tap[data-el="billet"]').getAttribute('data-etape');
         await toucher(page, `.tap[data-el="billet"] .pli${etape}`);
@@ -39,16 +45,16 @@ test('de l\'accueil au diplôme', async ({ page }) => {
   // La carte de France : l'étoile de la ville, puis « En route ! »
   await page.locator('.etoile-ville').click();
   await page.locator('#bandeau-actions button', { hasText: 'En route' }).click();
-  // Les neuf scènes du voyage
+  // Les dix scènes du voyage
   const vues: string[] = [];
-  for (let i = 0; i < 9; i++) {
+  for (let i = 0; i < 10; i++) {
     await page.waitForFunction(n => document.querySelectorAll('.pastille.active').length === 1 && (document.querySelector('.pastille.active') as HTMLElement).dataset.n === String(n), i);
     vues.push((await page.locator('svg.decor').getAttribute('class'))!.replace('decor decor-', '').split(' ')[0]);
     const fin = await jouerScene(page);
-    if (i < 8) expect(fin).toContain('Scène suivante'); else expect(fin).toContain('Aider');
+    if (i < 9) expect(fin).toContain('Scène suivante'); else expect(fin).toContain('Aider');
     await page.locator('#bandeau-actions button').click();
   }
-  expect(vues).toEqual(['chateau', 'foret', 'place', 'montgolfiere', 'etoiles', 'meuse', 'lievre', 'aiglemont', 'pantoufle']);
+  expect(vues).toEqual(['chateau', 'foret', 'place', 'montgolfiere', 'etoiles', 'meuse', 'lievre', 'aiglemont', 'fenetre', 'pantoufle']);
 
   // Le mini-jeu : rester appuyé jusqu'à la porte
   await expect(page.locator('#btn-avancer')).toBeVisible();
@@ -57,6 +63,15 @@ test('de l\'accueil au diplôme', async ({ page }) => {
   await page.mouse.down();
   await expect(page.locator('#btn-avancer')).toBeHidden({ timeout: 120_000 });
   await page.mouse.up();
+  // La lampe de poche : la lumière promenée jusqu'à la plaque de la chambre
+  await page.locator('#bandeau-actions button', { hasText: 'Entrer dans la maison' }).click();
+  await expect(page.locator('svg.lampe')).toBeVisible();
+  const plaque = (await page.locator('svg.lampe .plaque').boundingBox())!;
+  await page.mouse.move(80, 500);
+  await page.mouse.move(plaque.x + plaque.width / 2, plaque.y + plaque.height / 2, { steps: 8 });
+  await page.waitForTimeout(500);
+  await page.mouse.move(plaque.x + plaque.width / 2 + 2, plaque.y + plaque.height / 2);
+  await expect(page.locator('svg.lampe.trouvee')).toHaveCount(1);
   await page.locator('#bandeau-actions button', { hasText: 'caméra' }).click();
 
   // La caméra jusqu'au bout (avec les pauses des chuchotements)

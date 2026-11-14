@@ -1,4 +1,4 @@
-// Les neuf décors illustrés du chapitre 1 (SVG 1000 × 600, sol vers y = 480).
+// Les dix décors illustrés du chapitre 1 (SVG 1000 × 600, sol vers y = 480).
 // Chaque élément à toucher est un <g class="tap" data-el="…"> qui commence par un halo.
 window.DECORS = (function () {
   'use strict';
@@ -270,6 +270,44 @@ ${tap('constellation', 'Les étoiles à relier', `<circle class="halo" cx="${P[0
 </svg>`;
   }
 
+  // ---------- La grande fenêtre embuée : la chambre de l'enfant, reprise du dessin de la caméra ----------
+  // Le dessin de la caméra (vision nocturne verte) est recoloré en couleurs douces de veilleuse.
+  const COULEURS_CHAMBRE = [['#06180B', '#3b3352'], ['#1d4d26', '#2a2440'], ['#39FF14', '#F3E3C3'], ['#2fbf2f', '#b3a2bf'], ['#0f4a1b', '#7d70a3'], ['#0b3a14', '#5f5385'], ['#1d7a2c', '#9a8bb0'], ['#9fff8a', '#ffffff']];
+  function chambreCouleur() {
+    // Lu comme du HTML : le dessin contient un attribut « hidden » sans valeur, refusé par une lecture XML stricte
+    const doc = new DOMParser().parseFromString('<body>' + A.camSVG() + '</body>', 'text/html');
+    const ch = doc.querySelector('#cam-chambre');
+    if (!ch) return '';
+    ch.querySelectorAll('#dent1, #mot1, #cs1, .cam-souris').forEach(e => e.remove());
+    ch.removeAttribute('hidden');
+    let html = ch.outerHTML.replace(/ id="[^"]*"/g, '');
+    for (const [a, b] of COULEURS_CHAMBRE) html = html.split(a).join(b).split(a.toLowerCase()).join(b);
+    return html;
+  }
+  function fenetreDecor(nuit) {
+    const appart = window.CONFIG.logement === 'appartement';
+    const sx = 40, sy = 446, sw = 120;
+    // La vitre : x 290 → 710, y 90 → 405 (la chambre 400 × 300 y tient, à l'échelle 1,05)
+    return `<svg class="decor decor-fenetre" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet" role="img" aria-label="La grande fenêtre embuée de ta chambre">
+${A.fond(nuit, 101, { x: 900, y: 70, r: 26 })}
+<defs><mask id="m-buee" maskUnits="userSpaceOnUse" x="0" y="0" width="1000" height="600"><rect width="1000" height="600" fill="#fff"/><g class="essuyage"></g></mask>
+<clipPath id="c-vitre"><rect x="290" y="90" width="420" height="315" rx="6"/></clipPath>
+<radialGradient id="g-veilleuse" cx="78%" cy="55%" r="60%"><stop offset="0" stop-color="#FFC857" stop-opacity=".45"/><stop offset="1" stop-color="#FFC857" stop-opacity="0"/></radialGradient></defs>
+<rect x="120" y="20" width="760" height="600" fill="${appart ? '#D8D0C4' : '#E9E2D6'}"/>
+${appart ? '<g fill="#cfc6b8"><rect x="120" y="20" width="760" height="10"/></g>' : '<g fill="#3E7C8F" stroke="#2b5a66" stroke-width="3"><rect x="170" y="80" width="100" height="335" rx="4"/><rect x="730" y="80" width="100" height="335" rx="4"/></g><g stroke="#2b5a66" stroke-width="2" opacity=".6">' + [110, 160, 210, 260, 310, 360].map(y => `<path d="M180 ${y}h80M740 ${y}h80"/>`).join('') + '</g>'}
+${tap('vitre', 'La vitre embuée', `<circle class="halo" cx="500" cy="248" r="150" fill="url(#halo-or)" opacity=".5"/>
+  <g clip-path="url(#c-vitre)"><g transform="translate(290,90) scale(1.05)">${chambreCouleur()}</g><rect x="290" y="90" width="420" height="315" fill="url(#g-veilleuse)"/></g>
+  <g class="buee" mask="url(#m-buee)"><rect class="voile" x="290" y="90" width="420" height="315" rx="6" fill="#dfe6f2"/><g fill="#fff" opacity=".8">${[[340, 140], [620, 130], [420, 300], [560, 350], [680, 250], [330, 380]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="3.5"/><path d="M${x} ${y + 4}v${10 + (x % 17)}" stroke="#fff" stroke-width="2" stroke-linecap="round"/>`).join('')}</g></g>`)}
+<g fill="none" stroke="#F3EFE6" stroke-width="12"><rect x="284" y="84" width="432" height="327" rx="8"/></g><path d="M500 84v327M284 248h432" stroke="#F3EFE6" stroke-width="8"/>
+<rect x="250" y="410" width="500" height="22" rx="4" fill="#c9bfae"/>
+${appart ? '<g stroke="#4a4360" stroke-width="5">' + [270, 320, 370, 420, 470, 520, 570, 620, 670, 720].map(x => `<path d="M${x} 432v100"/>`).join('') + '<path d="M250 432h500M250 532h500"/></g>' : ''}
+${tap('araignee', 'Une petite araignée', `${halo(250, 52, 40)}<g class="toile" fill="none" stroke="#9aa0b5" stroke-width="1.2" opacity=".9"><path d="M222 26l40 40M222 26l52 14M222 26l14 50"/><path d="M238 32q6 8 4 18M252 38q6 12 2 24M230 42q10 6 18 4"/></g><g class="araignee-in"><path d="M262 64v-26" stroke="#9aa0b5" stroke-width="1"/><circle cx="262" cy="68" r="6" fill="#2B2B33"/><path d="M256 66l-7-5M256 70l-7 4M268 66l7-5M268 70l7 4" stroke="#2B2B33" stroke-width="2"/></g>`)}
+${tap('escargot', 'Un escargot', `${halo(660, 400, 46)}<g class="escargot-in"><path d="M626 410q30 4 56 0q4-8-8-8h-40z" fill="#B9A27A"/><circle cx="652" cy="392" r="16" fill="#B05E3B"/><path d="M652 392m-9 0a9 9 0 1 0 9-9a5 5 0 1 1-5 5" fill="none" stroke="#8B5A3C" stroke-width="2.5"/><path d="M630 402l-8-14M636 400l-2-14" stroke="#B9A27A" stroke-width="2.5" stroke-linecap="round"/></g>`)}
+${lueur(A.pointSouris(sx, sy, sw, 'lanterne').x, A.pointSouris(sx, sy, sw, 'lanterne').y, 90)}
+${A.souris(sx, sy, sw, 'class="quenotte"')}
+</svg>`;
+  }
+
   // ---------- 5. La montgolfière, au-dessus des Ardennes ----------
   // ---------- La montgolfière (dessin partagé : la scène du décollage et celle des étoiles) ----------
   // Enveloppe rayée rouge et jaune, aux couleurs de l'écharpe de Quenotte
@@ -311,7 +349,7 @@ ${tap('constellation', 'Les étoiles à relier', `<circle class="halo" cx="${P[0
       + '</svg>';
   }
 
-  return { chateau, foret, meuse, place, montgolfiere, etoiles: etoilesDecor, POINTS_DENT, lievre, aiglemont, pantoufle };
+  return { chateau, foret, meuse, place, montgolfiere, etoiles: etoilesDecor, POINTS_DENT, lievre, aiglemont, fenetre: fenetreDecor, pantoufle };
 })();
 
 // Module ES (chargé par src/main.ts) : le contenu reste un script qui expose ses objets sur window.

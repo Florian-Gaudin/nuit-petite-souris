@@ -23,7 +23,7 @@ test('Léo : première dent, garçon, sans doudou, 50 € sur le bureau', async 
   expect(await rendu(page, ['scenes', 0, 'intro'])).toContain('Elle attend ta toute première dent');
   expect(await rendu(page, ['scenes', 0, 'elements', 'sac', 'bulle'])).toContain('billet de 50 euros');
   expect(await rendu(page, ['scenes', 5, 'elements', 'billet', 'reponse'])).toContain('je le ferai sécher sur ton bureau.');
-  expect(await rendu(page, ['scenes', 8, 'elements', 'yeux', 'reponse'])).toContain('toute la maison va se réveiller');
+  expect(await rendu(page, ['scenes', 9, 'elements', 'yeux', 'reponse'])).toContain('toute la maison va se réveiller');
   expect(await rendu(page, ['lettre', 0])).toBe('Cher Léo,');
   expect(await rendu(page, ['badges', 6, 'nom'])).toBe('Première dent');
   await page.goto('certificat/#p=' + code(LEO));
@@ -35,8 +35,8 @@ test('Léo : première dent, garçon, sans doudou, 50 € sur le bureau', async 
 test('Inès : troisième dent, licorne, frère Tom dans la chambre, 10 € sur le radiateur', async ({ page }) => {
   await ouvrir(page, '#p=' + code(INES));
   expect(await rendu(page, ['scenes', 0, 'elements', 'lanterne', 'demande'])).toContain('ta troisième dent est tombée');
-  expect(await rendu(page, ['scenes', 7, 'elements', 'fenetre', 'bulle'])).toContain('Je vois Tom qui dort à côté de toi');
-  expect(await rendu(page, ['scenes', 8, 'elements', 'yeux', 'reponse'])).toContain('ton frère Tom va se réveiller');
+  expect(await rendu(page, ['scenes', 8, 'elements', 'vitre', 'reponse'])).toContain('et Tom aussi, dans son lit');
+  expect(await rendu(page, ['scenes', 9, 'elements', 'yeux', 'reponse'])).toContain('ton frère Tom va se réveiller');
   expect(await rendu(page, ['camera', 'cheminee'])).toMatch(/^Voilà ton radiateur, bien éteint\..*au chaud/);
   expect(await rendu(page, ['badges', 6, 'nom'])).toBe('Collectionneuse');
   await page.goto('certificat/#p=' + code(INES));
@@ -54,14 +54,14 @@ test('Jade : appartement au bord de la Seine, doudou linge', async ({ page }) =>
   expect(await rendu(page, ['scenes', 6, 'pont'])).toContain('C\'est écrit Lyon');
   expect(await rendu(page, ['scenes', 7, 'intro'])).toContain('Tous les immeubles dorment');
   expect(await rendu(page, ['scenes', 7, 'elements', 'girouette', 'reponse'])).toContain('Ton immeuble est par là');
-  expect(await rendu(page, ['scenes', 8, 'intro'])).toContain('Le palier est tout calme');
-  expect(await rendu(page, ['scenes', 8, 'elements', 'yeux', 'reponse'])).toContain('Il dort sur le paillasson');
+  expect(await rendu(page, ['scenes', 9, 'intro'])).toContain('Le palier est tout calme');
+  expect(await rendu(page, ['scenes', 9, 'elements', 'yeux', 'reponse'])).toContain('Il dort sur le paillasson');
   expect(await rendu(page, ['camera', 'intro'])).toContain('glissée sous la porte');
   expect(await rendu(page, ['lettre', 4])).toContain('a traversé la Seine en bateau');
   // Les dessins : immeubles, palier, panneau de la ville, doudou linge dans la caméra
   await ouvrir(page, '?chapitre=1&scene=6#p=' + code(JADE));
   await expect(page.locator('.decor-lievre .panneau text')).toHaveText('Lyon');
-  await ouvrir(page, '?chapitre=1&scene=8#p=' + code(JADE));
+  await ouvrir(page, '?chapitre=1&scene=9#p=' + code(JADE));
   await expect(page.locator('svg.decor-pantoufle.palier')).toHaveCount(1);
   await ouvrir(page, '?chapitre=3&t=34#p=' + code(JADE));
   expect(await page.locator('#doudou').evaluate(g => g.childElementCount)).toBeGreaterThan(2);
@@ -130,6 +130,25 @@ test('les saisons suivent la date de la nuit, et restent dehors', async ({ page 
     await expect(page.locator(`svg.decor .saison-${saison}`)).toHaveCount(1);
   }
   // Sur le palier d'un immeuble, pas de neige
-  await ouvrir(page, '?chapitre=1&scene=8#p=' + code({ ...structuredClone(LEO), nuit: '2026-12-24', logement: 'appartement' }));
+  await ouvrir(page, '?chapitre=1&scene=9#p=' + code({ ...structuredClone(LEO), nuit: '2026-12-24', logement: 'appartement' }));
   await expect(page.locator('svg.decor .saison')).toHaveCount(0);
+});
+
+test("la grande fenêtre embuée : on frotte la buée, la chambre apparaît", async ({ page }) => {
+  await ouvrir(page, '?reset=1#exemple');
+  await ouvrir(page, '?chapitre=1&scene=8#exemple');
+  const b = (await page.locator('.decor-fenetre .voile').boundingBox())!;
+  // Le doigt balaie la vitre de haut en bas
+  await page.mouse.move(b.x + 10, b.y + 10);
+  await page.mouse.down();
+  for (let i = 0; i < 16; i++) await page.mouse.move(b.x + 10 + (i % 2) * (b.width - 20), b.y + 10 + i * (b.height - 20) / 15, { steps: 6 });
+  await page.mouse.up();
+  await expect(page.locator('.decor-fenetre .buee.evapore')).toHaveCount(1);
+  // L'histoire continue d'elle-même une fois la demande posée
+  for (let i = 0; i < 20 && !(await page.locator('.tap[data-el="vitre"].fait').count()); i++) {
+    if (await page.locator('#bandeau.attente .bandeau-suite').isVisible()) await page.locator('.bandeau-suite').click();
+    await page.waitForTimeout(250);
+  }
+  await expect(page.locator('.tap[data-el="vitre"].fait')).toHaveCount(1);
+  await expect(page.locator('#bandeau-texte')).toContainText("C'est bien ta chambre");
 });
