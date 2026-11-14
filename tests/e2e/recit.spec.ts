@@ -174,6 +174,7 @@ test("répondre à Quenotte (dessin) et l'album des dents", async ({ page }) => 
   await page.locator('#btn-tout').click();
   // Le dessin
   await page.locator('#btn-dessin').click();
+  await expect(page.locator('.toile-invite')).toBeVisible(); // « Dessine ici avec ton doigt »
   const t = (await page.locator('.toile').boundingBox())!;
   await page.mouse.move(t.x + 40, t.y + 40); await page.mouse.down();
   await page.mouse.move(t.x + t.width - 40, t.y + t.height - 40, { steps: 10 }); await page.mouse.up();
@@ -182,8 +183,14 @@ test("répondre à Quenotte (dessin) et l'album des dents", async ({ page }) => 
   // Le diplôme (épilogue déjà vu) : le dessin, et l'histoire rangée dans l'album
   await page.evaluate(() => { const A = (window as any).APP; A.state.epilogue = true; A.state.unlocked = 5; A.show(5); });
   await expect(page.locator('.dessin-enfant img')).toBeVisible();
+  // On peut le modifier depuis le diplôme
+  await page.locator('#btn-dessin5').click();
+  await expect(page.locator('.atelier .toile')).toBeVisible();
+  await page.locator('.atelier [data-a="envoyer"]').click();
+  await expect(page.locator('.dessin-enfant img')).toBeVisible();
   await page.locator('#btn-album5').click();
   await expect(page.locator('.album-page h3')).toHaveText('Clémentine');
+  await expect(page.locator('.album-explication')).toContainText("s'ajoute ici");
   await expect(page.locator('.album-page li')).toHaveCount(1);
   await page.locator('.album [data-a="fermer"]').click();
   // Le dessin s'imprime avec le diplôme

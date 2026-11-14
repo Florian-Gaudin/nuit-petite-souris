@@ -89,6 +89,9 @@ test('de l\'accueil au diplôme', async ({ page }) => {
   await expect(page.locator('.papier')).toContainText('Chère Clémentine');
   await page.locator('#bandeau-actions button', { hasText: 'billet' }).click();
   // L'épilogue : le retour en montgolfière (les nuages passent), puis la dent rangée dans la boîte à trésors
+  // Le retour en montgolfière : l'histoire, les consignes, puis le départ ; elle se pose près du château
+  await page.locator('#bandeau-actions button', { hasText: 'Suite' }).click({ timeout: 30_000 });
+  await page.locator('#bandeau-actions button', { hasText: "C'est parti" }).click({ timeout: 30_000 });
   await page.locator('#bandeau-actions button', { hasText: 'Entrer dans le terrier' }).click({ timeout: 60_000 });
   // Le terrier : on suit le chemin jusqu'à la porte du château (flèches du clavier)
   await expect(page.locator('#voile-noir.on')).toHaveCount(0);

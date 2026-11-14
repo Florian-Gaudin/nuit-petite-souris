@@ -172,8 +172,9 @@
     const COULEURS = ['#1F2235', '#D64045', '#F2A3B5', '#FFC857', '#3E9A6B', '#3E7C8F', '#7d70a3', '#8B5A3C'];
     document.body.insertAdjacentHTML('beforeend', `<div class="atelier" role="dialog" aria-label="Dessine pour Quenotte">
   <div class="atelier-in">
-    <h2>Un dessin pour ${esc(C.souris)}</h2>
-    <canvas class="toile" width="960" height="720"></canvas>
+    <h2>${A.icone('crayon')} Un dessin pour ${esc(C.souris)}</h2>
+    <p class="consigne-dessin">${esc(T(D.dessin.consigne))}</p>
+    <div class="toile-wrap"><canvas class="toile" width="960" height="720"></canvas><p class="toile-invite" aria-hidden="true">${A.icone('crayon')} ${esc(T(D.dessin.ici))}</p></div>
     <div class="outils-dessin">
       ${COULEURS.map((c, i) => `<button class="couleur${i === 0 ? ' choisie' : ''}" data-c="${c}" style="background:${c}" aria-label="Couleur"></button>`).join('')}
       <button class="trait-taille" data-t="8" aria-label="Crayon fin">●</button><button class="trait-taille choisie" data-t="18" aria-label="Gros crayon">⬤</button>
@@ -185,18 +186,19 @@
     const fen = document.body.lastElementChild, toile = $('.toile', fen), g = toile.getContext('2d');
     const fond = () => { g.fillStyle = '#fff'; g.fillRect(0, 0, toile.width, toile.height); };
     fond();
-    const ancien = lireDessin(); if (ancien) { const img = new Image(); img.onload = () => g.drawImage(img, 0, 0, toile.width, toile.height); img.src = ancien; }
+    const invite = $('.toile-invite', fen);
+    const ancien = lireDessin(); if (ancien) { invite.hidden = true; const img = new Image(); img.onload = () => g.drawImage(img, 0, 0, toile.width, toile.height); img.src = ancien; }
     let couleur = '#1F2235', taille = 18, gomme = false, trace = false, dernier = null;
     const pos = e => { const r = toile.getBoundingClientRect(); return [(e.clientX - r.left) * toile.width / r.width, (e.clientY - r.top) * toile.height / r.height]; };
     const ligne = (a, b) => { g.strokeStyle = gomme ? '#fff' : couleur; g.lineWidth = gomme ? 40 : taille; g.lineCap = 'round'; g.lineJoin = 'round'; g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(b[0], b[1]); g.stroke(); };
-    toile.addEventListener('pointerdown', e => { e.preventDefault(); trace = true; dernier = pos(e); ligne(dernier, [dernier[0] + 0.1, dernier[1]]); try { toile.setPointerCapture(e.pointerId); } catch (er) { } });
+    toile.addEventListener('pointerdown', e => { e.preventDefault(); invite.hidden = true; trace = true; dernier = pos(e); ligne(dernier, [dernier[0] + 0.1, dernier[1]]); try { toile.setPointerCapture(e.pointerId); } catch (er) { } });
     toile.addEventListener('pointermove', e => { if (!trace) return; const p = pos(e); ligne(dernier, p); dernier = p; });
     ['pointerup', 'pointercancel'].forEach(n => toile.addEventListener(n, () => { trace = false; }));
     $$('.couleur', fen).forEach(b => b.onclick = () => { couleur = b.dataset.c; gomme = false; $$('.couleur, .gomme', fen).forEach(x => x.classList.remove('choisie')); b.classList.add('choisie'); });
     $$('.trait-taille', fen).forEach(b => b.onclick = () => { taille = +b.dataset.t; $$('.trait-taille', fen).forEach(x => x.classList.remove('choisie')); b.classList.add('choisie'); });
     $('.gomme', fen).onclick = e => { gomme = true; $$('.couleur', fen).forEach(x => x.classList.remove('choisie')); e.currentTarget.classList.add('choisie'); };
     const fermer = () => { fen.remove(); if (apres) apres(); };
-    $('[data-a="effacer"]', fen).onclick = fond;
+    $('[data-a="effacer"]', fen).onclick = () => { fond(); invite.hidden = false; };
     $('[data-a="annuler"]', fen).onclick = fermer;
     $('[data-a="envoyer"]', fen).onclick = () => {
       window.STOCKAGE.ecrire(CLE_DESSIN, toile.toDataURL('image/jpeg', 0.82));
@@ -224,7 +226,7 @@
   <ul>${nuits.map(x => `<li><span>Nuit du ${esc(date(x.nuit))} : ${esc(window.NOM_DENT(x.dent))}</span><a class="btn btn-petit" href="#p=${x.code}">Revoir</a></li>`).join('')}</ul></section>`;
     }).join('');
     document.body.insertAdjacentHTML('beforeend', `<div class="atelier album" role="dialog" aria-label="${esc(T(D.album.titre))}"><div class="atelier-in">
-  <h2>${A.icone('etoile')} ${esc(T(D.album.titre))}</h2>${pages || `<p>${esc(T(D.album.vide))}</p>`}
+  <h2>${A.icone('etoile')} ${esc(T(D.album.titre))}</h2><p class="album-explication">${esc(T(D.album.explication))}</p>${pages || `<p>${esc(T(D.album.vide))}</p>`}
   <div class="actions-dessin"><button class="btn btn-or" data-a="fermer">Fermer</button></div></div></div>`);
     const fen = document.body.lastElementChild;
     $('[data-a="fermer"]', fen).onclick = () => fen.remove();
@@ -706,9 +708,18 @@ ${[0, 1, 2].map(i => `<g class="nuage" data-n="${i}" transform="translate(-400,0
 <g class="ret-ballon" transform="translate(230,330) scale(.75)">${window.DECORS.ballonSVG()}</g>
 </svg>`;
       const svg = $('svg.retour', zone), ballon = $('.ret-ballon', svg), chateau = $('.ret-chateau', svg), nuages = $$('.nuage', svg);
-      NARR.dire(B(D.epilogue.intro));
       const borne = v => Math.max(140, Math.min(460, v));
-      let y = 330, cible = 330, k = 0, x = 1150, ny = 220, touche = false, dernier = null, doigtT = 0, base = null, fini = false;
+      // enJeu : les nuages ne partent qu'après « C'est parti ! » ; atterrissage : la montgolfière se pose près du château
+      let y = 330, cible = 330, bx = 230, k = 0, x = 1150, ny = 220, touche = false, dernier = null, doigtT = 0, base = null, fini = false, enJeu = false, atterrissage = null;
+      // D'abord l'histoire (elle reste affichée), puis les consignes, puis le départ
+      (async () => {
+        await NARR.dire(B(D.epilogue.intro));
+        NARR.action(T(D.epilogue.suite) + ' ' + A.icone('suite'), async () => {
+          SON.play('clic'); NARR.action(null);
+          await NARR.dire(B(D.epilogue.consigne));
+          NARR.action(A.icone('suite') + ' ' + T(D.epilogue.depart), () => { SON.play('clic'); NARR.action(null); enJeu = true; });
+        });
+      })();
       const point = e => { const pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); };
       // Le doigt (n'importe où sur l'image) ou l'inclinaison du téléphone
       svg.addEventListener('pointerdown', e => { e.preventDefault(); SON.unlock(); cible = borne(point(e).y); doigtT = performance.now(); });
@@ -719,17 +730,23 @@ ${[0, 1, 2].map(i => `<g class="nuage" data-n="${i}" transform="translate(-400,0
       nouveauNuage();
       const arrivee = () => {
         fini = true; nuages.forEach(n => n.setAttribute('transform', 'translate(-400,0)'));
-        chateau.classList.add('arrive'); cible = 400;
-        setTimeout(async () => {
-          SON.play('allume'); await NARR.dire(B(D.epilogue.arrivee));
-          NARR.action(A.icone('suite') + ' ' + T(D.epilogue.terrierBouton), () => { SON.play('clic'); NARR.action(null); fondu(() => self.terrier(r), 600); });
-        }, RM ? 100 : 1800);
+        chateau.classList.add('arrive');
+        // Le château arrive, puis la montgolfière descend et se pose dans l'herbe, juste à côté
+        setTimeout(() => { atterrissage = { t: performance.now(), x0: bx, y0: y }; }, RM ? 0 : 1600);
+      };
+      const pose = async () => {
+        SON.play('allume'); await NARR.dire(B(D.epilogue.arrivee));
+        NARR.action(A.icone('suite') + ' ' + T(D.epilogue.terrierBouton), () => { SON.play('clic'); NARR.action(null); fondu(() => self.terrier(r), 600); });
       };
       const boucle = ts => {
         if (dernier == null) dernier = ts; const dt = Math.min(60, ts - dernier); dernier = ts;
-        y += (cible - y) * Math.min(1, dt / 160);
-        ballon.setAttribute('transform', `translate(230,${y.toFixed(1)}) scale(.75)`);
-        if (!fini) {
+        if (atterrissage) {
+          const kA = Math.min(1, (ts - atterrissage.t) / (RM ? 50 : 2600)), e = kA * kA * (3 - 2 * kA);
+          bx = atterrissage.x0 + (600 - atterrissage.x0) * e; y = atterrissage.y0 + (548 - atterrissage.y0) * e;
+          if (kA >= 1) { atterrissage = null; pose(); }
+        } else if (!fini) y += (cible - y) * Math.min(1, dt / 160);
+        ballon.setAttribute('transform', `translate(${bx.toFixed(1)},${y.toFixed(1)}) scale(.75)`);
+        if (!fini && enJeu) {
           x -= dt * 0.38;
           nuages[k].setAttribute('transform', `translate(${x.toFixed(0)},${ny.toFixed(0)})`);
           // Un nuage touché : « pouf », il s'efface (on ne perd jamais)
@@ -938,6 +955,7 @@ ${places.map(dent).join('')}
     <button class="btn btn-petit" id="btn-revoir5">Revoir l'histoire</button>
   </div>
   ${lireDessin() ? `<figure class="dessin-enfant"><figcaption>Ton dessin pour ${esc(C.souris)}</figcaption><img src="${lireDessin()}" alt="Le dessin de ${esc(C.enfant)} pour ${esc(C.souris)}"></figure>` : ''}
+  <div class="fin"><button class="btn" id="btn-dessin5">${A.icone('crayon')} ${esc(T(lireDessin() ? D.dessin.modifier : D.dessin.faire))}</button></div>
 </section>`;
     },
     mount(r) {
@@ -953,6 +971,8 @@ ${places.map(dent).join('')}
       window.CERTIFICAT.brancher($('.diplome-wrap', r));
       $('#btn-revoir5', r).onclick = () => show(1, { scene: 0 });
       $('#btn-album5', r).onclick = album;
+      // Après l'atelier, le diplôme se redessine avec le nouveau dessin
+      $('#btn-dessin5', r).onclick = () => { SON.play('clic'); atelier(() => show(5)); };
     },
     unmount() { cancelAnimationFrame(this.raf); window.removeEventListener('deviceorientation', this.incline); window.removeEventListener('keydown', this.clavier); clearTimeout(this.tAide); },
   };

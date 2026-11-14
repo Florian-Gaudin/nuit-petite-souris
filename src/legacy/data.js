@@ -310,7 +310,10 @@ window.DATA = {
 
   // ---------- L'épilogue : le retour au château, puis la boîte à trésors ----------
   epilogue: {
-    intro: { txt: "Pendant que tu lis ma lettre, je rentre au château en montgolfière. Aide-moi à éviter les nuages : glisse ton doigt vers le haut ou vers le bas !", expr: "joie" },
+    intro: { txt: "Pendant que tu lis ma lettre, je rentre au château en montgolfière. Mais attention : des nuages arrivent sur ma route !", expr: "surprise" },
+    suite: "Suite",
+    consigne: { txt: "Aide-moi à les éviter : fais glisser ton doigt vers le haut ou vers le bas pour faire monter ou descendre la montgolfière. Tu peux aussi pencher ton téléphone !", expr: "clin" },
+    depart: "C'est parti !",
     evite: ["Ouf, évité !", "Bravo, on passe !", "Encore un, et c'est le château !"],
     pouf: { txt: "Pouf ! Un nuage tout doux… Ce n'est rien, on continue !", expr: "clin" },
     arrivee: { txt: "Voilà mon château ! Je me pose à l'orée de la forêt. Pour rentrer, je passe toujours par mon terrier secret…", expr: "clin" },
@@ -342,10 +345,14 @@ window.DATA = {
   dessin: {
     bouton: "Répondre à Quenotte",
     invite: { txt: "Tu veux me répondre ? Fais-moi un dessin, je l'emporterai au château !", expr: "joie" },
+    consigne: "Dessine avec ton doigt dans le cadre blanc, puis touche « Envoyer ».",
+    ici: "Dessine ici avec ton doigt",
+    modifier: "Modifier mon dessin",
+    faire: "Faire un dessin pour Quenotte",
     merci: "Quenotte a bien reçu ton dessin !",
   },
   // ---------- L'album des dents ----------
-  album: { titre: "L'album des dents", vide: "L'album se remplit à la fin de chaque histoire : chaque dent y garde sa nuit." },
+  album: { titre: "L'album des dents", explication: "Chaque histoire terminée s'ajoute ici, au fil des dents : retrouve tes nuits avec Quenotte, et revis-les quand tu veux.", vide: "L'album se remplit à la fin de chaque histoire : chaque dent y garde sa nuit." },
 
   // ---------- Chapitre 5 : le diplôme ----------
   diplome: { txt: "Bravo {enfant} ! Voici ton diplôme officiel, signé de ma patte. Tu peux l'imprimer avec un grand.", expr: "joie" },

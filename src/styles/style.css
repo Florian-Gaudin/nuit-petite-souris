@@ -730,3 +730,9 @@ html{touch-action:pan-x pan-y}
 .album .machoire{max-width:260px;display:block;margin:0 auto}
 .lien-album{position:relative;z-index:1;display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 14px;border-radius:999px;border:1.5px solid #3d4a95;background:none;color:var(--lanterne);font:700 .9rem var(--display);cursor:pointer}
 .lien-album .ico{width:16px;height:16px}
+
+.consigne-dessin{margin:0;font-weight:700;color:#6b5a2a}
+.toile-wrap{position:relative}
+.toile-invite{position:absolute;inset:0;margin:0;display:flex;align-items:center;justify-content:center;gap:8px;color:#b9ab8a;font:700 1.3rem var(--display);pointer-events:none}
+.toile-invite .ico{width:28px;height:28px}
+.album-explication{margin:0;color:#6b5a2a;line-height:1.4}
