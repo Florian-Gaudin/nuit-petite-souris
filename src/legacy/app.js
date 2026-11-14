@@ -302,7 +302,7 @@
     <a class="carte-choix voyage" href="#exemple"><span class="ic">${A.icone('etoile')}</span><span><b>Débuter le voyage avec Quenotte</b><small>Découvre l'histoire de ${esc(exemple)}</small></span></a>
     <a class="carte-choix parents" href="parents/"><span class="ic">${A.icone('famille')}</span><span><b>Je suis un parent</b><small>Préparer l'histoire personnalisée pour mon enfant</small></span></a>
   </nav>
-  ${window.DON_POSSIBLE ? `<p class="don-accueil">Gratuite pour toutes les familles, l'appli vit grâce à vos petits dons. <a href="parents/#don"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z" fill="currentColor"/></svg>Faire un don</a></p>` : ''}
+  ${window.DON_POSSIBLE ? `<p class="don-accueil"><span class="phrase">Gratuite pour toutes les familles, l'appli vit grâce à vos petits dons.</span> <a href="parents/#don"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z" fill="currentColor"/></svg>Faire un don</a></p>` : ''}
 </section>`;
   }
 

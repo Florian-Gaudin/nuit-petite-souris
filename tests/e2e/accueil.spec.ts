@@ -78,3 +78,18 @@ test('la carte : l\'outre-mer dans son encadré, un département inconnu sans é
   await expect(page.locator('#bandeau-actions button', { hasText: 'En route' })).toBeVisible();
   await expect(bandeau(page)).toContainText('à Quelque part');
 });
+
+test("l'écran de choix tient sans défiler, avec ses trois cartes et le don", async ({ page }) => {
+  await ouvrir(page, '#p=' + code(LEO)); // un profil mémorisé : la carte « Reprendre » s'ajoute
+  for (const [w, h] of [[320, 568], [360, 640], [375, 667], [412, 915], [768, 1024], [1280, 720], [740, 360]]) {
+    await page.setViewportSize({ width: w, height: h });
+    await ouvrir(page, './');
+    await expect(page.locator('.carte-choix')).toHaveCount(3);
+    const { haut, fenetre, bas } = await page.evaluate(() => ({
+      haut: document.documentElement.scrollHeight, fenetre: innerHeight,
+      bas: Math.max(...[...document.querySelectorAll('.carte-choix, .don-accueil')].map(e => e.getBoundingClientRect().bottom)),
+    }));
+    expect(haut, `${w}×${h} : la page défile`).toBeLessThanOrEqual(fenetre);
+    expect(bas, `${w}×${h} : un élément dépasse`).toBeLessThanOrEqual(fenetre);
+  }
+});

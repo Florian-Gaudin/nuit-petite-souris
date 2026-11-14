@@ -555,6 +555,23 @@ body.mode-choix .fil,body.mode-choix .bandeau{display:none}
 .carte-choix.voyage small{color:#5a4410}
 .carte-choix.voyage .ic{background:#fff3c4;color:var(--lanterne2)}
 .carte-choix:hover,.carte-choix:focus-visible{transform:translateY(-2px)}
+/* L'écran de choix tient toujours sur la hauteur de l'écran, sans défiler : tout se resserre avec la hauteur */
+.scene.choix-scene{height:100vh;height:100dvh;min-height:0;overflow:hidden}
+.ecran-choix{gap:clamp(10px,2.6vh,24px);padding-top:max(clamp(10px,2.5vh,24px),env(safe-area-inset-top,0px));padding-bottom:max(clamp(10px,2.5vh,24px),env(safe-area-inset-bottom,0px))}
+.choix-haut{gap:clamp(4px,1.2vh,12px)}
+.choix-logo{width:auto;height:clamp(52px,15vh,136px);border-radius:clamp(14px,3vh,28px)}
+.ecran-choix .titre{font-size:clamp(1.35rem,min(6.5vw,4.8vh),3rem)}
+.choix-cartes{gap:clamp(6px,1.4vh,12px)}
+.carte-choix{min-height:clamp(54px,9vh,76px);padding:clamp(6px,1.2vh,12px) 14px;gap:clamp(10px,1.8vh,14px)}
+.carte-choix b{font-size:clamp(.98rem,2.4vh,1.15rem)}
+.carte-choix small{font-size:clamp(.8rem,1.9vh,.95rem)}
+.carte-choix .ic{width:clamp(34px,6vh,48px);height:clamp(34px,6vh,48px)}
+.carte-choix .ic .ico{width:clamp(20px,3.5vh,28px);height:clamp(20px,3.5vh,28px)}
+.don-accueil{font-size:clamp(.78rem,1.8vh,.9rem)}
+.don-accueil a{min-height:clamp(30px,4.4vh,36px);margin-top:clamp(2px,.8vh,8px)}
+/* Très petits écrans : la phrase du don s'efface, son bouton reste ; téléphone couché : le logo aussi */
+@media (max-height:600px){.don-accueil .phrase{display:none}.don-accueil a{margin-top:0}}
+@media (max-height:440px){.choix-logo{display:none}.ecran-choix .titre{max-width:none}.choix-cartes{max-width:560px}}
 
 /* ---------- La carte de France (avant le château) ---------- */
 .scene.ch-0 .origine{flex:1;min-height:0}
