@@ -16,6 +16,9 @@ await import('../lib/machoire');
 await import('../legacy/certificat.js');
 
 const W = window as any;
+// Le dessin pour Quenotte (s'il existe), imprimé sur une seconde page
+const dessin = stockage.lire('souris.dessin.' + pc.id);
+const dessinValide = dessin && /^data:image\/(png|jpeg);base64,[A-Za-z0-9+/=]+$/.test(dessin) ? dessin : null;
 const { CONFIG, DATA, CERTIFICAT, ART } = W;
 const pad = (n: number) => String(n).padStart(2, '0');
 
@@ -49,6 +52,7 @@ const nuitTexte = m1 === m2
 const zone = document.getElementById('diplome') as HTMLElement;
 zone.innerHTML = CERTIFICAT.html({ badges: badges.concat(badges.indexOf('jumelle') < 0 ? ['jumelle'] : []), secret, nuitTexte, etoiles, total });
 CERTIFICAT.brancher(zone);
+if (dessinValide) zone.insertAdjacentHTML('afterend', `<figure class="dessin-imprime"><figcaption>Mon dessin pour ${CONFIG.souris}</figcaption><img src="${dessinValide}" alt="Le dessin pour ${CONFIG.souris}"></figure>`);
 (document.getElementById('btn-print') as HTMLElement).onclick = () => window.print();
 // Retour à l'histoire, avec le même profil
 const retour = document.querySelector<HTMLAnchorElement>('#retour');

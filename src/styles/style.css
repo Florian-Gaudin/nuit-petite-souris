@@ -708,3 +708,25 @@ html{touch-action:pan-x pan-y}
 .terrier .battant{transition:transform .8s ease-in-out;transform-box:fill-box;transform-origin:left center}
 .terrier.ouverte .battant{transform:scaleX(.15)}
 .terrier .nuit-terrier{opacity:.94}
+
+/* ---------- L'atelier de dessin et l'album ---------- */
+.atelier{position:fixed;inset:0;z-index:60;background:rgba(10,12,30,.82);display:flex;align-items:center;justify-content:center;padding:12px}
+.atelier-in{background:var(--papier);color:var(--encre);border-radius:20px;padding:14px;width:min(100%,720px);max-height:100%;overflow:auto;display:flex;flex-direction:column;gap:10px}
+.atelier-in h2{font-size:1.3rem;display:flex;align-items:center;gap:8px}
+.toile{width:100%;aspect-ratio:4/3;background:#fff;border-radius:12px;border:2px solid #e2d3ad;touch-action:none;cursor:crosshair}
+.outils-dessin{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center}
+.outils-dessin button{min-width:40px;height:40px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 2px #e2d3ad;cursor:pointer;font:700 .9rem var(--display);color:var(--encre);background:#fff}
+.outils-dessin .gomme{border-radius:20px;padding:0 12px}
+.outils-dessin .choisie{box-shadow:0 0 0 3px var(--rouge)}
+.actions-dessin{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.lettre-stage #btn-dessin{display:flex;margin:14px auto 0}
+.dessin-enfant{margin:18px auto 0;max-width:520px;text-align:center}
+.dessin-enfant img{width:100%;border-radius:14px;border:3px solid var(--lanterne);background:#fff}
+.dessin-enfant figcaption{font-weight:800;color:var(--lanterne);margin-bottom:6px}
+.album-page{border-top:2px dashed #e2d3ad;padding-top:10px}
+.album-page h3{font-size:1.2rem}
+.album-page ul{list-style:none;margin:6px 0 0;padding:0;display:flex;flex-direction:column;gap:6px}
+.album-page li{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.album .machoire{max-width:260px;display:block;margin:0 auto}
+.lien-album{position:relative;z-index:1;display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 14px;border-radius:999px;border:1.5px solid #3d4a95;background:none;color:var(--lanterne);font:700 .9rem var(--display);cursor:pointer}
+.lien-album .ico{width:16px;height:16px}

@@ -53,3 +53,9 @@ button.badge-dip.choisi,button.badge-dip:hover{background:rgba(201,162,39,.16)}
   .tampon{width:120px;height:120px}
   *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
+
+/* Le dessin pour Quenotte, sur une seconde page à l'impression */
+.dessin-imprime{max-width:680px;margin:20px auto 0;text-align:center}
+.dessin-imprime img{width:100%;border:3px solid #C9A227;border-radius:12px;background:#fff}
+.dessin-imprime figcaption{font-family:'Patrick Hand',cursive;font-size:1.6rem;margin-bottom:8px}
+@media print{.dessin-imprime{break-before:page;page-break-before:always}}

@@ -138,6 +138,7 @@ ${C.cadeau === 'piece'
 
   // Petites icônes de boutons (trait blanc)
   const ICONES = {
+    crayon: '<path d="M4 20l1-5L15.5 4.5a2.1 2.1 0 0 1 3 3L8 18zM13.5 6.5l3 3" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/>',
     piece: '<circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="4.5" fill="currentColor"/>',
     changer: '<path d="M4 8h14l-3.5-3.5M20 16H6l3.5 3.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>',
     famille: '<circle cx="8.5" cy="7" r="3" fill="none" stroke="currentColor" stroke-width="1.9"/><circle cx="16.5" cy="9.5" r="2.4" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M3 20a5.5 5.5 0 0 1 11 0M13 20a3.6 3.6 0 0 1 7.5 0" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/>',

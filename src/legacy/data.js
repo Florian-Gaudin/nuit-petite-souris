@@ -338,6 +338,15 @@ window.DATA = {
     diplome: "Voir mon diplôme",
   },
 
+  // ---------- Répondre à Quenotte : un dessin, gardé sur l'appareil et imprimé avec le diplôme ----------
+  dessin: {
+    bouton: "Répondre à Quenotte",
+    invite: { txt: "Tu veux me répondre ? Fais-moi un dessin, je l'emporterai au château !", expr: "joie" },
+    merci: "Quenotte a bien reçu ton dessin !",
+  },
+  // ---------- L'album des dents ----------
+  album: { titre: "L'album des dents", vide: "L'album se remplit à la fin de chaque histoire : chaque dent y garde sa nuit." },
+
   // ---------- Chapitre 5 : le diplôme ----------
   diplome: { txt: "Bravo {enfant} ! Voici ton diplôme officiel, signé de ma patte. Tu peux l'imprimer avec un grand.", expr: "joie" },
   billetTrouve: { txt: "Tu l'as {trouvee} ? {Il} est {sec} maintenant. {Il} est à toi !", expr: "joie" },

@@ -26,6 +26,15 @@ Château → forêt → place Ducale → montgolfière → **le cours d'eau de l
 
 Quenotte reste dans les Ardennes jusqu'à la montgolfière ; le cours d'eau peut donc être n'importe lequel, même à quelques kilomètres de chez l'enfant. Sans cours d'eau indiqué, l'histoire dit « la rivière ».
 
+## Les jeux et surprises de l'histoire
+
+- **Dix scènes** : château, forêt, place Ducale, montgolfière, **au milieu des étoiles** (relier les étoiles qui dessinent une dent), le cours d'eau, le lièvre, l'arrivée, **la fenêtre embuée** (frotter la buée, la chambre apparaît), le chat.
+- **Les saisons** : flocons, pétales, lucioles ou feuilles selon la date de la nuit (pas à l'intérieur).
+- **La lampe de poche** : après le chat, la maison est dans le noir ; le doigt promène la lumière jusqu'à « Chambre de {prénom} ».
+- **L'épilogue** (une fois, avant le diplôme) : le retour en montgolfière entre les nuages, **le terrier** (labyrinthe propre à chaque enfant, dans le noir, avec des surprises dans les impasses), la porte à serrure en forme de dent, puis la dent rangée dans la boîte à trésors.
+- **Répondre à Quenotte** : un dessin après la lettre, gardé sur l'appareil, affiché et imprimé avec le diplôme.
+- **L'album des dents** : chaque histoire terminée y est rangée (écran de choix et diplôme).
+
 ## L'accueil
 
 - **Écran de lancement** : le logo sur le fond de sa couleur, au moins 1,2 s, une seule fois par visite (inscrit dans `index.html`, il s'affiche avant tout chargement).

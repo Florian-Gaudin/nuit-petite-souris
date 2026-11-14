@@ -166,3 +166,31 @@ test("la constellation : l'étoile suivante clignote, le compte s'affiche, la de
   for (let n = 2; n <= 7; n++) { await page.waitForFunction(() => !(window as any).NARR.lit); await page.locator(`.pt-${n} use`).click(); }
   await expect(page.locator('.tap[data-el="constellation"]')).toHaveClass(/dessine/);
 });
+
+test("répondre à Quenotte (dessin) et l'album des dents", async ({ page }) => {
+  await ouvrir(page, '?reset=1#exemple');
+  await ouvrir(page, '?chapitre=4#exemple');
+  await page.locator('#cachet').click();
+  await page.locator('#btn-tout').click();
+  // Le dessin
+  await page.locator('#btn-dessin').click();
+  const t = (await page.locator('.toile').boundingBox())!;
+  await page.mouse.move(t.x + 40, t.y + 40); await page.mouse.down();
+  await page.mouse.move(t.x + t.width - 40, t.y + t.height - 40, { steps: 10 }); await page.mouse.up();
+  await page.locator('.atelier [data-a="envoyer"]').click();
+  await expect(page.locator('.atelier')).toHaveCount(0);
+  // Le diplôme (épilogue déjà vu) : le dessin, et l'histoire rangée dans l'album
+  await page.evaluate(() => { const A = (window as any).APP; A.state.epilogue = true; A.state.unlocked = 5; A.show(5); });
+  await expect(page.locator('.dessin-enfant img')).toBeVisible();
+  await page.locator('#btn-album5').click();
+  await expect(page.locator('.album-page h3')).toHaveText('Clémentine');
+  await expect(page.locator('.album-page li')).toHaveCount(1);
+  await page.locator('.album [data-a="fermer"]').click();
+  // Le dessin s'imprime avec le diplôme
+  await page.goto('certificat/#exemple');
+  await expect(page.locator('.dessin-imprime img')).toBeVisible();
+  // L'album depuis l'écran de choix
+  await ouvrir(page, './');
+  await page.locator('#lien-album').click();
+  await expect(page.locator('.album-page h3')).toHaveText('Clémentine');
+});

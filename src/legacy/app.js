@@ -165,6 +165,73 @@
     window.scrollTo(0, 0); updateFil(n); courant.mount(root, opts);
   }
 
+  // ---------- Répondre à Quenotte : l'atelier de dessin ----------
+  const CLE_DESSIN = 'souris.dessin.' + window.PROFIL.id;
+  const lireDessin = () => { const d = window.STOCKAGE.lire(CLE_DESSIN); return d && /^data:image\/(png|jpeg);base64,[A-Za-z0-9+/=]+$/.test(d) ? d : null; };
+  function atelier(apres) {
+    const COULEURS = ['#1F2235', '#D64045', '#F2A3B5', '#FFC857', '#3E9A6B', '#3E7C8F', '#7d70a3', '#8B5A3C'];
+    document.body.insertAdjacentHTML('beforeend', `<div class="atelier" role="dialog" aria-label="Dessine pour Quenotte">
+  <div class="atelier-in">
+    <h2>Un dessin pour ${esc(C.souris)}</h2>
+    <canvas class="toile" width="960" height="720"></canvas>
+    <div class="outils-dessin">
+      ${COULEURS.map((c, i) => `<button class="couleur${i === 0 ? ' choisie' : ''}" data-c="${c}" style="background:${c}" aria-label="Couleur"></button>`).join('')}
+      <button class="trait-taille" data-t="8" aria-label="Crayon fin">●</button><button class="trait-taille choisie" data-t="18" aria-label="Gros crayon">⬤</button>
+      <button class="gomme" aria-label="Gomme">Gomme</button>
+    </div>
+    <div class="actions-dessin"><button class="btn btn-petit" data-a="effacer">Tout effacer</button><button class="btn btn-petit" data-a="annuler">Fermer</button><button class="btn btn-or" data-a="envoyer">Envoyer à ${esc(C.souris)}</button></div>
+  </div>
+</div>`);
+    const fen = document.body.lastElementChild, toile = $('.toile', fen), g = toile.getContext('2d');
+    const fond = () => { g.fillStyle = '#fff'; g.fillRect(0, 0, toile.width, toile.height); };
+    fond();
+    const ancien = lireDessin(); if (ancien) { const img = new Image(); img.onload = () => g.drawImage(img, 0, 0, toile.width, toile.height); img.src = ancien; }
+    let couleur = '#1F2235', taille = 18, gomme = false, trace = false, dernier = null;
+    const pos = e => { const r = toile.getBoundingClientRect(); return [(e.clientX - r.left) * toile.width / r.width, (e.clientY - r.top) * toile.height / r.height]; };
+    const ligne = (a, b) => { g.strokeStyle = gomme ? '#fff' : couleur; g.lineWidth = gomme ? 40 : taille; g.lineCap = 'round'; g.lineJoin = 'round'; g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(b[0], b[1]); g.stroke(); };
+    toile.addEventListener('pointerdown', e => { e.preventDefault(); trace = true; dernier = pos(e); ligne(dernier, [dernier[0] + 0.1, dernier[1]]); try { toile.setPointerCapture(e.pointerId); } catch (er) { } });
+    toile.addEventListener('pointermove', e => { if (!trace) return; const p = pos(e); ligne(dernier, p); dernier = p; });
+    ['pointerup', 'pointercancel'].forEach(n => toile.addEventListener(n, () => { trace = false; }));
+    $$('.couleur', fen).forEach(b => b.onclick = () => { couleur = b.dataset.c; gomme = false; $$('.couleur, .gomme', fen).forEach(x => x.classList.remove('choisie')); b.classList.add('choisie'); });
+    $$('.trait-taille', fen).forEach(b => b.onclick = () => { taille = +b.dataset.t; $$('.trait-taille', fen).forEach(x => x.classList.remove('choisie')); b.classList.add('choisie'); });
+    $('.gomme', fen).onclick = e => { gomme = true; $$('.couleur', fen).forEach(x => x.classList.remove('choisie')); e.currentTarget.classList.add('choisie'); };
+    const fermer = () => { fen.remove(); if (apres) apres(); };
+    $('[data-a="effacer"]', fen).onclick = fond;
+    $('[data-a="annuler"]', fen).onclick = fermer;
+    $('[data-a="envoyer"]', fen).onclick = () => {
+      window.STOCKAGE.ecrire(CLE_DESSIN, toile.toDataURL('image/jpeg', 0.82));
+      SON.play('badge'); toast(T(D.dessin.merci), A.icone('patte')); fermer();
+    };
+  }
+
+  // ---------- L'album des dents : chaque histoire terminée y est rangée ----------
+  const CLE_ALBUM = 'souris.album';
+  const lireAlbum = () => { try { const a = JSON.parse(window.STOCKAGE.lire(CLE_ALBUM) || '[]'); return Array.isArray(a) ? a : []; } catch (e) { return []; } };
+  function rangerDansAlbum() {
+    const P = window.PROFIL.profil, a = lireAlbum().filter(x => x.id !== window.PROFIL.id);
+    a.push({ id: window.PROFIL.id, code: window.PROFIL.code, prenom: P.prenom, nuit: State.nuit, dent: P.dents.nuit, deja: P.dents.deja });
+    window.STOCKAGE.ecrire(CLE_ALBUM, JSON.stringify(a.slice(-60)));
+  }
+  function album() {
+    const a = lireAlbum(), parEnfant = {};
+    a.forEach(x => { (parEnfant[x.prenom] = parEnfant[x.prenom] || []).push(x); });
+    const date = n => new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(n + 'T12:00:00'));
+    const pages = Object.keys(parEnfant).map(prenom => {
+      const nuits = parEnfant[prenom].sort((x, y) => (x.nuit < y.nuit ? -1 : 1)), derniere = nuits[nuits.length - 1];
+      const toutes = new Set(); nuits.forEach(x => { toutes.add(x.dent); (x.deja || []).forEach(d => toutes.add(d)); });
+      toutes.delete(derniere.dent);
+      return `<section class="album-page"><h3>${esc(prenom)}</h3>${window.MACHOIRE({ dents: { nuit: derniere.dent, deja: [...toutes] } }).replace("cette nuit", "la plus récente")}
+  <ul>${nuits.map(x => `<li><span>Nuit du ${esc(date(x.nuit))} : ${esc(window.NOM_DENT(x.dent))}</span><a class="btn btn-petit" href="#p=${x.code}">Revoir</a></li>`).join('')}</ul></section>`;
+    }).join('');
+    document.body.insertAdjacentHTML('beforeend', `<div class="atelier album" role="dialog" aria-label="${esc(T(D.album.titre))}"><div class="atelier-in">
+  <h2>${A.icone('etoile')} ${esc(T(D.album.titre))}</h2>${pages || `<p>${esc(T(D.album.vide))}</p>`}
+  <div class="actions-dessin"><button class="btn btn-or" data-a="fermer">Fermer</button></div></div></div>`);
+    const fen = document.body.lastElementChild;
+    $('[data-a="fermer"]', fen).onclick = () => fen.remove();
+    // « Revoir » : une autre histoire, l'adresse change et la page se recharge avec son profil
+    $$('a[href^="#p="]', fen).forEach(l => l.addEventListener('click', () => fen.remove()));
+  }
+
   // ---------- Chapitre 0 : accueil ----------
   const Ch0 = {
     render() {
@@ -309,6 +376,7 @@
     <a class="carte-choix voyage" href="#exemple"><span class="ic">${A.icone('etoile')}</span><span><b>Débuter le voyage avec Quenotte</b><small>Découvre l'histoire de ${esc(exemple)}</small></span></a>
     <a class="carte-choix parents" href="parents/"><span class="ic">${A.icone('famille')}</span><span><b>Je suis un parent</b><small>Préparer l'histoire personnalisée pour mon enfant</small></span></a>
   </nav>
+  ${lireAlbum().length ? `<button class="lien-album" id="lien-album">${A.icone('etoile')} ${esc(T(D.album.titre))}</button>` : ''}
   ${window.DON_POSSIBLE ? `<p class="don-accueil"><span class="phrase">Gratuite pour toutes les familles, l'appli vit grâce à vos petits dons.</span> <a href="parents/#don"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z" fill="currentColor"/></svg>Faire un don</a></p>` : ''}
 </section>`;
     // Sans recharger la page (le plein écran est gardé) quand l'histoire choisie est déjà chargée ;
@@ -320,6 +388,7 @@
       document.body.classList.remove('mode-choix');
       show(0);
     };
+    const la = $('#lien-album', root); if (la) la.onclick = album;
     const exempleCharge = window.PROFIL.origine === 'choix' || window.PROFIL.origine === 'exemple';
     if (exempleCharge) $('.carte-choix.voyage', root).onclick = surPlace('#exemple', 'exemple');
     if (m && m.code === window.PROFIL.code) $('.carte-choix.reprendre', root).onclick = surPlace('#p=' + m.code, 'adresse');
@@ -581,6 +650,7 @@
   <div class="env-stage" id="env-stage">${A.enveloppeSVG(esc(C.enfant))}</div>
   <div class="lettre-stage" id="lettre-stage" hidden>
     <div class="papier" id="papier"></div>
+    <button class="btn btn-grand" id="btn-dessin" hidden>${A.icone('crayon')} ${esc(T(D.dessin.bouton))}</button>
   </div>
 </section>`;
     },
@@ -591,7 +661,8 @@
       let ecrit = false;
       const n = lignes.length;
       const els = lignes.map((l, i) => { const p = document.createElement('p'); p.className = 'ligne' + (i === n - 3 || i === n - 2 ? ' sign' : '') + (i === n - 1 ? ' ps' : ''); p.dataset.txt = l; papier.appendChild(p); return p; });
-      const termine = () => { $('#btn-tout', r).hidden = true; NARR.cacher(false); NARR.dire(B(D.lettreFin)); NARR.action(A.icone(C.cadeau === 'piece' ? 'piece' : 'billet') + ' ' + T(D.boutonLettre), () => { complete(4); badge('amie'); badge('billet'); show(5); }); };
+      $('#btn-dessin', r).onclick = () => { SON.play('clic'); atelier(); };
+      const termine = () => { $('#btn-tout', r).hidden = true; $('#btn-dessin', r).hidden = false; NARR.cacher(false); NARR.dire(B(D.lettreFin)); NARR.action(A.icone(C.cadeau === 'piece' ? 'piece' : 'billet') + ' ' + T(D.boutonLettre), () => { complete(4); badge('amie'); badge('billet'); show(5); }); };
       const montreTout = () => { if (ecrit) return; ecrit = true; clearTimeout(self.t); els.forEach(p => { p.textContent = p.dataset.txt; p.classList.add('vue'); }); termine(); };
       // La lettre s'écrit lentement, mot par mot, en très gros caractères
       const ecrire = () => {
@@ -863,8 +934,10 @@ ${places.map(dent).join('')}
   <div class="diplome-wrap">${window.CERTIFICAT.html({ badges: State.badges.concat(State.badges.indexOf('jumelle') < 0 ? ['jumelle'] : []), secret: State.secret, nuitTexte: nuitTexte(), etoiles: nbEtoiles(), total: totalEtoiles })}</div>
   <div class="fin">
     <a class="btn btn-grand btn-or" id="btn-imprimer" href="certificat/?${qs}#p=${window.PROFIL.code}" target="_blank" rel="noopener">${A.icone('imprimer')} Imprimer le diplôme</a>
+    <button class="btn btn-petit" id="btn-album5">${A.icone('etoile')} ${esc(T(D.album.titre))}</button>
     <button class="btn btn-petit" id="btn-revoir5">Revoir l'histoire</button>
   </div>
+  ${lireDessin() ? `<figure class="dessin-enfant"><figcaption>Ton dessin pour ${esc(C.souris)}</figcaption><img src="${lireDessin()}" alt="Le dessin de ${esc(C.enfant)} pour ${esc(C.souris)}"></figure>` : ''}
 </section>`;
     },
     mount(r) {
@@ -872,12 +945,14 @@ ${places.map(dent).join('')}
       heure('03:40'); MUS.ambiance('diplome');
       const premiere = !State.fini;
       complete(5); if (premiere) { State.fini = true; save(); }
+      rangerDansAlbum();
       badge('jumelle');
       if (premiere) SON.play('fanfare');
       NARR.dire(B(D.diplome));
       if (!RM) { const c = $('.confettis', r); const couleurs = ['#FFC857', '#D64045', '#F2A3B5', '#3E7C8F', '#F3EFE6']; for (let i = 0; i < 40; i++) { const s = document.createElement('i'); s.style.left = (Math.random() * 100) + '%'; s.style.background = couleurs[i % couleurs.length]; s.style.animationDelay = (Math.random() * 2.5) + 's'; s.style.animationDuration = (3 + Math.random() * 3) + 's'; c.appendChild(s); } }
       window.CERTIFICAT.brancher($('.diplome-wrap', r));
       $('#btn-revoir5', r).onclick = () => show(1, { scene: 0 });
+      $('#btn-album5', r).onclick = album;
     },
     unmount() { cancelAnimationFrame(this.raf); window.removeEventListener('deviceorientation', this.incline); window.removeEventListener('keydown', this.clavier); clearTimeout(this.tAide); },
   };
