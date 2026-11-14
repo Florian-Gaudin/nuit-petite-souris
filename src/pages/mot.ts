@@ -27,6 +27,10 @@ if (!C.url) $('alerte').hidden = false;
 $('qr').innerHTML = svgQr(C.url);
 
 $('btn-print').onclick = () => window.print();
+if (new URLSearchParams(location.search).has('imprimer')) {
+  // Une fois les polices chargées (sinon l'aperçu montre les polices de secours)
+  document.fonts.ready.then(() => setTimeout(() => window.print(), 300));
+}
 $('btn-plein').onclick = () => {
   const el = document.documentElement as any;
   const f = el.requestFullscreen || el.webkitRequestFullscreen;

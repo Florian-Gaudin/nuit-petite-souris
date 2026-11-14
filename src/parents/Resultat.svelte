@@ -20,7 +20,7 @@
   const date = $derived(new Intl.DateTimeFormat('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }).format(new Date(profil.nuit + 'T12:00:00')));
 
   async function telecharger() {
-    const blob = await pngQr(url, { titre: 'Pour ' + profil.prenom });
+    const blob = await pngQr(url, { titre: 'Pour ' + profil.prenom, icone: baseHistoire() + 'icones/icone.svg' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
     a.download = `petite-souris-${profil.prenom.toLowerCase().normalize('NFD').replace(/[^a-z0-9]+/g, '-')}.png`;
@@ -54,7 +54,7 @@
   </ul>
 
   <div class="actions">
-    <a class="btn btn-or" href={'../mot/#p=' + code} target="_blank" rel="noopener">Imprimer le mot de la souris</a>
+    <a class="btn btn-or" href={'../mot/?imprimer#p=' + code} target="_blank" rel="noopener">Imprimer le mot de la souris</a>
     <button class="btn" type="button" onclick={telecharger}>Télécharger le QR code</button>
     <button class="btn" type="button" onclick={partager}>Partager le lien</button>
     <a class="btn" href={'../?apercu=1#p=' + code}>{surprise ? "Voir l'aperçu de l'histoire" : "Lancer l'histoire ici"}</a>

@@ -1,5 +1,6 @@
 // L'espace parents : verrou, cinq étapes, ville (service simulé), QR code, aperçu
 import { test, expect, type Page } from '@playwright/test';
+import { readFileSync } from 'node:fs';
 import { toucher } from './aide';
 
 const COMMUNES = [{ nom: 'Charleville-Mézières', codesPostaux: ['08000'], codeDepartement: '08' }, { nom: 'Charleville', codesPostaux: ['51120'], codeDepartement: '51' }];
@@ -71,8 +72,13 @@ test('création complète d\'un profil jusqu\'au QR code', async ({ page }) => {
   await expect(conseil).toContainText('Posez le vrai billet de 20 € sur le radiateur (bien éteint !).');
   await expect(conseil).toContainText('avec un téléphone ou une tablette');
   await expect(conseil).not.toContainText(' ton ');
+  // Le QR code téléchargé : une carte aux couleurs du site (1080 × 1440), pas un simple carré blanc
+  const [telechargement] = await Promise.all([page.waitForEvent('download'), page.locator('button', { hasText: 'Télécharger le QR code' }).click()]);
+  expect(telechargement.suggestedFilename()).toBe('petite-souris-lea.png');
+  const png = readFileSync((await telechargement.path())!);
+  expect([png.readUInt32BE(16), png.readUInt32BE(20)]).toEqual([1080, 1440]);
   const histoire = await page.locator('a[href^="../?apercu"]').getAttribute('href');
-  const mot = await page.locator('a[href^="../mot/#p="]').getAttribute('href');
+  const mot = await page.locator('a[href^="../mot/?imprimer#p="]').getAttribute('href');
   expect(histoire).toContain('apercu=1');
   expect(histoire!.split('#')[1]).toBe(mot!.split('#')[1]);
 

@@ -7,7 +7,7 @@
 <title>Le mot de la Petite Souris</title>
 <style>
   /* Page à afficher en plein écran sur l'ordinateur : l'enfant scanne le QR code avec un téléphone ou une tablette */
-  html,body{height:100%}
+  html{height:100%}body{min-height:100%}
   body{display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(circle at 20% 15%,#2b356f 0,transparent 40%),radial-gradient(circle at 85% 80%,#1d2558 0,transparent 45%),var(--nuit);text-align:center;padding:16px}
   .mot{display:grid;grid-template-columns:1fr auto;gap:28px 40px;align-items:center;max-width:1100px;width:100%}
   .mot-texte{display:flex;flex-direction:column;align-items:center;gap:12px}
@@ -22,9 +22,8 @@
   .qr svg{display:block;width:clamp(220px,34vmin,460px);height:auto}
   .url{font-family:var(--mono);font-size:clamp(.8rem,1.6vw,1.05rem);color:var(--muet);word-break:break-all;max-width:36ch}
   .scan{font-weight:700;font-size:clamp(1rem,2.2vw,1.35rem)}
-  .outils{position:fixed;right:12px;bottom:12px;display:flex;gap:8px;opacity:.45;transition:opacity .2s}
-  .outils:hover,.outils:focus-within{opacity:1}
-  .outils .btn{min-height:40px;font-size:.85rem}
+  .outils{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:0 0 18px}
+  .note{color:var(--muet);font-size:.95rem;text-align:center;margin:14px 0 0;max-width:40em}
   .alerte-url{position:fixed;left:0;right:0;top:0;background:var(--rouge);color:#fff;padding:10px 16px;font-weight:700;text-align:center;z-index:5}
   @media (max-width:760px){.mot{grid-template-columns:1fr;gap:20px}.mot h1{max-width:none}}
   @media print{
@@ -38,12 +37,17 @@
     .mot .sign{font-size:15pt;color:#1F2235}.mot .sign svg{fill:#1F2235}
     .qr{box-shadow:none;padding:0;border-radius:0}.qr svg{width:48mm}
     .url{font-size:7pt;color:#333}.scan{font-size:10pt;color:#1F2235}
-    .outils,.alerte-url{display:none!important}
+    .outils,.note,.alerte-url{display:none!important}
   }
 </style>
 </head>
 <body>
 <div id="alerte" class="alerte-url" hidden>L'adresse du site n'est pas encore renseignée : modifiez « url » dans config.js, puis rechargez cette page.</div>
+<div class="outils">
+  <button class="btn btn-or" id="btn-print">Imprimer (A6)</button>
+  <button class="btn btn-petit" id="btn-plein">Plein écran</button>
+  <a class="btn btn-petit" href="../parents/">Retour à l'espace parents</a>
+</div>
 <main class="mot">
   <div class="mot-texte">
     <svg class="souris" viewBox="0 0 220 240" aria-hidden="true"><use href="#souris-face"/></svg>
@@ -58,10 +62,7 @@
     <p class="url" id="url"></p>
   </div>
 </main>
-<div class="outils">
-  <button class="btn btn-petit" id="btn-plein">Plein écran</button>
-  <button class="btn btn-petit" id="btn-print">Imprimer (A6)</button>
-</div>
+<p class="note">Impression : format A6, ou sur une feuille A4 (le mot en occupe un coin). Pas d'imprimante ? Affichez cette page en plein écran : le QR code se scanne aussi sur l'écran.</p>
 <script>
 // Pas de zoom en écartant deux doigts (iPhone et iPad ignorent user-scalable=no)
 (function(){ var no=function(e){ e.preventDefault(); };

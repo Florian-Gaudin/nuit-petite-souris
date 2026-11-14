@@ -55,3 +55,14 @@ test('le mot A6 et le diplôme suivent le profil', async ({ page }) => {
   await expect(page.locator('.dip-nom')).toHaveText('Léo');
   await expect(page.locator('#retour')).toHaveAttribute('href', '../#p=' + code(LEO));
 });
+
+test("le mot de la souris : barre d'outils comme le diplôme, impression automatique depuis l'espace parents", async ({ page }) => {
+  await page.addInitScript(() => { (window as any).IMPRESSIONS = 0; window.print = () => { (window as any).IMPRESSIONS++; }; });
+  await page.goto('mot/#p=' + code(LEO));
+  await expect(page.locator('.outils #btn-print')).toBeVisible();
+  await page.waitForTimeout(800);
+  expect(await page.evaluate(() => (window as any).IMPRESSIONS)).toBe(0); // ouverte simplement : pas d'impression
+  await page.goto('mot/?imprimer#p=' + code(LEO));
+  await expect.poll(() => page.evaluate(() => (window as any).IMPRESSIONS)).toBe(1);
+  await expect(page.locator('#titre')).toContainText('Léo');
+});
