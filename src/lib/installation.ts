@@ -59,9 +59,12 @@ export function appareil(ua = navigator.userAgent): Appareil {
   return 'ordinateur';
 }
 
-// Ouvre l'espace parents dans Chrome depuis un autre navigateur Android (lien « intent ») :
-// le bouton « Installer l'appli » y attend
+// Ouvre dans Chrome, depuis un autre navigateur Android (lien « intent »), la page d'installation :
+// l'espace parents avec « ?installer », où le bouton « Installer l'appli » attend, sans le verrou.
+// (Chrome exige un toucher sur la page pour installer : impossible de lancer l'installation seule.)
+export const PARAM_INSTALLER = 'installer';
 export function lienChrome(): string {
-  const u = new URL('parents/', racineSite());
-  return `intent://${u.host}${u.pathname}#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=${encodeURIComponent(u.href)};end`;
+  const u = new URL('parents/?' + PARAM_INSTALLER, racineSite());
+  return `intent://${u.host}${u.pathname}${u.search}#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=${encodeURIComponent(u.href)};end`;
 }
+export const pageInstallation = () => new URLSearchParams(location.search).has(PARAM_INSTALLER);

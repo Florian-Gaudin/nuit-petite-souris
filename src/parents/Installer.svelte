@@ -15,7 +15,8 @@
   {:else}
     <p class="aide">Gratuit, sans store : l'icône de Quenotte sur l'écran d'accueil, l'histoire en plein écran, et elle fonctionne même sans réseau.</p>
 
-    {#if peutInstaller}
+    <!-- Samsung Internet propose aussi l'installation, mais son appli est bloquée par Play Protect : on passe par Chrome -->
+    {#if peutInstaller && quoi !== 'android-autre'}
       <button type="button" class="btn btn-or" onclick={installer}>Installer l'appli</button>
     {/if}
     {#if fait}
@@ -27,7 +28,7 @@
         <li>Choisissez <b>« Sur l'écran d'accueil »</b>, puis <b>Ajouter</b>.</li>
       </ol>
     {:else if quoi === 'android-autre'}
-      <p>Pour installer l'appli, ouvrez l'espace parents dans <b>Chrome</b> et touchez « Installer l'appli ».</p>
+      <p>Pour installer l'appli, passez par <b>Chrome</b> : un seul toucher suffira.</p>
       <a class="btn btn-or" href={lienChrome()}>Ouvrir dans Chrome</a>
     {:else if quoi === 'android-chrome'}
       {#if !peutInstaller}

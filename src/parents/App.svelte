@@ -9,6 +9,10 @@
   import ChoixVille from './ChoixVille.svelte';
   import Resultat from './Resultat.svelte';
   import Installer from './Installer.svelte';
+  import { pageInstallation } from '../lib/installation';
+
+  // Arrivée depuis « Ouvrir dans Chrome » : seulement l'installation, sans le verrou ni le formulaire
+  const installation = pageInstallation();
 
   const CLE_BROUILLON = 'souris.parents.brouillon';
 
@@ -68,7 +72,12 @@
   const accord = $derived(b.genre === 'g' ? 'il' : b.genre === 'f' ? 'elle' : 'il ou elle');
 </script>
 
-{#if !deverrouille}
+{#if installation}
+  <main class="verrou">
+    <Installer />
+    <a class="retour" href="../">Retour à l'histoire</a>
+  </main>
+{:else if !deverrouille}
   <main class="verrou">
     <div class="carte">
       <h1>Espace parents</h1>

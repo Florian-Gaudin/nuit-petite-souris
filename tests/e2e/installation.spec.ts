@@ -15,10 +15,10 @@ test.describe('Samsung Internet', () => {
   test.use({ userAgent: SAMSUNG });
   test('conseille Chrome, avec un lien qui l\'ouvre', async ({ page }) => {
     await espaceParents(page);
-    await expect(page.locator('.installer')).toContainText("ouvrez l'espace parents dans Chrome");
+    await expect(page.locator('.installer')).toContainText("passez par Chrome");
     await expect(page.locator('.installer')).not.toContainText('sécurisée');
     const lien = await page.locator('.installer a', { hasText: 'Ouvrir dans Chrome' }).getAttribute('href');
-    expect(lien).toMatch(/^intent:\/\/.+\/parents\/#Intent;scheme=https;package=com\.android\.chrome;/);
+    expect(lien).toMatch(/^intent:\/\/.+\/parents\/\?installer#Intent;scheme=https;package=com\.android\.chrome;/);
   });
 });
 
@@ -62,4 +62,31 @@ test("le message « C'est fait » attend la vraie installation", async ({ page }
   await expect(page.locator('.installer .ok')).toHaveCount(0);
   await page.evaluate(() => window.dispatchEvent(new Event('appinstalled')));
   await expect(page.locator('.installer .ok')).toContainText("C'est fait");
+});
+
+test("« Ouvrir dans Chrome » mène à la page d'installation, sans le verrou", async ({ page }) => {
+  await page.goto('parents/?installer');
+  await expect(page.locator('.installer')).toBeVisible();
+  await expect(page.locator('.tenir')).toHaveCount(0);
+  await page.evaluate(() => {
+    const e: any = new Event('beforeinstallprompt', { cancelable: true });
+    e.prompt = async () => {}; e.userChoice = Promise.resolve({ outcome: 'dismissed' });
+    window.dispatchEvent(e);
+  });
+  await expect(page.locator('.installer button', { hasText: "Installer l'appli" })).toBeVisible();
+});
+
+test.describe('Samsung Internet, invitation reçue', () => {
+  test.use({ userAgent: SAMSUNG });
+  test("pas de bouton « Installer l'appli », seulement Chrome", async ({ page }) => {
+    await espaceParents(page);
+    await page.evaluate(() => {
+      const e: any = new Event('beforeinstallprompt', { cancelable: true });
+      e.prompt = async () => {}; e.userChoice = Promise.resolve({ outcome: 'dismissed' });
+      window.dispatchEvent(e);
+    });
+    await expect(page.locator('.installer a', { hasText: 'Ouvrir dans Chrome' })).toBeVisible();
+    await expect(page.locator('.installer button')).toHaveCount(0);
+    expect(await page.locator('.installer a', { hasText: 'Ouvrir dans Chrome' }).getAttribute('href')).toContain('/parents/?installer#Intent');
+  });
 });
