@@ -89,7 +89,15 @@ test('de l\'accueil au diplôme', async ({ page }) => {
   await expect(page.locator('.papier')).toContainText('Chère Clémentine');
   await page.locator('#bandeau-actions button', { hasText: 'billet' }).click();
   // L'épilogue : le retour en montgolfière (les nuages passent), puis la dent rangée dans la boîte à trésors
-  await page.locator('#bandeau-actions button', { hasText: 'boîte à trésors' }).click({ timeout: 60_000 });
+  await page.locator('#bandeau-actions button', { hasText: 'Entrer dans le terrier' }).click({ timeout: 60_000 });
+  // Le terrier : on suit le chemin jusqu'à la porte du château (flèches du clavier)
+  await expect(page.locator('#voile-noir.on')).toHaveCount(0);
+  const solution = (await page.locator('svg.terrier').getAttribute('data-solution'))!;
+  const fleches: Record<string, string> = { N: 'ArrowUp', S: 'ArrowDown', E: 'ArrowRight', O: 'ArrowLeft' };
+  await page.waitForTimeout(300);
+  for (const d of solution) { await page.keyboard.press(fleches[d]); await page.waitForTimeout(120); }
+  await expect(page.locator('svg.terrier.ouverte')).toHaveCount(1);
+  await page.locator('#bandeau-actions button', { hasText: 'boîte à trésors' }).click({ timeout: 30_000 });
   await expect(page.locator('#voile-noir.on')).toHaveCount(0); // la fin du fondu au noir
   await page.waitForTimeout(300);
   const dent = (await page.locator('.dent-a-ranger').boundingBox())!, place = (await page.locator('.place-nuit').boundingBox())!;

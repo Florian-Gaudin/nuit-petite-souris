@@ -651,7 +651,7 @@ ${[0, 1, 2].map(i => `<g class="nuage" data-n="${i}" transform="translate(-400,0
         chateau.classList.add('arrive'); cible = 400;
         setTimeout(async () => {
           SON.play('allume'); await NARR.dire(B(D.epilogue.arrivee));
-          NARR.action(A.icone('etoile') + ' ' + T(D.epilogue.bouton), () => { SON.play('clic'); NARR.action(null); fondu(() => self.boite(r), 600); });
+          NARR.action(A.icone('suite') + ' ' + T(D.epilogue.terrierBouton), () => { SON.play('clic'); NARR.action(null); fondu(() => self.terrier(r), 600); });
         }, RM ? 100 : 1800);
       };
       const boucle = ts => {
@@ -673,8 +673,158 @@ ${[0, 1, 2].map(i => `<g class="nuage" data-n="${i}" transform="translate(-400,0
       };
       self.raf = requestAnimationFrame(boucle);
     },
+    // ---------- Le terrier : un labyrinthe sous la terre, de l'entrée (à gauche) à la porte du château (à droite) ----------
+    // Fabriqué à partir du profil (toujours le même pour un enfant), plongé dans le noir : seule la lanterne éclaire.
+    terrier(r) {
+      const self = this;
+      cancelAnimationFrame(this.raf); window.removeEventListener('deviceorientation', this.incline);
+      heure('03:28'); MUS.ambiance('foret');
+      const COLS = 16, ROWS = 6, CELL = 90, X0 = 60, Y0 = 110, LARG = X0 + COLS * CELL + 170, HAUT = Y0 + ROWS * CELL + 50;
+      // Hasard reproductible, à partir de l'identifiant du profil
+      let graine = 0; for (const ch of String(window.PROFIL.id)) graine = (graine * 31 + ch.charCodeAt(0)) >>> 0;
+      const hasard = () => { graine = (graine + 0x6D2B79F5) >>> 0; let t = graine; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+      // Le labyrinthe (exploration en profondeur) : ouvert[c][l] = directions ouvertes
+      const ouvert = [...Array(COLS)].map(() => [...Array(ROWS)].map(() => ({})));
+      const DIR = { N: [0, -1, 'S'], S: [0, 1, 'N'], E: [1, 0, 'O'], O: [-1, 0, 'E'] };
+      const vu = new Set(['0,0']), pile = [[0, 0]];
+      while (pile.length) {
+        const [c, l] = pile[pile.length - 1];
+        const voisins = Object.entries(DIR).filter(([, [dx, dy]]) => { const n = c + dx, m = l + dy; return n >= 0 && n < COLS && m >= 0 && m < ROWS && !vu.has(n + ',' + m); });
+        if (!voisins.length) { pile.pop(); continue; }
+        const [d, [dx, dy, inverse]] = voisins[Math.floor(hasard() * voisins.length)];
+        ouvert[c][l][d] = true; ouvert[c + dx][l + dy][inverse] = true;
+        vu.add((c + dx) + ',' + (l + dy)); pile.push([c + dx, l + dy]);
+      }
+      const sortie = [COLS - 1, Math.floor(hasard() * ROWS)];
+      const centre = (c, l) => [X0 + c * CELL + CELL / 2, Y0 + l * CELL + CELL / 2];
+      // Le chemin le plus court vers la sortie (pour les lucioles et pour les tests)
+      const chemin = (c0, l0) => {
+        const prec = new Map([[c0 + ',' + l0, null]]), file = [[c0, l0]];
+        while (file.length) {
+          const [c, l] = file.shift(); if (c === sortie[0] && l === sortie[1]) break;
+          for (const [d, [dx, dy]] of Object.entries(DIR)) if (ouvert[c][l][d]) { const k = (c + dx) + ',' + (l + dy); if (!prec.has(k)) { prec.set(k, [c, l, d]); file.push([c + dx, l + dy]); } }
+        }
+        const pas = []; let k = sortie[0] + ',' + sortie[1];
+        while (prec.get(k)) { const [c, l, d] = prec.get(k); pas.unshift({ c, l, d }); k = c + ',' + l; }
+        return pas;
+      };
+      // Les surprises, au fond des impasses les plus éloignées de l'entrée
+      const impasses = [];
+      for (let c = 0; c < COLS; c++) for (let l = 0; l < ROWS; l++) if (Object.keys(ouvert[c][l]).length === 1 && !(c === 0 && l === 0) && !(c === sortie[0] && l === sortie[1])) impasses.push([c, l]);
+      impasses.sort((a, b) => (b[0] - a[0]) || (hasard() - 0.5));
+      const SURPRISES = ['ver', 'carotte', 'fossile', 'piece'];
+      const surprises = impasses.filter((_, i) => i % Math.max(1, Math.floor(impasses.length / 4)) === 0).slice(0, 4).map((p, i) => ({ id: SURPRISES[i], c: p[0], l: p[1], vue: false }));
+      const DESSIN_SURPRISE = {
+        ver: '<path d="M-22 6q8-14 16 0t16 0 14-4" fill="none" stroke="#E98BA0" stroke-width="7" stroke-linecap="round"/><circle cx="24" cy="1" r="1.6" fill="#2B2B33"/>',
+        carotte: '<path d="M-20 -6l34 6-34 6z" fill="#E8833A"/><path d="M14 0l10-8M14 0l12 0M14 0l10 8" stroke="#3E9A6B" stroke-width="3" stroke-linecap="round"/>',
+        fossile: '<circle r="16" fill="#cbbfa8"/><path d="M0 0m-10 0a10 10 0 1 0 10-10a6 6 0 1 1-6 6a3 3 0 1 0 3-3" fill="none" stroke="#8a7a5c" stroke-width="2.4"/>',
+        piece: '<circle r="13" fill="#C9A227" stroke="#8a6a12" stroke-width="2.5"/><path d="M-5-4h10M-5 4h10" stroke="#8a6a12" stroke-width="2"/>',
+      };
+      // ---------- Le dessin : couches de terre, cailloux, racines, galeries ----------
+      let galeries = '', clair = '';
+      for (let c = 0; c < COLS; c++) for (let l = 0; l < ROWS; l++) {
+        const [x, y] = centre(c, l);
+        galeries += `<circle cx="${x}" cy="${y}" r="31"/>`; clair += `<circle cx="${x}" cy="${y - 4}" r="20"/>`;
+        if (ouvert[c][l].E) { galeries += `<path d="M${x} ${y}h${CELL}"/>`; clair += `<path d="M${x} ${y - 4}h${CELL}"/>`; }
+        if (ouvert[c][l].S) { galeries += `<path d="M${x} ${y}v${CELL}"/>`; clair += `<path d="M${x} ${y - 4}v${CELL}"/>`; }
+      }
+      const [ex0, ey0] = centre(0, 0), [sx, sy] = centre(sortie[0], sortie[1]);
+      galeries += `<path d="M${ex0} ${ey0}V40"/><path d="M${sx} ${sy}H${LARG - 70}"/>`;
+      clair += `<path d="M${ex0} ${ey0}V44"/><path d="M${sx} ${sy - 4}H${LARG - 70}"/>`;
+      let cailloux = '';
+      for (let i = 0; i < 160; i++) cailloux += `<ellipse cx="${(hasard() * LARG).toFixed(0)}" cy="${(60 + hasard() * (HAUT - 60)).toFixed(0)}" rx="${(3 + hasard() * 9).toFixed(1)}" ry="${(2 + hasard() * 6).toFixed(1)}" fill="${['#6b4a33', '#4a3222', '#7d5b40', '#3b2618'][i % 4]}" opacity="${(0.5 + hasard() * 0.5).toFixed(2)}"/>`;
+      let racines = '';
+      for (let i = 0; i < 14; i++) { const x = 100 + hasard() * (LARG - 200), h = 40 + hasard() * 110; racines += `<path d="M${x.toFixed(0)} 60q${(hasard() * 30 - 15).toFixed(0)} ${(h / 2).toFixed(0)} ${(hasard() * 20 - 10).toFixed(0)} ${h.toFixed(0)}" fill="none" stroke="#2a1a10" stroke-width="${(2 + hasard() * 3).toFixed(1)}" stroke-linecap="round" opacity=".7"/>`; }
+      const solution = chemin(0, 0);
+      const zone = $('#epi', r);
+      zone.innerHTML = `<svg class="terrier" viewBox="0 0 600 ${HAUT}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Le terrier de Quenotte : un labyrinthe sous la terre, jusqu'à la porte du château" data-solution="${solution.map(p => p.d).join('')}">
+<defs>
+  <linearGradient id="g-terre" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6b4a33"/><stop offset=".45" stop-color="#4f3524"/><stop offset="1" stop-color="#2e1d12"/></linearGradient>
+  <radialGradient id="g-lanterne"><stop offset=".45" stop-color="#000"/><stop offset="1" stop-color="#fff"/></radialGradient>
+  <mask id="m-terrier" maskUnits="userSpaceOnUse" x="-200" y="-200" width="${LARG + 400}" height="${HAUT + 400}"><rect x="-200" y="-200" width="${LARG + 400}" height="${HAUT + 400}" fill="#fff"/><circle class="lumiere" cx="${ex0}" cy="${ey0}" r="190" fill="url(#g-lanterne)"/></mask>
+</defs>
+<rect x="-400" y="-400" width="${LARG + 800}" height="${HAUT + 800}" fill="url(#g-terre)"/>
+<g opacity=".35" fill="none" stroke="#2e1d12" stroke-width="10">${[180, 300, 420, 560].map(y => `<path d="M-100 ${y}Q${LARG / 4} ${y - 20} ${LARG / 2} ${y}T${LARG + 100} ${y}"/>`).join('')}</g>
+${cailloux}
+<rect x="-400" y="-400" width="${LARG + 800}" height="440" fill="#141A3A"/><path d="M-400 40H${LARG + 400}V62H-400Z" fill="#2F5D50"/><path d="M-400 40${[...Array(Math.ceil((LARG + 800) / 16))].map(() => 'l8-10l8 10').join('')}" fill="#3E7C50"/>
+${racines}
+<g class="galeries" fill="none" stroke="#9c7650" stroke-width="62" stroke-linecap="round"><g fill="#9c7650" stroke="none">${galeries.match(/<circle[^>]*>/g).join('')}</g>${galeries.replace(/<circle[^>]*>/g, '')}</g>
+<g fill="none" stroke="#b58c62" stroke-width="30" stroke-linecap="round" opacity=".55"><g fill="#b58c62" stroke="none">${clair.match(/<circle[^>]*>/g).join('')}</g>${clair.replace(/<circle[^>]*>/g, '')}</g>
+<g transform="translate(${ex0},36)"><ellipse rx="44" ry="14" fill="#1a110a"/></g>
+<g class="porte-chateau" transform="translate(${LARG - 70},${sy})"><rect x="-10" y="-70" width="90" height="140" fill="#8a8395"/><circle r="46" fill="#6b6560"/><g class="battant"><circle r="40" fill="#8B5A3C" stroke="#5c3a24" stroke-width="4"/><path d="M-40 0h80M0-40v80" stroke="#6E4630" stroke-width="3" opacity=".6"/><use href="#dent" x="-9" y="-11" width="18" height="18" opacity=".85"/></g></g>
+${surprises.map(s => { const [x, y] = centre(s.c, s.l); return `<g class="surprise" data-id="${s.id}" transform="translate(${x},${y + 12})">${DESSIN_SURPRISE[s.id]}</g>`; }).join('')}
+<g class="lucioles"></g>
+<g class="q-terrier"><circle r="34" fill="url(#glow)"/>${A.souris(-38, -40, 76)}</g>
+<rect class="nuit-terrier" x="-400" y="-400" width="${LARG + 800}" height="${HAUT + 800}" fill="#0b0705" mask="url(#m-terrier)"/>
+</svg>`;
+      const svg = $('svg.terrier', zone), q = $('.q-terrier', svg), lumiere = $('.lumiere', svg), lucioles = $('.lucioles', svg);
+      NARR.dire(B(D.epilogue.terrier));
+      let pos = [0, 0], qx = ex0, qy = 40, depart = null, but = null, fini = false, cible = null, aide = false, camX = 0;
+      // On entre par le trou, en haut à gauche
+      depart = { x: ex0, y: 40, t: performance.now() }; but = { x: ex0, y: ey0 };
+      const DUREE = RM ? 40 : 170;
+      const point = e => { const pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); };
+      const avance = d => {
+        if (fini || but) return false;
+        const [c, l] = pos; if (!ouvert[c][l][d]) return false;
+        const [dx, dy] = DIR[d]; pos = [c + dx, l + dy];
+        const [x, y] = centre(pos[0], pos[1]);
+        depart = { x: qx, y: qy, t: performance.now() }; but = { x, y };
+        SON.play('pas');
+        return true;
+      };
+      const arrive = () => {
+        // Une surprise ?
+        const s = surprises.find(s => !s.vue && s.c === pos[0] && s.l === pos[1]);
+        if (s) { s.vue = true; const g = $(`.surprise[data-id="${s.id}"]`, svg); if (g) g.classList.add('vue'); SON.play('etoile'); NARR.dire(B(D.epilogue.surprises[s.id]), { vite: true }); }
+        if (aide) montreLucioles();
+        // La sortie : la porte du château
+        if (pos[0] === sortie[0] && pos[1] === sortie[1]) {
+          fini = true; clearTimeout(self.tAide);
+          depart = { x: qx, y: qy, t: performance.now() }; but = { x: LARG - 120, y: sy };
+          setTimeout(async () => {
+            svg.classList.add('ouverte'); SON.play('cachet');
+            await NARR.dire(B(D.epilogue.porte));
+            NARR.action(A.icone('etoile') + ' ' + T(D.epilogue.bouton), () => { SON.play('clic'); NARR.action(null); fondu(() => self.boite(r), 600); });
+          }, RM ? 50 : 500);
+        }
+      };
+      const montreLucioles = () => { lucioles.innerHTML = chemin(pos[0], pos[1]).map(p => { const [x, y] = centre(p.c, p.l); return `<circle cx="${x}" cy="${y}" r="7" fill="#F4F19A"/><circle cx="${x}" cy="${y}" r="16" fill="url(#glow)"/>`; }).join(''); };
+      // Le doigt montre le chemin : Quenotte avance de case en case vers lui
+      svg.addEventListener('pointerdown', e => { e.preventDefault(); SON.unlock(); cible = point(e); try { svg.setPointerCapture(e.pointerId); } catch (er) { } });
+      svg.addEventListener('pointermove', e => { if (cible) cible = point(e); });
+      ['pointerup', 'pointercancel'].forEach(n => svg.addEventListener(n, () => { cible = null; }));
+      self.clavier = e => { const d = { ArrowUp: 'N', ArrowDown: 'S', ArrowRight: 'E', ArrowLeft: 'O' }[e.key]; if (d) { e.preventDefault(); avance(d); } };
+      window.addEventListener('keydown', self.clavier);
+      self.tAide = setTimeout(() => { if (!fini) { aide = true; montreLucioles(); NARR.dire(B(D.epilogue.terrierAide)); } }, 30000);
+      const boucle = ts => {
+        if (but) {
+          const k = Math.min(1, (ts - depart.t) / DUREE);
+          qx = depart.x + (but.x - depart.x) * k; qy = depart.y + (but.y - depart.y) * k;
+          if (k >= 1) { const fin = !fini; but = null; if (fin || !fini) arrive(); }
+        } else if (cible && !fini) {
+          const dx = cible.x - qx, dy = cible.y - qy;
+          if (Math.hypot(dx, dy) > 34) {
+            const prem = Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'E' : 'O') : (dy > 0 ? 'S' : 'N');
+            const sec = Math.abs(dx) > Math.abs(dy) ? (dy > 0 ? 'S' : 'N') : (dx > 0 ? 'E' : 'O');
+            if (!avance(prem) && Math.min(Math.abs(dx), Math.abs(dy)) > 24) avance(sec);
+          }
+        }
+        q.setAttribute('transform', `translate(${qx.toFixed(1)},${qy.toFixed(1)})`);
+        lumiere.setAttribute('cx', qx.toFixed(1)); lumiere.setAttribute('cy', qy.toFixed(1));
+        // La caméra suit Quenotte : le terrier défile de gauche à droite
+        const vb = svg.viewBox.baseVal, rect = svg.getBoundingClientRect();
+        const largeurVue = Math.max(420, Math.min(LARG, HAUT * rect.width / Math.max(1, rect.height)));
+        const voulu = Math.max(0, Math.min(LARG - largeurVue, qx - largeurVue * 0.4));
+        camX += (voulu - camX) * (RM ? 1 : 0.12);
+        svg.setAttribute('viewBox', `${camX.toFixed(1)} 0 ${largeurVue.toFixed(0)} ${HAUT}`);
+        if (vb) self.raf = requestAnimationFrame(boucle);
+      };
+      self.raf = requestAnimationFrame(boucle);
+    },
     boite(r) {
       cancelAnimationFrame(this.raf); window.removeEventListener('deviceorientation', this.incline);
+      window.removeEventListener('keydown', this.clavier); clearTimeout(this.tAide);
       const zone = $('#epi', r), places = window.PLACES_DENTS, P = window.PROFIL.profil;
       const deja = new Set(P.dents.deja), cible = places.find(t => t.d === P.dents.nuit);
       const dent = t => `<g transform="translate(${t.x.toFixed(1)} ${t.y.toFixed(1)}) rotate(${t.angle.toFixed(1)})"><rect x="${-t.l / 2}" y="${-t.h / 2}" width="${t.l}" height="${t.h}" rx="7" ${t.d === P.dents.nuit ? 'class="place-nuit" fill="none" stroke="#FFC857" stroke-width="2.5" stroke-dasharray="5 4"' : deja.has(t.d) ? 'class="deja" fill="#fff" stroke="#F2A3B5" stroke-width="2"' : 'fill="none" stroke="#6b4a6e" stroke-width="1.5" opacity=".6"'}/></g>`;
@@ -729,7 +879,7 @@ ${places.map(dent).join('')}
       window.CERTIFICAT.brancher($('.diplome-wrap', r));
       $('#btn-revoir5', r).onclick = () => show(1, { scene: 0 });
     },
-    unmount() { cancelAnimationFrame(this.raf); window.removeEventListener('deviceorientation', this.incline); },
+    unmount() { cancelAnimationFrame(this.raf); window.removeEventListener('deviceorientation', this.incline); window.removeEventListener('keydown', this.clavier); clearTimeout(this.tAide); },
   };
 
   const Chapitres = [Ch0, Ch1, Ch2, Ch3, Ch4, Ch5];

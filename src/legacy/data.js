@@ -313,7 +313,17 @@ window.DATA = {
     intro: { txt: "Pendant que tu lis ma lettre, je rentre au château en montgolfière. Aide-moi à éviter les nuages : glisse ton doigt vers le haut ou vers le bas !", expr: "joie" },
     evite: ["Ouf, évité !", "Bravo, on passe !", "Encore un, et c'est le château !"],
     pouf: { txt: "Pouf ! Un nuage tout doux… Ce n'est rien, on continue !", expr: "clin" },
-    arrivee: { txt: "Voilà mon château ! Ouvrons vite ma boîte à trésors.", expr: "joie" },
+    arrivee: { txt: "Voilà mon château ! Je me pose à l'orée de la forêt. Pour rentrer, je passe toujours par mon terrier secret…", expr: "clin" },
+    terrierBouton: "Entrer dans le terrier",
+    terrier: { txt: "Guide-moi dans mon terrier jusqu'à la porte du château ! Pose ton doigt devant moi pour me montrer le chemin.", expr: "chuchote" },
+    terrierAide: { txt: "Regarde, les lucioles t'indiquent le chemin !", expr: "clin" },
+    surprises: {
+      ver: { txt: "Un ver de terre qui fait sa gymnastique ! Bonne nuit, ver de terre.", expr: "sourire" },
+      carotte: { txt: "Une carotte oubliée par le lièvre ! Il doit la chercher partout.", expr: "surprise" },
+      fossile: { txt: "Un coquillage en pierre ! Il y a très, très longtemps, ici, c'était la mer.", expr: "surprise" },
+      piece: { txt: "Une pièce toute ancienne ! Quelqu'un l'a perdue il y a cent ans.", expr: "surprise" },
+    },
+    porte: { txt: "La porte de mon château ! Sa serrure a la forme d'une dent… Clic ! Elle s'ouvre.", expr: "joie" },
     bouton: "Ouvrir la boîte à trésors",
     boite: { variante: {
       premiere: { txt: "Voici ma boîte à trésors. Fais glisser ta dent jusqu'à sa place, celle qui brille !", expr: "sourire" },
