@@ -180,6 +180,9 @@ test("répondre à Quenotte (dessin) et l'album des dents", async ({ page }) => 
   await page.mouse.move(t.x + t.width - 40, t.y + t.height - 40, { steps: 10 }); await page.mouse.up();
   await page.locator('.atelier [data-a="envoyer"]').click();
   await expect(page.locator('.atelier')).toHaveCount(0);
+  // L'aperçu sous la lettre, et le bouton devient « Modifier mon dessin »
+  await expect(page.locator('#dessin-lettre .dessin-enfant img')).toBeVisible();
+  await expect(page.locator('#btn-dessin')).toContainText('Modifier mon dessin');
   // Le diplôme (épilogue déjà vu) : le dessin, et l'histoire rangée dans l'album
   await page.evaluate(() => { const A = (window as any).APP; A.state.epilogue = true; A.state.unlocked = 5; A.show(5); });
   await expect(page.locator('.dessin-enfant img')).toBeVisible();

@@ -652,7 +652,7 @@
   <div class="env-stage" id="env-stage">${A.enveloppeSVG(esc(C.enfant))}</div>
   <div class="lettre-stage" id="lettre-stage" hidden>
     <div class="papier" id="papier"></div>
-    <button class="btn btn-grand" id="btn-dessin" hidden>${A.icone('crayon')} ${esc(T(D.dessin.bouton))}</button>
+    <div class="dessin-lettre" id="dessin-lettre" hidden></div>
   </div>
 </section>`;
     },
@@ -663,8 +663,15 @@
       let ecrit = false;
       const n = lignes.length;
       const els = lignes.map((l, i) => { const p = document.createElement('p'); p.className = 'ligne' + (i === n - 3 || i === n - 2 ? ' sign' : '') + (i === n - 1 ? ' ps' : ''); p.dataset.txt = l; papier.appendChild(p); return p; });
-      $('#btn-dessin', r).onclick = () => { SON.play('clic'); atelier(); };
-      const termine = () => { $('#btn-tout', r).hidden = true; $('#btn-dessin', r).hidden = false; NARR.cacher(false); NARR.dire(B(D.lettreFin)); NARR.action(A.icone(C.cadeau === 'piece' ? 'piece' : 'billet') + ' ' + T(D.boutonLettre), () => { complete(4); badge('amie'); badge('billet'); show(5); }); };
+      // Sous la lettre : l'aperçu du dessin (comme sous le diplôme) et le bouton pour le faire ou le modifier
+      const majDessin = () => {
+        const z = $('#dessin-lettre', r), d = lireDessin();
+        z.innerHTML = (d ? `<figure class="dessin-enfant"><figcaption>Ton dessin pour ${esc(C.souris)}</figcaption><img src="${d}" alt="Le dessin de ${esc(C.enfant)} pour ${esc(C.souris)}"></figure>` : '')
+          + `<button class="btn btn-petit" id="btn-dessin">${A.icone('crayon')} ${esc(T(d ? D.dessin.modifier : D.dessin.bouton))}</button>`;
+        $('#btn-dessin', z).onclick = () => { SON.play('clic'); atelier(majDessin); };
+      };
+      majDessin();
+      const termine = () => { $('#btn-tout', r).hidden = true; $('#dessin-lettre', r).hidden = false; NARR.cacher(false); NARR.dire(B(D.lettreFin)); NARR.action(A.icone(C.cadeau === 'piece' ? 'piece' : 'billet') + ' ' + T(D.boutonLettre), () => { complete(4); badge('amie'); badge('billet'); show(5); }); };
       const montreTout = () => { if (ecrit) return; ecrit = true; clearTimeout(self.t); els.forEach(p => { p.textContent = p.dataset.txt; p.classList.add('vue'); }); termine(); };
       // La lettre s'écrit lentement, mot par mot, en très gros caractères
       const ecrire = () => {
@@ -955,7 +962,7 @@ ${places.map(dent).join('')}
     <button class="btn btn-petit" id="btn-revoir5">Revoir l'histoire</button>
   </div>
   ${lireDessin() ? `<figure class="dessin-enfant"><figcaption>Ton dessin pour ${esc(C.souris)}</figcaption><img src="${lireDessin()}" alt="Le dessin de ${esc(C.enfant)} pour ${esc(C.souris)}"></figure>` : ''}
-  <div class="fin"><button class="btn" id="btn-dessin5">${A.icone('crayon')} ${esc(T(lireDessin() ? D.dessin.modifier : D.dessin.faire))}</button></div>
+  <div class="fin"><button class="btn btn-petit" id="btn-dessin5">${A.icone('crayon')} ${esc(T(lireDessin() ? D.dessin.modifier : D.dessin.faire))}</button></div>
 </section>`;
     },
     mount(r) {

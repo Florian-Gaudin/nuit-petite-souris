@@ -719,7 +719,7 @@ html{touch-action:pan-x pan-y}
 .outils-dessin .gomme{border-radius:20px;padding:0 12px}
 .outils-dessin .choisie{box-shadow:0 0 0 3px var(--rouge)}
 .actions-dessin{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
-.lettre-stage #btn-dessin{display:flex;margin:14px auto 0}
+.lettre-stage #btn-dessin{display:flex}
 .dessin-enfant{margin:18px auto 0;max-width:520px;text-align:center}
 .dessin-enfant img{width:100%;border-radius:14px;border:3px solid var(--lanterne);background:#fff}
 .dessin-enfant figcaption{font-weight:800;color:var(--lanterne);margin-bottom:6px}
@@ -740,3 +740,5 @@ html{touch-action:pan-x pan-y}
 .toile-titre{position:absolute;left:14px;top:-15px;z-index:1;display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:999px;background:var(--lanterne);color:#3b2a00;font:800 .95rem var(--display);box-shadow:0 2px 6px rgba(0,0,0,.15)}
 .toile-titre .ico{width:18px;height:18px}
 .toile{border-color:var(--lanterne);border-width:3px}
+.dessin-lettre{display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:14px}
+.dessin-lettre .dessin-enfant{margin:0;width:100%}
