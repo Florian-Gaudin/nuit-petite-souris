@@ -442,7 +442,6 @@
     mount(r) {
       const self = this, cam = $('#cam', r), dets = $('#dets', r), ts = $('#cam-ts', r), nom = $('#cam-nom', r);
       const cs1 = $('#cs1', r), cs2 = $('#cs2', r), bat = $('#bateau2', r), dent = $('#dent1', r), mot = $('#mot1', r), salon = $('#cam-salon', r), chambre = $('#cam-chambre', r);
-      const lieu = (C.billet.lieu || 'sur la cheminée').toUpperCase();
       heure('02:47'); MUS.ambiance('camera');
       const mv = (el, x, y) => { el.style.transform = `translate(${x}px,${y}px)`; };
       const det = (id, label, l, t, w, h, mode) => {
@@ -471,7 +470,7 @@
         [2.6, () => { mv(cs2, 40, 200); mv(bat, 90, 236); SON.play('pas'); }],
         [6.2, () => { mv(cs2, 70, 56); mv(bat, 120, 92); SON.play('pas'); rm('cheminee'); }],
         [8.2, () => { mv(bat, 160, 84); }],
-        [9.6, () => { det('bateau', 'BATEAU BILLET – SÈCHE ' + lieu, 38, 26, 30, 12); chuchote(D.camera.cheminee); }],
+        [9.6, () => { det('bateau', C.cadeau === 'piece' ? 'PIÈCE – SÈCHE' : 'BILLET – SÈCHE', 38, 26, 30, 12); chuchote(D.camera.cheminee); }],
         [12.5, () => { cs2.classList.add('coucou'); }],
         [14.5, () => { cs2.classList.remove('coucou'); mv(cs2, -90, 200); SON.play('pas'); rm('bateau'); }],
         [16, () => { salon.setAttribute('hidden', ''); chambre.removeAttribute('hidden'); nom.textContent = 'CAM 2 · CHAMBRE'; dets.innerHTML = ''; SON.play('bip'); chuchote(D.camera.chambre); }],

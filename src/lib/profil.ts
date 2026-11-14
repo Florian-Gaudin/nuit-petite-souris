@@ -6,8 +6,9 @@ import { vocabulaire } from './recit';
 export type Genre = 'f' | 'g';
 export type TypeDoudou = 'ours' | 'lapin' | 'chat' | 'chien' | 'bebe' | 'licorne' | 'dinosaure' | 'linge' | 'aucun';
 export type Logement = 'maison' | 'appartement';
-export type Cachette = 'cheminee' | 'radiateur' | 'table-de-nuit' | 'bureau' | 'etagere';
-export type Billet = 5 | 10 | 20 | 50;
+export type Cachette = 'cheminee' | 'radiateur' | 'table-de-nuit' | 'bureau' | 'etagere' | 'coffre';
+// La somme offerte : une pièce (1 ou 2 €) ou un billet (5 à 50 €). Le nom « Billet » est resté pour les deux.
+export type Billet = 1 | 2 | 5 | 10 | 20 | 50;
 
 // Dents de lait, numérotation dentaire internationale :
 // 51-55 haut droit, 61-65 haut gauche, 71-75 bas gauche, 81-85 bas droit (côté de l'enfant),
@@ -34,8 +35,10 @@ export const TYPES_DOUDOU: readonly TypeDoudou[] = ['ours', 'lapin', 'chat', 'ch
 // L'ordre d'affichage dans le formulaire
 export const ORDRE_DOUDOUS: readonly TypeDoudou[] = ['ours', 'lapin', 'chat', 'chien', 'bebe', 'licorne', 'dinosaure', 'linge', 'aucun'];
 export const LOGEMENTS: readonly Logement[] = ['maison', 'appartement'];
-export const CACHETTES: readonly Cachette[] = ['cheminee', 'radiateur', 'table-de-nuit', 'bureau', 'etagere'];
-export const BILLETS: readonly Billet[] = [5, 10, 20, 50];
+// L'ordre compte pour les QR codes déjà imprimés (la cachette est codée par sa position) : on ajoute à la fin
+export const CACHETTES: readonly Cachette[] = ['cheminee', 'radiateur', 'table-de-nuit', 'bureau', 'etagere', 'coffre'];
+export const BILLETS: readonly Billet[] = [1, 2, 5, 10, 20, 50];
+export const estPiece = (v: Billet) => v <= 2;
 
 // Où sèche le billet, dit par Quenotte (« … sèche sur la cheminée »)
 export const LIEU_CACHETTE: Record<Cachette, string> = {
@@ -44,6 +47,7 @@ export const LIEU_CACHETTE: Record<Cachette, string> = {
   'table-de-nuit': 'sur ta table de nuit',
   'bureau': 'sur ton bureau',
   'etagere': 'sur ton étagère',
+  'coffre': 'sur ton coffre à jouets',
 };
 
 // Le profil d'exemple (celui de la première histoire), utilisé tant qu'aucun profil n'a été créé

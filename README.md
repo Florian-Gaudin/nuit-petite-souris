@@ -14,7 +14,7 @@ Site : **https://florian-gaudin.github.io/nuit-petite-souris/**
 
 Le profil (`src/lib/profil.ts`) voyage après le « # » de l'adresse : `…/nuit-petite-souris/#p=CODE`. Cette partie de l'adresse n'est jamais envoyée au serveur.
 
-- **Contenu** : prénom, fille ou garçon, doudou (type et nom, dont le linge : lange ou serviette), frère ou sœur, nom du chat, dent de la nuit et dents déjà tombées (les 20 dents de lait), valeur du billet, cachette du cadeau, ville, maison ou appartement, cours d'eau le plus proche (facultatif), date de la nuit.
+- **Contenu** : prénom, fille ou garçon, doudou (type et nom, dont le linge : lange ou serviette), frère ou sœur, nom du chat, dent de la nuit et dents déjà tombées (les 20 dents de lait), somme offerte (pièce de 1 ou 2 €, ou billet de 5 à 50 €), cachette du cadeau (dont le coffre à jouets), ville, maison ou appartement, cours d'eau le plus proche (facultatif), date de la nuit.
 - **Compatibilité** : le logement et le cours d'eau ne sont écrits dans le code que s'ils diffèrent de « maison, sans cours d'eau ». Les QR codes imprimés avant leur ajout restent lisibles, et les progressions déjà enregistrées gardent leur identifiant.
 - **Format** : champs séparés par « | », choix fixes en chiffres, dents en masque, puis compression. Un profil complet tient en 260 caractères environ, soit un QR de 65 modules, lisible en A6.
 - **Sécurité** : chaque valeur est vérifiée ; les noms n'acceptent que lettres, chiffres, espaces et ponctuation simple. Un QR abîmé ou falsifié est ignoré.

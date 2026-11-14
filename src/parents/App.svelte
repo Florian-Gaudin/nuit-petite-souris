@@ -165,7 +165,7 @@
           <h2>Le cadeau</h2>
           <fieldset>
             <legend>La somme que vous souhaitez offrir à votre enfant</legend>
-            <p class="aide">Quenotte la laissera en billet, à l'endroit choisi juste en dessous.</p>
+            <p class="aide">Une pièce ou un billet, que Quenotte laissera à l'endroit choisi juste en dessous.</p>
             <div class="choix billets">
               {#each BILLETS as v}
                 <label class="option billet" class:choisi={b.billet === v}>
@@ -175,8 +175,8 @@
             </div>
           </fieldset>
           <fieldset>
-            <legend>Où sèchera-t-il ?</legend>
-            <p class="aide">Dans l'histoire, le billet sert de bateau, puis sèche à cet endroit jusqu'au matin. Le mot sous l'oreiller l'indiquera à votre enfant.</p>
+            <legend>Où le cadeau séchera-t-il ?</legend>
+            <p class="aide">Dans l'histoire, le billet devient un bateau (la pièce, elle, voyage dans une coquille de noix), puis sèche à cet endroit jusqu'au matin. Le mot sous l'oreiller l'indiquera à votre enfant.</p>
             <div class="choix grille">
               {#each CACHETTES as k}
                 <label class="option icone" class:choisi={b.cachette === k}>

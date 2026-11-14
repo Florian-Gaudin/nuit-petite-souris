@@ -70,6 +70,11 @@ export function cachetteCam(k: Cachette): string {
     case 'bureau':
       return `<path d="M98 122v128M302 122v128" ${v} stroke-width="3"/><rect x="226" y="122" width="72" height="66" fill="${FOND2}" ${v} stroke-width="1.5"/><path d="M226 155h72" ${v} stroke-width="1.5"/><circle cx="262" cy="138" r="2.5" fill="${VERT}"/><circle cx="262" cy="171" r="2.5" fill="${VERT}"/>`
         + `<path d="M140 250v-40h40v40M140 210v-34" fill="none" ${v} stroke-width="2"/>${dessus}`;
+    case 'coffre':
+      // Un coffre à jouets : couvercle bombé, une peluche et un ballon qui dépassent
+      return `<rect x="104" y="136" width="192" height="112" rx="6" fill="${FOND2}" ${v} stroke-width="2"/><path d="M104 170h192" ${v} stroke-width="1.5"/>`
+        + `<rect x="186" y="160" width="28" height="20" rx="3" fill="${FOND}" ${v} stroke-width="1.5"/><circle cx="200" cy="170" r="3" fill="${VERT}"/>`
+        + `<path d="M104 136q96-30 192 0" fill="${FOND}" ${v} stroke-width="2"/><g ${v} stroke-width="1.5" fill="none"><path d="M130 216h30M240 216h30"/><circle cx="126" cy="196" r="6"/><circle cx="274" cy="196" r="6"/></g>${dessus}`;
     case 'etagere': {
       let livres = '';
       [[128, 18], [148, 14], [164, 20], [186, 12], [200, 16]].forEach(([x, w], i) => { livres += `<rect x="${x}" y="${170 - 26 + (i % 2) * 4}" width="${w}" height="${26 - (i % 2) * 4}" fill="${FOND}" ${v} stroke-width="1.2"/>`; });

@@ -41,6 +41,15 @@ describe('récit adaptatif', () => {
     expect(v.billetCouleurs.moyen).toBe('#E4A39A');
   });
 
+  it("le cadeau : billet ou pièce, au bon genre et au bon nombre", () => {
+    const billet = vocabulaire(JUMELLE), une = vocabulaire({ ...JUMELLE, billet: 1 }), deux = vocabulaire({ ...JUMELLE, billet: 2, cachette: 'coffre' });
+    expect(billet.unCadeau).toBe('un billet de 5 euros'); expect(billet.il).toBe('il'); expect(billet.cadeau).toBe('billet');
+    expect(une.unCadeau).toBe('une pièce de 1 euro'); expect(une.TonCadeau).toBe('Ta pièce de 1 euro');
+    expect(deux.tonCadeau).toBe('ta pièce de 2 euros'); expect(deux.Il).toBe('Elle'); expect(deux.sec).toBe('sèche'); expect(deux.CadeauTrouve).toBe('Pièce trouvée');
+    expect(deux.lieuBillet).toBe('sur ton coffre à jouets'); expect(deux.cachetteEtiquette).toBe('COFFRE À JOUETS');
+    expect(resoudre({ cadeau: { billet: 'B', piece: 'P' } }, deux)).toBe('P');
+  });
+
   it('aiguillages', () => {
     const t = { variante: { premiere: 'P', jumelle: { deja: { une: 'J1', plusieurs: 'J+' } }, suite: 'S' } };
     expect(resoudre(t, vocabulaire(PREMIERE))).toBe('P');

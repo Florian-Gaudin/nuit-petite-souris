@@ -80,7 +80,7 @@ ${A.souris(sx, sy, sw, 'class="quenotte trotte"')}
     let lum = '';
     for (let i = 0; i < 6; i++) lum += `<rect x="${880 + i * 11}" y="${282 - (i % 2) * 4}" width="3" height="4" fill="#FFC857"/>`;
     const nomRiviere = window.CONFIG.Riviere;
-    return `<svg class="decor decor-meuse" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet" role="img" aria-label="${nomRiviere} sous la lune, avec le billet à plier en bateau">
+    return `<svg class="decor decor-meuse" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet" role="img" aria-label="${nomRiviere} sous la lune, avec ${window.CONFIG.leCadeau} et son bateau">
 ${A.fond(nuit, 41, null)}
 <g transform="translate(700,110)"><circle r="60" fill="#FFF4D6" opacity=".07"/><path d="M10 -36A38 38 0 1 0 10 36A40 40 0 0 1 10 -36Z" fill="#FFF4D6"/></g>
 <defs><linearGradient id="geau" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4a8ea3"/><stop offset="1" stop-color="#2b5f70"/></linearGradient></defs>
@@ -94,7 +94,11 @@ ${tap('bulles', 'Des bulles dans l’eau', `${halo(470, 440, 60)}<g class="bulle
 <path d="M0 600V380Q120 360 240 400L300 600Z" fill="#24483E"/><path d="M0 600V440Q120 430 230 470L260 600Z" fill="#1A2A26"/>
 <path d="M1000 600V360Q900 350 780 400L720 600Z" fill="#24483E"/><path d="M1000 600V430Q900 420 790 460L760 600Z" fill="#1A2A26"/>
 <g fill="#2F5D50"><ellipse cx="60" cy="390" rx="40" ry="18"/><ellipse cx="900" cy="372" rx="46" ry="18"/></g>
-${tap('billet', 'Le billet de ' + window.CONFIG.euros + ' euros à plier', `<g class="billet-in">${halo(0, 0, 84)}
+${window.CONFIG.cadeau === 'piece' ? tap('billet', 'La pièce de ' + window.CONFIG.euros + (window.CONFIG.euros === '1' ? ' euro' : ' euros') + ', et son bateau à construire', `<g class="billet-in">${halo(0, 0, 84)}
+  <g class="pli pli0"><use href="#billet" x="-50" y="-27" width="100" height="54"/></g>
+  <g class="pli pli1"><path d="M-62 0q62 14 124 0q-8 30-62 30t-62-30z" fill="#A47B54" stroke="#6E4630" stroke-width="2"/><path d="M-44 10q44 9 88 0" fill="none" stroke="#6E4630" stroke-width="2" opacity=".6"/><use href="#billet" x="-44" y="-22" width="52" height="28"/></g>
+  <g class="pli pli2"><path d="M8 4v-60" stroke="#6E4630" stroke-width="5" stroke-linecap="round"/><path d="M-62 0q62 14 124 0q-8 30-62 30t-62-30z" fill="#A47B54" stroke="#6E4630" stroke-width="2"/><use href="#billet" x="-44" y="-22" width="52" height="28"/></g>
+  <g class="pli pli3"><use href="#bateau" x="-70" y="-40" width="140" height="74"/></g></g>`, 'transform="translate(170,316)" data-etape="0"') : tap('billet', 'Le billet de ' + window.CONFIG.euros + ' euros à plier', `<g class="billet-in">${halo(0, 0, 84)}
   <g class="pli pli0"><use href="#billet" x="-70" y="-37" width="140" height="74"/></g>
   <g class="pli pli1"><rect x="-70" y="-20" width="140" height="40" rx="3" fill="${window.CONFIG.billetCouleurs.moyen}" stroke="${window.CONFIG.billetCouleurs.fonce}" stroke-width="2"/><path d="M-70 0h140" stroke="${window.CONFIG.billetCouleurs.fonce}" stroke-width="2" stroke-dasharray="6 4" opacity=".6"/><text x="0" y="12" font-family="Share Tech Mono, monospace" font-size="18" fill="${window.CONFIG.billetCouleurs.fonce}" text-anchor="middle">${window.CONFIG.euros} €</text></g>
   <g class="pli pli2"><path d="M-62 18L0-44l62 62z" fill="${window.CONFIG.billetCouleurs.clair}" stroke="${window.CONFIG.billetCouleurs.fonce}" stroke-width="2"/><rect x="-62" y="18" width="124" height="16" fill="${window.CONFIG.billetCouleurs.moyen}" stroke="${window.CONFIG.billetCouleurs.fonce}" stroke-width="2"/><path d="M0-44v62" stroke="${window.CONFIG.billetCouleurs.fonce}" stroke-width="2" opacity=".6"/></g>

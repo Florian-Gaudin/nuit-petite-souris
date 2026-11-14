@@ -70,6 +70,24 @@ test('Jade : appartement au bord de la Seine, doudou linge', async ({ page }) =>
   expect(await rendu(page, ['scenes', 4, 'intro'])).toContain('Voilà la rivière !');
 });
 
+test('Noé : une pièce de 1 euro, posée sur le coffre à jouets', async ({ page }) => {
+  const NOE = { ...structuredClone(LEO), prenom: 'Noé', billet: 1 as const, cachette: 'coffre' as const, riviere: '' };
+  await ouvrir(page, '#p=' + code(NOE));
+  expect(await rendu(page, ['scenes', 0, 'elements', 'sac', 'bulle'])).toContain("C'est une pièce de 1 euro, pour te remercier");
+  expect(await rendu(page, ['scenes', 4, 'elements', 'billet', 'demande'])).toContain('Une pièce, ça coule');
+  expect(await rendu(page, ['scenes', 4, 'elements', 'billet', 'reponse'])).toContain('je la ferai sécher sur ton coffre à jouets.');
+  expect(await rendu(page, ['camera', 'cheminee'])).toBe('Voilà ton coffre à jouets. Je pose ta pièce dessus : elle va sécher jusqu\'au matin.');
+  expect(await rendu(page, ['lettre', 4])).toBe('Ta pièce de 1 euro a traversé la rivière en bateau. Elle sèche sur ton coffre à jouets : va vite la chercher !');
+  expect(await rendu(page, ['boutonLettre'])).toBe("J'ai trouvé ma pièce !");
+  expect(await rendu(page, ['badges', 7, 'nom'])).toBe('Pièce trouvée');
+  // Les dessins : la pièce, puis la coquille de noix sur la rivière
+  await ouvrir(page, '?chapitre=1&scene=4#p=' + code(NOE));
+  await expect(page.locator('symbol#billet circle')).toHaveCount(2);
+  await expect(page.locator('.tap[data-el="billet"] .pli1 path').first()).toHaveAttribute('fill', '#A47B54');
+  await page.goto('certificat/#p=' + code(NOE));
+  await expect(page.locator('.dip-texte')).toContainText('Sa pièce de 1 €');
+});
+
 test('dessins personnalisés : billet, doudou, cachette, frère dans la caméra', async ({ page }) => {
   await ouvrir(page, '?chapitre=1&scene=2#p=' + code(LEO));
   await expect(page.locator('#billet text').first()).toHaveText('50');

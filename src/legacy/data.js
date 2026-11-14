@@ -50,7 +50,7 @@ window.DATA = {
           bulle: { txt: "Hou hou ! C'est la hulotte, ma voisine. Elle sort la tête des feuilles pour me dire : « Bon voyage, {souris} ! » Touche-la encore : elle va s'envoler !", expr: "surprise" },
           bulle2: { txt: "Et hop, elle s'envole chasser dans la forêt. À bientôt, hulotte !", expr: "joie" },
         },
-        sac: { bulle: { txt: "Regarde dans mon sac : j'ai un cadeau pour toi ! C'est un billet de {euros} euros, pour te remercier de ta dent.", expr: "clin" } },
+        sac: { bulle: { txt: "Regarde dans mon sac : j'ai un cadeau pour toi ! C'est {unCadeau}, pour te remercier de ta dent.", expr: "clin" } },
       },
       pont: { txt: "C'est parti, direction la forêt !", expr: "joie" },
     },
@@ -105,9 +105,19 @@ window.DATA = {
       oblig: ["billet"], bonus: ["bulles", "reflet"],
       elements: {
         billet: {
-          demande: { txt: "J'ai une idée ! J'ai un billet de {euros} euros pour toi, et je vais le plier pour en faire un bateau. Aide-moi : touche le billet pour le plier.", expr: "clin" },
-          etapes: ["Un pli…", "Deux plis…", "Trois plis… Le bateau est prêt !"],
-          reponse: { txt: "Je monte à bord et hop, je traverse ! Le bateau se balance sous la lune. Oh, quelques gouttes ont mouillé le billet. Ne t'inquiète pas, je le ferai sécher{auChaud} sur {cachetteNom}.", expr: "joie" },
+          demande: { cadeau: {
+            billet: { txt: "J'ai une idée ! J'ai {unCadeau} pour toi, et je vais le plier pour en faire un bateau. Aide-moi : touche le billet pour le plier.", expr: "clin" },
+            piece: { txt: "J'ai une idée ! J'ai {unCadeau} pour toi. Une pièce, ça coule… alors je vais lui construire un bateau. Aide-moi : touche la pièce pour commencer.", expr: "clin" },
+          } },
+          etapes: [
+            { cadeau: { billet: "Un pli…", piece: "Une coquille de noix…" } },
+            { cadeau: { billet: "Deux plis…", piece: "Un mât en brindille…" } },
+            { cadeau: { billet: "Trois plis… Le bateau est prêt !", piece: "Une feuille pour la voile… Le bateau est prêt !" } },
+          ],
+          reponse: { cadeau: {
+            billet: { txt: "Je monte à bord et hop, je traverse ! Le bateau se balance sous la lune. Oh, quelques gouttes ont mouillé le billet. Ne t'inquiète pas, je le ferai sécher{auChaud} sur {cachetteNom}.", expr: "joie" },
+            piece: { txt: "Je monte à bord avec ta pièce et hop, je traverse ! Le bateau se balance sous la lune. Oh, quelques gouttes ont mouillé la pièce. Ne t'inquiète pas, je la ferai sécher{auChaud} sur {cachetteNom}.", expr: "joie" },
+          } },
         },
         bulles: { bulle: { txt: "Splash ! Un poisson me dit bonjour. Il a l'air de bien s'amuser, lui.", expr: "surprise" } },
         reflet: { bulle: { txt: "Regarde, la lune se baigne dans {riviere}. Quand on la touche, elle fait des ronds dans l'eau !", expr: "sourire" } },
@@ -215,7 +225,7 @@ window.DATA = {
       maison: { txt: "Chut… J'ai mis ma petite caméra en marche. Je suis entrée par la chatière, {chat} n'a rien entendu.", expr: "chuchote" },
       appartement: { txt: "Chut… J'ai mis ma petite caméra en marche. Je me suis glissée sous la porte, {chat} n'a rien entendu.", expr: "chuchote" },
     } },
-    cheminee: { txt: "Voilà {cachetteNom}{eteint}. Je pose ton billet dessus : il va sécher{auChaudFin} jusqu'au matin.", expr: "chuchote" },
+    cheminee: { txt: "Voilà {cachetteNom}{eteint}. Je pose {tonCadeauCourt} dessus : {il} va sécher{auChaudFin} jusqu'au matin.", expr: "chuchote" },
     chambre: { fratrie: {
       aCote: { doudou: { oui: { txt: "Te voilà ! Tu dors comme une marmotte. {poupee} dort tout contre toi, et {frere} ronfle tout doucement dans son lit.", expr: "chuchote" }, non: { txt: "Te voilà ! Tu dors comme une marmotte. Et {frere} ronfle tout doucement dans son lit.", expr: "chuchote" } } },
       ailleurs: { doudou: { oui: { txt: "Te voilà ! Tu dors comme une marmotte. Et {poupee} dort aussi, tout contre toi.", expr: "chuchote" }, non: { txt: "Te voilà ! Tu dors comme une marmotte, bien au chaud sous ta couette.", expr: "chuchote" } } },
@@ -246,7 +256,7 @@ window.DATA = {
       jumelle: "J'ai pris ta {ordinal} dent. Au château, elle a retrouvé sa jumelle. Elles ne se quittent plus !",
       suite: "J'ai pris ta {ordinal} dent. Au château, elle a rejoint ses sœurs. Elles font la fête !",
     } },
-    "Ton billet de {euros} euros a traversé {riviere} en bateau. Il sèche {lieuBillet} : va vite le chercher !",
+    "{TonCadeau} a traversé {riviere} en bateau. {Il} sèche {lieuBillet} : va vite {le} chercher !",
     { fratrie: { aCote: "Fais un gros bisou à {frere} de ma part.", ailleurs: "Fais un gros bisou à {frere} de ma part.", non: null } },
     "Brosse bien tes dents, le matin et le soir. Les nouvelles vont pousser grandes et fortes.",
     "À la prochaine dent !",
@@ -254,11 +264,11 @@ window.DATA = {
   signature: "Bisous à moustaches, {souris}",
   heureLettre: "3 h 02",
   ps: "P.-S. J'ai laissé un bout de fromage à {chat}. Ne lui dis pas que c'est moi.",
-  boutonLettre: "J'ai trouvé mon billet !",
+  boutonLettre: "J'ai trouvé {monCadeau} !",
 
   // ---------- Chapitre 5 : le diplôme ----------
   diplome: { txt: "Bravo {enfant} ! Voici ton diplôme officiel, signé de ma patte. Tu peux l'imprimer avec un grand.", expr: "joie" },
-  billetTrouve: { txt: "Tu l'as trouvé ? Il est sec maintenant. Il est à toi !", expr: "joie" },
+  billetTrouve: { txt: "Tu l'as {trouvee} ? {Il} est {sec} maintenant. {Il} est à toi !", expr: "joie" },
 
   // ---------- Chapitre secret : la 13e scène du Grand Marionnettiste ----------
   scene13: [
@@ -280,7 +290,7 @@ window.DATA = {
       nom: { variante: { premiere: "Première dent", jumelle: "Dent jumelle", suite: "{Collectionneuse}" } },
       obtenu: { variante: { premiere: "Ta toute première dent est arrivée au château.", jumelle: "Ta {ordinal} dent a retrouvé sa jumelle au château.", suite: "Ta {ordinal} dent a rejoint ta collection au château." } },
       aGagner: { variante: { premiere: "Ta toute première dent doit arriver au château.", jumelle: "Ta {ordinal} dent doit retrouver sa jumelle au château.", suite: "Ta {ordinal} dent doit rejoindre ta collection au château." } } },
-    { id: "billet", nom: "Billet trouvé", bouton: true, obtenu: "Tu as trouvé le billet qui séchait {lieuBillet}.", aGagner: "Trouve le billet qui sèche {lieuBillet}, puis touche « J'ai trouvé mon billet ! » à la fin de la lettre." },
+    { id: "billet", nom: "{CadeauTrouve}", bouton: true, obtenu: "Tu as trouvé {leCadeau} qui séchait {lieuBillet}.", aGagner: "Trouve {leCadeau} qui sèche {lieuBillet}, puis touche « J'ai trouvé {monCadeau} ! » à la fin de la lettre." },
     { id: "scene13", nom: "Scène 13", secret: true, obtenu: "Tu as découvert la 13e scène secrète du Grand Marionnettiste !", aGagner: "Un secret bien caché…" },
   ],
 };
