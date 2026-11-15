@@ -90,3 +90,26 @@ test("le livre : la treizième page s'ouvre quand la scène secrète a été tro
   for (let p = 2; p <= 15; p++) await page.keyboard.press('ArrowRight');
   await expect(page.locator('.livre-texte')).toContainText('sauf toi, Clémentine');
 });
+
+test('le livre ancien : lettrine, et la page se tourne en la faisant glisser', async ({ page }) => {
+  await diplome(page);
+  await page.locator('#btn-carnet5').click();
+  await page.locator('.carte-ard', { hasText: 'légende' }).click();
+  await page.locator('[data-a="livre"]').click();
+  await expect(page.locator('.livre-ancien .lettrine')).toHaveText('V'); // « Voici l'histoire… »
+  await expect(page.locator('.livre-texte p').first()).toContainText("Voici l'histoire"); // texte complet pour les lecteurs d'écran
+  if (CAPTURES) await page.screenshot({ path: CAPTURES + '/livre-ancien-1.png' });
+  const glisser = async (de: number, a: number) => {
+    const b = (await page.locator('.livre-ancien').boundingBox())!;
+    const y = b.y + b.height / 2;
+    await page.mouse.move(b.x + b.width * de, y); await page.mouse.down();
+    await page.mouse.move(b.x + b.width * a, y, { steps: 8 }); await page.mouse.up();
+  };
+  await glisser(0.8, 0.2); // vers la gauche : page suivante
+  await expect(page.locator('.carnet-chemin')).toContainText('page 2 sur 15');
+  await expect(page.locator('.livre-page h2')).toHaveText('Premier tableau');
+  await expect(page.locator('.livre-ancien .lettrine')).toHaveText('L');
+  if (CAPTURES) await page.screenshot({ path: CAPTURES + '/livre-ancien-2.png' });
+  await glisser(0.2, 0.8); // vers la droite : page précédente
+  await expect(page.locator('.carnet-chemin')).toContainText('page 1 sur 15');
+});

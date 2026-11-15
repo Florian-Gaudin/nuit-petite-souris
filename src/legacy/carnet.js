@@ -214,19 +214,54 @@ ${o.pierre ? '<rect x="-14" y="-40" width="28" height="18" rx="2" fill="#cbbfa8"
           ? `<rect width="320" height="200" fill="#2a8c7e"/><rect x="30" y="20" width="260" height="160" fill="#1b2250"/><path d="M30 20h80q-10 80 0 160H30zM290 20h-80q10 80 0 160h80z" fill="#D64045"/><text x="160" y="96" text-anchor="middle" font-family="Baloo 2, sans-serif" font-weight="800" font-size="17" fill="#FFC857">Ce soir :</text><text x="160" y="120" text-anchor="middle" font-family="Baloo 2, sans-serif" font-weight="800" font-size="15" fill="#FFF6E0">${esc(T('{enfant} et la dent d\'or'))}</text>`
           : `<rect width="320" height="200" fill="#2a8c7e"/><rect x="30" y="20" width="260" height="160" fill="#D64045"/><path d="M160 20v160" stroke="#a8303a" stroke-width="4"/><text x="160" y="118" text-anchor="middle" font-family="Baloo 2, sans-serif" font-weight="800" font-size="56" fill="#FFC857">?</text>`;
       }
-      corps.innerHTML = `<p class="carnet-chemin">${esc(L.titre)} · page ${page + 1} sur ${NB}</p><h2>${esc(titre)}</h2>${heure ? `<p class="livre-heure">${esc(heure)}</p>` : ''}
-<div class="livre-vignette"><svg viewBox="0 0 320 200" role="img" aria-label="${esc(titre)}">${dessin}</svg></div>
-<div class="livre-texte" aria-live="polite">${textes.map(t => `<p>${esc(T(t))}</p>`).join('')}</div>
+      // Un livre ancien : parchemin, cadre enluminé, lettrine au début du texte, miniature dorée
+      const ORDINAUX = ['Premier', 'Deuxième', 'Troisième', 'Quatrième', 'Cinquième', 'Sixième', 'Septième', 'Huitième', 'Neuvième', 'Dixième', 'Onzième', 'Douzième'];
+      if (page >= 1 && page <= L.tableaux.length) titre = ORDINAUX[page - 1] + ' tableau';
+      const avecLettrine = (t, k) => {
+        const txt = T(t);
+        if (k > 0 || !/^\p{L}/u.test(txt)) return `<p>${esc(txt)}</p>`;
+        // La lettrine est décorative : le texte complet reste lu tel quel par les lecteurs d'écran
+        return `<p class="avec-lettrine"><span class="lettrine" aria-hidden="true">${esc(txt[0])}</span><span class="visuellement-cache">${esc(txt[0])}</span>${esc(txt.slice(1))}</p>`;
+      };
+      corps.innerHTML = `<p class="carnet-chemin">${esc(L.titre)} · page ${page + 1} sur ${NB}</p>
+<article class="livre-ancien${sens ? ' ' + sens : ''}">
+  <div class="livre-page">
+    ${heure ? `<p class="livre-heure">${esc(heure)}</p>` : ''}<h2>${esc(titre)}</h2>
+    <div class="livre-vignette"><svg viewBox="0 0 320 200" role="img" aria-label="${esc(titre)}">${dessin}</svg></div>
+    <div class="livre-texte" aria-live="polite">${textes.map(avecLettrine).join('')}</div>
+    ${page === 0 ? '<p class="livre-astuce">Fais glisser la page du bout du doigt pour la tourner.</p>' : ''}
+    <p class="livre-folio" aria-hidden="true">— ${page + 1} —</p>
+  </div>
+</article>
 <div class="carnet-nav"><div class="carnet-pages">${page > 0 ? '<button type="button" class="btn btn-petit" data-a="prec">◂ Précédente</button>' : ''}${page < NB - 1 ? `<button type="button" class="btn btn-or" data-a="suiv">${page === 0 ? 'Commencer ▸' : 'Suivante ▸'}</button>` : ''}</div><button type="button" class="btn btn-petit" data-a="grille">Toutes les cartes</button></div>`;
+      sens = '';
       const act = (a, f) => { const b = corps.querySelector(`[data-a="${a}"]`); if (b) b.onclick = f; };
-      act('prec', () => { son('papier'); livre(page - 1); }); act('suiv', () => { son('papier'); livre(page + 1); }); act('grille', grille);
+      act('prec', () => tourner(-1)); act('suiv', () => tourner(1)); act('grille', grille);
+      // Tourner la page en la faisant glisser du doigt (vers la gauche : page suivante)
+      const feuille = corps.querySelector('.livre-ancien');
+      let x0 = null, y0 = 0;
+      feuille.addEventListener('pointerdown', e => { x0 = e.clientX; y0 = e.clientY; });
+      feuille.addEventListener('pointerup', e => {
+        if (x0 == null) return;
+        const dx = e.clientX - x0, dy = e.clientY - y0; x0 = null;
+        if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.2) tourner(dx < 0 ? 1 : -1);
+      });
+      feuille.addEventListener('pointercancel', () => { x0 = null; });
       titreFocus();
+    };
+    // La page tourne (animation de feuille qui pivote, sauf si les animations sont réduites)
+    let sens = '';
+    const tourner = d => {
+      const p = page + d;
+      if (p < 0 || p > NB - 1) return;
+      son('papier'); sens = d > 0 ? 'vers-suivante' : 'vers-precedente';
+      livre(p);
     };
 
     const fermer = () => { document.removeEventListener('keydown', clavier); fen.remove(); if (precedent && precedent.focus) try { precedent.focus({ preventScroll: true }); } catch (e) { } };
     const clavier = e => {
       if (e.key === 'Escape') { e.preventDefault(); fermer(); return; }
-      if (vue === 'livre' && (e.key === 'ArrowRight' || e.key === 'ArrowLeft') && !(e.target && /INPUT|TEXTAREA/.test(e.target.tagName))) { e.preventDefault(); son('papier'); livre(page + (e.key === 'ArrowRight' ? 1 : -1)); }
+      if (vue === 'livre' && (e.key === 'ArrowRight' || e.key === 'ArrowLeft') && !(e.target && /INPUT|TEXTAREA/.test(e.target.tagName))) { e.preventDefault(); tourner(e.key === 'ArrowRight' ? 1 : -1); }
     };
     document.addEventListener('keydown', clavier);
     fen.querySelector('[data-a="fermer"]').onclick = fermer;
