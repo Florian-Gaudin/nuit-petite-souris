@@ -386,6 +386,8 @@ window.DATA = {
       aGagner: { variante: { premiere: "Ta toute première dent doit arriver au château.", jumelle: "Ta {ordinal} dent doit retrouver sa jumelle au château.", suite: "Ta {ordinal} dent doit rejoindre ta collection au château." } } },
     { id: "billet", nom: "{CadeauTrouve}", bouton: true, obtenu: "Tu as trouvé {leCadeau} qui séchait {lieuBillet}.", aGagner: "Trouve {leCadeau} qui sèche {lieuBillet}, puis touche « J'ai trouvé {monCadeau} ! » à la fin de la lettre." },
     { id: "terrier", nom: "Fouille-terrier", chapitre: 5, obtenu: "Tu as trouvé les 4 trésors cachés dans le terrier de {souris}.", aGagner: "Trouve les 4 trésors cachés dans le terrier de {souris}." },
+    { id: "pilote", nom: "Pilote des nuages", chapitre: 5, obtenu: "Tu as ramené la montgolfière au château sans toucher un seul nuage.", aGagner: "Ramène la montgolfière au château sans toucher un seul nuage." },
+    { id: "artiste", nom: "Artiste de la nuit", obtenu: "Tu as fait un dessin pour {souris}.", aGagner: "Fais un dessin pour {souris}, sous sa lettre." },
     { id: "scene13", nom: "Scène 13", secret: true, obtenu: "Tu as découvert la 13e scène secrète du Grand Marionnettiste !", aGagner: "Un secret bien caché…" },
   ],
 };

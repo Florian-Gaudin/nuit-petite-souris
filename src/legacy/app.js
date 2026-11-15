@@ -215,18 +215,20 @@
     let couleur = '#1F2235', taille = 18, gomme = false, trace = false, dernier = null;
     const pos = e => { const r = toile.getBoundingClientRect(); return [(e.clientX - r.left) * toile.width / r.width, (e.clientY - r.top) * toile.height / r.height]; };
     const ligne = (a, b) => { g.strokeStyle = gomme ? '#fff' : couleur; g.lineWidth = gomme ? 40 : taille; g.lineCap = 'round'; g.lineJoin = 'round'; g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(b[0], b[1]); g.stroke(); };
-    toile.addEventListener('pointerdown', e => { e.preventDefault(); invite.hidden = true; trace = true; dernier = pos(e); ligne(dernier, [dernier[0] + 0.1, dernier[1]]); try { toile.setPointerCapture(e.pointerId); } catch (er) { } });
+    let aDessine = false;
+    toile.addEventListener('pointerdown', e => { e.preventDefault(); invite.hidden = true; trace = true; aDessine = true; dernier = pos(e); ligne(dernier, [dernier[0] + 0.1, dernier[1]]); try { toile.setPointerCapture(e.pointerId); } catch (er) { } });
     toile.addEventListener('pointermove', e => { if (!trace) return; const p = pos(e); ligne(dernier, p); dernier = p; });
     ['pointerup', 'pointercancel'].forEach(n => toile.addEventListener(n, () => { trace = false; }));
     $$('.couleur', fen).forEach(b => b.onclick = () => { couleur = b.dataset.c; gomme = false; $$('.couleur, .gomme', fen).forEach(x => x.classList.remove('choisie')); b.classList.add('choisie'); });
     $$('.trait-taille', fen).forEach(b => b.onclick = () => { taille = +b.dataset.t; $$('.trait-taille', fen).forEach(x => x.classList.remove('choisie')); b.classList.add('choisie'); });
     $('.gomme', fen).onclick = e => { gomme = true; $$('.couleur', fen).forEach(x => x.classList.remove('choisie')); e.currentTarget.classList.add('choisie'); };
     const fermer = () => { fen.remove(); if (apres) apres(); };
-    $('[data-a="effacer"]', fen).onclick = () => { fond(); invite.hidden = false; };
+    $('[data-a="effacer"]', fen).onclick = () => { fond(); invite.hidden = false; aDessine = false; };
     $('[data-a="annuler"]', fen).onclick = fermer;
     $('[data-a="envoyer"]', fen).onclick = () => {
       window.STOCKAGE.ecrire(CLE_DESSIN, toile.toDataURL('image/jpeg', 0.82));
       SON.play('badge'); toast(T(D.dessin.merci), A.icone('patte')); fermer();
+      if (aDessine) setTimeout(() => badge('artiste'), 1800); // après le merci de Quenotte
     };
   }
 
@@ -771,7 +773,7 @@ ${[0, 1, 2, 3, 4, 5].map(i => `<g class="nuage" data-n="${i}" transform="transla
       const svg = $('svg.retour', zone), ballon = $('.ret-ballon', svg), chateau = $('.ret-chateau', svg), nuages = $$('.nuage', svg);
       const borne = v => Math.max(140, Math.min(460, v));
       // enJeu : les nuages ne partent qu'après « C'est parti ! » ; atterrissage : la montgolfière se pose près du château
-      let y = 330, cible = 330, bx = 230, k = 0, x = 1150, ny = 220, touche = false, dernier = null, doigtT = 0, base = null, fini = false, enJeu = false, atterrissage = null;
+      let y = 330, cible = 330, bx = 230, k = 0, x = 1150, ny = 220, touche = false, heurts = 0, dernier = null, doigtT = 0, base = null, fini = false, enJeu = false, atterrissage = null;
       // D'abord l'histoire (elle reste affichée), puis les consignes, puis le départ
       (async () => {
         await NARR.dire(B(D.epilogue.intro)); if (!encore()) return;
@@ -798,6 +800,7 @@ ${[0, 1, 2, 3, 4, 5].map(i => `<g class="nuage" data-n="${i}" transform="transla
       const arrivee = () => {
         fini = true; nuages.forEach(n => n.setAttribute('transform', 'translate(-400,0)'));
         chateau.classList.add('arrive');
+        if (heurts === 0) badge('pilote'); // pas un seul nuage touché
         // Le château arrive, puis la montgolfière descend et se pose dans l'herbe, juste à côté
         setTimeout(() => { if (encore()) atterrissage = { t: performance.now(), x0: bx, y0: y }; }, RM ? 0 : 1600);
       };
@@ -818,7 +821,7 @@ ${[0, 1, 2, 3, 4, 5].map(i => `<g class="nuage" data-n="${i}" transform="transla
           x -= dt * (0.36 + k * 0.045); // chaque nuage arrive un peu plus vite que le précédent
           nuages[k].setAttribute('transform', `translate(${x.toFixed(0)},${ny.toFixed(0)})`);
           // Un nuage touché : « pouf », il s'efface (on ne perd jamais)
-          if (!touche && Math.abs(x - 230) < 105 && Math.abs(ny - (y - 120)) < 88) { touche = true; nuages[k].classList.add('pouf'); SON.play('plouf'); NARR.dire(B(D.epilogue.pouf), { vite: true }); }
+          if (!touche && Math.abs(x - 230) < 105 && Math.abs(ny - (y - 120)) < 88) { touche = true; heurts++; nuages[k].classList.add('pouf'); SON.play('plouf'); NARR.dire(B(D.epilogue.pouf), { vite: true }); }
           if (x < -160) {
             if (!touche) NARR.dire({ txt: T(k === nuages.length - 2 ? D.epilogue.dernier : D.epilogue.evite[k % D.epilogue.evite.length]), expr: 'joie' }, { vite: true });
             k++;

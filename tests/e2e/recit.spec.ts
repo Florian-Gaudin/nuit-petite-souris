@@ -186,6 +186,8 @@ test("répondre à Quenotte (dessin) et l'album des dents", async ({ page }) => 
   await page.mouse.move(t.x + t.width - 40, t.y + t.height - 40, { steps: 10 }); await page.mouse.up();
   await page.locator('.atelier [data-a="envoyer"]').click();
   await expect(page.locator('.atelier')).toHaveCount(0);
+  // Un vrai dessin envoyé : le badge « Artiste de la nuit »
+  await expect.poll(() => page.evaluate(() => (window as any).APP.state.badges)).toContain('artiste');
   // L'aperçu sous la lettre, et le bouton devient « Modifier mon dessin »
   await expect(page.locator('#dessin-lettre .dessin-enfant img')).toBeVisible();
   await expect(page.locator('#btn-dessin')).toContainText('Modifier mon dessin');
@@ -396,4 +398,19 @@ test("le badge Fouille-terrier : les 4 trésors du terrier trouvés", async ({ p
   for (const c of chemins) for (const d of c) { await page.keyboard.press(f[d]); await page.waitForTimeout(110); }
   await expect(page.locator('.tresors-n')).toHaveText('4');
   expect(await page.evaluate(() => (window as any).APP.state.badges)).toContain('terrier');
+});
+
+test("le badge Pilote des nuages : seulement sans toucher un seul nuage", async ({ page }) => {
+  test.setTimeout(120000);
+  for (const evite of [false, true]) {
+    await ouvrir(page, '?reset=1#exemple');
+    // Les nuages arrivent toujours en haut du ciel : en descendant tout en bas, on les évite tous
+    await page.evaluate(() => { Math.random = () => 0; const A = (window as any).APP; A.state.unlocked = 5; A.show(5); });
+    await page.locator('#bandeau-actions button', { hasText: 'Suite' }).click({ timeout: 30_000 });
+    await page.locator('#bandeau-actions button', { hasText: "C'est parti" }).click({ timeout: 30_000 });
+    if (evite) for (let i = 0; i < 12; i++) await page.keyboard.press('ArrowDown');
+    await page.locator('#bandeau-actions button', { hasText: 'Entrer dans le terrier' }).waitFor({ timeout: 60_000 });
+    const badges = await page.evaluate(() => (window as any).APP.state.badges);
+    if (evite) expect(badges).toContain('pilote'); else expect(badges).not.toContain('pilote');
+  }
 });
