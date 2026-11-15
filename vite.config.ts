@@ -16,6 +16,7 @@ export default defineConfig({
         mot: resolve(import.meta.dirname, 'mot/index.html'),
         certificat: resolve(import.meta.dirname, 'certificat/index.html'),
         parents: resolve(import.meta.dirname, 'parents/index.html'),
+        infos: resolve(import.meta.dirname, 'infos/index.html'),
       },
     },
   },

@@ -2,10 +2,11 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
 <title>Le mot de la Petite Souris</title>
 <style>
+  html{touch-action:manipulation} /* page de texte : le zoom à deux doigts reste possible (accessibilité) */
   /* Page à afficher en plein écran sur l'ordinateur : l'enfant scanne le QR code avec un téléphone ou une tablette */
   html{height:100%}body{min-height:100%}
   body{display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(circle at 20% 15%,#2b356f 0,transparent 40%),radial-gradient(circle at 85% 80%,#1d2558 0,transparent 45%),var(--nuit);text-align:center;padding:16px}
@@ -63,14 +64,6 @@
   </div>
 </main>
 <p class="note">Impression : format A6, ou sur une feuille A4 (le mot en occupe un coin). Pas d'imprimante ? Affichez cette page en plein écran : le QR code se scanne aussi sur l'écran.</p>
-<script>
-// Pas de zoom en écartant deux doigts (iPhone et iPad ignorent user-scalable=no)
-(function(){ var no=function(e){ e.preventDefault(); };
-  ['gesturestart','gesturechange','gestureend'].forEach(function(n){ document.addEventListener(n, no, { passive:false }); });
-  document.addEventListener('touchmove', function(e){ if (e.touches && e.touches.length > 1) e.preventDefault(); }, { passive:false });
-  document.addEventListener('wheel', function(e){ if (e.ctrlKey) e.preventDefault(); }, { passive:false });
-})();
-</script>
 <script type="module" src="/src/pages/mot.ts"></script>
 </body>
 </html>

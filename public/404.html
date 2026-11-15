@@ -17,7 +17,7 @@
   var l = location, chemin = l.pathname;
   // Sur GitHub Pages, le site vit dans un sous-dossier (/nuit-petite-souris/)
   var racine = /\.github\.io$/.test(l.hostname) ? '/' + chemin.split('/')[1] + '/' : '/';
-  var ancien = chemin.match(/^(.*\/)(parents|mot|certificat|index)\.html$/);
+  var ancien = chemin.match(/^(.*\/)(parents|mot|certificat|infos|index)\.html$/);
   var cible = ancien ? ancien[1] + (ancien[2] === 'index' ? '' : ancien[2] + '/') : racine;
   l.replace(cible + l.search + l.hash);
 })();

@@ -113,6 +113,7 @@
           ${PLEIN.api && !PLEIN.appli ? `<button role="menuitem" id="pref-plein"></button>` : ''}
           <a role="menuitem" id="pref-changer" href="./"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5L12 4l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z" fill="currentColor"/></svg> Retour à l'accueil</a>
           <a role="menuitem" id="pref-parents" href="parents/">${A.icone('famille')} Espace parents</a>
+          <a role="menuitem" id="pref-infos" href="infos/"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 10.5v6M12 7.2v.1" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg> Informations</a>
           <button role="menuitem" id="pref-reset" class="danger">${A.icone('recommencer')} Recommencer l'histoire</button>
         </div>
       </div>
@@ -398,6 +399,7 @@
   </nav>
   <button class="lien-album" id="lien-album">${A.icone('etoile')} ${esc(T(D.album.titre))}</button>
   ${window.DON_POSSIBLE ? `<p class="don-accueil"><span class="phrase">Gratuite pour toutes les familles, l'appli vit grâce à vos petits dons.</span> <a href="parents/#don"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z" fill="currentColor"/></svg>Faire un don</a></p>` : ''}
+  <a class="lien-infos" href="infos/">Informations · confidentialité</a>
 </section>`;
     // Sans recharger la page (le plein écran est gardé) quand l'histoire choisie est déjà chargée ;
     // sinon le lien change l'adresse et la page se recharge avec le bon profil
@@ -474,9 +476,11 @@
       NARR.dire(B(D.lampe.intro));
       // Coordonnées du doigt dans le dessin
       const point = e => { const pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); };
-      const bouge = e => {
+      let lx = 500, ly = 300; // position de la lumière (souris, doigt ou flèches du clavier)
+      const bouge = e => eclaire(point(e));
+      const eclaire = p => {
         if (trouve) return;
-        const p = point(e);
+        lx = p.x; ly = p.y;
         trou.setAttribute('cx', p.x.toFixed(0)); trou.setAttribute('cy', p.y.toFixed(0));
         faisceau.setAttribute('cx', p.x.toFixed(0)); faisceau.setAttribute('cy', p.y.toFixed(0));
         // La lumière sur la plaque de la chambre un court instant : trouvée !
@@ -491,6 +495,14 @@
       };
       svg.addEventListener('pointerdown', e => { e.preventDefault(); SON.unlock(); bouge(e); });
       svg.addEventListener('pointermove', bouge);
+      // Au clavier : les flèches promènent la lumière
+      document.removeEventListener('keydown', self.kdLampe);
+      document.addEventListener('keydown', self.kdLampe = e => {
+        const d = { ArrowUp: [0, -40], ArrowDown: [0, 40], ArrowLeft: [-40, 0], ArrowRight: [40, 0] }[e.key];
+        if (!d || trouve) return; e.preventDefault(); SON.unlock();
+        eclaire({ x: Math.max(0, Math.min(1000, lx + d[0])), y: Math.max(0, Math.min(600, ly + d[1])) });
+        setTimeout(() => eclaire({ x: lx, y: ly }), 400); // rester un instant sur la plaque suffit
+      });
       // Après un moment : un filet de lumière sous la bonne porte
       self.tAide = setTimeout(() => { if (!trouve) { fente.classList.add('on'); NARR.dire(B(D.lampe.aide)); } }, 9000);
     },
@@ -572,7 +584,7 @@
       self.cadre(); window.addEventListener('resize', self.cadre);
       rendu(); cycle(); self.raf = requestAnimationFrame(boucle);
     },
-    unmount() { window.removeEventListener('resize', this.cadre); clearTimeout(this.t); clearTimeout(this.tAide); cancelAnimationFrame(this.raf); SON.ronfleStop(); document.removeEventListener('keydown', this.kd); document.removeEventListener('keyup', this.ku); },
+    unmount() { window.removeEventListener('resize', this.cadre); clearTimeout(this.t); clearTimeout(this.tAide); cancelAnimationFrame(this.raf); SON.ronfleStop(); document.removeEventListener('keydown', this.kd); document.removeEventListener('keyup', this.ku); document.removeEventListener('keydown', this.kdLampe); },
   };
 
   // ---------- Chapitre 3 : la caméra de la souris ----------
@@ -760,6 +772,12 @@ ${[0, 1, 2, 3, 4, 5].map(i => `<g class="nuage" data-n="${i}" transform="transla
       svg.addEventListener('pointermove', e => { if (e.buttons || e.pointerType === 'touch') { cible = borne(point(e).y); doigtT = performance.now(); } });
       self.incline = e => { if (e.beta == null || performance.now() - doigtT < 2000) return; if (base == null) base = e.beta; cible = borne(330 + (e.beta - base) * 9); };
       window.addEventListener('deviceorientation', self.incline);
+      // Au clavier : flèches haut et bas
+      window.removeEventListener('keydown', self.clavierNuages);
+      window.addEventListener('keydown', self.clavierNuages = e => {
+        const d = { ArrowUp: -60, ArrowDown: 60 }[e.key]; if (!d) return;
+        e.preventDefault(); cible = borne((cible == null ? 330 : cible) + d); doigtT = performance.now();
+      });
       const nouveauNuage = () => { x = 1150; touche = false; ny = 160 + Math.random() * 280; nuages[k].classList.remove('pouf'); };
       nouveauNuage();
       const arrivee = () => {
@@ -800,7 +818,7 @@ ${[0, 1, 2, 3, 4, 5].map(i => `<g class="nuage" data-n="${i}" transform="transla
     // Fabriqué à partir du profil (toujours le même pour un enfant), plongé dans le noir : seule la lanterne éclaire.
     terrier(r) {
       const self = this, mien = self.jeton = (self.jeton || 0) + 1, encore = () => self.jeton === mien;
-      cancelAnimationFrame(this.raf); window.removeEventListener('deviceorientation', this.incline);
+      cancelAnimationFrame(this.raf); window.removeEventListener('deviceorientation', this.incline); window.removeEventListener('keydown', this.clavierNuages);
       heure('03:28'); MUS.ambiance('foret');
       etape(() => fondu(() => self.boite(r), 400));
       // 20 × 7 cases ; un long couloir (2 cases) mène de la dernière case à la porte
@@ -1044,7 +1062,7 @@ ${places.map(dent).join('')}
       // Après l'atelier, le diplôme se redessine avec le nouveau dessin
       $('#btn-dessin5', r).onclick = () => { SON.play('clic'); atelier(() => show(5, { diplome: true })); };
     },
-    unmount() { this.jeton = (this.jeton || 0) + 1; cancelAnimationFrame(this.raf); window.removeEventListener('deviceorientation', this.incline); window.removeEventListener('keydown', this.clavier); clearTimeout(this.tAide); },
+    unmount() { this.jeton = (this.jeton || 0) + 1; cancelAnimationFrame(this.raf); window.removeEventListener('deviceorientation', this.incline); window.removeEventListener('keydown', this.clavierNuages); window.removeEventListener('keydown', this.clavier); clearTimeout(this.tAide); },
   };
 
   const Chapitres = [Ch0, Ch1, Ch2, Ch3, Ch4, Ch5];

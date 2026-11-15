@@ -72,7 +72,7 @@ export function serviceWorker(): Plugin {
     generateBundle(_options, bundle) {
       // Les pages HTML sont ajoutées explicitement : elles sont parfois produites après ce plugin
       // Chaque page annexe est gardée sous ses deux adresses : son dossier (…/parents/) et son fichier
-      const annexes = ['parents', 'mot', 'certificat'];
+      const annexes = ['parents', 'mot', 'certificat', 'infos'];
       const pages = ['index.html', ...annexes.flatMap(a => [a + '/', a + '/index.html'])];
       const construits = [...new Set([...Object.keys(bundle).filter(f => !f.endsWith('.map')), ...pages])];
       const publics = fichiersPublics(dossierPublic);

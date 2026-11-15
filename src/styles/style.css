@@ -97,7 +97,7 @@ input,textarea,[contenteditable]{-webkit-user-select:text;user-select:text;-webk
 .portrait{width:100%;height:100%;display:block;filter:drop-shadow(0 3px 4px rgba(0,0,0,.25))}
 .portrait.hop{animation:hop .5s ease-out}
 @keyframes hop{0%{transform:scale(1)}40%{transform:scale(1.1) rotate(-4deg)}100%{transform:scale(1)}}
-.bandeau-bulle{position:absolute;right:-8px;top:-6px;min-width:22px;height:22px;padding:0 6px;border-radius:12px;background:#fff;border:2px solid var(--lanterne);color:var(--rouge);font:800 .8rem var(--display);display:none;align-items:center;justify-content:center;box-shadow:0 2px 4px rgba(0,0,0,.2)}
+.bandeau-bulle{position:absolute;right:-8px;top:-6px;min-width:22px;height:22px;padding:0 6px;border-radius:12px;background:#fff;border:2px solid var(--lanterne);color:var(--rouge2);font:800 .8rem var(--display);display:none;align-items:center;justify-content:center;box-shadow:0 2px 4px rgba(0,0,0,.2)}
 .bandeau-bulle.on{display:inline-flex;animation:pop .3s ease-out}
 /* Hauteur ajustée au texte, jamais plus que le maximum (au-delà, la police se réduit : jamais de défilement) */
 .bandeau-texte{grid-area:texte;margin:0;font-size:1.05rem;font-weight:600;line-height:1.36;word-spacing:.06em;letter-spacing:.005em;max-height:108px;overflow:hidden;align-self:start;text-wrap:pretty}
@@ -777,3 +777,7 @@ body.mode-choix .btn-passer{display:none}
 .tresor{width:24px;height:20px;filter:grayscale(1) brightness(.6);opacity:.45;transition:filter .5s,opacity .5s}
 .tresor.trouve{filter:drop-shadow(0 0 5px #FFC857);opacity:1}
 .tresors-n{color:var(--lanterne)}
+
+/* Accueil : le lien vers les informations, discret */
+.lien-infos{position:relative;z-index:1;color:var(--muet);font-size:.78rem;text-decoration:underline;text-underline-offset:3px;min-height:28px;display:inline-flex;align-items:center}
+@media (max-height:600px){.lien-infos{min-height:22px;font-size:.7rem}}

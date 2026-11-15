@@ -14,7 +14,7 @@ window.DECORS = (function () {
   function chateau(nuit) {
     const sx = 380, sy = 362, sw = 170;
     const L = A.pointSouris(sx, sy, sw, 'lanterne');
-    return `<svg class="decor decor-chateau" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Le château des dents de lait, la nuit">
+    return `<svg class="decor decor-chateau" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet" role="group" aria-label="Le château des dents de lait, la nuit">
 ${A.fond(nuit, 21, { x: 830, y: 95, r: 34 })}
 <path d="M0 360Q150 300 300 340T600 330T1000 300V600H0Z" fill="#1E2658"/>
 <g>${sapins([0, 60, 130, 200, 700, 760, 900, 960], 470, 150, '#1E3F36')}${sapins([30, 100, 170, 730, 820, 930], 480, 110, '#24483E')}</g>
@@ -52,7 +52,7 @@ ${tap('sac', 'Le sac de Quenotte', `${halo(0, 10, 56)}
     const champi = (x, y, s, i) => `<g class="champi" data-sub="${i}" transform="translate(${x},${y}) scale(${s})"><circle class="champi-lueur" cx="0" cy="-16" r="70" fill="url(#halo-or)"/><rect x="-10" y="-10" width="20" height="34" rx="7" fill="#E9E2D6"/><path class="chapeau" d="M-36-6q36-48 72 0z" fill="#6b4a5a"/><circle class="pois" cx="-12" cy="-22" r="4" fill="#9a7a8a"/><circle class="pois" cx="10" cy="-30" r="3" fill="#9a7a8a"/><circle class="pois" cx="18" cy="-14" r="3.5" fill="#9a7a8a"/></g>`;
     let fars = '';
     [60, 150, 240, 330, 420, 520, 610, 700, 790, 880, 960].forEach((x, i) => { fars += `<rect x="${x}" y="-1100" width="${18 + (i % 3) * 5}" height="1600" fill="#141c3c"/>`; });
-    return `<svg class="decor decor-foret" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet" role="img" aria-label="La grande forêt des Ardennes, la nuit">
+    return `<svg class="decor decor-foret" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet" role="group" aria-label="La grande forêt des Ardennes, la nuit">
 ${A.fond(nuit, 31, null)}
 <rect x="0" y="-1100" width="1000" height="1700" fill="#0d1430" opacity=".45"/>
 ${fars}
@@ -80,7 +80,7 @@ ${A.souris(sx, sy, sw, 'class="quenotte trotte"')}
     let lum = '';
     for (let i = 0; i < 6; i++) lum += `<rect x="${880 + i * 11}" y="${282 - (i % 2) * 4}" width="3" height="4" fill="#FFC857"/>`;
     const nomRiviere = window.CONFIG.Riviere;
-    return `<svg class="decor decor-meuse" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet" role="img" aria-label="${nomRiviere} sous la lune, avec ${window.CONFIG.leCadeau} et son bateau">
+    return `<svg class="decor decor-meuse" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet" role="group" aria-label="${nomRiviere} sous la lune, avec ${window.CONFIG.leCadeau} et son bateau">
 ${A.fond(nuit, 41, null)}
 <g transform="translate(700,110)"><circle r="60" fill="#FFF4D6" opacity=".07"/><path d="M10 -36A38 38 0 1 0 10 36A40 40 0 0 1 10 -36Z" fill="#FFF4D6"/></g>
 <defs><linearGradient id="geau" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4a8ea3"/><stop offset="1" stop-color="#2b5f70"/></linearGradient></defs>
@@ -122,7 +122,7 @@ ${A.souris(800, 296, 150, 'class="quenotte rive-d"')}
 <g fill="#1b2250" stroke="#F3EFE6" stroke-width="2"><rect x="${x + 20}" y="246" width="24" height="40"/><rect x="${x + 64}" y="246" width="24" height="40"/><rect x="${x + 108}" y="246" width="24" height="40"/><rect x="${x + 20}" y="300" width="24" height="44"/><rect x="${x + 64}" y="300" width="24" height="44"/><rect x="${x + 108}" y="300" width="24" height="44"/></g>
 <rect x="${x}" y="362" width="152" height="120" fill="#B98B68"/><path d="M${x + 12} 482v-66a64 64 0 0 1 128 0v66z" fill="#151a40"/><rect x="${x}" y="362" width="12" height="120" fill="#A07A58"/>`;
     }
-    return `<svg class="decor decor-place" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet" role="img" aria-label="La place Ducale de Charleville et ses arcades, avec le Grand Marionnettiste">
+    return `<svg class="decor decor-place" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet" role="group" aria-label="La place Ducale de Charleville et ses arcades, avec le Grand Marionnettiste">
 ${A.fond(nuit, 51, { x: 150, y: 100, r: 26 })}
 ${maisons}
 <rect x="800" y="90" width="92" height="392" fill="#232c66"/><path d="M790 90l56-60 56 60z" fill="#3A4690"/><rect x="800" y="90" width="92" height="8" fill="#3A4690"/>
@@ -157,7 +157,7 @@ ${A.souris(sx, sy, sw, 'class="quenotte trotte"')}
 ${maison(330, 450, 170, 110, '#3E7C8F')}
 ${maison(640, 400, 190, 130, '#D64045')}
 <rect x="920" y="300" width="100" height="70" fill="#E9E2D6"/><path d="M910 300l60-40 60 40z" fill="#3E7C8F"/>${volet(940, 318)}`;
-    return `<svg class="decor decor-aiglemont" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet" role="img" aria-label="${appart ? 'Les immeubles endormis' : 'Les maisons endormies'} et la girouette">
+    return `<svg class="decor decor-aiglemont" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet" role="group" aria-label="${appart ? 'Les immeubles endormis' : 'Les maisons endormies'} et la girouette">
 ${A.fond(nuit, 61, { x: 880, y: 80, r: 30 })}
 <path d="M0 600V440Q300 400 600 350T1000 290V600Z" fill="#1E3F36"/>
 <path d="M0 600V480Q300 440 600 400T1000 340V600Z" fill="#24483E"/>
@@ -196,7 +196,7 @@ ${tap('fenetre', 'La fenêtre du salon', `${halo(900, 218, 64)}<rect class="vitr
 <g>${marches}</g><path d="M0 236L330 476" stroke="#8B5A3C" stroke-width="8" stroke-linecap="round"/><g stroke="#8B5A3C" stroke-width="4">${[40, 110, 180, 250].map(x => `<path d="M${x} ${265 + x * 0.73}v-40"/>`).join('')}</g>
 ${tap('fenetre', 'L’horloge du palier', `${halo(900, 218, 64)}<rect x="866" y="184" width="68" height="68" rx="12" fill="#6E4630"/>${pendule}`)}
 <rect y="482" width="1000" height="118" fill="#2a2638"/><rect y="478" width="1000" height="8" fill="#524a6a"/>`;
-    return `<svg class="decor decor-pantoufle${appart ? ' palier' : ''}" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet" role="img" aria-label="${appart ? 'Le palier, la porte de l’appartement et le chat endormi sur le paillasson' : 'Le jardin, la porte de la maison et le chat endormi sur le seuil'}">
+    return `<svg class="decor decor-pantoufle${appart ? ' palier' : ''}" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet" role="group" aria-label="${appart ? 'Le palier, la porte de l’appartement et le chat endormi sur le paillasson' : 'Le jardin, la porte de la maison et le chat endormi sur le seuil'}">
 ${appart ? palier : dehors}
 ${appart ? tap('fleurs', 'Une plante verte', `${halo(0, -40, 56)}<path d="M-22 8l5-34h34l5 34z" fill="#B05E3B"/><g class="fleur"><path d="M0-26q-30-30-34-70q24 20 34 70z" fill="#2F5D50"/></g><g class="fleur"><path d="M0-26q30-34 30-80q-20 28-30 80z" fill="#3E7C50"/></g><g class="fleur"><path d="M0-26q-6-40 6-76q10 40-6 76z" fill="#4f8a5f"/></g>`, 'transform="translate(364,482)"') : tap('fleurs', 'Un pot de fleurs', `${halo(0, -22, 50)}<path d="M-24 8l6-34h36l6 34z" fill="#B05E3B"/><g class="fleur"><path d="M-6-26v-18" stroke="#2F5D50" stroke-width="3"/><circle cx="-6" cy="-46" r="11" fill="#D64045"/><circle cx="-6" cy="-46" r="4" fill="#FFC857"/></g><g class="fleur"><path d="M10-26v-14" stroke="#2F5D50" stroke-width="3"/><circle cx="10" cy="-42" r="10" fill="#F2A3B5"/><circle cx="10" cy="-42" r="3.5" fill="#FFC857"/></g><g class="fleur"><path d="M-18-26v-10" stroke="#2F5D50" stroke-width="3"/><circle cx="-18" cy="-38" r="8" fill="#FFC857"/><circle cx="-18" cy="-38" r="3" fill="#D64045"/></g>`, 'transform="translate(364,482)"')}
 <g transform="translate(700,482)">${appart ? '<rect x="-14" y="-212" width="28" height="18" rx="3" fill="#C9A227"/><text x="0" y="-198" font-family="Baloo 2, sans-serif" font-size="14" font-weight="800" fill="#4a3324" text-anchor="middle">12</text>' : ''}<path d="M-74 0v-170a74 74 0 0 1 148 0V0z" fill="#4a3324"/><g class="battant"><path d="M-60 0v-168a60 60 0 0 1 120 0V0z" fill="#8B5A3C"/><rect x="-42" y="-150" width="34" height="62" rx="4" fill="#6E4630"/><rect x="8" y="-150" width="34" height="62" rx="4" fill="#6E4630"/><rect x="-42" y="-74" width="34" height="56" rx="4" fill="#6E4630"/><rect x="8" y="-74" width="34" height="56" rx="4" fill="#6E4630"/><circle cx="44" cy="-80" r="6" fill="#C9A227"/></g></g>
@@ -236,7 +236,7 @@ ${tap('quenotte', 'Quenotte', `${halo(195, 430, 95)}${A.souris(sx, sy, sw, 'clas
 <path class="oeil-ferme" d="M58-66q6 5 12 0" fill="none" stroke="#2B2B33" stroke-width="3" stroke-linecap="round"/><g class="oeil-ouvert"><circle cx="64" cy="-66" r="5" fill="#2B2B33"/><circle cx="66" cy="-68" r="1.6" fill="#fff"/></g>
 <ellipse cx="34" cy="-4" rx="18" ry="6" fill="#8E6844"/>
 <g class="zzz"><text x="70" y="-110" class="z">z</text><text x="88" y="-128" class="z petit">z</text></g>`;
-    return `<svg class="decor decor-lievre" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Un lièvre endormi dans les champs, et le panneau de ${ville}">
+    return `<svg class="decor decor-lievre" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet" role="group" aria-label="Un lièvre endormi dans les champs, et le panneau de ${ville}">
 ${A.fond(nuit, 91, { x: 560, y: 90, r: 28 })}
 <path d="M0 420Q250 370 520 400T1000 380V600H0Z" fill="#1E3F36"/>
 <path d="M0 450Q300 420 600 440T1000 430V600H0Z" fill="#24483E"/>${sillons}
@@ -260,7 +260,7 @@ ${tap('lievre', 'Un lièvre endormi', `${halo(10, -50, 90)}${lievreDessin}`, 'da
     const traits = P.map((p, i) => { const q = P[(i + 1) % P.length]; return `<line class="trait trait-${i + 1}" x1="${p[0]}" y1="${p[1]}" x2="${q[0]}" y2="${q[1]}"/>`; }).join('');
     const points = P.map((p, i) => `<g class="pt pt-${i + 1}" data-sub="${i + 1}" transform="translate(${p[0]},${p[1]})"><circle r="34" fill="transparent"/><circle class="pt-lueur" r="22" fill="url(#halo-or)"/><use href="#etoile5" x="-14" y="-14" width="28" height="28"/><text y="-24" class="pt-num">${i + 1}</text></g>`).join('');
     const dent = 'M' + P.map(p => p.join(' ')).join('L') + 'Z';
-    return `<svg class="decor decor-etoiles" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet" role="img" aria-label="La montgolfière au milieu des étoiles, sept étoiles à relier">
+    return `<svg class="decor decor-etoiles" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet" role="group" aria-label="La montgolfière au milieu des étoiles, sept étoiles à relier">
 ${A.fond(nuit, 97, null)}
 <rect width="1000" height="600" fill="#0e1330" opacity=".35"/>${A.etoiles(120, 1000, 600, 98)}
 ${tap('lune', 'La lune', `${halo(860, 470, 62)}<g class="lune-visage"><circle cx="860" cy="470" r="42" fill="#FFF4D6"/><circle cx="846" cy="462" r="5" fill="#c9b98f"/><path class="oeil-lune" d="M868 458q6-5 12 0" fill="none" stroke="#8a7a52" stroke-width="3" stroke-linecap="round"/><circle class="oeil-lune-ouvert" cx="874" cy="460" r="4" fill="#8a7a52"/><path d="M846 484q12 8 24 0" fill="none" stroke="#8a7a52" stroke-width="3" stroke-linecap="round"/></g>`)}
@@ -288,7 +288,7 @@ ${tap('constellation', 'Les étoiles à relier', `<circle class="halo" cx="${P[0
     const appart = window.CONFIG.logement === 'appartement';
     const sx = 40, sy = 446, sw = 120;
     // La vitre : x 290 → 710, y 90 → 405 (la chambre 400 × 300 y tient, à l'échelle 1,05)
-    return `<svg class="decor decor-fenetre" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet" role="img" aria-label="La grande fenêtre embuée de ta chambre">
+    return `<svg class="decor decor-fenetre" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet" role="group" aria-label="La grande fenêtre embuée de ta chambre">
 ${A.fond(nuit, 101, { x: 900, y: 70, r: 26 })}
 <defs><mask id="m-buee" maskUnits="userSpaceOnUse" x="0" y="0" width="1000" height="600"><rect width="1000" height="600" fill="#fff"/><g class="essuyage"></g></mask>
 <clipPath id="c-vitre"><rect x="290" y="90" width="420" height="315" rx="6"/></clipPath>
@@ -329,7 +329,7 @@ ${A.souris(sx, sy, sw, 'class="quenotte"')}
     let lumieresCharleville = '', lumieresVille = '';
     for (let i = 0; i < 12; i++) lumieresCharleville += '<rect x="' + (40 + i * 13) + '" y="' + (486 - (i % 3) * 6) + '" width="4" height="5" fill="#FFC857"/>';
     for (let i = 0; i < 7; i++) lumieresVille += '<rect x="' + (850 + i * 14) + '" y="' + (452 - (i % 2) * 5) + '" width="4" height="5" fill="#FFC857"/>';
-    return '<svg class="decor decor-montgolfiere" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Une montgolfière rouge et jaune au-dessus des Ardennes, la nuit">'
+    return '<svg class="decor decor-montgolfiere" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet" role="group" aria-label="Une montgolfière rouge et jaune au-dessus des Ardennes, la nuit">'
       + A.fond(nuit, 81, { x: 860, y: 96, r: 30 })
       // le paysage vu d'en haut : collines, forêt, la Meuse qui brille, Charleville et la ville d'arrivée au loin
       + '<path d="M0 470Q180 420 360 450T720 430T1000 420V600H0Z" fill="#1E2658"/>'

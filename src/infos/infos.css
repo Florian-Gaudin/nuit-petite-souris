@@ -1,0 +1,20 @@
+/* Informations : des cartes claires et lisibles sur le fond de nuit ; le zoom reste possible */
+html { touch-action: manipulation; }
+html, body { -webkit-user-select: text; user-select: text; -webkit-touch-callout: default; }
+body { background: radial-gradient(circle at 20% 0%, #2b356f 0, transparent 45%), var(--nuit); min-height: 100vh; }
+.infos { max-width: 720px; margin: 0 auto; padding: 16px max(16px, env(safe-area-inset-left, 0px)) 48px; display: flex; flex-direction: column; gap: 16px; }
+.infos-tete h1 { font-size: 1.8rem; font-weight: 800; color: var(--clair); margin: 4px 0 8px; }
+.infos .retour { color: var(--lanterne); font-weight: 700; text-decoration: none; min-height: 44px; display: inline-flex; align-items: center; }
+.sommaire { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.sommaire a { display: inline-flex; align-items: center; min-height: 40px; padding: 0 14px; border-radius: 999px; border: 1.5px solid #3d4a95; color: var(--clair); text-decoration: none; font-weight: 700; }
+.infos .carte { background: var(--papier); color: var(--encre); border-radius: 20px; padding: 18px 18px 20px; box-shadow: 0 12px 32px rgba(0, 0, 0, .35); line-height: 1.5; scroll-margin-top: 12px; }
+.infos h2 { margin: 0 0 8px; font-size: 1.4rem; }
+.infos h3 { margin: 16px 0 4px; font-size: 1.1rem; }
+.infos p, .infos ul, .infos dl { margin: 0 0 8px; }
+.infos ul { padding-left: 1.2em; }
+.infos li { margin-bottom: 4px; }
+.infos dt { font-weight: 800; margin-top: 12px; }
+.infos dd { margin: 2px 0 0; }
+.infos .carte a { color: var(--rouge2); font-weight: 700; }
+.essentiel { background: #fff; border-left: 5px solid var(--foret); border-radius: 10px; padding: 10px 12px; }
+.infos a:focus-visible { outline: 3px solid var(--lanterne); outline-offset: 2px; }

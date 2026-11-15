@@ -314,7 +314,7 @@ ${etoiles(40, 1000, 500, 5)}
 
   // ---------- Chapitre 4 : l'enveloppe ----------
   function enveloppeSVG(enfant) {
-    return `<svg class="env" viewBox="0 0 400 280" role="img" aria-label="Une enveloppe fermée par un cachet de cire">
+    return `<svg class="env" viewBox="0 0 400 280" role="group" aria-label="Une enveloppe fermée par un cachet de cire">
 <rect x="40" y="60" width="320" height="200" rx="10" fill="#FFF6E0" stroke="#e6d6ae" stroke-width="2"/>
 <path d="M40 70L200 190 360 70" fill="none" stroke="#e6d6ae" stroke-width="2"/>
 <path d="M40 260L200 150 360 260" fill="#f7ecd0" stroke="#e6d6ae" stroke-width="2"/>

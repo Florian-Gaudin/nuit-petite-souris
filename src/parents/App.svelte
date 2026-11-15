@@ -236,6 +236,6 @@
     <Don />
     <Installer />
 
-    <p class="vie-privee">Aucune donnée personnelle n'est collectée : tout reste sur votre appareil. Les informations voyagent uniquement dans le QR code obtenu à la fin du formulaire.</p>
+    <p class="vie-privee">Aucune donnée personnelle n'est collectée : tout reste sur votre appareil. Les informations voyagent uniquement dans le QR code obtenu à la fin du formulaire. <a href="../infos/#confidentialite">Confidentialité et mentions légales</a></p>
   </main>
 {/if}

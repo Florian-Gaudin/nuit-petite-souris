@@ -183,6 +183,8 @@ window.SCENES = (function () {
       efface(e);
     });
     svg.addEventListener('pointermove', e => { if (frotte) efface(e); });
+    // Au clavier (ou lecteur d'écran) : Entrée ou Espace sur la vitre l'essuie d'un coup
+    vitre.addEventListener('keydown', e => { if (!fini && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); e.stopImmediatePropagation(); termine(); } }, true);
     ['pointerup', 'pointercancel'].forEach(n => svg.addEventListener(n, () => { frotte = false; }));
   }
 

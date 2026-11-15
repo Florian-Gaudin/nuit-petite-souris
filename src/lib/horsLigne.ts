@@ -3,7 +3,7 @@
 import { plateforme } from './plateforme';
 
 // Les pages annexes, chacune dans son dossier : adresses sans « .html » (…/parents/, …/mot/, …/certificat/)
-export const PAGES_ANNEXES = ['parents', 'mot', 'certificat'] as const;
+export const PAGES_ANNEXES = ['parents', 'mot', 'certificat', 'infos'] as const;
 
 // La racine du site, vue depuis n'importe quelle page (histoire ou page annexe)
 export function racineSite(): string {
