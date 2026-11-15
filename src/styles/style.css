@@ -972,3 +972,4 @@ html.grand-texte .livre-ancien .livre-texte p{font-size:1.5rem}
 @keyframes balaie{from{transform:rotate(calc(var(--a) - 30deg))}to{transform:rotate(calc(var(--a) + 30deg))}}
 @keyframes flash-concert{0%{opacity:.12}35%{opacity:0}100%{opacity:0}}
 @media (prefers-reduced-motion:reduce){.decor-montgolfiere.concert .rayon,.decor-montgolfiere.concert .lasers .flash{animation:none}}
+.livre-ancien,.livre-ancien *{touch-action:pan-y}

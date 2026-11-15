@@ -242,15 +242,19 @@ ${o.pierre ? '<rect x="-14" y="-40" width="28" height="18" rx="2" fill="#cbbfa8"
       const act = (a, f) => { const b = corps.querySelector(`[data-a="${a}"]`); if (b) b.onclick = f; };
       act('prec', () => tourner(-1)); act('suiv', () => tourner(1)); act('grille', grille); act('fermer-livre', () => fermer());
       // Tourner la page en la faisant glisser du doigt (vers la gauche : page suivante)
+      // Au doigt : les événements tactiles arrivent même quand le navigateur fait défiler le texte de la page
+      // (les événements « pointer » seraient alors annulés) ; à la souris : les événements « pointer »
       const feuille = corps.querySelector('.livre-ancien');
       let x0 = null, y0 = 0;
-      feuille.addEventListener('pointerdown', e => { x0 = e.clientX; y0 = e.clientY; });
-      feuille.addEventListener('pointerup', e => {
+      const geste = (x, y) => {
         if (x0 == null) return;
-        const dx = e.clientX - x0, dy = e.clientY - y0; x0 = null;
+        const dx = x - x0, dy = y - y0; x0 = null;
         if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.2) tourner(dx < 0 ? 1 : -1);
-      });
-      feuille.addEventListener('pointercancel', () => { x0 = null; });
+      };
+      feuille.addEventListener('touchstart', e => { const t = e.touches[0]; x0 = t.clientX; y0 = t.clientY; }, { passive: true });
+      feuille.addEventListener('touchend', e => { const t = e.changedTouches[0]; geste(t.clientX, t.clientY); });
+      feuille.addEventListener('pointerdown', e => { if (e.pointerType !== 'touch') { x0 = e.clientX; y0 = e.clientY; } });
+      feuille.addEventListener('pointerup', e => { if (e.pointerType !== 'touch') geste(e.clientX, e.clientY); });
       titreFocus();
     };
     // La page tourne (animation de feuille qui pivote, sauf si les animations sont réduites)

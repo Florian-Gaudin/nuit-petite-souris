@@ -112,6 +112,15 @@ test('le livre ancien : lettrine, et la page se tourne en la faisant glisser', a
   if (CAPTURES) await page.screenshot({ path: CAPTURES + '/livre-ancien-2.png' });
   await glisser(0.2, 0.8); // vers la droite : page précédente
   await expect(page.locator('.carnet-chemin')).toContainText('Page 1 sur 15');
+  // Un vrai geste tactile, sur le texte de la page (qui peut défiler)
+  const cdp = await page.context().newCDPSession(page);
+  const t = (type: string, x: number, y: number) => cdp.send('Input.dispatchTouchEvent', { type, touchPoints: type === 'touchEnd' ? [] : [{ x, y }] });
+  const z = (await page.locator('.livre-texte').boundingBox())!;
+  const y = z.y + Math.min(30, z.height / 2);
+  await t('touchStart', z.x + z.width * 0.85, y);
+  for (let i = 1; i <= 8; i++) await t('touchMove', z.x + z.width * (0.85 - i * 0.08), y + i);
+  await t('touchEnd', 0, 0);
+  await expect(page.locator('.carnet-chemin')).toContainText('Page 2 sur 15');
 });
 
 test('le livre occupe tout l\'écran, et sa page garde la même taille sur les quinze pages', async ({ page }) => {
