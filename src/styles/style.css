@@ -250,7 +250,7 @@ input,textarea,[contenteditable]{-webkit-user-select:text;user-select:text;-webk
 .decor-foret .tap.vu .buisson{animation:none}
 @keyframes tremble-buisson{0%,70%,100%{transform:rotate(0)}75%{transform:rotate(-3deg)}80%{transform:rotate(3deg)}85%{transform:rotate(-2deg)}90%{transform:rotate(2deg)}}
 .decor-foret .renard{opacity:0;transition:transform 1.1s cubic-bezier(.3,1,.4,1),opacity .5s}
-.decor-foret .tap.vu .renard{opacity:1;transform:translateX(-100px)}
+.decor-foret .tap.vu .renard{opacity:1;transform:translate(-14px,-64px)}
 .decor-foret .tap[data-el="luciole"] .lum{animation:luciole 1.6s ease-in-out infinite}
 .decor-foret .tap.vole .lum{animation-duration:.5s}
 @keyframes luciole{0%,100%{opacity:.5;transform:scale(.8)}50%{opacity:1;transform:scale(1.3)}}
@@ -1135,3 +1135,6 @@ html.grand-texte .livre-ancien .livre-texte p{font-size:1.5rem}
 .decor-etoiles .tap:not(.pret) .pt-num{opacity:0}
 .decor-etoiles .tap:not(.pret) .pt.prochaine use{animation:none;opacity:.55}
 .decor-etoiles .tap:not(.pret) .pt.prochaine .pt-lueur{opacity:0}
+
+/* Le nom du meuble filmé suffit : pas de cadre autour */
+.det.etiquette{border-color:transparent;box-shadow:none}

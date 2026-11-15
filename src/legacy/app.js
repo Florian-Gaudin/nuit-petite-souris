@@ -672,7 +672,7 @@
       const evenements = [
         [0.3, () => { mv(cs2, -90, 200); mv(bat, -40, 236); }],
         [0.6, () => chuchote(D.camera.intro)],
-        [1.1, () => det('cheminee', C.cachetteEtiquette, 25, 40, 50, 43, 'bas')],
+        [1.1, () => det('cheminee', C.cachetteEtiquette, 25, 40, 50, 43, 'bas etiquette')],
         [1.9, () => { mv(cs2, 40, 200); mv(bat, 90, 236); SON.play('pas'); }],
         [3.8, () => { mv(cs2, 70, 56); mv(bat, 120, 92); SON.play('pas'); rm('cheminee'); }],
         [5, () => { mv(bat, 160, 84); }],

@@ -458,7 +458,14 @@ window.SCENES = (function () {
     if (el.etapes) {
       let sub = e && e.target && e.target.closest ? e.target.closest('[data-sub]') : null;
       if (sub && sub.classList.contains('allume')) sub = null;
-      if (!sub && g.querySelector('[data-sub]')) sub = g.querySelector('[data-sub]:not(.allume)');
+      // Touché à côté (sur le halo) : c'est le plus proche du doigt qui répond, pas le suivant dans l'ordre
+      if (!sub && g.querySelector('[data-sub]')) {
+        const libres = $$('[data-sub]:not(.allume)', g);
+        if (e && e.clientX != null && (e.clientX || e.clientY)) {
+          const d = el2 => { const b = el2.getBoundingClientRect(); return Math.hypot(b.x + b.width / 2 - e.clientX, b.y + b.height / 2 - e.clientY); };
+          sub = libres.sort((a, b) => d(a) - d(b))[0] || null;
+        } else sub = libres[0] || null;
+      }
       const etape = (+(g.dataset.etape || 0)) + 1;
       g.dataset.etape = etape;
       if (act) act(g, sub, etape);
