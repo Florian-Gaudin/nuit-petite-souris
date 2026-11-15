@@ -357,7 +357,7 @@
       r.className = 'scene ch-0';
       r.innerHTML = `<section class="ch origine${et ? '' : ' sans-etoile'}">
   <p class="origine-aide">${esc(T(D.origine.aide))}</p>
-  <svg class="carte-france" viewBox="0 0 900 870" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Carte de France : le château de Quenotte, dans les Ardennes${et ? ', et ' + esc(ville.nom) : ''}">
+  <svg class="carte-france" viewBox="0 0 900 870" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Carte de France : le château fort de Sedan, maison de Quenotte, dans les Ardennes${et ? ', et ' + esc(ville.nom) : ''}">
     ${trajet ? `<defs><mask id="masque-trajet" maskUnits="userSpaceOnUse" x="0" y="0" width="900" height="870"><path class="trace" d="${trajet}" fill="none" stroke="#fff" stroke-width="16" stroke-linecap="round"/></mask></defs>` : ''}
     <path class="pays" d="${K.CONTOUR_FRANCE}"/><path class="pays" d="${K.CONTOUR_CORSE}"/>
     ${et && et.outreMer ? `<g class="outre-mer"><rect x="40" y="722" width="140" height="116" rx="16"/><text x="110" y="862">Outre-mer</text></g>` : ''}
@@ -368,7 +368,7 @@
       <path d="M-5 0v-12a5 5 0 0 1 10 0V0z" fill="#3b2a55"/><rect x="-3" y="-50" width="6" height="8" rx="3" fill="#FFC857"/>
       <path d="M0 -74v-14l12 4-12 4" fill="#D64045"/>
     </g>
-    <text class="nom-chateau" x="${cx}" y="${cy - 100}">Château de ${esc(C.souris)}</text>
+    <text class="nom-chateau" x="${cx}" y="${cy - 100}">Château fort de Sedan</text>
     ${et ? `<g class="etoile-ville" role="button" tabindex="0" aria-label="L'étoile de ${esc(ville.nom)}" transform="translate(${et.x},${et.y})">
       <circle class="halo" r="54" fill="url(#glow)"/><circle class="cible" r="48" fill="transparent"/>
       <use href="#etoile5" x="-26" y="-26" width="52" height="52"/>
@@ -673,12 +673,14 @@
         [39.4, () => { mv(cs1, -90, 236); SON.play('pas'); rm('lit'); chuchote(D.camera.fin); }],
         [42, () => { cam.classList.add('fin'); $('#btn-revoir', r).hidden = false; SON.play('alerte'); heure('02:52'); NARR.action(T(D.camera.bouton) + ' ' + A.icone('suite'), () => { complete(3); badge('hibou'); show(4); }); }],
       ];
+      const VITESSE_CAMERA = 1.4;
       const finAt = evenements[evenements.length - 1][0];
       let debut = null, idx = 0, fini = false;
       const horo = s => { const t = 2 * 3600 + 47 * 60 + Math.floor(s * 7); ts.textContent = dateCam() + ' ' + pad(Math.floor(t / 3600)) + ':' + pad(Math.floor(t / 60) % 60) + ':' + pad(t % 60); heure(pad(Math.floor(t / 3600)) + ':' + pad(Math.floor(t / 60) % 60)); };
       const boucle = now => {
-        if (fini || !encore()) return; if (debut == null) debut = now - tTest * 1000;
-        const s = (now - debut) / 1000;
+        // Le film est joué un peu plus vite que son minutage (environ trente secondes au lieu de quarante-deux)
+        if (fini || !encore()) return; if (debut == null) debut = now - tTest * 1000 / VITESSE_CAMERA;
+        const s = (now - debut) / 1000 * VITESSE_CAMERA;
         while (idx < evenements.length && s >= evenements[idx][0] && !pause) evenements[idx++][1]();
         horo(Math.min(s, finAt));
         if (idx >= evenements.length) { fini = true; return; }
@@ -773,7 +775,7 @@
       zone.innerHTML = `<svg class="retour" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet" role="img" aria-label="La montgolfière rentre au château entre les nuages">
 ${A.fond(State.nuit, 111, { x: 880, y: 90, r: 28 })}
 <path d="M0 560Q250 520 500 545T1000 530V600H0Z" fill="#1E3F36"/><rect x="-600" y="598" width="2200" height="900" fill="#1E3F36"/>
-<g class="ret-chateau" transform="translate(1250,560)"><rect x="-70" y="-150" width="40" height="150" fill="#F3EFE6"/><rect x="30" y="-150" width="40" height="150" fill="#F3EFE6"/><rect x="-32" y="-100" width="64" height="100" fill="#F3EFE6"/><path d="M-76-150h52l-26-44zM24-150h52l-26-44z" fill="#D64045"/><rect x="-10" y="-60" width="20" height="30" rx="10" fill="#FFC857"/></g>
+<g class="ret-chateau" transform="translate(1250,560)"><path d="M-110 0l20-26h180l20 26z" fill="#2F5D50"/><rect x="-80" y="-120" width="150" height="40" fill="#c9a466"/><path d="M-90-118l18-24h132l18 24z" fill="#5b6182"/><rect x="-86" y="-84" width="170" height="84" fill="#c9a466"/><rect x="-104" y="-104" width="36" height="104" rx="18" fill="#b8925a"/><path d="M-110-100l24-44 24 44z" fill="#5b6182"/><rect x="66" y="-112" width="40" height="112" rx="20" fill="#b8925a"/><path d="M60-108l26-48 26 48z" fill="#5b6182"/><rect x="20" y="-140" width="30" height="24" fill="#b8925a"/><path d="M16-140l19-24 19 24z" fill="#5fa3a3"/><rect x="-10" y="-60" width="20" height="30" rx="10" fill="#FFC857"/><rect x="-60" y="-112" width="8" height="10" fill="#FFC857"/><rect x="30" y="-110" width="8" height="10" fill="#FFC857"/></g>
 ${[0, 1, 2, 3, 4, 5].map(i => `<g class="nuage" data-n="${i}" transform="translate(-400,0)"><g fill="#cfd3ee" opacity=".92" transform="scale(1.15)"><circle cx="-40" cy="0" r="36"/><circle cx="0" cy="-18" r="44"/><circle cx="44" cy="0" r="36"/><ellipse cx="0" cy="16" rx="80" ry="24"/></g></g>`).join('')}
 <g class="ret-ballon" transform="translate(230,330) scale(.75)">${window.DECORS.ballonSVG()}</g>
 </svg>`;

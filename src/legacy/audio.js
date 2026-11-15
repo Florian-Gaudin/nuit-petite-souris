@@ -49,7 +49,18 @@ window.SON = (function () {
     grogne() { bruit(0.18, 0.2, 0, 220, 2); bruit(0.14, 0.16, 0.22, 200, 2); },
     plume() { bruit(0.35, 0.06, 0, 1400, 0.6); },
     trompette() { [392, 523, 659].forEach((f, i) => tone(f, 0.35, 'triangle', 0.1, i * 0.14)); tone(784, 0.6, 'triangle', 0.1, 0.42); },
-    concert() { [196, 247, 294, 247, 330, 294].forEach((f, i) => { tone(f, 0.18, 'triangle', 0.12, i * 0.16); bruit(0.04, 0.12, i * 0.16, 150, 1); }); },
+    // Le Cabaret Vert : huit temps d'électro (grosse caisse, charleston, basse, arpège)
+    concert() {
+      const temps = 0.47, arpege = [220, 262, 330, 392, 349, 262, 294, 349];
+      for (let i = 0; i < 8; i++) {
+        const t = i * temps;
+        tone(120, 0.18, 'sine', 0.42, t, 45); // grosse caisse
+        bruit(0.03, 0.07, t + temps / 2, 7000, 1); // charleston
+        tone(i < 4 ? 55 : 44, 0.2, 'sawtooth', 0.05, t + temps / 2); // basse
+        for (let k = 0; k < 2; k++) tone(arpege[(i * 2 + k) % arpege.length] * 2, 0.12, 'square', 0.025, t + k * temps / 2); // arpège
+      }
+      tone(880, 0.6, 'square', 0.02, 8 * temps - 0.3, 1320);
+    },
     coup() { tone(68, 0.4, 'sine', 0.55); bruit(0.12, 0.45, 0, 300, 0.8); tone(68, 0.3, 'sine', 0.18, 0.17); bruit(0.08, 0.14, 0.17, 300, 0.8); },
     coup1() { sons.coup(); tone(196, 0.7, 'triangle', 0.12, 0.08); },
     coup2() { sons.coup(); tone(247, 0.7, 'triangle', 0.12, 0.08); },

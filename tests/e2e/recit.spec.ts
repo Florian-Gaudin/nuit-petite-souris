@@ -405,3 +405,16 @@ test("le badge Pilote des nuages : seulement sans toucher un seul nuage", async 
     if (evite) expect(badges).toContain('pilote'); else expect(badges).not.toContain('pilote');
   }
 });
+
+test("un élément touché trop tôt tremble sur place, sans sauter dans le coin de l'image", async ({ page }) => {
+  await ouvrir(page, '?chapitre=1&scene=5#exemple');
+  // La position est portée par un groupe autour : l'animation de refus ne peut pas l'écraser
+  const billet = page.locator('.tap[data-el="billet"]');
+  expect(await billet.getAttribute('transform')).toBeNull();
+  expect(await billet.evaluate(g => g.parentElement!.getAttribute('transform'))).toContain('translate(170,316)');
+  const avant = (await billet.boundingBox())!;
+  await billet.evaluate(g => g.classList.add('refus'));
+  await page.waitForTimeout(150);
+  const pendant = (await billet.boundingBox())!;
+  expect(Math.abs(pendant.x - avant.x)).toBeLessThan(20);
+});

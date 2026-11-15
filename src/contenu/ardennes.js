@@ -72,7 +72,7 @@ window.ARDENNES = {
     {
       id: "sedan", titre: "Le château fort de Sedan", secret: "montgolfiere.sedan",
       texte: [
-        "Le château fort de Sedan est le plus grand château fort d'Europe !",
+        "Le château fort de Sedan est le plus grand château fort d'Europe ! C'est là que je me cache, avec ma boîte à trésors.",
         "Ses murs sont si épais et ses salles si nombreuses qu'on pourrait s'y perdre.",
         "En deux mille vingt-trois, il a même été élu monument préféré des Français.",
       ],

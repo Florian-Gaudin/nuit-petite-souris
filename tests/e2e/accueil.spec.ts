@@ -49,8 +49,8 @@ test('« Changer d\'histoire » ramène à l\'écran de choix', async ({ page })
 
 test('la carte : le château des Ardennes, l\'étoile de Lyon, un chemin courbe, puis le château', async ({ page }) => {
   await versLaCarte(page, LEO);
-  await expect(bandeau(page)).toContainText('château caché au fond de la forêt des Ardennes');
-  await expect(page.locator('.nom-chateau')).toHaveText('Château de Quenotte');
+  await expect(bandeau(page)).toContainText('château fort de Sedan');
+  await expect(page.locator('.nom-chateau')).toHaveText('Château fort de Sedan');
   // Le chemin : une courbe (le point de contrôle s'écarte franchement de la ligne droite)
   const d = (await page.locator('.trajet').getAttribute('d'))!;
   const [x0, y0, qx, qy, x1, y1] = d.match(/-?\d+(\.\d+)?/g)!.map(Number);

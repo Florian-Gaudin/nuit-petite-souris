@@ -98,20 +98,71 @@ ${o.pierre ? '<rect x="-14" y="-40" width="28" height="18" rx="2" fill="#cbbfa8"
     () => ciel('#0d1030', '#1b2250') + etoiles(30) + '<circle cx="60" cy="40" r="18" fill="#F3EFE6"/><rect y="170" width="320" height="30" fill="#14271f"/>' + sapins([0, 30, 250, 280, 300], 172, 80, '#0f2a22') + bayard(150, 74, 0.52, false),
   ];
 
-  // Petites icônes des cartes
+  // ---------- Les illustrations des cartes : de petites scènes (repère 120 × 90) ----------
+  const etoilesC = n => { let s = ''; for (let i = 0; i < n; i++) s += `<circle cx="${(i * 37) % 120}" cy="${(i * 23) % 40}" r="${i % 3 ? 0.5 : 0.9}" fill="#FFF6E0" opacity=".8"/>`; return s; };
+  const sapinC = (x, y, h, c) => `<path d="M${x} ${y}l${h * 0.3}-${h} ${h * 0.3} ${h}z" fill="${c}"/>`;
   const ICONES = {
-    foret: '<ellipse cx="22" cy="30" rx="16" ry="9" fill="#4a3222"/><path d="M34 24q8-2 10 6l-10 2z" fill="#5c3c28"/><path d="M28 24l2-6 3 6z" fill="#3a2618"/>',
-    place: '<rect x="4" y="14" width="40" height="28" fill="#D6B493"/><path d="M4 14l20-10 20 10z" fill="#2A3470"/><g fill="#151a40"><path d="M8 42v-10a6 6 0 0 1 12 0v10zM28 42v-10a6 6 0 0 1 12 0v10z"/></g>',
-    rimbaud: '<path d="M10 40C18 24 28 14 42 6C38 18 28 30 12 42z" fill="#FFF6E0" stroke="#8a90a8"/><path d="M10 42L40 8" stroke="#8a90a8"/>',
-    meuse: '<path d="M2 30c10-14 18 10 28-4s14-12 16-6" fill="none" stroke="#3E7C8F" stroke-width="6" stroke-linecap="round"/>',
-    sedan: '<path d="M6 40V24h36v16z" fill="#c9a466"/><rect x="4" y="18" width="10" height="22" rx="5" fill="#b8925a"/><path d="M3 18l6-8 6 8z" fill="#5b6182"/><rect x="34" y="16" width="10" height="24" rx="5" fill="#b8925a"/><path d="M33 16l6-8 6 8z" fill="#5b6182"/>',
-    ardoise: '<path d="M4 30l20-18 20 18z" fill="#4a5478"/><rect x="8" y="30" width="32" height="12" fill="#cfc3a8"/><path d="M14 22l6-4" stroke="#e8e2ee" stroke-width="2"/>',
-    cabaret: '<g fill="#3E9A6B"><path d="M14 34V12l18-4v22"/><circle cx="11" cy="34" r="5"/><circle cx="29" cy="30" r="5"/></g>',
-    marionnette: '<path d="M24 2v10" stroke="#8a90a8"/><circle cx="24" cy="16" r="5" fill="#FFC857"/><rect x="20" y="21" width="8" height="12" rx="2" fill="#D64045"/><path d="M20 24l-7 6M28 24l7 6M22 33l-3 9M26 33l3 9" stroke="#FFC857" stroke-width="2.4" stroke-linecap="round"/>',
-    galette: '<ellipse cx="24" cy="28" rx="18" ry="8" fill="#E8B04A"/><ellipse cx="24" cy="26" rx="14" ry="5" fill="#F6CF7A"/><g fill="#fff"><circle cx="18" cy="26" r="1.2"/><circle cx="26" cy="25" r="1.2"/><circle cx="30" cy="27" r="1.2"/></g>',
-    legende: '<path d="M8 40V14q8-6 16 0 8-6 16 0v26q-8-6-16 0-8-6-16 0z" fill="#FFF6E0" stroke="#8B5A3C" stroke-width="2"/><path d="M24 14v26" stroke="#8B5A3C" stroke-width="2"/>',
+    // La forêt des Ardennes et son sanglier
+    foret: '<rect width="120" height="90" fill="#16213f"/>' + etoilesC(14) + '<circle cx="98" cy="16" r="7" fill="#F3EFE6"/>'
+      + [[2, 74, 46], [16, 76, 56], [92, 74, 50], [104, 78, 58]].map(([x, y, h]) => sapinC(x, y, h, '#173229')).join('') + [[30, 70, 34], [74, 72, 38]].map(([x, y, h]) => sapinC(x, y, h, '#1E3F36')).join('')
+      + '<rect y="72" width="120" height="18" fill="#24483E"/>'
+      + '<g transform="translate(58,66)"><ellipse cx="-4" cy="0" rx="24" ry="13" fill="#6b4a33"/><path d="M-22-8q8-8 18-5q8-6 18 0" fill="none" stroke="#3a2618" stroke-width="3" stroke-linecap="round"/><path d="M14-10q12-2 18 8l4 2q1 4-3 5l-14 1q-8-2-8-9z" fill="#7a5238"/><ellipse cx="34" cy="2" rx="3.5" ry="3" fill="#a07a68"/><path d="M26 5q4 1 4-4" fill="none" stroke="#FFF6E0" stroke-width="2" stroke-linecap="round"/><path d="M16-10l3-7 4 7z" fill="#3a2618"/><circle cx="24" cy="-3" r="1.4" fill="#1a110a"/><path d="M-20 10v6M-12 11v6M4 11v6M12 10v6" stroke="#3a2618" stroke-width="3" stroke-linecap="round"/><path d="M-28-2q-6 2-5 7" fill="none" stroke="#3a2618" stroke-width="2"/></g>'
+      + '<path d="M8 86q4-14 0-20M8 76l-6-4M8 72l6-4M112 86q-4-12 0-18M112 76l6-4M112 72l-6-3" fill="none" stroke="#3E7C50" stroke-width="2" stroke-linecap="round"/>',
+    // La place Ducale : façades de brique et de pierre, arcades, toits d'ardoise
+    place: '<rect width="120" height="90" fill="#2b356f"/>' + etoilesC(10) + '<circle cx="104" cy="14" r="6" fill="#F3EFE6"/>'
+      + [0, 40, 80].map((x, k) => `<path d="M${x} 34l20-${k === 1 ? 20 : 14} 20 ${k === 1 ? 20 : 14}z" fill="#3c4566"/><rect x="${x + 16}" y="${k === 1 ? 18 : 24}" width="8" height="8" fill="#e8dcc4"/><rect x="${x}" y="34" width="40" height="30" fill="${k % 2 ? '#b5563f' : '#c26a4f'}"/><rect x="${x}" y="34" width="4" height="30" fill="#e8dcc4"/><rect x="${x + 36}" y="34" width="4" height="30" fill="#e8dcc4"/><g fill="#FFC857">${[8, 18, 28].map(wx => `<rect x="${x + wx}" y="40" width="5" height="8"/>`).join('')}</g><g fill="#1b2250">${[8, 18, 28].map(wx => `<rect x="${x + wx}" y="52" width="5" height="8"/>`).join('')}</g>`).join('')
+      + '<rect y="64" width="120" height="16" fill="#d9b77a"/><g fill="#151a40">' + [0, 20, 40, 60, 80, 100].map(x => `<path d="M${x + 3} 80v-9a7 7 0 0 1 14 0v9z"/>`).join('') + '</g><rect y="80" width="120" height="10" fill="#4d4a5a"/>',
+    // Arthur Rimbaud : la plume, l'encrier, le poème et un petit bateau rêvé
+    rimbaud: '<rect width="120" height="90" fill="#6b4a33"/><rect y="62" width="120" height="28" fill="#5c3c28"/>'
+      + '<g transform="rotate(-6 54 46)"><rect x="24" y="14" width="60" height="62" rx="2" fill="#FFF6E0"/><g stroke="#8a7a9c" stroke-width="1.6" stroke-linecap="round">' + [24, 31, 38, 45, 52].map(y => `<path d="M31 ${y}h${y % 2 ? 40 : 34}"/>`).join('') + '</g><path d="M58 66l12-4 4-12 2 12h-14z" fill="#3E7C8F"/><path d="M68 62v-14" stroke="#3E7C8F"/><path d="M52 68q8 3 18 0" fill="none" stroke="#7FB8C7" stroke-width="1.6"/></g>'
+      + '<rect x="90" y="54" width="18" height="16" rx="3" fill="#2B2B33"/><rect x="94" y="50" width="10" height="5" fill="#45454f"/>'
+      + '<path d="M98 50C92 30 96 14 112 4C110 18 106 34 100 50z" fill="#FFF6E0" stroke="#cfd3ee"/><path d="M99 52L111 6" stroke="#8a90a8"/>',
+    // La Meuse vue d'en haut : ses grandes boucles entre les collines boisées
+    meuse: '<rect width="120" height="90" fill="#5c8a4a"/>'
+      + '<g fill="#3E7C50">' + [[14, 14, 12], [40, 70, 14], [96, 20, 14], [104, 74, 12], [62, 40, 8], [20, 50, 9]].map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}"/>`).join('') + '</g>'
+      + '<path d="M-4 18C30 6 46 30 34 44S20 74 54 72S92 40 76 28S80 6 124 14" fill="none" stroke="#3E7C8F" stroke-width="11" stroke-linecap="round"/><path d="M-4 18C30 6 46 30 34 44S20 74 54 72S92 40 76 28S80 6 124 14" fill="none" stroke="#9fd0dd" stroke-width="2.4" stroke-dasharray="6 9" stroke-linecap="round"/>'
+      + '<g>' + [[58, 52], [64, 56], [52, 58]].map(([x, y]) => `<rect x="${x}" y="${y}" width="5" height="4" fill="#e8dcc4"/><path d="M${x - 1} ${y}l3.5-3 3.5 3z" fill="#4a5478"/>`).join('') + '</g>',
+    // Le château fort de Sedan : tours rondes, toits d'ardoise, la petite tour vert-de-gris
+    sedan: '<rect width="120" height="90" fill="#9fb8d6"/><rect y="56" width="120" height="34" fill="#7aa35a"/>'
+      + '<path d="M4 82l14-24h84l14 24z" fill="#5c8a4a"/>'
+      + '<rect x="30" y="30" width="58" height="14" fill="#c9a466"/><path d="M26 31l6-9h54l6 9z" fill="#5b6182"/>'
+      + '<rect x="20" y="40" width="80" height="34" fill="#c9a466"/><g stroke="#a8844e" stroke-width=".8" opacity=".6">' + [46, 52, 58, 64, 70].map(y => `<path d="M20 ${y}h80"/>`).join('') + '</g>'
+      + [[20, 34, 14], [100, 30, 16], [44, 42, 10]].map(([x, y, w]) => `<rect x="${x - w / 2}" y="${y}" width="${w}" height="${74 - y}" rx="${w / 2}" fill="#b8925a"/><path d="M${x - w / 2 - 2} ${y + 2}L${x} ${y - 14}L${x + w / 2 + 2} ${y + 2}z" fill="#5b6182"/>`).join('')
+      + '<rect x="70" y="26" width="12" height="14" fill="#b8925a"/><path d="M68 27l8-10 8 10z" fill="#5fa3a3"/>'
+      + '<path d="M54 74v-10a6 6 0 0 1 12 0v10z" fill="#5c3a24"/><g fill="#3a2f22">' + [[30, 50], [84, 48], [60, 50], [40, 58]].map(([x, y]) => `<rect x="${x}" y="${y}" width="2.5" height="5"/>`).join('') + '</g>',
+    // L'ardoise : les toits couverts d'écailles de pierre, et une pile d'ardoises violettes
+    ardoise: '<rect width="120" height="90" fill="#9fb8d6"/>'
+      + '<path d="M-6 66L40 20L86 66z" fill="#4a5478"/><g fill="none" stroke="#6b7398" stroke-width="1.2">' + [30, 38, 46, 54, 62].map(y => `<path d="M${40 - (y - 20)} ${y}h${2 * (y - 20)}"/>`).join('') + '</g>'
+      + '<g fill="#5b6182">' + [34, 42, 50, 58].map((y, r) => [...Array(2 * (y - 20) / 8 | 0)].map((_, k) => `<path d="M${40 - (y - 20) + k * 8 + (r % 2) * 4} ${y}q4 6 8 0" />`).join('')).join('') + '</g>'
+      + '<rect x="4" y="66" width="72" height="24" fill="#e8dcc4"/><rect x="34" y="72" width="12" height="18" fill="#5c3a24"/>'
+      + '<g transform="translate(96,72)">' + [0, 5, 10, 15].map(d => `<path d="M-16 ${-d}l26-4 8 6-26 4z" fill="${d % 10 ? '#7a6a9c' : '#6b5b8a'}" stroke="#45395e" stroke-width="1"/>`).join('') + '</g>',
+    // Le Cabaret Vert : la grande scène, les lumières vertes, la foule qui danse
+    cabaret: '<rect width="120" height="90" fill="#0d1a14"/>' + etoilesC(8)
+      + '<g opacity=".35" stroke="#7CD65A" stroke-width="6" stroke-linecap="round"><path d="M40 40L10 4M60 40V0M80 40L110 4"/></g>'
+      + '<path d="M24 48h72l-6-14H30z" fill="#2F5D50"/><rect x="24" y="48" width="72" height="12" fill="#1a2a20"/><g fill="#7CD65A">' + [32, 44, 56, 68, 80, 90].map(x => `<circle cx="${x}" cy="40" r="2"/>`).join('') + '</g>'
+      + '<g fill="#cfd3ee"><circle cx="50" cy="44" r="3"/><rect x="48" y="46" width="4" height="4"/><circle cx="70" cy="44" r="3"/><rect x="68" y="46" width="4" height="4"/></g>'
+      + '<g fill="#7CD65A"><path d="M14 30v-12l8-2v12" stroke="#7CD65A" stroke-width="1.6" fill="none"/><circle cx="12" cy="30" r="2.6"/><circle cx="20" cy="28" r="2.6"/><path d="M104 24v-10" stroke="#7CD65A" stroke-width="1.6"/><circle cx="102" cy="24" r="2.6"/></g>'
+      + '<g fill="#1f2b4a">' + [...Array(12)].map((_, k) => `<circle cx="${6 + k * 10}" cy="${74 + (k % 3) * 2}" r="6"/><path d="M${6 + k * 10 - 7} 90q7-12 14 0z"/>`).join('') + '<path d="M18 70l-4-10M48 70l-2-12M88 70l4-11M108 72l3-10" stroke="#1f2b4a" stroke-width="3" stroke-linecap="round"/></g>',
+    // La marionnette : le cadre vert-de-gris, la croix de bois, le pantin à fils
+    marionnette: '<rect width="120" height="90" fill="#2a8c7e"/><rect x="10" y="10" width="100" height="74" fill="#1b2250"/><path d="M10 10h22q-6 36 0 74H10zM110 10H88q6 36 0 74h22z" fill="#D64045"/>'
+      + '<rect x="40" y="12" width="40" height="5" rx="2" fill="#8B5A3C"/><rect x="57" y="6" width="6" height="18" rx="2" fill="#8B5A3C"/>'
+      + '<path d="M42 15L48 52M78 15L72 52M60 22V34M50 15L52 72M70 15L68 72" stroke="#e8e2ee" stroke-width=".8"/>'
+      + '<circle cx="60" cy="40" r="7" fill="#FFC857"/><circle cx="57.5" cy="39" r="1.2" fill="#2B2B33"/><circle cx="62.5" cy="39" r="1.2" fill="#2B2B33"/><path d="M57 43q3 2 6 0" fill="none" stroke="#2B2B33" stroke-width="1"/>'
+      + '<rect x="54" y="47" width="12" height="16" rx="3" fill="#D64045"/><path d="M54 50L48 52M66 50L72 52M57 63L52 72M63 63L68 72" stroke="#FFC857" stroke-width="3" stroke-linecap="round"/>'
+      + '<rect x="10" y="78" width="100" height="6" fill="#6b4a33"/>',
+    // La galette au sucre, sur une nappe à carreaux
+    galette: '<rect width="120" height="90" fill="#FFF6E0"/><g fill="#D64045" opacity=".35">' + [...Array(36)].map((_, k) => (k + Math.floor(k / 6)) % 2 ? `<rect x="${(k % 6) * 20}" y="${Math.floor(k / 6) * 15}" width="20" height="15"/>` : '').join('') + '</g>'
+      + '<ellipse cx="60" cy="54" rx="46" ry="20" fill="#fff" stroke="#cfd3ee" stroke-width="2"/>'
+      + '<ellipse cx="60" cy="52" rx="34" ry="13" fill="#b9801a"/><ellipse cx="60" cy="48" rx="34" ry="13" fill="#E8B04A"/><ellipse cx="60" cy="46" rx="27" ry="9" fill="#F6CF7A"/>'
+      + '<g fill="#fff">' + [[48, 44], [56, 48], [64, 43], [72, 47], [52, 50], [68, 50], [60, 45], [44, 48], [76, 44]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="1.6"/>`).join('') + '</g>'
+      + '<path d="M60 47L94 52l-6 8z" fill="#FFF6E0" opacity=".9"/><path d="M92 62l10-3v6z" fill="#E8B04A" stroke="#b9801a"/>',
+    // La légende : le livre ouvert, Bayard et les quatre casques des frères
+    legende: '<rect width="120" height="90" fill="#3a2f6b"/>' + etoilesC(10)
+      + '<path d="M10 80V22q25-10 50 0 25-10 50 0v58q-25-10-50 0-25-10-50 0z" fill="#FFF6E0" stroke="#8B5A3C" stroke-width="2"/><path d="M60 22v58" stroke="#8B5A3C" stroke-width="2"/>'
+      + '<g transform="translate(34,52) scale(.24)"><ellipse cx="0" cy="58" rx="80" ry="32" fill="#6b4a33"/><path d="M54 44l34-46 26 10-18 54z" fill="#6b4a33"/><ellipse cx="112" cy="0" rx="30" ry="15" fill="#6b4a33" transform="rotate(28 112 0)"/><g fill="#5c3c28"><rect x="-56" y="70" width="13" height="58" rx="5"/><rect x="-34" y="70" width="13" height="58" rx="5"/><rect x="30" y="70" width="13" height="58" rx="5"/><rect x="52" y="70" width="13" height="58" rx="5"/></g><path d="M-72 36q-36 6-34 50q10-18 30-30z" fill="#4a3222"/></g>'
+      + '<g>' + [[72, '#D64045'], [84, '#3E7C8F'], [96, '#FFC857'], [108, '#3E9A6B']].map(([x, c], k) => `<path d="M${x - 6} ${52 + (k % 2) * 6}a6 5.5 0 0 1 12 0z" fill="#dfe2ee" stroke="#8a90a8"/><path d="M${x} ${46 + (k % 2) * 6}q-1-7 5-8q-3 4-2 8z" fill="${c}"/>`).join('') + '</g>',
   };
-  const icone = id => `<svg viewBox="0 0 48 48" aria-hidden="true">${ICONES[id] || ''}</svg>`;
+  const icone = id => `<svg viewBox="0 0 120 90" aria-hidden="true">${ICONES[id] || ''}</svg>`;
 
   // ---------- La fenêtre du carnet ----------
   function ouvrir(o) {
@@ -142,7 +193,7 @@ ${o.pierre ? '<rect x="-14" y="-40" width="28" height="18" rx="2" fill="#cbbfa8"
       const trouvee = c.secret && trouves.indexOf(c.secret) >= 0;
       corps.innerHTML = `<p class="carnet-chemin">Le savais-tu ? · ${i + 1} / ${n}</p><h2>${esc(c.titre)}</h2>${photo}
 <div class="carte-texte" aria-live="polite">${c.texte.map(t => `<p>${esc(T(t))}</p>`).join('')}${poeme}${c.aVoir ? `<p class="carte-avoir"><strong>${esc(AR.aVoir)} :</strong> ${esc(c.aVoir)}</p>` : ''}${trouvee ? `<p class="carte-trouvee">${feuille(18)} ${esc(AR.trouve)}</p>` : ''}</div>
-<div class="carnet-nav">${i > 0 ? '<button type="button" class="btn btn-petit" data-a="prec">◂ Carte précédente</button>' : ''}${c.livre ? `<button type="button" class="btn btn-or" data-a="livre">${esc(AR.livre.ouvrir)}</button>` : ''}${i < n - 1 ? '<button type="button" class="btn btn-petit" data-a="suiv">Carte suivante ▸</button>' : ''}<button type="button" class="btn btn-petit" data-a="grille">Toutes les cartes</button></div>`;
+<div class="carnet-nav">${c.livre ? `<button type="button" class="btn btn-or" data-a="livre">${esc(AR.livre.ouvrir)}</button>` : ''}<div class="carnet-pages">${i > 0 ? '<button type="button" class="btn btn-petit" data-a="prec">◂ Précédente</button>' : ''}${i < n - 1 ? '<button type="button" class="btn btn-petit" data-a="suiv">Suivante ▸</button>' : ''}</div><button type="button" class="btn btn-petit" data-a="grille">Toutes les cartes</button></div>`;
       const act = (a, f) => { const b = corps.querySelector(`[data-a="${a}"]`); if (b) b.onclick = f; };
       act('prec', () => { son('papier'); carte(i - 1); }); act('suiv', () => { son('papier'); carte(i + 1); });
       act('grille', grille); act('livre', () => { son('papier'); livre(0); });
@@ -166,7 +217,7 @@ ${o.pierre ? '<rect x="-14" y="-40" width="28" height="18" rx="2" fill="#cbbfa8"
       corps.innerHTML = `<p class="carnet-chemin">${esc(L.titre)} · page ${page + 1} sur ${NB}</p><h2>${esc(titre)}</h2>${heure ? `<p class="livre-heure">${esc(heure)}</p>` : ''}
 <div class="livre-vignette"><svg viewBox="0 0 320 200" role="img" aria-label="${esc(titre)}">${dessin}</svg></div>
 <div class="livre-texte" aria-live="polite">${textes.map(t => `<p>${esc(T(t))}</p>`).join('')}</div>
-<div class="carnet-nav">${page > 0 ? '<button type="button" class="btn btn-petit" data-a="prec">◂ Page précédente</button>' : ''}${page < NB - 1 ? `<button type="button" class="btn btn-or" data-a="suiv">${page === 0 ? 'Commencer ▸' : 'Page suivante ▸'}</button>` : ''}<button type="button" class="btn btn-petit" data-a="grille">Toutes les cartes</button></div>`;
+<div class="carnet-nav"><div class="carnet-pages">${page > 0 ? '<button type="button" class="btn btn-petit" data-a="prec">◂ Précédente</button>' : ''}${page < NB - 1 ? `<button type="button" class="btn btn-or" data-a="suiv">${page === 0 ? 'Commencer ▸' : 'Suivante ▸'}</button>` : ''}</div><button type="button" class="btn btn-petit" data-a="grille">Toutes les cartes</button></div>`;
       const act = (a, f) => { const b = corps.querySelector(`[data-a="${a}"]`); if (b) b.onclick = f; };
       act('prec', () => { son('papier'); livre(page - 1); }); act('suiv', () => { son('papier'); livre(page + 1); }); act('grille', grille);
       titreFocus();

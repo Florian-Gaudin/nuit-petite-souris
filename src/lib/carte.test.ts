@@ -12,7 +12,7 @@ describe('carte de France', () => {
     const lille = etoileDepartement('59')!, marseille = etoileDepartement('13')!, brest = etoileDepartement('29')!, strasbourg = etoileDepartement('67')!;
     expect(lille.y).toBeLessThan(marseille.y);       // Lille au nord de Marseille
     expect(brest.x).toBeLessThan(strasbourg.x);      // Brest à l'ouest de Strasbourg
-    expect(Math.abs(etoileDepartement('08')!.x - CHATEAU[0])).toBeLessThan(10); // Charleville tout près du château
+    expect(Math.abs(etoileDepartement('08')!.x - CHATEAU[0])).toBeLessThan(20); // Charleville tout près du château fort de Sedan
   });
 
   it('tout tient dans le cadre de la carte', () => {

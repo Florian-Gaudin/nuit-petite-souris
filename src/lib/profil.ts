@@ -260,7 +260,7 @@ export function configDepuisProfil(p: Profil, url: string) {
     poupee: p.doudou.type === 'aucun' ? '' : p.doudou.nom,
     souris: 'Quenotte',
     chat: p.chat,
-    chateau: 'Château des Dents de Lait',
+    chateau: 'Château fort de Sedan',
     ville: p.ville.nom,
     nuit: p.nuit,
     dents: ordre.map((d, i) => ({ numero: i + 1, position: POSITION_ANCIEN_SCHEMA[d] ?? 'autre', code: d })),

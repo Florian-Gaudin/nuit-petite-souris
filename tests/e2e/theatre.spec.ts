@@ -44,7 +44,17 @@ test('les trois coups ouvrent le théâtre ; le spectacle complet donne le badge
   // 2. La danse du doudou : tirer le fil cinq fois
   await page.locator('.th-actions button').click();
   await expect(txt).toContainText('Premier numéro');
-  for (let i = 0; i < 5; i++) { await page.locator('.th-actions button').click(); await page.waitForTimeout(150); }
+  // Quatre figures : au doigt (vers le bas), en touchant la marionnette, puis au bouton
+  const b = (await page.locator('.th-svg').boundingBox())!;
+  const cdp = await page.context().newCDPSession(page);
+  const t = (type: string, x: number, y: number) => cdp.send('Input.dispatchTouchEvent', { type, touchPoints: type === 'touchEnd' ? [] : [{ x, y }] });
+  const x = b.x + b.width / 2, y = b.y + b.height * 0.5;
+  await t('touchStart', x, y); for (let i = 1; i <= 6; i++) await t('touchMove', x, y + i * 10); await t('touchEnd', 0, 0);
+  await expect(page.locator('.th-txt')).not.toContainText('Premier numéro');
+  await page.waitForTimeout(800);
+  await page.locator('.marionnette[data-p="doudou"]').click();
+  await page.waitForTimeout(800);
+  for (let i = 0; i < 2; i++) { await page.locator('.th-actions button', { hasText: 'Tirer le fil' }).click(); await page.waitForTimeout(800); }
   await expect(txt).toContainText('doigts de marionnettiste');
   await capture(page, 't2-danse');
   // 3. Le chat endormi : trop vite, il ouvre un œil ; tout doucement, Quenotte passe

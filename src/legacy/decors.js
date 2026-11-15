@@ -5,7 +5,14 @@ window.DECORS = (function () {
   const A = window.ART;
 
   const halo = (cx, cy, r) => `<circle class="halo" cx="${cx}" cy="${cy}" r="${r}" fill="url(#halo-or)"/>`;
-  const tap = (el, label, contenu, attrs) => `<g class="tap" data-el="${el}" role="button" tabindex="0" aria-label="${label}" ${attrs || ''}>${contenu}</g>`;
+  // La position (transform) va sur un groupe autour : les petites animations de l'élément (tremblement
+  // de refus…) ne peuvent plus l'envoyer dans le coin de l'image
+  const tap = (el, label, contenu, attrs) => {
+    attrs = attrs || '';
+    const pos = attrs.match(/transform="[^"]*"/);
+    const g = `<g class="tap" data-el="${el}" role="button" tabindex="0" aria-label="${label}" ${pos ? attrs.replace(pos[0], '') : attrs}>${contenu}</g>`;
+    return pos ? `<g ${pos[0]}>${g}</g>` : g;
+  };
   const sapin = (x, y, h, fill) => `<path d="M${x} ${y}l${h * 0.32}-${h} ${h * 0.32} ${h}z" fill="${fill}"/>`;
   function sapins(xs, y, h, fill) { return xs.map(x => sapin(x, y, h, fill)).join(''); }
   function lueur(x, y, r) { return `<circle class="lueur" cx="${x.toFixed(0)}" cy="${y.toFixed(0)}" r="${r}" fill="url(#halo-or)"/>`; }
@@ -14,19 +21,24 @@ window.DECORS = (function () {
   function chateau(nuit) {
     const sx = 380, sy = 362, sw = 170;
     const L = A.pointSouris(sx, sy, sw, 'lanterne');
-    return `<svg class="decor decor-chateau" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet" role="group" aria-label="Le château des dents de lait, la nuit">
+    return `<svg class="decor decor-chateau" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet" role="group" aria-label="Le château fort de Sedan, la maison de Quenotte, la nuit">
 ${A.fond(nuit, 21, { x: 830, y: 95, r: 34 })}
 <path d="M0 360Q150 300 300 340T600 330T1000 300V600H0Z" fill="#1E2658"/>
 <g>${sapins([0, 60, 130, 200, 700, 760, 900, 960], 470, 150, '#1E3F36')}${sapins([30, 100, 170, 730, 820, 930], 480, 110, '#24483E')}</g>
 <path d="M0 600V470Q250 450 500 470T1000 460V600Z" fill="#24483E"/>
 <path d="M0 600V500Q500 480 1000 500V600Z" fill="#1A2A26"/>
 <g id="chateau-svg">
-  <rect x="300" y="200" width="70" height="285" fill="#E9E2D6"/><rect x="560" y="200" width="70" height="285" fill="#E9E2D6"/>
-  <path d="M288 200l47-78 47 78z" fill="#D64045"/><path d="M548 200l47-78 47 78z" fill="#D64045"/>
-  <path d="M335 122v-30M595 122v-30" stroke="#6b6560" stroke-width="3"/><path d="M335 92l22 8-22 8zM595 92l22 8-22 8z" fill="#FFC857"/>
-  <rect x="370" y="290" width="190" height="195" fill="#DDD5C7"/>
-  <g fill="#DDD5C7"><rect x="370" y="276" width="22" height="16"/><rect x="412" y="276" width="22" height="16"/><rect x="454" y="276" width="22" height="16"/><rect x="496" y="276" width="22" height="16"/><rect x="538" y="276" width="22" height="16"/></g>
-  <g fill="#2b3470"><rect x="325" y="250" width="20" height="30" rx="10"/><rect x="325" y="330" width="20" height="30" rx="10"/><rect x="585" y="250" width="20" height="30" rx="10"/><rect x="585" y="330" width="20" height="30" rx="10"/><rect x="390" y="320" width="22" height="34" rx="11"/><rect x="518" y="320" width="22" height="34" rx="11"/></g>
+  <!-- Le château fort de Sedan : le glacis vert, les longs corps de logis, les tours rondes coiffées d'ardoise -->
+  <path d="M150 500L215 420H745L810 500Z" fill="#2F5D50"/><path d="M215 420H745" stroke="#24483E" stroke-width="4"/>
+  <rect x="300" y="236" width="370" height="70" fill="#c9a466"/><path d="M286 238L318 196H652L684 238Z" fill="#5b6182"/>
+  <g fill="#4a5478"><path d="M341 222l9-14 9 14z"/><rect x="344" y="222" width="12" height="10"/><path d="M411 222l9-14 9 14z"/><rect x="414" y="222" width="12" height="10"/><path d="M481 222l9-14 9 14z"/><rect x="484" y="222" width="12" height="10"/><path d="M551 222l9-14 9 14z"/><rect x="554" y="222" width="12" height="10"/><path d="M611 222l9-14 9 14z"/><rect x="614" y="222" width="12" height="10"/></g>
+  <rect x="262" y="300" width="436" height="185" fill="#c9a466"/><path d="M262 322h436" stroke="#a8844e" stroke-width="1.5" opacity=".45"/><path d="M262 342h436" stroke="#a8844e" stroke-width="1.5" opacity=".45"/><path d="M262 362h436" stroke="#a8844e" stroke-width="1.5" opacity=".45"/><path d="M262 382h436" stroke="#a8844e" stroke-width="1.5" opacity=".45"/><path d="M262 402h436" stroke="#a8844e" stroke-width="1.5" opacity=".45"/><path d="M262 422h436" stroke="#a8844e" stroke-width="1.5" opacity=".45"/><path d="M262 442h436" stroke="#a8844e" stroke-width="1.5" opacity=".45"/><path d="M262 462h436" stroke="#a8844e" stroke-width="1.5" opacity=".45"/>
+  <g fill="#a8844e"><rect x="264" y="300" width="12" height="9"/><rect x="285" y="300" width="12" height="9"/><rect x="306" y="300" width="12" height="9"/><rect x="327" y="300" width="12" height="9"/><rect x="348" y="300" width="12" height="9"/><rect x="369" y="300" width="12" height="9"/><rect x="390" y="300" width="12" height="9"/><rect x="411" y="300" width="12" height="9"/><rect x="432" y="300" width="12" height="9"/><rect x="453" y="300" width="12" height="9"/><rect x="474" y="300" width="12" height="9"/><rect x="495" y="300" width="12" height="9"/><rect x="516" y="300" width="12" height="9"/><rect x="537" y="300" width="12" height="9"/><rect x="558" y="300" width="12" height="9"/><rect x="579" y="300" width="12" height="9"/><rect x="600" y="300" width="12" height="9"/><rect x="621" y="300" width="12" height="9"/><rect x="642" y="300" width="12" height="9"/><rect x="663" y="300" width="12" height="9"/><rect x="684" y="300" width="12" height="9"/></g>
+  <rect x="223" y="262" width="66" height="223" rx="33" fill="#b8925a"/><rect x="223" y="272" width="22" height="213" fill="#a07a48" opacity=".5"/><path d="M215 268L256 198L297 268Z" fill="#5b6182"/><path d="M256 198v-14" stroke="#4a5478" stroke-width="3"/><rect x="664" y="250" width="72" height="235" rx="36" fill="#b8925a"/><rect x="664" y="260" width="24" height="225" fill="#a07a48" opacity=".5"/><path d="M656 256L700 186L744 256Z" fill="#5b6182"/><path d="M700 186v-14" stroke="#4a5478" stroke-width="3"/><rect x="315" y="300" width="46" height="185" rx="23" fill="#b8925a"/><rect x="315" y="310" width="15.333333333333334" height="175" fill="#a07a48" opacity=".5"/><path d="M307 306L338 236L369 306Z" fill="#5b6182"/><path d="M338 236v-14" stroke="#4a5478" stroke-width="3"/>
+  <rect x="566" y="268" width="56" height="40" fill="#b8925a"/><path d="M558 270L594 222L630 270Z" fill="#5fa3a3"/>
+  <g fill="#3a2f22"><rect x="248" y="330" width="8" height="16" rx="4"/><rect x="248" y="400" width="8" height="16" rx="4"/><rect x="692" y="320" width="8" height="16" rx="4"/><rect x="692" y="392" width="8" height="16" rx="4"/><rect x="336" y="360" width="8" height="16" rx="4"/><rect x="300" y="380" width="8" height="16" rx="4"/><rect x="610" y="360" width="8" height="16" rx="4"/><rect x="560" y="340" width="8" height="16" rx="4"/><rect x="390" y="330" width="8" height="16" rx="4"/></g>
+  <g fill="#FFC857"><rect x="300" y="254" width="10" height="14" rx="2"/><rect x="400" y="254" width="10" height="14" rx="2"/><rect x="520" y="254" width="10" height="14" rx="2"/><rect x="600" y="254" width="10" height="14" rx="2"/><rect x="632" y="290" width="10" height="14" rx="2"/></g>
+  <path d="M420 486v-78a45 45 0 0 1 90 0v78z" fill="#a8844e"/>
   <path d="M440 485v-62a25 25 0 0 1 50 0v62z" fill="#6E4630"/><circle cx="480" cy="452" r="3" fill="#C9A227"/>
   <g class="tresor"><circle cx="465" cy="355" r="40" fill="url(#halo-or)" opacity=".7"/><rect x="445" y="332" width="40" height="48" rx="6" fill="#FFC857"/><path d="M445 356h40M465 332v48" stroke="#B9801A" stroke-width="2"/><use href="#dent" x="455" y="346" width="20" height="20"/></g>
 </g>
@@ -67,11 +79,11 @@ ${tap('buisson', 'Un buisson qui tremble', `${halo(0, -10, 85)}
   <g class="buisson"><circle cx="-40" cy="-6" r="34" fill="#1E3F36"/><circle cx="0" cy="-26" r="42" fill="#24483E"/><circle cx="44" cy="-6" r="36" fill="#1E3F36"/><circle cx="6" cy="4" r="34" fill="#2F5D50"/></g>`, 'transform="translate(830,470)"')}
 ${tap('sanglier', 'Un sanglier endormi sous les fougères', `${halo(0, -14, 70)}<g class="sanglier">
   <path d="M-46 4q-14-4-12-16" fill="none" stroke="#3a2618" stroke-width="4" stroke-linecap="round"/>
-  <ellipse cx="-4" cy="-10" rx="44" ry="24" fill="#4a3222"/><path d="M-36-30q14-10 30-6q16-8 30 2" fill="none" stroke="#2a1a10" stroke-width="5" stroke-linecap="round"/>
-  <path class="tete" d="M30-24q20-4 30 14l8 4q2 8-6 10l-24 2q-14-4-14-16z" fill="#5c3c28"/><ellipse cx="66" cy="-2" rx="6" ry="5" fill="#8a6a5a"/><path d="M50 2q6 2 6-6" fill="none" stroke="#FFF6E0" stroke-width="3" stroke-linecap="round"/>
+  <ellipse cx="-4" cy="-10" rx="44" ry="24" fill="#7a5238" stroke="#c9a27a" stroke-width="1.5"/><path d="M-36-30q14-10 30-6q16-8 30 2" fill="none" stroke="#2a1a10" stroke-width="5" stroke-linecap="round"/>
+  <path class="tete" d="M30-24q20-4 30 14l8 4q2 8-6 10l-24 2q-14-4-14-16z" fill="#8a6044" stroke="#c9a27a" stroke-width="1.5"/><ellipse cx="66" cy="-2" rx="6" ry="5" fill="#8a6a5a"/><path d="M50 2q6 2 6-6" fill="none" stroke="#FFF6E0" stroke-width="3" stroke-linecap="round"/>
   <path d="M34-24l6-12 6 12z" fill="#3a2618"/><path class="oeil" d="M44-12q3 2 6 0" fill="none" stroke="#1a110a" stroke-width="2" stroke-linecap="round"/>
   <g class="zz" fill="#cfd3ee" font-family="Baloo 2, sans-serif" font-weight="800"><text x="58" y="-34" font-size="14">z</text><text x="68" y="-46" font-size="10">z</text></g>
-</g>${'<path transform="translate(-40,18) scale(0.9)" d="M0 0q-6-30 6-60M0-10l-16-10M0-22l-14-12M2-34l-12-12M3-46l-9-10M0-10l14-12M1-22l13-13M3-34l10-12" fill="none" stroke="#2F5D50" stroke-width="4" stroke-linecap="round"/><path transform="translate(-6,20) scale(1)" d="M0 0q-6-30 6-60M0-10l-16-10M0-22l-14-12M2-34l-12-12M3-46l-9-10M0-10l14-12M1-22l13-13M3-34l10-12" fill="none" stroke="#2F5D50" stroke-width="4" stroke-linecap="round"/><path transform="translate(30,20) scale(0.8)" d="M0 0q-6-30 6-60M0-10l-16-10M0-22l-14-12M2-34l-12-12M3-46l-9-10M0-10l14-12M1-22l13-13M3-34l10-12" fill="none" stroke="#2F5D50" stroke-width="4" stroke-linecap="round"/>'}`, 'transform="translate(700,482)"')}
+</g>${'<path transform="translate(-40,18) scale(0.9)" d="M0 0q-6-30 6-60M0-10l-16-10M0-22l-14-12M2-34l-12-12M3-46l-9-10M0-10l14-12M1-22l13-13M3-34l10-12" fill="none" stroke="#2F5D50" stroke-width="4" stroke-linecap="round"/><path transform="translate(-6,20) scale(1)" d="M0 0q-6-30 6-60M0-10l-16-10M0-22l-14-12M2-34l-12-12M3-46l-9-10M0-10l14-12M1-22l13-13M3-34l10-12" fill="none" stroke="#2F5D50" stroke-width="4" stroke-linecap="round"/><path transform="translate(30,20) scale(0.8)" d="M0 0q-6-30 6-60M0-10l-16-10M0-22l-14-12M2-34l-12-12M3-46l-9-10M0-10l14-12M1-22l13-13M3-34l10-12" fill="none" stroke="#2F5D50" stroke-width="4" stroke-linecap="round"/>'}`, 'transform="translate(690,590) scale(1.15)"')}
 ${tap('luciole', 'Une luciole', `<animateMotion dur="18s" repeatCount="indefinite" path="M200 300C350 200 500 380 650 280S850 200 900 320S600 420 400 340S220 380 200 300"/>${halo(0, 0, 44)}<circle r="34" fill="transparent"/><circle class="lum" r="16" fill="url(#halo-or)"/><circle r="4.5" fill="#FFF4D6"/>`)}
 <rect class="dore" x="0" y="-1100" width="1000" height="1700" fill="#FFC857" opacity="0"/>
 ${lueur(L.x, L.y, 120)}
@@ -91,6 +103,13 @@ ${A.souris(sx, sy, sw, 'class="quenotte trotte"')}
 ${A.fond(nuit, 41, null)}
 <g transform="translate(700,110)"><circle r="60" fill="#FFF4D6" opacity=".07"/><path d="M10 -36A38 38 0 1 0 10 36A40 40 0 0 1 10 -36Z" fill="#FFF4D6"/></g>
 <defs><linearGradient id="geau" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4a8ea3"/><stop offset="1" stop-color="#2b5f70"/></linearGradient></defs>
+<g class="grands-arbres">
+  <rect x="96" y="40" width="34" height="300" fill="#1a1226"/><rect x="900" y="20" width="38" height="300" fill="#1a1226"/>
+  <path d="M112 120q-40-30-80-20M112 60q30-40 70-40M918 100q-50-40-90-30M918 60q30-50 80-60" fill="none" stroke="#1a1226" stroke-width="10" stroke-linecap="round"/>
+  <g fill="#14271f"><circle cx="60" cy="20" r="110"/><circle cx="150" cy="-60" r="120"/><circle cx="60" cy="-170" r="120"/><circle cx="170" cy="-230" r="110"/><circle cx="80" cy="-330" r="100"/><circle cx="940" cy="0" r="120"/><circle cx="850" cy="-80" r="110"/><circle cx="960" cy="-190" r="130"/><circle cx="860" cy="-280" r="110"/><circle cx="950" cy="-380" r="100"/></g>
+  <g fill="#1E3F36"><circle cx="110" cy="-20" r="70"/><circle cx="40" cy="-110" r="60"/><circle cx="150" cy="-180" r="70"/><circle cx="900" cy="-40" r="70"/><circle cx="960" cy="-130" r="60"/><circle cx="880" cy="-220" r="70"/></g>
+  <g class="lucioles-riviere" fill="#FFC857"><circle cx="220" cy="120" r="3"/><circle cx="260" cy="60" r="3"/><circle cx="760" cy="90" r="3"/><circle cx="720" cy="30" r="3"/><circle cx="300" cy="-40" r="3"/><circle cx="690" cy="-80" r="3"/></g>
+</g>
 <path d="M0 330Q200 280 400 320T1000 290V600H0Z" fill="#1E2658"/>
 <g class="lumieres"><path d="M700 330Q800 290 900 296T1000 288V330Z" fill="#1E3F36"/><path d="M720 318q80-16 160-12M760 324q90-10 180-8" fill="none" stroke="#2F5D50" stroke-width="3"/><g fill="#1b2250"><rect x="874" y="278" width="22" height="16"/><path d="M872 278l13-10 13 10z"/><rect x="900" y="282" width="26" height="12"/><rect x="930" y="276" width="16" height="18"/><path d="M928 276l10-12 10 12z"/></g>${lum}</g>
 <rect y="330" width="1000" height="270" fill="url(#geau)"/>
@@ -274,7 +293,9 @@ ${A.fond(nuit, 97, null)}
 <rect width="1000" height="600" fill="#0e1330" opacity=".35"/>${A.etoiles(120, 1000, 600, 98)}
 ${tap('lune', 'La lune', `${halo(860, 470, 62)}<g class="lune-visage"><circle cx="860" cy="470" r="42" fill="#FFF4D6"/><circle cx="846" cy="462" r="5" fill="#c9b98f"/><path class="oeil-lune" d="M868 458q6-5 12 0" fill="none" stroke="#8a7a52" stroke-width="3" stroke-linecap="round"/><circle class="oeil-lune-ouvert" cx="874" cy="460" r="4" fill="#8a7a52"/><path d="M846 484q12 8 24 0" fill="none" stroke="#8a7a52" stroke-width="3" stroke-linecap="round"/></g>`)}
 ${tap('mouton', 'Un nuage en forme de mouton', `${halo(230, 190, 70)}<g class="mouton"><g fill="#cfd3ee" opacity=".9"><circle cx="200" cy="190" r="26"/><circle cx="230" cy="176" r="30"/><circle cx="262" cy="190" r="26"/><circle cx="232" cy="206" r="26"/></g><ellipse cx="284" cy="186" rx="14" ry="11" fill="#2b3470"/><circle cx="288" cy="183" r="2" fill="#fff"/><path d="M212 228v14M248 228v14" stroke="#2b3470" stroke-width="5" stroke-linecap="round"/></g>`)}
-<g class="ballon-flotte" transform="translate(190,575) scale(.82)"><g class="flotte-in">${enveloppe}${nacelle}</g></g>
+<rect y="590" width="1000" height="1300" fill="#1b2250"/>${A.etoiles(60, 1000, 600, 99).replace(/cy="(\d+(?:\.\d+)?)"/g, (m, y) => 'cy="' + (+y + 640) + '"')}
+<g class="mer-nuages" fill="#cfd3ee" opacity=".22"><ellipse cx="80" cy="690" rx="150" ry="48"/><ellipse cx="330" cy="720" rx="190" ry="60.800000000000004"/><ellipse cx="600" cy="690" rx="170" ry="54.4"/><ellipse cx="880" cy="720" rx="180" ry="57.6"/><ellipse cx="200" cy="790" rx="200" ry="64"/><ellipse cx="500" cy="800" rx="220" ry="70.4"/><ellipse cx="800" cy="800" rx="200" ry="64"/></g>
+<g class="ballon-flotte" transform="translate(250,575) scale(.82)"><g class="flotte-in">${enveloppe}${nacelle}</g></g>
 ${tap('constellation', 'Les étoiles à relier', `<circle class="halo" cx="${P[0][0]}" cy="${P[0][1]}" r="46" fill="url(#halo-or)"/><path class="dent-ciel" d="${dent}"/><g class="traits">${traits}</g>${points}`, 'data-etape="0"')}
 </svg>`;
   }

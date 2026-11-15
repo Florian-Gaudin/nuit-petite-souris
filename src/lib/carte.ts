@@ -22,8 +22,8 @@ const chemin = (pts: [number, number][]) => 'M' + pts.map(([la, lo]) => projeter
 export const CONTOUR_FRANCE = chemin(CONTOUR);
 export const CONTOUR_CORSE = chemin(CORSE);
 
-// Le château de Quenotte : au fond de la forêt des Ardennes, au nord de Charleville
-export const CHATEAU = projeter(49.95, 4.7);
+// Le château de Quenotte : le château fort de Sedan, dans les Ardennes
+export const CHATEAU = projeter(49.70, 4.94);
 
 // Chef-lieu de chaque département de métropole (latitude, longitude)
 const CHEFS_LIEUX: Record<string, [number, number]> = {

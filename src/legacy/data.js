@@ -13,7 +13,7 @@ window.DATA = {
   surprise: { txt: "Chut… Coucou {enfant} ! Je ne suis pas encore passée chez toi. Ferme vite les yeux, et reviens me voir {reveilTexte}, à ton réveil !", expr: "chuchote" },
   // La carte de France : d'où part Quenotte, et où elle va cette nuit
   origine: {
-    txt: "Je vis dans un château caché au fond de la forêt des Ardennes. Chaque nuit, je pars chercher les dents de lait des enfants, partout en France.",
+    txt: "Je me cache dans le grand château fort de Sedan, au cœur des Ardennes. Chaque nuit, je pars chercher les dents de lait des enfants, partout en France.",
     expr: "joie",
     aide: "Touche l'étoile qui brille !",
   },
@@ -26,12 +26,12 @@ window.DATA = {
     {
       id: "chateau", titre: "Le château", heure: "00:45", ambiance: "chateau",
       intro: { variante: {
-        premiere: { txt: "Au fond de la forêt des Ardennes, mon château dort sous les étoiles. Dans ma boîte à trésors, il y a une petite place toute neuve, avec ton prénom écrit dessus. Elle attend ta toute première dent !", expr: "sourire" },
+        premiere: { txt: "Au cœur des Ardennes, le château fort de Sedan dort sous les étoiles : c'est là que je me cache ! Dans ma boîte à trésors, il y a une petite place toute neuve, avec ton prénom écrit dessus. Elle attend ta toute première dent !", expr: "sourire" },
         jumelle: { deja: {
-          une: { txt: "Au fond de la forêt des Ardennes, mon château dort sous les étoiles. Dans ma boîte à trésors, il n'y a qu'une seule dent de lait : ta toute première, celle du {arcadePremiere}. Elle est bien triste, toute seule.", expr: "triste" },
-          plusieurs: { txt: "Au fond de la forêt des Ardennes, mon château dort sous les étoiles. Dans ma boîte à trésors, il y a déjà {nbDeja} de tes dents de lait. Mais l'une d'elles est bien triste : sa jumelle n'est pas encore arrivée.", expr: "triste" },
+          une: { txt: "Au cœur des Ardennes, le château fort de Sedan dort sous les étoiles : c'est là que je me cache ! Dans ma boîte à trésors, il n'y a qu'une seule dent de lait : ta toute première, celle du {arcadePremiere}. Elle est bien triste, toute seule.", expr: "triste" },
+          plusieurs: { txt: "Au cœur des Ardennes, le château fort de Sedan dort sous les étoiles : c'est là que je me cache ! Dans ma boîte à trésors, il y a déjà {nbDeja} de tes dents de lait. Mais l'une d'elles est bien triste : sa jumelle n'est pas encore arrivée.", expr: "triste" },
         } },
-        suite: { txt: "Au fond de la forêt des Ardennes, mon château dort sous les étoiles. Dans ma boîte à trésors, il y a déjà {nbDeja} de tes dents de lait. Elles se racontent des histoires en attendant la suivante.", expr: "sourire" },
+        suite: { txt: "Au cœur des Ardennes, le château fort de Sedan dort sous les étoiles : c'est là que je me cache ! Dans ma boîte à trésors, il y a déjà {nbDeja} de tes dents de lait. Elles se racontent des histoires en attendant la suivante.", expr: "sourire" },
       } },
       oblig: ["lanterne"], bonus: ["feuillage", "sac"],
       elements: {
@@ -98,7 +98,7 @@ window.DATA = {
         },
         etoile: { bulle: { txt: "Une étoile filante ! Vite, fais un vœu. Moi, j'ai fait le mien : que ta dent arrive bien au château.", expr: "surprise" } },
         oies: { bulle: { txt: "Des oies sauvages volent à côté de moi. Elles cancanent « Bon voyage, {souris} ! » et filent vers le sud.", expr: "surprise" } },
-        sedan: { bulle: { txt: "Là-bas, ce grand château aux murs épais, c'est le château fort de Sedan : le plus grand château fort d'Europe ! On pourrait s'y perdre.", expr: "surprise" } },
+        sedan: { bulle: { txt: "Là-bas, au loin, c'est le château fort de Sedan : ma maison ! C'est le plus grand château fort d'Europe. On pourrait s'y perdre.", expr: "surprise" } },
         ardoises: { bulle: { txt: "Les toits brillent sous la lune : ils sont en ardoise, une pierre grise et bleue qu'on tire du sol des Ardennes.", expr: "sourire" } },
         cabaret: { bulle: { txt: "Tu entends cette musique ? Chaque été, au bord de la Meuse, le festival du Cabaret Vert fait danser des milliers de gens !", expr: "joie" } },
       },
@@ -326,7 +326,7 @@ window.DATA = {
     evite: ["Ouf, évité !", "Bravo, on passe !", "Attention, en voici un autre !", "Bien joué, ils vont de plus en plus vite !"],
     dernier: "Encore un, et c'est le château !",
     pouf: { txt: "Pouf ! Un nuage tout doux… Ce n'est rien, on continue !", expr: "clin" },
-    arrivee: { txt: "Voilà mon château ! Je me pose à l'orée de la forêt. Pour rentrer, je passe toujours par mon terrier secret…", expr: "clin" },
+    arrivee: { txt: "Voilà le château fort de Sedan, ma maison ! Je me pose au pied des remparts. Pour rentrer, je passe toujours par mon terrier secret…", expr: "clin" },
     terrierBouton: "Entrer dans le terrier",
     terrier: { txt: "Guide-moi dans mon terrier jusqu'à la porte du château ! Pose ton doigt devant moi pour me montrer le chemin.", expr: "chuchote" },
     toucherPorte: { txt: "La porte de mon château ! Touche-la pour l'ouvrir.", expr: "joie" },
@@ -387,9 +387,9 @@ window.DATA = {
     salutDernier: "Plus qu'une marionnette à saluer !",
     saluts: { souris: "Bonsoir, {enfant} !", doudou: { doudou: { oui: "Révérence de {poupee} !", non: "Révérence du pantin !" } }, chat: "Miaou ! Bonsoir !", dent: "Coucou, c'est moi la vedette !" },
     salutFini: "Quelle belle troupe ! Que le spectacle commence…",
-    danse: { doudou: { oui: "Premier numéro : la danse de {poupee} ! Tire son fil : à chaque fois, une figure nouvelle !", non: "Premier numéro : la danse du petit pantin ! Tire son fil : à chaque fois, une figure nouvelle !" } },
+    danse: { doudou: { oui: "Premier numéro : la danse de {poupee} ! Fais glisser ton doigt pour tirer son fil, ou touche la marionnette : à chaque fois, une figure nouvelle !", non: "Premier numéro : la danse du petit pantin ! Fais glisser ton doigt pour tirer son fil, ou touche-le : à chaque fois, une figure nouvelle !" } },
     figures: { saut: "Un grand saut !", pirouette: "Une pirouette !", salto: "Un salto arrière !", ecart: "Le grand écart !", balancier: "Le balancier !", envol: "Une envolée !", toupie: "La toupie !" },
-    danseEncore: ["Tire encore !", "Encore !", "Magnifique, encore !", "Un dernier !"],
+    danseEncore: ["Tire encore !", "Magnifique, encore !", "Un dernier !"],
     danseBravo: "Bravo ! Tu as des doigts de marionnettiste.",
     chatTableau: "Deuxième numéro, le plus difficile : un gros chat dort au milieu de la scène. Fais passer {souris} en tirant son fil tout doucement…",
     chatReveil: "Oh ! Le chat a ouvert un œil… Doucement, doucement !",

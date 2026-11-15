@@ -336,7 +336,9 @@ window.SCENES = (function () {
       const vw = Math.min(1000, Math.max(vwIdeal, z[1] - z[0]));
       const vh = Math.min(1700, vw * H / W);
       const x0 = Math.max(0, Math.min(1000 - vw, (z[0] + z[1]) / 2 - vw / 2));
-      svg.setAttribute('viewBox', `${x0.toFixed(0)} ${(600 - vh).toFixed(0)} ${vw.toFixed(0)} ${vh.toFixed(0)}`);
+      // Le ciel étoilé (tout en ciel) : la scène au milieu de l'écran, un tapis de nuages en dessous
+      const y0 = sc.id === 'etoiles' ? Math.min(0, (600 - vh) / 2) : 600 - vh;
+      svg.setAttribute('viewBox', `${x0.toFixed(0)} ${y0.toFixed(0)} ${vw.toFixed(0)} ${vh.toFixed(0)}`);
       svg.style.width = '100%'; svg.style.height = Math.round(vh * W / vw) + 'px';
     }
   }

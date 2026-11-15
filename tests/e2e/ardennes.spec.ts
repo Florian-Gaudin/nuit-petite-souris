@@ -33,7 +33,7 @@ test('les six secrets des Ardennes : compteur, bulle, puis le badge', async ({ p
 test('le diplôme : sanglier dans le tampon, fait au château de Quenotte, badge accordé', async ({ page }) => {
   await ouvrir(page, '?reset=1#exemple');
   await page.evaluate(() => { const A = (window as any).APP; A.state.unlocked = 5; A.state.fini = true; A.show(5, { diplome: true }); });
-  await expect(page.locator('.dip-date')).toContainText('Fait au château de Quenotte');
+  await expect(page.locator('.dip-date')).toContainText('Fait au château fort de Sedan');
   await expect(page.locator('.badge-dip', { hasText: "Ardennaise d'honneur" })).toHaveCount(1); // Clémentine
   await expect(page.locator('.dip-compte')).toContainText('/13');
   if (CAPTURES) await page.locator('.dip-pied').screenshot({ path: CAPTURES + '/ard-diplome.png' });

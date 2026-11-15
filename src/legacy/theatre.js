@@ -330,30 +330,33 @@ ${maison()}
       place('souris', 140, false); place('chat', 362, false); place('dent', 462, false); place('doudou', 300, true);
       focusX = 300;
       dire(T(D.danse));
-      const ordre = FIGURES.slice().sort(() => Math.random() - 0.5).slice(0, 5);
+      const NB = 4; // quatre figures, c'est assez
+      const ordre = FIGURES.slice().sort(() => Math.random() - 0.5).slice(0, NB);
       let n = 0, occupe = false;
       const tirer = () => {
-        if (n >= 5 || occupe) return;
+        if (n >= NB || occupe) return;
         const fig = ordre[n++];
         occupe = true; plus(() => { occupe = false; }, Math.min(fig.duree, 700));
         P.doudou.anim = { f: fig.f, duree: fig.duree, t0: performance.now() };
         croix.g.dy = -40; plus(() => { croix.g.dy = 0; }, 320);
         son(fig.son);
         flotte('★', 300 + (Math.random() * 140 - 70), 300, 'etoile');
-        if (n < 5) dire(D.figures[fig.id] + ' ' + D.danseEncore[(n - 1) % D.danseEncore.length]);
+        if (n < NB) dire(D.figures[fig.id] + ' ' + D.danseEncore[(n - 1) % D.danseEncore.length]);
         else plus(() => { dire(T(D.danseBravo)); son('applaudir'); suite(chatDort); svg.onpointerdown = svg.onpointermove = null; }, fig.duree);
       };
       actions([{ txt: '▲ ' + D.boutons.fil, fn: tirer }]);
       // Au doigt : on tire le fil vers le haut, n'importe où sur la scène
       let depart = null;
+      // Au doigt : on tire le fil (vers le haut ou vers le bas), ou on touche simplement la marionnette
       svg.onpointerdown = e => { depart = e.clientY; };
-      svg.onpointermove = e => { if (depart != null && depart - e.clientY > 40) { depart = null; tirer(); } };
+      svg.onpointermove = e => { if (depart != null && Math.abs(depart - e.clientY) > 30) { depart = null; tirer(); } };
+      touchable('doudou', D.boutons.fil, tirer);
       svg.onpointerup = svg.onpointercancel = () => { depart = null; };
     };
 
     // ---------- 3. Le chat endormi : tirer le fil tout doucement ----------
     const chatDort = () => {
-      svg.onpointerdown = svg.onpointermove = null;
+      svg.onpointerdown = svg.onpointermove = null; plusTouchable('doudou');
       place('doudou', 300, false); place('souris', 110, true); place('chat', 330, true);
       chat.classList.remove('eveille', 'oeil');
       P.souris.vitesse = 8;
