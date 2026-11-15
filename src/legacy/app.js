@@ -835,7 +835,8 @@ ${[0, 1, 2, 3, 4, 5].map(i => `<g class="nuage" data-n="${i}" transform="transla
       heure('03:28'); MUS.ambiance('foret');
       etape(() => fondu(() => self.boite(r), 400));
       // 20 × 7 cases ; un long couloir (2 cases) mène de la dernière case à la porte
-      const COLS = 20, ROWS = 7, CELL = 90, X0 = 60, Y0 = 110, LARG = X0 + COLS * CELL + 2 * CELL + 160, HAUT = Y0 + ROWS * CELL + 50, PORTE_X = LARG - 70;
+      const COULOIR = 2; // les cases du couloir, après la sortie : Quenotte y avance jusque devant la porte
+      const COLS = 20, ROWS = 7, CELL = 90, X0 = 60, Y0 = 110, LARG = X0 + COLS * CELL + 2 * CELL + 160, HAUT = Y0 + ROWS * CELL + 50, PORTE_X = LARG - 110;
       // Hasard reproductible, à partir de l'identifiant du profil
       let graine = 0; for (const ch of String(window.PROFIL.id)) graine = (graine * 31 + ch.charCodeAt(0)) >>> 0;
       const hasard = () => { graine = (graine + 0x6D2B79F5) >>> 0; let t = graine; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
@@ -904,7 +905,7 @@ ${[0, 1, 2, 3, 4, 5].map(i => `<g class="nuage" data-n="${i}" transform="transla
       const zone = $('#epi', r);
       // Les trésors du terrier, en grisé en haut : ils s'allument quand Quenotte passe dessus
       const tresors = `<div class="tresors" aria-live="polite"><span class="tresors-titre">Trésors du terrier : <b class="tresors-n">0</b> / ${surprises.length}</span><span class="tresors-liste">${surprises.map(t => `<svg class="tresor" data-id="${t.id}" viewBox="-30 -24 60 48" aria-hidden="true">${DESSIN_SURPRISE[t.id]}</svg>`).join('')}</span></div>`;
-      zone.innerHTML = tresors + `<svg class="terrier" viewBox="0 0 600 ${HAUT}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Le terrier de Quenotte : un labyrinthe sous la terre, jusqu'à la porte du château" data-solution="${solution.map(p => p.d).join('')}">
+      zone.innerHTML = tresors + `<svg class="terrier" viewBox="0 0 600 ${HAUT}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Le terrier de Quenotte : un labyrinthe sous la terre, jusqu'à la porte du château" data-solution="${solution.map(p => p.d).join('')}${'E'.repeat(COULOIR)}">
 <defs>
   <linearGradient id="g-terre" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6b4a33"/><stop offset=".45" stop-color="#4f3524"/><stop offset="1" stop-color="#2e1d12"/></linearGradient>
   <radialGradient id="g-lanterne"><stop offset=".45" stop-color="#000"/><stop offset="1" stop-color="#fff"/></radialGradient>
@@ -932,7 +933,10 @@ ${surprises.map(s => { const [x, y] = centre(s.c, s.l); return `<g class="surpri
       const point = e => { const pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); };
       const avance = d => {
         if (fini || but) return false;
-        const [c, l] = pos; if (!ouvert[c][l][d]) return false;
+        const [c, l] = pos;
+        // Le couloir de la porte : de la case de sortie, on continue vers l'est (et on peut revenir)
+        const dansCouloir = c >= COLS, versCouloir = c === sortie[0] && l === sortie[1] && d === 'E';
+        if (dansCouloir ? !((d === 'E' && c < COLS + COULOIR - 1) || d === 'O') : !(ouvert[c][l][d] || versCouloir)) return false;
         const [dx, dy] = DIR[d]; pos = [c + dx, l + dy];
         const [x, y] = centre(pos[0], pos[1]);
         depart = { x: qx, y: qy, t: performance.now() }; but = { x, y };
@@ -950,7 +954,7 @@ ${surprises.map(s => { const [x, y] = centre(s.c, s.l); return `<g class="surpri
           NARR.dire(B(D.epilogue.surprises[s.id]), { vite: true });
         }
         // Devant la porte du château : elle brille, il faut la toucher pour entrer
-        devantPorte = pos[0] === sortie[0] && pos[1] === sortie[1];
+        devantPorte = pos[0] === COLS + COULOIR - 1;
         svg.classList.toggle('devant-porte', devantPorte);
         if (devantPorte) NARR.dire(B(D.epilogue.toucherPorte), { vite: true });
       };
