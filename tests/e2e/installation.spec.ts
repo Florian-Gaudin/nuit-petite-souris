@@ -1,13 +1,13 @@
 // L'aide à l'installation de l'appli, selon l'appareil (espace parents)
 import { test, expect, type Page } from '@playwright/test';
+import { tenirVerrou } from './aide';
 
 const SAMSUNG = 'Mozilla/5.0 (Linux; Android 14; SM-S911B) AppleWebKit/537.36 (KHTML, like Gecko) SamsungBrowser/26.0 Chrome/122.0.0.0 Mobile Safari/537.36';
 const IPAD = 'Mozilla/5.0 (iPad; CPU OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Mobile/15E148 Safari/604.1';
 
 async function espaceParents(page: Page) {
   await page.goto('parents/');
-  await page.evaluate(() => sessionStorage.setItem('souris.parents', '1'));
-  await page.reload();
+  await tenirVerrou(page);
   await expect(page.locator('.installer')).toBeVisible();
 }
 
@@ -50,6 +50,7 @@ test("dans le navigateur : l'aide reste proposée ; lancée depuis l'icône : ap
   await page.waitForFunction(() => !!(window as any).APP);
   expect(new URL(page.url()).search).toBe('');
   await page.goto('parents/');
+  await tenirVerrou(page); // le verrou revient à chaque arrivée
   await expect(page.locator('.installer')).toContainText('déjà installée');
 });
 

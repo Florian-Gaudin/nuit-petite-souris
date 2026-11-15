@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 
 // L'adresse réglée dans src/lib/don.ts (lue dans le fichier : le module, lui, a besoin d'un navigateur)
 const LIEN_DON = /export const LIEN_DON(?:: string)? = '([^']*)'/.exec(readFileSync(new URL('../../src/lib/don.ts', import.meta.url), 'utf8'))![1];
-import { ouvrir } from './aide';
+import { ouvrir, tenirVerrou } from './aide';
 
 test('le don : discret sur l\'accueil, complet dans l\'espace parents', async ({ page }) => {
   await ouvrir(page, '?reset=1');
@@ -12,8 +12,7 @@ test('le don : discret sur l\'accueil, complet dans l\'espace parents', async ({
     // Tant que l'adresse de la page de don n'est pas réglée, rien ne s'affiche
     await expect(page.locator('.don-accueil')).toHaveCount(0);
     await page.goto('parents/');
-    await page.evaluate(() => sessionStorage.setItem('souris.parents', '1'));
-    await page.reload();
+    await tenirVerrou(page);
     await expect(page.locator('#don')).toHaveCount(0);
     return;
   }
@@ -21,7 +20,6 @@ test('le don : discret sur l\'accueil, complet dans l\'espace parents', async ({
   await expect(page.locator('.don-accueil a')).toHaveAttribute('href', 'parents/#don');
   await page.locator('.don-accueil a').click();
   await expect(page.locator('.tenir')).toBeVisible();
-  await page.evaluate(() => sessionStorage.setItem('souris.parents', '1'));
-  await page.reload();
+  await tenirVerrou(page);
   await expect(page.locator('#don a')).toHaveAttribute('href', LIEN_DON);
 });

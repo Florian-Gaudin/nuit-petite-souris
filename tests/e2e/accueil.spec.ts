@@ -1,7 +1,7 @@
 // L'accueil : écran de lancement, écran de choix, accès direct par QR code, carte de France avant le château
 import { test, expect, type Page } from '@playwright/test';
 import { type Profil } from '../../src/lib/profil';
-import { LEO, code, ouvrir, bandeau } from './aide';
+import { LEO, code, ouvrir, bandeau, tenirVerrou } from './aide';
 
 const avecVille = (ville: Profil['ville']): Profil => ({ ...structuredClone(LEO), ville });
 
@@ -126,8 +126,7 @@ test('les textes ne se sélectionnent pas (pas de « Toucher pour rechercher »)
   await ouvrir(page, '#p=' + code(LEO));
   expect(await page.evaluate(() => getComputedStyle(document.querySelector('#bandeau-texte')!).userSelect)).toBe('none');
   await page.goto('parents/');
-  await page.evaluate(() => sessionStorage.setItem('souris.parents', '1'));
-  await page.reload();
+  await tenirVerrou(page);
   expect(await page.evaluate(() => getComputedStyle(document.querySelector('h1')!).userSelect)).toBe('none');
   expect(await page.evaluate(() => getComputedStyle(document.querySelector('input[type=text]')!).userSelect)).toBe('text');
 });

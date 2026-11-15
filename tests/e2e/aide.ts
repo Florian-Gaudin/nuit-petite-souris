@@ -39,3 +39,13 @@ export async function toucher(page: Page, selecteur: string) {
 export async function attendreChargement(page: Page) {
   await expect(page.locator('#bandeau-texte')).toBeVisible();
 }
+
+// L'espace parents : maintenir le bouton du verrou 3 secondes (à refaire à chaque arrivée)
+export async function tenirVerrou(page: Page) {
+  const b = (await page.locator('.tenir').boundingBox())!;
+  await page.mouse.move(b.x + b.width / 2, b.y + b.height / 2);
+  await page.mouse.down();
+  await page.waitForTimeout(3500);
+  await page.mouse.up();
+  await page.locator('.tenir').waitFor({ state: 'detached' });
+}

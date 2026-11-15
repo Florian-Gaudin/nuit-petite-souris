@@ -17,11 +17,11 @@
 
   const CLE_BROUILLON = 'souris.parents.brouillon';
 
-  // ---------- Verrou : maintenir le bouton 3 secondes ----------
-  let deverrouille = $state(sessionOuverte());
+  // ---------- Verrou : maintenir le bouton 3 secondes, à chaque arrivée sur l'espace parents ----------
+  // Rien n'est mémorisé : un enfant qui reprend le téléphone d'un parent retrouve toujours le verrou
+  let deverrouille = $state(false);
   let progression = $state(0);
   let minuteur: ReturnType<typeof setInterval> | undefined;
-  function sessionOuverte() { try { return sessionStorage.getItem('souris.parents') === '1'; } catch { return false; } }
   function appuyer(e: PointerEvent) {
     e.preventDefault();
     clearInterval(minuteur); progression = 0;
@@ -29,7 +29,6 @@
       progression = Math.min(1, progression + 0.05);
       if (progression >= 1) {
         clearInterval(minuteur); deverrouille = true;
-        try { sessionStorage.setItem('souris.parents', '1'); } catch { /* session privée */ }
       }
     }, 150);
   }

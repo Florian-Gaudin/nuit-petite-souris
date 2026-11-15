@@ -1,17 +1,13 @@
 // L'espace parents : verrou, cinq étapes, ville (service simulé), QR code, aperçu
 import { test, expect, type Page } from '@playwright/test';
 import { readFileSync } from 'node:fs';
-import { toucher } from './aide';
+import { toucher, tenirVerrou } from './aide';
 
 const COMMUNES = [{ nom: 'Charleville-Mézières', codesPostaux: ['08000'], codeDepartement: '08' }, { nom: 'Charleville', codesPostaux: ['51120'], codeDepartement: '51' }];
 
 async function deverrouiller(page: Page) {
   await page.goto('parents/');
-  const b = (await page.locator('.tenir').boundingBox())!;
-  await page.mouse.move(b.x + b.width / 2, b.y + b.height / 2);
-  await page.mouse.down();
-  await page.waitForTimeout(3500);
-  await page.mouse.up();
+  await tenirVerrou(page);
   await expect(page.locator('form.carte')).toBeVisible();
 }
 
@@ -95,14 +91,27 @@ test('ville : service lent ou coupé, le nom tapé est gardé', async ({ page })
   await page.route('https://geo.api.gouv.fr/**', () => { /* ne répond jamais */ });
   await page.goto('parents/');
   await page.evaluate(() => {
-    sessionStorage.setItem('souris.parents', '1');
     localStorage.setItem('souris.parents.brouillon', JSON.stringify({ prenom: 'Léa', genre: 'f', doudouType: 'lapin', doudouNom: 'Pompon', dentNuit: 51, dentsDeja: [61], billet: 20, cachette: 'radiateur' }));
   });
   await page.reload();
+  await tenirVerrou(page);
   await page.locator('.etapes button').nth(3).click();
   await page.locator('.ville input').fill('Reims');
   await expect(page.locator('.ville .message')).toContainText('Recherche');
   await expect(page.locator('.ville .message')).toContainText('lentement', { timeout: 10_000 });
   await page.locator('.etapes button').nth(4).click();
   await expect(page.locator('form.carte h2')).toHaveText('La nuit');
+});
+
+test("le verrou revient à chaque arrivée sur l'espace parents", async ({ page }) => {
+  await deverrouiller(page);
+  // On revient à l'histoire, puis à l'espace parents : le verrou est de nouveau là
+  await page.goto('./#exemple');
+  await page.goto('parents/');
+  await expect(page.locator('.tenir')).toBeVisible();
+  await expect(page.locator('form.carte')).toHaveCount(0);
+  // Un simple rechargement aussi
+  await tenirVerrou(page);
+  await page.reload();
+  await expect(page.locator('.tenir')).toBeVisible();
 });
