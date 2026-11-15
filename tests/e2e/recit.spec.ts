@@ -212,6 +212,8 @@ test("répondre à Quenotte (dessin) et l'album des dents", async ({ page }) => 
   // Supprimer : un premier toucher demande confirmation, le second retire l'histoire
   await page.locator('.album .supprimer').click();
   await expect(page.locator('.album .supprimer')).toHaveText('Sûr ? Touche encore');
+  const bs = (await page.locator('.album .supprimer').boundingBox())!;
+  expect(bs.x + bs.width).toBeLessThanOrEqual(page.viewportSize()!.width); // rien ne déborde de l'écran
   await page.locator('.album .supprimer').click();
   await expect(page.locator('.album-page')).toHaveCount(0);
   await expect(page.locator('.album')).toContainText("L'album se remplit");
@@ -314,4 +316,48 @@ test("histoire terminée : le « 5 » rejoue l'épilogue, et « Passer » franch
   await page.locator('#btn-passer').click();                       // la boîte à trésors
   await expect(page.locator('.diplome')).toBeVisible();
   await expect(page.locator('#btn-passer')).toBeHidden();
+});
+
+test("la caméra s'arrête quand on la quitte : pas de « cheminée » pendant l'épilogue", async ({ page }) => {
+  test.setTimeout(90000);
+  await page.emulateMedia({ reducedMotion: 'no-preference' }); // la caméra ne chuchote qu'avec les animations
+  await ouvrir(page, '?chapitre=3#exemple');
+  // Quenotte chuchote : la caméra se met en pause en attendant un toucher sur le bandeau
+  await expect(page.locator('.attente')).toHaveCount(1, { timeout: 15000 });
+  // On part relire la lettre, puis l'épilogue
+  await page.evaluate(() => { const A = (window as any).APP; A.state.unlocked = 5; A.show(4); });
+  await page.locator('#cachet').dispatchEvent('click'); // le cachet bat doucement : jamais « stable »
+  await page.locator('#btn-tout').click();
+  await page.locator('#bandeau-actions button', { hasText: 'billet' }).click();
+  await expect(page.locator('svg.retour')).toBeVisible();
+  // Avant la correction, le premier « Suite » relançait la caméra cachée, qui chuchotait « Voilà ta cheminée… »
+  // « Suite ▸ » sur le bandeau : c'est ce toucher que la caméra attendait encore
+  for (let i = 0; i < 3; i++) { await page.locator('.bandeau-suite').dispatchEvent('click'); await page.waitForTimeout(800); }
+  for (let i = 0; i < 12; i++) {
+    await page.waitForTimeout(1000);
+    await expect(page.locator('#bandeau-texte')).not.toContainText('cheminée');
+    expect(await page.locator('#bandeau-actions button').count()).toBeLessThanOrEqual(1);
+  }
+});
+
+test("le bouton « Passer » reste là d'une scène à l'autre (histoire terminée)", async ({ page }) => {
+  await ouvrir(page, '?reset=1#exemple');
+  await ouvrir(page, '?chapitre=1#exemple');
+  await page.evaluate(() => { const A = (window as any).APP; A.state.fini = true; A.state.unlocked = 5; A.show(1, { scene: 0 }); });
+  for (let i = 0; i < 3; i++) {
+    await expect(page.locator('#btn-passer'), `scène ${i + 1}`).toBeVisible();
+    await page.locator('#btn-passer').click();
+    await expect(page.locator('#btn-passer')).toBeHidden();
+  }
+  await expect(page.locator('#btn-passer')).toBeVisible();
+});
+
+test('le bandeau prend la hauteur de son texte, sans dépasser le maximum', async ({ page }) => {
+  await ouvrir(page, '?chapitre=1#exemple');
+  const h = (txt: string) => page.evaluate(async t => { await (window as any).NARR.dire({ txt: t }, { vite: 'instant' }); const e = document.querySelector('#bandeau-texte') as HTMLElement; return { h: e.clientHeight, plein: e.scrollHeight <= e.clientHeight + 1 }; }, txt);
+  const court = await h('Coucou !');
+  const long = await h('Il était une fois une toute petite souris qui voyageait la nuit, de maison en maison, avec un grand sac rempli de pièces, de billets et de petits mots, pour récupérer les dents tombées des enfants endormis.');
+  expect(court.h).toBeLessThan(long.h);
+  expect(long.h).toBeLessThanOrEqual(108);
+  expect(long.plein).toBe(true); // tout le texte tient, sans défilement
 });

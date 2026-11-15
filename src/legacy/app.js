@@ -289,12 +289,13 @@
         await fondu(() => { this.unmount(); this.carte(r); }, 700);
       });
     },
-    unmount() { window.removeEventListener('resize', this.cadre); clearTimeout(this.tCarte); },
+    unmount() { window.removeEventListener('resize', this.cadre); clearTimeout(this.tCarte); this.jetonCarte = (this.jetonCarte || 0) + 1; },
 
     // ---------- La carte de France (hors de la frise des scènes) ----------
     // Le château dans les Ardennes, une étoile sur le département de l'enfant : un toucher sur l'étoile
     // trace le chemin de la nuit (une courbe en pointillés), puis « En route ! » ouvre le château.
     carte(r) {
+      const mienCarte = this.jetonCarte = (this.jetonCarte || 0) + 1, encoreCarte = () => this.jetonCarte === mienCarte;
       etape(() => { complete(0); fondu(() => show(1, { scene: 0 }), 500); });
       const K = window.CARTE, ville = window.PROFIL.profil.ville;
       let et = K.etoileDepartement(ville.departement);
@@ -340,7 +341,8 @@
   </svg>
 </section>`;
       const ensuite = async () => {
-        await NARR.dire(B(D.origineVille));
+        if (!encoreCarte()) return;
+        await NARR.dire(B(D.origineVille)); if (!encoreCarte()) return;
         NARR.action(A.icone('suite') + ' ' + T(D.origineVille.bouton), async () => {
           SON.unlock(); SON.play('clic'); NARR.action(null);
           complete(0);
@@ -604,11 +606,13 @@
       const instant = () => cam.classList.contains('instant');
       // Quenotte chuchote : le film se met en pause jusqu'à un toucher sur le bandeau
       let pause = false, pauseA = 0;
+      // Un jeton par visite : la caméra en pause (Quenotte chuchote) ne repart pas dans un autre chapitre
+      const mien = self.jeton = (self.jeton || 0) + 1, encore = () => self.jeton === mien;
       const chuchote = b => {
         if (instant()) return;
         pause = true; pauseA = performance.now(); cancelAnimationFrame(self.raf);
         NARR.dire(B(b)).then(() => NARR.attendre()).then(ok => {
-          if (!pause || !ok || fini) return;
+          if (!pause || !ok || fini || !encore()) return;
           pause = false; debut += performance.now() - pauseA; self.raf = requestAnimationFrame(boucle);
         });
       };
@@ -637,7 +641,7 @@
       let debut = null, idx = 0, fini = false;
       const horo = s => { const t = 2 * 3600 + 47 * 60 + Math.floor(s * 7); ts.textContent = dateCam() + ' ' + pad(Math.floor(t / 3600)) + ':' + pad(Math.floor(t / 60) % 60) + ':' + pad(t % 60); heure(pad(Math.floor(t / 3600)) + ':' + pad(Math.floor(t / 60) % 60)); };
       const boucle = now => {
-        if (fini) return; if (debut == null) debut = now - tTest * 1000;
+        if (fini || !encore()) return; if (debut == null) debut = now - tTest * 1000;
         const s = (now - debut) / 1000;
         while (idx < evenements.length && s >= evenements[idx][0] && !pause) evenements[idx++][1]();
         horo(Math.min(s, finAt));
@@ -656,7 +660,7 @@
       lancer();
       if (RM || tTest > 0) requestAnimationFrame(() => cam.classList.add('instant'));
     },
-    unmount() { cancelAnimationFrame(this.raf); },
+    unmount() { this.jeton = (this.jeton || 0) + 1; cancelAnimationFrame(this.raf); },
   };
 
   // ---------- Chapitre 4 : la lettre ----------
@@ -734,7 +738,7 @@
 ${A.fond(State.nuit, 111, { x: 880, y: 90, r: 28 })}
 <path d="M0 560Q250 520 500 545T1000 530V600H0Z" fill="#1E3F36"/><rect x="-600" y="598" width="2200" height="900" fill="#1E3F36"/>
 <g class="ret-chateau" transform="translate(1250,560)"><rect x="-70" y="-150" width="40" height="150" fill="#F3EFE6"/><rect x="30" y="-150" width="40" height="150" fill="#F3EFE6"/><rect x="-32" y="-100" width="64" height="100" fill="#F3EFE6"/><path d="M-76-150h52l-26-44zM24-150h52l-26-44z" fill="#D64045"/><rect x="-10" y="-60" width="20" height="30" rx="10" fill="#FFC857"/></g>
-${[0, 1, 2].map(i => `<g class="nuage" data-n="${i}" transform="translate(-400,0)"><g fill="#cfd3ee" opacity=".92"><circle cx="-40" cy="0" r="36"/><circle cx="0" cy="-18" r="44"/><circle cx="44" cy="0" r="36"/><ellipse cx="0" cy="16" rx="80" ry="24"/></g></g>`).join('')}
+${[0, 1, 2, 3, 4, 5].map(i => `<g class="nuage" data-n="${i}" transform="translate(-400,0)"><g fill="#cfd3ee" opacity=".92" transform="scale(1.15)"><circle cx="-40" cy="0" r="36"/><circle cx="0" cy="-18" r="44"/><circle cx="44" cy="0" r="36"/><ellipse cx="0" cy="16" rx="80" ry="24"/></g></g>`).join('')}
 <g class="ret-ballon" transform="translate(230,330) scale(.75)">${window.DECORS.ballonSVG()}</g>
 </svg>`;
       const svg = $('svg.retour', zone), ballon = $('.ret-ballon', svg), chateau = $('.ret-chateau', svg), nuages = $$('.nuage', svg);
@@ -778,12 +782,12 @@ ${[0, 1, 2].map(i => `<g class="nuage" data-n="${i}" transform="translate(-400,0
         } else if (!fini) y += (cible - y) * Math.min(1, dt / 160);
         ballon.setAttribute('transform', `translate(${bx.toFixed(1)},${y.toFixed(1)}) scale(.75)`);
         if (!fini && enJeu) {
-          x -= dt * 0.38;
+          x -= dt * (0.36 + k * 0.045); // chaque nuage arrive un peu plus vite que le précédent
           nuages[k].setAttribute('transform', `translate(${x.toFixed(0)},${ny.toFixed(0)})`);
           // Un nuage touché : « pouf », il s'efface (on ne perd jamais)
-          if (!touche && Math.abs(x - 230) < 95 && Math.abs(ny - (y - 120)) < 80) { touche = true; nuages[k].classList.add('pouf'); SON.play('plouf'); NARR.dire(B(D.epilogue.pouf), { vite: true }); }
+          if (!touche && Math.abs(x - 230) < 105 && Math.abs(ny - (y - 120)) < 88) { touche = true; nuages[k].classList.add('pouf'); SON.play('plouf'); NARR.dire(B(D.epilogue.pouf), { vite: true }); }
           if (x < -160) {
-            if (!touche) NARR.dire({ txt: T(D.epilogue.evite[Math.min(k, 2)]), expr: 'joie' }, { vite: true });
+            if (!touche) NARR.dire({ txt: T(k === nuages.length - 2 ? D.epilogue.dernier : D.epilogue.evite[k % D.epilogue.evite.length]), expr: 'joie' }, { vite: true });
             k++;
             if (k >= nuages.length) arrivee(); else nouveauNuage();
           }
@@ -1048,7 +1052,12 @@ ${places.map(dent).join('')}
   // ---------- Démarrage ----------
   document.body.insertAdjacentHTML('afterbegin', A.symboles());
   document.body.insertAdjacentHTML('beforeend', `<button class="btn-passer" id="btn-passer" hidden>Passer ${A.icone('vite')}</button>`);
-  $('#btn-passer').onclick = () => { const f = passerEtape; if (!f) return; SON.play('clic'); NARR.action(null); etape(null); f(); };
+  $('#btn-passer').onclick = () => {
+    const f = passerEtape; if (!f) return; SON.play('clic'); NARR.action(null);
+    etape(null); const n = courantN; f();
+    // Même chapitre (les scènes du chapitre 1) : sans nouvelle étape déclarée, la même façon de passer resservira
+    setTimeout(() => { if (passerEtape === null && courantN === n) etape(f); }, 1200);
+  };
   NARR.init();
   buildFil();
   // Premier toucher : on autorise les sons et on lance la musique d'ambiance

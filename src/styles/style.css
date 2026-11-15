@@ -92,15 +92,15 @@ input,textarea,[contenteditable]{-webkit-user-select:text;user-select:text;-webk
 /* ---------- Bandeau de narration (Quenotte parle) ---------- */
 .bandeau{position:fixed;left:0;right:0;bottom:0;z-index:25;max-height:42vh;background:rgba(255,246,224,.94);color:var(--encre);border-top:3px solid var(--lanterne);box-shadow:0 -10px 30px rgba(0,0,0,.35);backdrop-filter:blur(8px);padding:7px max(12px,env(safe-area-inset-left,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-right,0px));transition:transform .5s cubic-bezier(.4,0,.2,1);cursor:pointer}
 .bandeau.cache{transform:translateY(110%)}
-.bandeau-in{max-width:960px;margin:0 auto;display:grid;grid-template-columns:44px 1fr;grid-template-rows:108px 44px;grid-template-areas:"texte texte" "portrait actions";gap:4px 10px;align-items:center}
+.bandeau-in{max-width:960px;margin:0 auto;display:grid;grid-template-columns:44px 1fr;grid-template-rows:auto 44px;grid-template-areas:"texte texte" "portrait actions";gap:4px 10px;align-items:center}
 .bandeau-portrait{grid-area:portrait;position:relative;width:44px;height:44px}
 .portrait{width:100%;height:100%;display:block;filter:drop-shadow(0 3px 4px rgba(0,0,0,.25))}
 .portrait.hop{animation:hop .5s ease-out}
 @keyframes hop{0%{transform:scale(1)}40%{transform:scale(1.1) rotate(-4deg)}100%{transform:scale(1)}}
 .bandeau-bulle{position:absolute;right:-8px;top:-6px;min-width:22px;height:22px;padding:0 6px;border-radius:12px;background:#fff;border:2px solid var(--lanterne);color:var(--rouge);font:800 .8rem var(--display);display:none;align-items:center;justify-content:center;box-shadow:0 2px 4px rgba(0,0,0,.2)}
 .bandeau-bulle.on{display:inline-flex;animation:pop .3s ease-out}
-/* Hauteur fixe : tout l'écran reste visible, un texte trop long défile dans le cadre */
-.bandeau-texte{grid-area:texte;margin:0;font-size:1.05rem;font-weight:600;line-height:1.36;word-spacing:.06em;letter-spacing:.005em;height:108px;overflow:hidden;align-self:start;text-wrap:pretty}
+/* Hauteur ajustée au texte, jamais plus que le maximum (au-delà, la police se réduit : jamais de défilement) */
+.bandeau-texte{grid-area:texte;margin:0;font-size:1.05rem;font-weight:600;line-height:1.36;word-spacing:.06em;letter-spacing:.005em;max-height:108px;overflow:hidden;align-self:start;text-wrap:pretty}
 .bandeau-actions{min-height:40px}
 .bandeau.chuchote .bandeau-texte{font-style:italic;color:#3a3550}
 .bandeau-texte .mot{opacity:0;transition:opacity .35s ease-out}
@@ -558,9 +558,9 @@ input,textarea,[contenteditable]{-webkit-user-select:text;user-select:text;-webk
 /* ---------- Tablette et plus large ---------- */
 @media (min-width:700px){
   body{font-size:19px}
-  .bandeau-in{grid-template-columns:84px 1fr auto;grid-template-rows:156px;grid-template-areas:"portrait texte actions";gap:6px 12px;align-items:center}
+  .bandeau-in{grid-template-columns:84px 1fr auto;grid-template-rows:auto;grid-template-areas:"portrait texte actions";gap:6px 12px;align-items:center}
   .bandeau-suite{align-self:end}
-  .bandeau-texte{font-size:1.3rem;line-height:1.48;height:156px;align-self:center}
+  .bandeau-texte{font-size:1.3rem;line-height:1.48;max-height:156px;align-self:center}
   .bandeau-actions .btn{min-height:56px;font-size:1.2rem}
   .bandeau-portrait{width:84px;height:84px}
   .bandeau-actions .btn{width:auto;min-width:200px}
@@ -760,7 +760,9 @@ html{touch-action:pan-x pan-y}
 .terrier.devant-porte .porte-chateau{cursor:pointer}
 
 .album-boutons{display:flex;gap:6px;flex:none}
-.album .supprimer{background:#fff;color:var(--rouge2);border-color:#e9b4b8}
+.album-page li{flex-wrap:wrap}
+.album-boutons{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:6px;margin-left:auto;max-width:100%}
+.album .supprimer{white-space:normal;max-width:100%;background:#fff;color:var(--rouge2);border-color:#e9b4b8}
 .album .supprimer.confirme{background:var(--rouge);color:#fff;border-color:var(--rouge)}
 .terrier .nuit-terrier{pointer-events:none}
 
@@ -770,8 +772,8 @@ html{touch-action:pan-x pan-y}
 body.mode-choix .btn-passer{display:none}
 /* Les trésors du terrier */
 .epilogue .epi-wrap{flex-direction:column}
-.tresors{flex:none;width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 12px;background:#2a1a10;color:#e8d4b8;font:700 .9rem var(--display)}
-.tresors-liste{display:flex;gap:6px}
-.tresor{width:36px;height:30px;filter:grayscale(1) brightness(.6);opacity:.45;transition:filter .5s,opacity .5s}
+.tresors{flex:none;width:100%;display:flex;align-items:center;justify-content:space-between;gap:6px;padding:2px 10px;background:#2a1a10;color:#e8d4b8;font:700 .72rem/1.2 var(--display)}
+.tresors-liste{display:flex;gap:3px}
+.tresor{width:24px;height:20px;filter:grayscale(1) brightness(.6);opacity:.45;transition:filter .5s,opacity .5s}
 .tresor.trouve{filter:drop-shadow(0 0 5px #FFC857);opacity:1}
 .tresors-n{color:var(--lanterne)}
