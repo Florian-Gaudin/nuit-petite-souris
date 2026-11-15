@@ -612,7 +612,8 @@
       };
       const cycle = () => {
         if (gagne) return; setEtat('dort');
-        const base = pris >= 5 ? 6500 : 2800 + Math.random() * 2000;
+        // Pantoufle rouvre souvent les yeux (entre 1,6 et 3 secondes de sommeil) ; après 5 surprises, il dort plus longtemps
+        const base = pris >= 5 ? 5000 : 1600 + Math.random() * 1400;
         self.t = setTimeout(() => { if (gagne) return; setEtat('baille'); self.t = setTimeout(() => { if (gagne) return; setEtat('reveille'); self.t = setTimeout(cycle, 1700); }, 1000); }, base);
       };
       const rendu = () => {
@@ -728,7 +729,7 @@
         [14.8, () => { mot.classList.add('pose'); patte.classList.remove('lettre', 'pose'); det('mot', 'PETIT MOT – SOUS L\'OREILLER', 35, 40, 21, 21, 'droite'); }],
         [16.2, () => { cam.classList.remove('zoom'); nom.textContent = 'CAM 2 · CHAMBRE'; rm('mot'); }],
         [17.2, () => det('lit', 'SOUS LE LIT – MONSTRES : 0', 8, 79, 20, 6)],
-        [18.4, () => { rm('lit'); chuchote(D.camera.fin); }],
+        [18.4, () => chuchote(D.camera.fin)], // « Monstres : 0 » reste affiché jusqu'au bouton de fin
         [19.2, () => { cam.classList.add('fin'); $('#btn-revoir', r).hidden = false; SON.play('alerte'); heure('02:52'); NARR.action(T(D.camera.bouton) + ' ' + A.icone('suite'), () => { complete(3); badge('hibou'); show(4); }); }],
       ];
       const VITESSE_CAMERA = 1.4;
@@ -802,8 +803,8 @@
           if (ecrit) return;
           if (i >= els.length) { ecrit = true; termine(); return; }
           if (j === 0) { mots = els[i].dataset.txt.split(' '); els[i].classList.add('vue'); }
-          if (j < mots.length) { els[i].textContent = mots.slice(0, j + 1).join(' '); SON.play('crayon'); j++; self.t = setTimeout(pas, RM ? 60 : 300); }
-          else { i++; j = 0; self.t = setTimeout(pas, RM ? 100 : 700); }
+          if (j < mots.length) { els[i].textContent = mots.slice(0, j + 1).join(' '); SON.play('crayon'); j++; self.t = setTimeout(pas, RM ? 60 : 170); }
+          else { i++; j = 0; self.t = setTimeout(pas, RM ? 100 : 400); }
         };
         pas();
       };
