@@ -108,7 +108,8 @@ window.SCENES = (function () {
     meuse: { billet: traversee },
     place: { marionnettiste: () => wait(RM ? 100 : 900) },
     montgolfiere: { bruleur: async () => { svg.classList.add('vole'); SON.play('bruleur'); await wait(RM ? 100 : 3800); } },
-    etoiles: { constellation: () => wait(RM ? 100 : 1600) },
+    // La dent dessinée, puis la montgolfière traverse l'écran et s'en va par la droite
+    etoiles: { constellation: async () => { await wait(RM ? 100 : 1400); svg.classList.add('envol'); SON.play('bruleur'); await wait(RM ? 100 : 2600); } },
     lievre: { lievre: async () => {
       // Quenotte grimpe sur son dos, et ils filent en bondissant jusqu'au panneau de la ville
       svg.classList.add('galop');
@@ -256,7 +257,7 @@ window.SCENES = (function () {
       friseX = Math.max(0, Math.min(cible, fr.scrollWidth - fr.clientWidth));
     }
     // La saison de la nuit (flocons, pétales, lucioles, feuilles), sauf à l'intérieur (le palier d'un immeuble)
-    if (!svg.classList.contains('palier')) svg.insertAdjacentHTML('beforeend', A.saisonSVG(ctx.state.nuit, 1000, 600));
+    if (!svg.classList.contains('palier') && sc.id !== 'etoiles') svg.insertAdjacentHTML('beforeend', A.saisonSVG(ctx.state.nuit, 1000, 600));
     svg.insertAdjacentHTML('beforeend', `<g class="main-aide" aria-hidden="true"><use href="#main" x="-20" y="-6" width="60" height="70"/></g>`);
     ctx.heure(sc.heure); MUS.ambiance(sc.ambiance);
     cadre(); window.addEventListener('resize', cadre);

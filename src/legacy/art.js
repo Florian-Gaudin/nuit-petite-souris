@@ -225,8 +225,14 @@ ${saisonSVG(nuit, 800, 480)}
 
   // ---------- Chapitre 2 : la scène du jeu ----------
   function jeuSVG() {
-    return `<svg class="jeu" viewBox="0 0 1000 500" role="img" aria-label="La souris doit passer devant le chat endormi pour atteindre la porte">
-<defs>${CIEL}</defs>
+    return `<svg class="jeu" viewBox="0 0 1000 500" role="img" aria-label="La souris doit passer devant le chat endormi pour atteindre la porte${window.CONFIG.logement === 'appartement' ? ' de l’appartement' : ''}">
+${window.CONFIG.logement === 'appartement' ? `<defs>${CIEL}</defs><rect x="-200" y="-1500" width="1400" height="2000" fill="#3a3550"/><rect x="-200" y="-1500" width="1400" height="1560" fill="#332e47"/>
+<g>${[0, 1, 2, 3, 4].map(i => `<rect x="${i * 40}" y="${220 + i * 40}" width="${220 - i * 40}" height="40" fill="${i % 2 ? '#4a4360' : '#524a6a'}"/>`).join('')}</g><path d="M0 206L220 420" stroke="#8B5A3C" stroke-width="7" stroke-linecap="round"/>
+<path d="M500 60v30" stroke="#6b6560" stroke-width="3"/><path d="M478 90h44l-8 18h-28z" fill="#FFC857"/><circle cx="500" cy="110" r="120" fill="#FFC857" opacity=".1"/>
+<rect x="830" y="190" width="140" height="230" rx="4" fill="#5c3a24"/><rect x="842" y="202" width="116" height="218" rx="3" fill="#8B5A3C"/><rect x="886" y="222" width="28" height="18" rx="3" fill="#C9A227"/><circle cx="944" cy="318" r="6" fill="#C9A227"/>
+<rect y="420" width="1000" height="80" fill="#2a2638"/><rect y="405" width="1000" height="18" fill="#524a6a"/><rect x="830" y="414" width="140" height="10" rx="4" fill="#8B5A3C"/>
+<g fill="#B05E3B"><path d="M300 420l8-40h44l8 40zM520 420l8-40h44l8 40z"/></g><g fill="#3E7C50"><path d="M330 380q-26-30-22-66q20 24 22 66zM330 380q24-34 22-70q-18 26-22 70zM550 380q-26-30-22-66q20 24 22 66zM550 380q24-34 22-70q-18 26-22 70z"/></g>
+` : `<defs>${CIEL}</defs>
 <rect x="0" y="-1500" width="1000" height="1500" fill="#141A3A"/>${etoiles(70, 1000, 500, 9, -1500)}
 <rect width="1000" height="500" fill="url(#gciel)"/>
 ${etoiles(40, 1000, 500, 5)}
@@ -235,7 +241,7 @@ ${etoiles(40, 1000, 500, 5)}
 <rect x="806" y="150" width="6" height="270" fill="#6b6560"/><circle cx="809" cy="140" r="18" fill="#FFC857"/><circle cx="809" cy="140" r="60" fill="#FFC857" opacity=".12"/>
 <rect y="420" width="1000" height="80" fill="#1A2A26"/><rect y="405" width="1000" height="18" fill="#2b3b36"/>
 <g fill="#8B5A3C"><path d="M300 420l8-40h44l8 40zM520 420l8-40h44l8 40z"/></g><g fill="#3E7C8F"><circle cx="330" cy="372" r="18"/><circle cx="550" cy="372" r="18"/></g>
-<g id="chat" data-etat="dort" transform="translate(600,300)">
+`}<g id="chat" data-etat="dort" transform="translate(600,300)">
   <path id="queue" d="M20 90C-20 100-25 50 10 60" fill="none" stroke="#E8A552" stroke-width="14" stroke-linecap="round"/>
   <ellipse cx="90" cy="92" rx="80" ry="40" fill="#E8A552"/>
   <g fill="none" stroke="#C9833A" stroke-width="6" stroke-linecap="round"><path d="M50 64q6 12 2 24M74 60q6 14 2 28M98 60q6 14 2 28"/></g>

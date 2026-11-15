@@ -168,6 +168,9 @@ test("la constellation : l'étoile suivante clignote, le compte s'affiche, la de
   await expect(page.locator('#bandeau-texte')).toContainText('Une…');
   for (let n = 2; n <= 7; n++) { await page.waitForFunction(() => !(window as any).NARR.lit); await page.locator(`.pt-${n} use`).click(); }
   await expect(page.locator('.tap[data-el="constellation"]')).toHaveClass(/dessine/);
+  // Pas de particules de saison dans le ciel étoilé ; la montgolfière traverse l'écran
+  await expect(page.locator('svg.decor-etoiles .saison')).toHaveCount(0);
+  await expect(page.locator('svg.decor-etoiles.envol')).toHaveCount(1);
 });
 
 test("répondre à Quenotte (dessin) et l'album des dents", async ({ page }) => {
@@ -206,6 +209,12 @@ test("répondre à Quenotte (dessin) et l'album des dents", async ({ page }) => 
   await ouvrir(page, './');
   await page.locator('#lien-album').click();
   await expect(page.locator('.album-page h3')).toHaveText('Clémentine');
+  // Supprimer : un premier toucher demande confirmation, le second retire l'histoire
+  await page.locator('.album .supprimer').click();
+  await expect(page.locator('.album .supprimer')).toHaveText('Sûr ? Touche encore');
+  await page.locator('.album .supprimer').click();
+  await expect(page.locator('.album-page')).toHaveCount(0);
+  await expect(page.locator('.album')).toContainText("L'album se remplit");
 });
 
 test("le lièvre repart au galop, Quenotte sur le dos, et sort par la droite", async ({ page }) => {
@@ -234,4 +243,49 @@ test("la buée s'efface en glissant le doigt, sans le lever (vrai geste tactile)
   }
   await touche('touchEnd', 0, 0);
   await expect(page.locator('.decor-fenetre .buee.evapore')).toHaveCount(1);
+});
+
+test("le mini-jeu du chat : le palier pour un appartement", async ({ page }) => {
+  const JADE = { ...structuredClone(LEO), prenom: 'Jade', logement: 'appartement' as const };
+  await ouvrir(page, '?chapitre=2#p=' + code(JADE));
+  await expect(page.locator('svg.jeu')).toHaveAttribute('aria-label', /de l’appartement/);
+  await expect(page.locator('svg.jeu rect[fill="#3a3550"]')).toHaveCount(1); // le mur du palier
+  await ouvrir(page, '?chapitre=2#p=' + code(LEO));
+  await expect(page.locator('svg.jeu rect[fill="#3a3550"]')).toHaveCount(0); // la maison : le jardin, comme avant
+});
+
+test("l'épilogue revient à chaque fin d'histoire, même en relecture", async ({ page }) => {
+  await ouvrir(page, '?reset=1#exemple');
+  for (const tour of [1, 2]) {
+    await ouvrir(page, '?chapitre=4#exemple');
+    await page.locator('#cachet').click();
+    await page.locator('#btn-tout').click();
+    await page.locator('#bandeau-actions button', { hasText: 'billet' }).click();
+    await expect(page.locator('svg.retour'), `tour ${tour}`).toBeVisible();
+    // On saute au diplôme (comme à la fin de l'épilogue) : l'histoire est terminée
+    await page.evaluate(() => { const A = (window as any).APP; A.state.fini = true; A.show(5); });
+    await expect(page.locator('.diplome')).toBeVisible();
+  }
+});
+
+test("recommencer l'histoire efface le dessin ; chaque histoire garde le sien", async ({ page }) => {
+  await ouvrir(page, '?reset=1#exemple');
+  const dessin = 'data:image/png;base64,iVBORw0KGgo=';
+  await page.evaluate(d => (window as any).STOCKAGE.ecrire('souris.dessin.' + (window as any).PROFIL.id, d), dessin);
+  // Une autre histoire (Léo) : pas de dessin, une feuille blanche
+  await ouvrir(page, '?chapitre=4#p=' + code(LEO));
+  await page.locator('#cachet').click(); await page.locator('#btn-tout').click();
+  await expect(page.locator('#dessin-lettre .dessin-enfant')).toHaveCount(0);
+  // Retour à Clémentine : son dessin est toujours là
+  await ouvrir(page, '?chapitre=4#exemple');
+  await page.locator('#cachet').click(); await page.locator('#btn-tout').click();
+  await expect(page.locator('#dessin-lettre .dessin-enfant')).toHaveCount(1);
+  // Recommencer : le dessin est effacé, la feuille est blanche
+  await ouvrir(page, '?reset=1#exemple');
+  await ouvrir(page, '?chapitre=4#exemple');
+  await page.locator('#cachet').click(); await page.locator('#btn-tout').click();
+  await expect(page.locator('#dessin-lettre .dessin-enfant')).toHaveCount(0);
+  await expect(page.locator('#dessin-lettre')).toContainText('Réponds à Quenotte');
+  await page.locator('#btn-dessin').click();
+  await expect(page.locator('.toile-invite')).toBeVisible();
 });

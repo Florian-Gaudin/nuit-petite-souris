@@ -750,3 +750,16 @@ html{touch-action:pan-x pan-y}
 /* Frotter la buée en glissant le doigt : le navigateur ne doit pas prendre le geste pour un défilement
    (touch-action est ignoré sur les éléments internes d'un SVG par certains navigateurs : on le pose sur le dessin entier) */
 .decor-fenetre{touch-action:none}
+
+/* Les étoiles : à la fin, la montgolfière traverse l'écran */
+.decor-etoiles .ballon-flotte{transition:transform 2.8s cubic-bezier(.45,0,.75,.5)}
+.decor-etoiles.envol .ballon-flotte{transform:translate(1250px,430px) scale(.82)}
+
+.terrier .porte-lueur{opacity:0;transition:opacity .4s}
+.terrier.devant-porte .porte-lueur{opacity:1;animation:lueur 1s ease-in-out infinite alternate}
+.terrier.devant-porte .porte-chateau{cursor:pointer}
+
+.album-boutons{display:flex;gap:6px;flex:none}
+.album .supprimer{background:#fff;color:var(--rouge2);border-color:#e9b4b8}
+.album .supprimer.confirme{background:var(--rouge);color:#fff;border-color:var(--rouge)}
+.terrier .nuit-terrier{pointer-events:none}

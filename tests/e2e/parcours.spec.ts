@@ -99,6 +99,11 @@ test('de l\'accueil au diplôme', async ({ page }) => {
   const fleches: Record<string, string> = { N: 'ArrowUp', S: 'ArrowDown', E: 'ArrowRight', O: 'ArrowLeft' };
   await page.waitForTimeout(300);
   for (const d of solution) { await page.keyboard.press(fleches[d]); await page.waitForTimeout(120); }
+  // Arrivée devant la porte : elle brille, mais ne s'ouvre pas toute seule
+  await expect(page.locator('svg.terrier.devant-porte')).toHaveCount(1);
+  await page.waitForTimeout(600);
+  await expect(page.locator('svg.terrier.ouverte')).toHaveCount(0);
+  await page.locator('.porte-chateau').click();
   await expect(page.locator('svg.terrier.ouverte')).toHaveCount(1);
   await page.locator('#bandeau-actions button', { hasText: 'boîte à trésors' }).click({ timeout: 30_000 });
   await expect(page.locator('#voile-noir.on')).toHaveCount(0); // la fin du fondu au noir

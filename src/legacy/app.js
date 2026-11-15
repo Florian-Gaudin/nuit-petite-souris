@@ -42,7 +42,8 @@
   // ?chapitre=1&scene=4 ouvre la scène 4 du voyage, ?t=30 avance de 30 s dans la caméra
   const params = new URLSearchParams(location.search);
   if (params.has('reset')) {
-    [KEY, 'souris.muet'].forEach(k => window.STOCKAGE.effacer(k)); // le profil, lui, est gardé
+    // Une nouvelle partie : la progression, le son et le dessin pour Quenotte (le profil, lui, est gardé)
+    [KEY, 'souris.muet', 'souris.dessin.' + window.PROFIL.id].forEach(k => window.STOCKAGE.effacer(k));
     location.replace(location.pathname + location.hash); return;
   }
   load();
@@ -223,7 +224,7 @@
       const toutes = new Set(); nuits.forEach(x => { toutes.add(x.dent); (x.deja || []).forEach(d => toutes.add(d)); });
       toutes.delete(derniere.dent);
       return `<section class="album-page"><h3>${esc(prenom)}</h3>${window.MACHOIRE({ dents: { nuit: derniere.dent, deja: [...toutes] } }).replace("cette nuit", "la plus récente")}
-  <ul>${nuits.map(x => `<li><span>Nuit du ${esc(date(x.nuit))} : ${esc(window.NOM_DENT(x.dent))}</span><a class="btn btn-petit" href="#p=${x.code}">Revoir</a></li>`).join('')}</ul></section>`;
+  <ul>${nuits.map(x => `<li><span>Nuit du ${esc(date(x.nuit))} : ${esc(window.NOM_DENT(x.dent))}</span><span class="album-boutons"><a class="btn btn-petit" href="#p=${x.code}">Revoir</a><button class="btn btn-petit supprimer" data-id="${esc(x.id)}">Supprimer</button></span></li>`).join('')}</ul></section>`;
     }).join('');
     document.body.insertAdjacentHTML('beforeend', `<div class="atelier album" role="dialog" aria-label="${esc(T(D.album.titre))}"><div class="atelier-in">
   <h2>${A.icone('etoile')} ${esc(T(D.album.titre))}</h2><p class="album-explication">${esc(T(D.album.explication))}</p>${pages || `<p>${esc(T(D.album.vide))}</p>`}
@@ -232,6 +233,12 @@
     $('[data-a="fermer"]', fen).onclick = () => fen.remove();
     // « Revoir » : une autre histoire, l'adresse change et la page se recharge avec son profil
     $$('a[href^="#p="]', fen).forEach(l => l.addEventListener('click', () => fen.remove()));
+    // Supprimer : un second toucher confirme ; l'histoire quitte l'album (sa progression n'est pas touchée)
+    $$('.supprimer', fen).forEach(b => b.onclick = () => {
+      if (!b.classList.contains('confirme')) { b.classList.add('confirme'); b.textContent = 'Sûr ? Touche encore'; clearTimeout(b.t); b.t = setTimeout(() => { b.classList.remove('confirme'); b.textContent = 'Supprimer'; }, 3000); return; }
+      window.STOCKAGE.ecrire(CLE_ALBUM, JSON.stringify(lireAlbum().filter(x => x.id !== b.dataset.id)));
+      SON.play('papier'); fen.remove(); album();
+    });
   }
 
   // ---------- Chapitre 0 : accueil ----------
@@ -672,7 +679,7 @@
         $('#btn-dessin', z).onclick = () => { SON.play('clic'); atelier(majDessin); };
       };
       majDessin();
-      const termine = () => { $('#btn-tout', r).hidden = true; $('#dessin-lettre', r).hidden = false; NARR.cacher(false); NARR.dire(B(D.lettreFin)); NARR.action(A.icone(C.cadeau === 'piece' ? 'piece' : 'billet') + ' ' + T(D.boutonLettre), () => { complete(4); badge('amie'); badge('billet'); show(5); }); };
+      const termine = () => { $('#btn-tout', r).hidden = true; $('#dessin-lettre', r).hidden = false; NARR.cacher(false); NARR.dire(B(D.lettreFin)); NARR.action(A.icone(C.cadeau === 'piece' ? 'piece' : 'billet') + ' ' + T(D.boutonLettre), () => { complete(4); badge('amie'); badge('billet'); show(5, { epilogue: true }); }); };
       const montreTout = () => { if (ecrit) return; ecrit = true; clearTimeout(self.t); els.forEach(p => { p.textContent = p.dataset.txt; p.classList.add('vue'); }); termine(); };
       // La lettre s'écrit lentement, mot par mot, en très gros caractères
       const ecrire = () => {
@@ -775,7 +782,8 @@ ${[0, 1, 2].map(i => `<g class="nuage" data-n="${i}" transform="translate(-400,0
       const self = this;
       cancelAnimationFrame(this.raf); window.removeEventListener('deviceorientation', this.incline);
       heure('03:28'); MUS.ambiance('foret');
-      const COLS = 16, ROWS = 6, CELL = 90, X0 = 60, Y0 = 110, LARG = X0 + COLS * CELL + 170, HAUT = Y0 + ROWS * CELL + 50;
+      // 20 × 7 cases ; un long couloir (2 cases) mène de la dernière case à la porte
+      const COLS = 20, ROWS = 7, CELL = 90, X0 = 60, Y0 = 110, LARG = X0 + COLS * CELL + 2 * CELL + 160, HAUT = Y0 + ROWS * CELL + 50, PORTE_X = LARG - 70;
       // Hasard reproductible, à partir de l'identifiant du profil
       let graine = 0; for (const ch of String(window.PROFIL.id)) graine = (graine * 31 + ch.charCodeAt(0)) >>> 0;
       const hasard = () => { graine = (graine + 0x6D2B79F5) >>> 0; let t = graine; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
@@ -807,9 +815,18 @@ ${[0, 1, 2].map(i => `<g class="nuage" data-n="${i}" transform="translate(-400,0
       // Les surprises, au fond des impasses les plus éloignées de l'entrée
       const impasses = [];
       for (let c = 0; c < COLS; c++) for (let l = 0; l < ROWS; l++) if (Object.keys(ouvert[c][l]).length === 1 && !(c === 0 && l === 0) && !(c === sortie[0] && l === sortie[1])) impasses.push([c, l]);
-      impasses.sort((a, b) => (b[0] - a[0]) || (hasard() - 0.5));
-      const SURPRISES = ['ver', 'carotte', 'fossile', 'piece'];
-      const surprises = impasses.filter((_, i) => i % Math.max(1, Math.floor(impasses.length / 4)) === 0).slice(0, 4).map((p, i) => ({ id: SURPRISES[i], c: p[0], l: p[1], vue: false }));
+      // Distance (en cases) de chaque impasse au bon chemin : on garde les plus proches, bien réparties de gauche à droite
+      const surLeChemin = new Set(['0,0', ...chemin(0, 0).map(p => { const [dx, dy] = DIR[p.d]; return (p.c + dx) + ',' + (p.l + dy); })]);
+      const distance = (c0, l0) => {
+        const vus = new Map([[c0 + ',' + l0, 0]]), file = [[c0, l0]];
+        while (file.length) { const [c, l] = file.shift(), d = vus.get(c + ',' + l); if (surLeChemin.has(c + ',' + l)) return d; for (const [k, [dx, dy]] of Object.entries(DIR)) if (ouvert[c][l][k] && !vus.has((c + dx) + ',' + (l + dy))) { vus.set((c + dx) + ',' + (l + dy), d + 1); file.push([c + dx, l + dy]); } }
+        return 99;
+      };
+      impasses.sort((p, q) => distance(p[0], p[1]) - distance(q[0], q[1]) || p[0] - q[0]);
+      const SURPRISES = ['ver', 'carotte', 'fossile', 'piece'], choisies = [];
+      for (const p of impasses) { if (choisies.length >= 4) break; if (choisies.every(q => Math.abs(q[0] - p[0]) >= 3)) choisies.push(p); }
+      choisies.sort((p, q) => p[0] - q[0]);
+      const surprises = choisies.map((p, i) => ({ id: SURPRISES[i], c: p[0], l: p[1], vue: false }));
       const DESSIN_SURPRISE = {
         ver: '<path d="M-22 6q8-14 16 0t16 0 14-4" fill="none" stroke="#E98BA0" stroke-width="7" stroke-linecap="round"/><circle cx="24" cy="1" r="1.6" fill="#2B2B33"/>',
         carotte: '<path d="M-20 -6l34 6-34 6z" fill="#E8833A"/><path d="M14 0l10-8M14 0l12 0M14 0l10 8" stroke="#3E9A6B" stroke-width="3" stroke-linecap="round"/>',
@@ -825,8 +842,8 @@ ${[0, 1, 2].map(i => `<g class="nuage" data-n="${i}" transform="translate(-400,0
         if (ouvert[c][l].S) { galeries += `<path d="M${x} ${y}v${CELL}"/>`; clair += `<path d="M${x} ${y - 4}v${CELL}"/>`; }
       }
       const [ex0, ey0] = centre(0, 0), [sx, sy] = centre(sortie[0], sortie[1]);
-      galeries += `<path d="M${ex0} ${ey0}V40"/><path d="M${sx} ${sy}H${LARG - 70}"/>`;
-      clair += `<path d="M${ex0} ${ey0}V44"/><path d="M${sx} ${sy - 4}H${LARG - 70}"/>`;
+      galeries += `<path d="M${ex0} ${ey0}V40"/><path d="M${sx} ${sy}H${PORTE_X}"/>`;
+      clair += `<path d="M${ex0} ${ey0}V44"/><path d="M${sx} ${sy - 4}H${PORTE_X}"/>`;
       let cailloux = '';
       for (let i = 0; i < 160; i++) cailloux += `<ellipse cx="${(hasard() * LARG).toFixed(0)}" cy="${(60 + hasard() * (HAUT - 60)).toFixed(0)}" rx="${(3 + hasard() * 9).toFixed(1)}" ry="${(2 + hasard() * 6).toFixed(1)}" fill="${['#6b4a33', '#4a3222', '#7d5b40', '#3b2618'][i % 4]}" opacity="${(0.5 + hasard() * 0.5).toFixed(2)}"/>`;
       let racines = '';
@@ -847,15 +864,14 @@ ${racines}
 <g class="galeries" fill="none" stroke="#9c7650" stroke-width="62" stroke-linecap="round"><g fill="#9c7650" stroke="none">${galeries.match(/<circle[^>]*>/g).join('')}</g>${galeries.replace(/<circle[^>]*>/g, '')}</g>
 <g fill="none" stroke="#b58c62" stroke-width="30" stroke-linecap="round" opacity=".55"><g fill="#b58c62" stroke="none">${clair.match(/<circle[^>]*>/g).join('')}</g>${clair.replace(/<circle[^>]*>/g, '')}</g>
 <g transform="translate(${ex0},36)"><ellipse rx="44" ry="14" fill="#1a110a"/></g>
-<g class="porte-chateau" transform="translate(${LARG - 70},${sy})"><rect x="-10" y="-70" width="90" height="140" fill="#8a8395"/><circle r="46" fill="#6b6560"/><g class="battant"><circle r="40" fill="#8B5A3C" stroke="#5c3a24" stroke-width="4"/><path d="M-40 0h80M0-40v80" stroke="#6E4630" stroke-width="3" opacity=".6"/><use href="#dent" x="-9" y="-11" width="18" height="18" opacity=".85"/></g></g>
+<g class="porte-chateau" role="button" tabindex="0" aria-label="La porte du château" transform="translate(${PORTE_X},${sy})"><circle class="porte-lueur" r="70" fill="url(#glow)"/><rect x="-10" y="-70" width="90" height="140" fill="#8a8395"/><circle r="46" fill="#6b6560"/><g class="battant"><circle r="40" fill="#8B5A3C" stroke="#5c3a24" stroke-width="4"/><path d="M-40 0h80M0-40v80" stroke="#6E4630" stroke-width="3" opacity=".6"/><use href="#dent" x="-9" y="-11" width="18" height="18" opacity=".85"/></g></g>
 ${surprises.map(s => { const [x, y] = centre(s.c, s.l); return `<g class="surprise" data-id="${s.id}" transform="translate(${x},${y + 12})">${DESSIN_SURPRISE[s.id]}</g>`; }).join('')}
-<g class="lucioles"></g>
 <g class="q-terrier"><circle r="34" fill="url(#glow)"/>${A.souris(-38, -40, 76)}</g>
 <rect class="nuit-terrier" x="-400" y="-400" width="${LARG + 800}" height="${HAUT + 800}" fill="#0b0705" mask="url(#m-terrier)"/>
 </svg>`;
-      const svg = $('svg.terrier', zone), q = $('.q-terrier', svg), lumiere = $('.lumiere', svg), lucioles = $('.lucioles', svg);
+      const svg = $('svg.terrier', zone), q = $('.q-terrier', svg), lumiere = $('.lumiere', svg), porte = $('.porte-chateau', svg);
       NARR.dire(B(D.epilogue.terrier));
-      let pos = [0, 0], qx = ex0, qy = 40, depart = null, but = null, fini = false, cible = null, aide = false, camX = 0;
+      let pos = [0, 0], qx = ex0, qy = 40, depart = null, but = null, fini = false, cible = null, camX = 0, devantPorte = false;
       // On entre par le trou, en haut à gauche
       depart = { x: ex0, y: 40, t: performance.now() }; but = { x: ex0, y: ey0 };
       const DUREE = RM ? 40 : 170;
@@ -870,29 +886,42 @@ ${surprises.map(s => { const [x, y] = centre(s.c, s.l); return `<g class="surpri
         return true;
       };
       const arrive = () => {
-        // Une surprise ?
-        const s = surprises.find(s => !s.vue && s.c === pos[0] && s.l === pos[1]);
-        if (s) { s.vue = true; const g = $(`.surprise[data-id="${s.id}"]`, svg); if (g) g.classList.add('vue'); SON.play('etoile'); NARR.dire(B(D.epilogue.surprises[s.id]), { vite: true }); }
-        if (aide) montreLucioles();
-        // La sortie : la porte du château
-        if (pos[0] === sortie[0] && pos[1] === sortie[1]) {
-          fini = true; clearTimeout(self.tAide);
-          depart = { x: qx, y: qy, t: performance.now() }; but = { x: LARG - 120, y: sy };
-          setTimeout(async () => {
-            svg.classList.add('ouverte'); SON.play('cachet');
-            await NARR.dire(B(D.epilogue.porte));
-            NARR.action(A.icone('etoile') + ' ' + T(D.epilogue.bouton), () => { SON.play('clic'); NARR.action(null); fondu(() => self.boite(r), 600); });
-          }, RM ? 50 : 500);
-        }
+        if (fini) return;
+        // Une surprise : son texte revient à chaque passage
+        const s = surprises.find(s => s.c === pos[0] && s.l === pos[1]);
+        if (s) { const g = $(`.surprise[data-id="${s.id}"]`, svg); if (g) g.classList.add('vue'); if (!s.vue) SON.play('etoile'); s.vue = true; NARR.dire(B(D.epilogue.surprises[s.id]), { vite: true }); }
+        // Devant la porte du château : elle brille, il faut la toucher pour entrer
+        devantPorte = pos[0] === sortie[0] && pos[1] === sortie[1];
+        svg.classList.toggle('devant-porte', devantPorte);
+        if (devantPorte) NARR.dire(B(D.epilogue.toucherPorte), { vite: true });
       };
-      const montreLucioles = () => { lucioles.innerHTML = chemin(pos[0], pos[1]).map(p => { const [x, y] = centre(p.c, p.l); return `<circle cx="${x}" cy="${y}" r="7" fill="#F4F19A"/><circle cx="${x}" cy="${y}" r="16" fill="url(#glow)"/>`; }).join(''); };
+      // Entrer : Quenotte longe le couloir jusqu'à la porte, qui s'ouvre
+      const entrer = () => {
+        if (fini || but || !devantPorte) { SON.play('toc'); return; }
+        fini = true; svg.classList.remove('devant-porte');
+        depart = { x: qx, y: qy, t: performance.now() }; but = { x: PORTE_X - 50, y: sy };
+        setTimeout(async () => {
+          svg.classList.add('ouverte'); SON.play('cachet');
+          await NARR.dire(B(D.epilogue.porte));
+          NARR.action(A.icone('etoile') + ' ' + T(D.epilogue.bouton), () => { SON.play('clic'); NARR.action(null); fondu(() => self.boite(r), 600); });
+        }, RM ? 80 : 700);
+      };
+      porte.addEventListener('click', e => { e.stopPropagation(); entrer(); });
       // Le doigt montre le chemin : Quenotte avance de case en case vers lui
-      svg.addEventListener('pointerdown', e => { e.preventDefault(); SON.unlock(); cible = point(e); try { svg.setPointerCapture(e.pointerId); } catch (er) { } });
+      svg.addEventListener('pointerdown', e => {
+        e.preventDefault(); SON.unlock();
+        const p = point(e);
+        // Un toucher sur la porte (quand on est devant) : on entre
+        if (devantPorte && Math.hypot(p.x - PORTE_X, p.y - sy) < 70) { entrer(); return; }
+        cible = p; try { svg.setPointerCapture(e.pointerId); } catch (er) { }
+      });
       svg.addEventListener('pointermove', e => { if (cible) cible = point(e); });
       ['pointerup', 'pointercancel'].forEach(n => svg.addEventListener(n, () => { cible = null; }));
-      self.clavier = e => { const d = { ArrowUp: 'N', ArrowDown: 'S', ArrowRight: 'E', ArrowLeft: 'O' }[e.key]; if (d) { e.preventDefault(); avance(d); } };
+      self.clavier = e => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); entrer(); return; }
+        const d = { ArrowUp: 'N', ArrowDown: 'S', ArrowRight: 'E', ArrowLeft: 'O' }[e.key]; if (d) { e.preventDefault(); avance(d); }
+      };
       window.addEventListener('keydown', self.clavier);
-      self.tAide = setTimeout(() => { if (!fini) { aide = true; montreLucioles(); NARR.dire(B(D.epilogue.terrierAide)); } }, 30000);
       const boucle = ts => {
         if (but) {
           const k = Math.min(1, (ts - depart.t) / DUREE);
@@ -950,8 +979,10 @@ ${places.map(dent).join('')}
       });
       d.addEventListener('keydown', e => { if (!range && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); ranger(); } });
     },
-    render() {
-      if (!State.epilogue) return this.epilogueHTML();
+    // L'épilogue se joue à chaque fois qu'on arrive au bout de la lettre (première lecture comme relecture) ;
+    // le ruban du haut mène, lui, directement au diplôme
+    render(opts) {
+      if (opts && opts.epilogue) return this.epilogueHTML();
       const qs = 'badges=' + encodeURIComponent(State.badges.join(',')) + '&secret=' + (State.secret ? 1 : 0) + '&nuit=' + State.nuit + '&etoiles=' + nbEtoiles();
       return `<section class="ch ch5">
   <h2 class="decor-titre"><span class="decor-heure">La nuit dernière à 3 h 40</span>Bravo ${esc(C.enfant)} !</h2>
@@ -966,8 +997,8 @@ ${places.map(dent).join('')}
   <div class="fin"><button class="btn btn-petit" id="btn-dessin5">${A.icone('crayon')} ${esc(T(lireDessin() ? D.dessin.modifier : D.dessin.faire))}</button></div>
 </section>`;
     },
-    mount(r) {
-      if (!State.epilogue) { this.retour(r); return; }
+    mount(r, opts) {
+      if (opts && opts.epilogue) { this.retour(r); return; }
       heure('03:40'); MUS.ambiance('diplome');
       const premiere = !State.fini;
       complete(5); if (premiere) { State.fini = true; save(); }
