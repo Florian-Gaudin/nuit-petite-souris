@@ -904,10 +904,18 @@ ${[0, 1, 2, 3, 4, 5].map(i => `<g class="nuage" data-n="${i}" transform="transla
       let racines = '';
       for (let i = 0; i < 14; i++) { const x = 100 + hasard() * (LARG - 200), h = 40 + hasard() * 110; racines += `<path d="M${x.toFixed(0)} 60q${(hasard() * 30 - 15).toFixed(0)} ${(h / 2).toFixed(0)} ${(hasard() * 20 - 10).toFixed(0)} ${h.toFixed(0)}" fill="none" stroke="#2a1a10" stroke-width="${(2 + hasard() * 3).toFixed(1)}" stroke-linecap="round" opacity=".7"/>`; }
       const solution = chemin(0, 0);
+      // Pour les tests : le trajet qui passe par les 4 trésors, de case en case (directions N, S, E, O)
+      const route = (a, b) => {
+        const prec = new Map([[a.join(), null]]), file = [a];
+        while (file.length) { const [c, l] = file.shift(); if (c === b[0] && l === b[1]) break; for (const [d, [dx, dy]] of Object.entries(DIR)) if (ouvert[c][l][d] && !prec.has((c + dx) + ',' + (l + dy))) { prec.set((c + dx) + ',' + (l + dy), [c, l, d]); file.push([c + dx, l + dy]); } }
+        let k = b.join(), out = ''; while (prec.get(k)) { const [c, l, d] = prec.get(k); out = d + out; k = c + ',' + l; } return out;
+      };
+      let ici = [0, 0], tourTresors = '';
+      surprises.forEach(t => { tourTresors += route(ici, [t.c, t.l]); ici = [t.c, t.l]; });
       const zone = $('#epi', r);
       // Les trésors du terrier, en grisé en haut : ils s'allument quand Quenotte passe dessus
       const tresors = `<div class="tresors" aria-live="polite"><span class="tresors-titre">Trésors du terrier : <b class="tresors-n">0</b> / ${surprises.length}</span><span class="tresors-liste">${surprises.map(t => `<svg class="tresor" data-id="${t.id}" viewBox="-30 -24 60 48" aria-hidden="true">${DESSIN_SURPRISE[t.id]}</svg>`).join('')}</span></div>`;
-      zone.innerHTML = tresors + `<svg class="terrier" viewBox="0 0 600 ${HAUT}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Le terrier de Quenotte : un labyrinthe sous la terre, jusqu'à la porte du château" data-solution="${solution.map(p => p.d).join('')}${'E'.repeat(COULOIR)}">
+      zone.innerHTML = tresors + `<svg class="terrier" viewBox="0 0 600 ${HAUT}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Le terrier de Quenotte : un labyrinthe sous la terre, jusqu'à la porte du château" data-tresors="${tourTresors}" data-solution="${solution.map(p => p.d).join('')}${'E'.repeat(COULOIR)}">
 <defs>
   <linearGradient id="g-terre" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6b4a33"/><stop offset=".45" stop-color="#4f3524"/><stop offset="1" stop-color="#2e1d12"/></linearGradient>
   <radialGradient id="g-lanterne"><stop offset=".45" stop-color="#000"/><stop offset="1" stop-color="#fff"/></radialGradient>
@@ -953,6 +961,7 @@ ${surprises.map(s => { const [x, y] = centre(s.c, s.l); return `<g class="surpri
           const g = $(`.surprise[data-id="${s.id}"]`, svg); if (g) g.classList.add('vue');
           if (!s.vue) { SON.play('etoile'); const t = $(`.tresor[data-id="${s.id}"]`, zone); if (t) t.classList.add('trouve'); }
           s.vue = true; $('.tresors-n', zone).textContent = surprises.filter(x => x.vue).length;
+          if (surprises.every(x => x.vue)) badge('terrier'); // les 4 trésors : un badge
           NARR.dire(B(D.epilogue.surprises[s.id]), { vite: true });
         }
         // Devant la porte du château : elle brille, il faut la toucher pour entrer

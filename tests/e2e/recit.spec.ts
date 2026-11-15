@@ -381,3 +381,19 @@ test("pas de bouton « Passer » sur le diplôme, la dernière étape", async ({
   await page.waitForTimeout(1600);
   await expect(page.locator('#btn-passer')).toBeHidden();
 });
+
+test("le badge Fouille-terrier : les 4 trésors du terrier trouvés", async ({ page }) => {
+  await ouvrir(page, '?reset=1#exemple');
+  await page.evaluate(() => { const A = (window as any).APP; A.state.fini = true; A.state.unlocked = 5; A.show(5); });
+  await page.locator('#btn-passer').click();
+  await expect(page.locator('svg.terrier')).toBeVisible();
+  await expect(page.locator('#voile-noir.on')).toHaveCount(0);
+  await page.waitForTimeout(500);
+  expect(await page.evaluate(() => (window as any).APP.state.badges)).not.toContain('terrier');
+  // On visite chaque trésor (chemin calculé dans le labyrinthe affiché, au clavier)
+  const chemins = [(await page.locator('svg.terrier').getAttribute('data-tresors'))!];
+  const f: Record<string, string> = { N: 'ArrowUp', S: 'ArrowDown', E: 'ArrowRight', O: 'ArrowLeft' };
+  for (const c of chemins) for (const d of c) { await page.keyboard.press(f[d]); await page.waitForTimeout(110); }
+  await expect(page.locator('.tresors-n')).toHaveText('4');
+  expect(await page.evaluate(() => (window as any).APP.state.badges)).toContain('terrier');
+});
