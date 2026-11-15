@@ -1,4 +1,6 @@
-# Publication automatique sur GitHub Pages à chaque push sur main
+# Publication automatique sur GitHub Pages à chaque push sur main.
+# La publication ne dépend que des vérifications rapides (code, tests unitaires, construction) ;
+# les tests de bout en bout tournent à côté, sans la bloquer : en cas d'échec, GitHub envoie une alerte.
 name: Publier le site
 
 on:
@@ -28,15 +30,6 @@ jobs:
       - run: npm run verifier
       - run: npm test
       - run: npm run build
-      # Tests de bout en bout dans un vrai navigateur (format téléphone)
-      - run: npx playwright install --with-deps chromium
-      - run: npx playwright test
-      - if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: rapport-tests
-          path: test-results/
-          retention-days: 7
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
@@ -50,3 +43,22 @@ jobs:
     steps:
       - id: deploiement
         uses: actions/deploy-pages@v4
+
+  # Tests de bout en bout dans un vrai navigateur (format téléphone), en parallèle de la publication
+  parcours:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npx playwright test
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rapport-tests
+          path: test-results/
+          retention-days: 7
