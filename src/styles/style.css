@@ -747,3 +747,6 @@ html{touch-action:pan-x pan-y}
 .dessin-titre .ico{width:24px;height:24px}
 .dessin-texte{margin:0;color:var(--muet);max-width:32em}
 .decor-lievre.repart .monture{transition:transform 1.5s cubic-bezier(.5,0,.8,.6);transform:translate(900px,0)}
+/* Frotter la buée en glissant le doigt : le navigateur ne doit pas prendre le geste pour un défilement
+   (touch-action est ignoré sur les éléments internes d'un SVG par certains navigateurs : on le pose sur le dessin entier) */
+.decor-fenetre{touch-action:none}

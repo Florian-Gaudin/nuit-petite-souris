@@ -212,8 +212,8 @@ window.DATA = {
         yeux: {
           reponse: { fratrie: {
             aCote: { txt: "C'est {chat}, le chat du voisin ! Il dort {surLeSeuil} et il a l'oreille fine. Si je le réveille, il va miauler, et {tonFrere} va se réveiller. Je ne veux surtout pas ça.", expr: "surprise" },
-            ailleurs: { doudou: { oui: { txt: "C'est {chat}, le chat du voisin ! Il dort {surLeSeuil} et il a l'oreille fine. Si je le réveille, il va miauler, et {poupee} va se réveiller. Je ne veux surtout pas ça.", expr: "surprise" }, non: { txt: "C'est {chat}, le chat du voisin ! Il dort {surLeSeuil} et il a l'oreille fine. Si je le réveille, il va miauler, et toute la maison va se réveiller. Je ne veux surtout pas ça.", expr: "surprise" } } },
-            non: { doudou: { oui: { txt: "C'est {chat}, le chat du voisin ! Il dort {surLeSeuil} et il a l'oreille fine. Si je le réveille, il va miauler, et {poupee} va se réveiller. Je ne veux surtout pas ça.", expr: "surprise" }, non: { txt: "C'est {chat}, le chat du voisin ! Il dort {surLeSeuil} et il a l'oreille fine. Si je le réveille, il va miauler, et toute la maison va se réveiller. Je ne veux surtout pas ça.", expr: "surprise" } } },
+            ailleurs: { doudou: { oui: { txt: "C'est {chat}, le chat du voisin ! Il dort {surLeSeuil} et il a l'oreille fine. Si je le réveille, il va miauler, et {poupee} va se réveiller. Je ne veux surtout pas ça.", expr: "surprise" }, non: { txt: "C'est {chat}, le chat du voisin ! Il dort {surLeSeuil} et il a l'oreille fine. Si je le réveille, il va miauler, et {touteLaMaison} va se réveiller. Je ne veux surtout pas ça.", expr: "surprise" } } },
+            non: { doudou: { oui: { txt: "C'est {chat}, le chat du voisin ! Il dort {surLeSeuil} et il a l'oreille fine. Si je le réveille, il va miauler, et {poupee} va se réveiller. Je ne veux surtout pas ça.", expr: "surprise" }, non: { txt: "C'est {chat}, le chat du voisin ! Il dort {surLeSeuil} et il a l'oreille fine. Si je le réveille, il va miauler, et {touteLaMaison} va se réveiller. Je ne veux surtout pas ça.", expr: "surprise" } } },
           } },
         },
         quenotte: {
@@ -251,12 +251,12 @@ window.DATA = {
     trop: "{chat} ronfle trop fort pour entendre quoi que ce soit. Fonce !",
     gagne: { txt: "Passé ! Merci {enfant}, sans toi je serais encore devant lui. Maintenant, chut… je rentre.", expr: "joie" },
     bouton: "Voir ma caméra",
-    entrer: "Entrer dans la maison",
+    entrer: "Entrer dans {laMaison}",
   },
 
   // ---------- La lampe de poche : trouver la chambre dans la maison plongée dans le noir ----------
   lampe: {
-    intro: { txt: "Il fait tout noir dans la maison ! Promène ma lumière avec ton doigt pour m'aider à trouver ta chambre.", expr: "chuchote" },
+    intro: { txt: "Il fait tout noir dans {laMaison} ! Promène ma lumière avec ton doigt pour m'aider à trouver ta chambre.", expr: "chuchote" },
     aide: { txt: "Regarde, un peu de lumière passe sous une porte… C'est sûrement ta veilleuse !", expr: "chuchote" },
     trouve: { txt: "La voilà, ta chambre ! Je mets ma petite caméra en marche, et j'entre sur la pointe des pattes.", expr: "joie" },
   },

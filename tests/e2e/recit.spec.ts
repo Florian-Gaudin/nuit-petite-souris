@@ -58,6 +58,9 @@ test('Jade : appartement au bord de la Seine, doudou linge', async ({ page }) =>
   expect(await rendu(page, ['scenes', 9, 'elements', 'yeux', 'reponse'])).toContain('Il dort sur le paillasson');
   expect(await rendu(page, ['camera', 'intro'])).toContain('glissée sous la porte');
   expect(await rendu(page, ['lettre', 4])).toContain('a traversé la Seine en bateau');
+  // Jamais « la maison » pour un appartement
+  expect(await rendu(page, ['jeu', 'entrer'])).toBe("Entrer dans l'appartement");
+  expect(await rendu(page, ['lampe', 'intro'])).toContain("tout noir dans l'appartement");
   // Les dessins : immeubles, palier, panneau de la ville, doudou linge dans la caméra
   await ouvrir(page, '?chapitre=1&scene=6#p=' + code(JADE));
   await expect(page.locator('.decor-lievre .panneau text')).toHaveText('Lyon');
@@ -215,4 +218,20 @@ test("le lièvre repart au galop, Quenotte sur le dos, et sort par la droite", a
   }
   await page.locator('#bandeau-actions button', { hasText: 'Scène suivante' }).click();
   await expect(page.locator('svg.decor-lievre.repart')).toHaveCount(1);
+});
+
+test("la buée s'efface en glissant le doigt, sans le lever (vrai geste tactile)", async ({ page }) => {
+  await ouvrir(page, '?reset=1#exemple');
+  await ouvrir(page, '?chapitre=1&scene=8#exemple');
+  const b = (await page.locator('.decor-fenetre .voile').boundingBox())!;
+  const cdp = await page.context().newCDPSession(page);
+  const touche = (type: string, x: number, y: number) => cdp.send('Input.dispatchTouchEvent', { type, touchPoints: type === 'touchEnd' ? [] : [{ x, y }] });
+  // Un seul geste : le doigt se pose, balaie toute la vitre en zigzag, puis se lève
+  await touche('touchStart', b.x + 10, b.y + 10);
+  for (let i = 0; i <= 15; i++) for (let s = 1; s <= 6; s++) {
+    const x = b.x + 10 + ((i % 2 ? 6 - s : s) / 6) * (b.width - 20), y = b.y + 10 + i * (b.height - 20) / 15;
+    await touche('touchMove', x, y);
+  }
+  await touche('touchEnd', 0, 0);
+  await expect(page.locator('.decor-fenetre .buee.evapore')).toHaveCount(1);
 });

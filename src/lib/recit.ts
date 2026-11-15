@@ -87,6 +87,8 @@ export function vocabulaire(p: Profil) {
     trouvee: estPiece(p.billet) ? 'trouvée' : 'trouvé',
     logement: p.logement,                                    // « maison » ou « appartement »
     surLeSeuil: p.logement === 'appartement' ? 'sur le paillasson' : 'sur le seuil', // où dort le chat
+    laMaison: p.logement === 'appartement' ? "l'appartement" : 'la maison',               // « Il fait tout noir dans la maison »
+    touteLaMaison: p.logement === 'appartement' ? "tout l'appartement" : 'toute la maison', // « toute la maison va se réveiller »
     riviere: riviere(p),                                     // « la Seine » (ou « la rivière »)
     Riviere: majuscule(riviere(p)),                          // « La Seine », en début de phrase
   };
