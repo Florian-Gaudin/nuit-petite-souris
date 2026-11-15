@@ -11,6 +11,16 @@
       Si elle a fait briller les yeux de votre enfant, vous pouvez soutenir son créateur d'un petit don :
       il aide Quenotte à continuer ses voyages. Merci du fond du cœur !
     </p>
-    <a class="btn btn-or" href={LIEN_DON} target="_blank" rel="noopener">Faire un don</a>
+    <a class="btn btn-don" href={LIEN_DON} target="_blank" rel="noopener"><span aria-hidden="true">🧀</span> Offrir un goûter à Quenotte</a>
   </section>
 {/if}
+
+<style>
+  /* Le bouton de don : rouge de l'écharpe de Quenotte, texte blanc, police arrondie */
+  .btn-don {
+    display: inline-flex; align-items: center; gap: 8px; min-height: 52px; padding: 0 22px; border-radius: 999px;
+    background: #b8323a !important; color: #fff !important; border: 2px solid #fff !important; box-shadow: 0 4px 0 #7f1f26 !important;
+    font: 800 1.1rem 'Baloo 2', 'Comic Sans MS', sans-serif; text-decoration: none;
+  }
+  .btn-don:hover, .btn-don:focus-visible { background: #a22b33 !important; outline: 3px solid #FFC857; outline-offset: 2px; }
+</style>
