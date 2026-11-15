@@ -44,6 +44,20 @@ window.SON = (function () {
       osc.connect(f); osc.start(t0); osc.stop(t0 + dur + 0.05);
     }
   }
+  // Un souffle de papier : bruit filtré dont la fréquence glisse (de grave à aigu puis retombe), volume en cloche
+  function glisse(dur, vol, when, f0, f1, f2) {
+    if (!debloque) return;
+    const c = ensure(); if (!c) return;
+    const t0 = c.currentTime + (when || 0);
+    const buf = c.createBuffer(1, Math.floor(c.sampleRate * dur), c.sampleRate), d = buf.getChannelData(0);
+    for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+    const s = c.createBufferSource(); s.buffer = buf;
+    const f = c.createBiquadFilter(); f.type = 'bandpass'; f.Q.value = 0.9;
+    f.frequency.setValueAtTime(f0, t0); f.frequency.exponentialRampToValueAtTime(f1, t0 + dur * 0.55); f.frequency.exponentialRampToValueAtTime(f2, t0 + dur);
+    const g = c.createGain();
+    g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(vol, t0 + dur * 0.4); g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+    s.connect(f).connect(g).connect(master); s.start(t0); s.stop(t0 + dur + 0.05);
+  }
   function bruit(dur, vol, when, freq, q) {
     if (!debloque) return;
     const c = ensure(); if (!c) return;
@@ -119,10 +133,12 @@ window.SON = (function () {
     alerte() { tone(880, 0.12, 'square', 0.08); tone(660, 0.12, 'square', 0.08, 0.16); tone(880, 0.12, 'square', 0.08, 0.32); },
     bip() { tone(1200, 0.08, 'square', 0.07); },
     cachet() { bruit(0.12, 0.35, 0, 900); bruit(0.25, 0.2, 0.08, 500); },
-    // Une page qui tourne : la feuille glisse (un frottement qui enfle puis s'éteint, environ une demi-seconde), puis retombe
+    // Une page qui tourne : la feuille glisse lentement contre la suivante (environ trois quarts de seconde),
+    // puis retombe à plat avec un petit souffle grave
     page() {
-      for (let k = 0; k < 10; k++) bruit(0.14, 0.03 + 0.07 * Math.sin(Math.PI * k / 9), k * 0.05, 1400 + k * 220, 0.5);
-      bruit(0.09, 0.08, 0.52, 700, 0.8);
+      glisse(0.75, 0.16, 0, 700, 2600, 1300);
+      glisse(0.5, 0.05, 0.12, 3200, 5200, 2800);
+      bruit(0.16, 0.07, 0.7, 260, 0.7);
     },
     papier() { bruit(0.3, 0.12, 0, 2500); },
     pli() { bruit(0.12, 0.18, 0, 3000); bruit(0.08, 0.1, 0.1, 1800); },

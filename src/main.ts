@@ -48,6 +48,7 @@ try {
   await import('./legacy/scenes.js');
   await import('./legacy/theatre.js');
   await import('./legacy/carnet.js');
+  await import('./legacy/ouverture.js');
   await import('./lib/machoire');
   await import('./legacy/certificat.js');
   await import('./legacy/app.js');

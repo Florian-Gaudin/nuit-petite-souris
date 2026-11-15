@@ -299,55 +299,49 @@
     });
   }
 
-  // ---------- Chapitre 0 : accueil ----------
+  // ---------- Chapitre 0 : la couverture du livre, puis la page de garde ----------
+  // La couverture (titre, prénom, Quenotte sur les remparts de Sedan) s'ouvre au toucher ou avec « Viens, je te
+  // raconte ! ». Dessous, la page de garde : la France, où l'enfant touche son étoile, puis un zoom sur les
+  // Ardennes et le chemin de Quenotte jusqu'à sa maison, dont la fenêtre s'allume. « En route ! » ouvre le château.
   const Ch0 = {
     render() {
-      return `<section class="ch ch0">
-  <div class="ciel">${A.cielSVG(State.nuit)}</div>
-  <div class="ch0-texte">
-    <h1 class="titre">La nuit de la Petite Souris</h1>
-    <p class="sous">${window.PROFIL.surprise ? 'Rendez-vous ' + esc(C.reveilTexte) + ' !' : esc(C.ville) + ' · ' + esc(nuitTexte())}</p>
-    <a class="retour-choix" href="./">${A.icone('changer')} Changer d'histoire</a>
-  </div>
+      const surprise = window.PROFIL.surprise;
+      return `<section class="ch origine ouverture-livre">
+  <div class="lv-scene"><div class="lv-ecran">
+    <div class="lv-garde"></div>
+    <div class="lv-ombre" aria-hidden="true"></div>
+    <button type="button" class="lv-couverture" aria-label="Ouvrir le livre : La nuit de la Petite Souris, l'histoire de ${esc(C.enfant)}"${surprise ? ' disabled' : ''}>${window.OUVERTURE.couverture({
+      enfant: C.enfant,
+      ligne1: surprise ? 'Rendez-vous ' + C.reveilTexte + ' !' : C.ville,
+      ligne2: surprise ? '' : nuitTexte(),
+      invite: surprise ? '' : 'Touche la couverture pour ouvrir le livre',
+    })}</button>
+  </div></div>
+  <a class="retour-choix" href="./">${A.icone('changer')} Changer d'histoire</a>
 </section>`;
     },
     mount(r) {
       heure('—'); MUS.ambiance('accueil');
       etape(() => { complete(0); fondu(() => show(1, { scene: 0 }), 500); });
-      // Recadrage : sur un écran en hauteur, on resserre sur le château et la maison, puis on ajoute du ciel
-      const svgC = $('.ciel-svg', r), boite = $('.ch0 .ciel', r);
-      this.cadre = () => {
-        const W = boite.clientWidth || 1, H = boite.clientHeight || 1, ideal = 480 * W / H;
-        if (ideal >= 800) { svgC.setAttribute('viewBox', '0 0 800 480'); svgC.setAttribute('preserveAspectRatio', 'xMidYMax slice'); return; }
-        const vw = Math.max(ideal, 620), vh = vw * H / W, x0 = Math.max(0, Math.min(800 - vw, 330 - vw / 2));
-        svgC.setAttribute('viewBox', `${x0.toFixed(0)} ${(480 - vh).toFixed(0)} ${vw.toFixed(0)} ${vh.toFixed(0)}`);
-        svgC.setAttribute('preserveAspectRatio', 'xMidYMax meet');
-      };
-      this.cadre(); window.addEventListener('resize', this.cadre);
+      const mien = this.jetonCarte = (this.jetonCarte || 0) + 1, encore = () => this.jetonCarte === mien;
       $('.retour-choix', r).onclick = changerHistoire;
-      if (window.PROFIL.surprise) {
-        // Trop tôt : Quenotte n'est pas encore passée. Pas de bouton pour commencer.
-        $('.ch0', r).classList.add('surprise');
-        NARR.dire(B(D.surprise));
-        return;
-      }
+      if (window.PROFIL.surprise) { NARR.dire(B(D.surprise)); return; }
+      this.preparerCarte(r);
+      let ouvert = false;
+      const ouvrir = async () => {
+        if (ouvert) return; ouvert = true;
+        SON.unlock(); SON.play('page'); NARR.action(null);
+        $('.lv-ecran', r).classList.add('ouvert');
+        await wait(RM ? 50 : 1300); if (!encore()) return;
+        this.carte(r);
+      };
+      $('.lv-couverture', r).onclick = ouvrir;
       NARR.dire(B(D.accueil));
-      NARR.action(A.icone('lanterne') + ' ' + T(D.accueil.bouton), async () => {
-        SON.unlock(); SON.play('lanterne');
-        NARR.action(null);
-        await wait(RM ? 50 : 350);
-        // Avant le château : la carte de France, d'où part Quenotte et où elle va cette nuit
-        await fondu(() => { this.unmount(); this.carte(r); }, 700);
-      });
+      NARR.action(A.icone('lanterne') + ' ' + T(D.accueil.bouton), ouvrir);
     },
-    unmount() { window.removeEventListener('resize', this.cadre); clearTimeout(this.tCarte); this.jetonCarte = (this.jetonCarte || 0) + 1; },
-
-    // ---------- La carte de France (hors de la frise des scènes) ----------
-    // Le château dans les Ardennes, une étoile sur le département de l'enfant : un toucher sur l'étoile
-    // trace le chemin de la nuit (une courbe en pointillés), puis « En route ! » ouvre le château.
-    carte(r) {
-      const mienCarte = this.jetonCarte = (this.jetonCarte || 0) + 1, encoreCarte = () => this.jetonCarte === mienCarte;
-      etape(() => { complete(0); fondu(() => show(1, { scene: 0 }), 500); });
+    unmount() { this.jetonCarte = (this.jetonCarte || 0) + 1; },
+    // La page de garde, dessinée dès le départ sous la couverture
+    preparerCarte(r) {
       const K = window.CARTE, ville = window.PROFIL.profil.ville;
       let et = K.etoileDepartement(ville.departement);
       const [cx, cy] = K.CHATEAU;
@@ -364,63 +358,51 @@
         const h = Math.max(70, d * 0.38), borne = v => Math.max(10, Math.min(860, v));
         trajet = `M${cx} ${cy}Q${borne((cx + et.x) / 2 + nx * h).toFixed(0)} ${borne((cy + et.y) / 2 + ny * h).toFixed(0)} ${et.x} ${et.y}`;
       }
-      const nomX = et ? Math.max(170, Math.min(730, et.x)) : 0, nomY = et ? (et.y > 220 ? et.y - 52 : et.y + 82) : 0;
-      const versGauche = et && et.x < cx;
-      r.className = 'scene ch-0';
-      r.innerHTML = `<section class="ch origine${et ? '' : ' sans-etoile'}">
-  <p class="origine-aide">${esc(T(D.origine.aide))}</p>
-  <svg class="carte-france" viewBox="0 0 900 870" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Carte de France : le château fort de Sedan, maison de Quenotte, dans les Ardennes${et ? ', et ' + esc(ville.nom) : ''}">
-    ${trajet ? `<defs><mask id="masque-trajet" maskUnits="userSpaceOnUse" x="0" y="0" width="900" height="870"><path class="trace" d="${trajet}" fill="none" stroke="#fff" stroke-width="16" stroke-linecap="round"/></mask></defs>` : ''}
-    <path class="pays" d="${K.CONTOUR_FRANCE}"/><path class="pays" d="${K.CONTOUR_CORSE}"/>
-    ${et && et.outreMer ? `<g class="outre-mer"><rect x="40" y="722" width="140" height="116" rx="16"/><text x="110" y="862">Outre-mer</text></g>` : ''}
-    ${trajet ? `<path class="trajet" d="${trajet}" mask="url(#masque-trajet)"/>` : ''}
-    <g class="chateau" transform="translate(${cx},${cy})">
-      <circle r="58" cy="-22" fill="url(#glow)"/>
-      <path d="M-30 0V-34h8v6h6v-6h8v6h6v-6h8v6h6v-6h8V0z M-12 -34V-56h-5l17-18 17 18h-5v22z" fill="#d8cfe6" stroke="#5b5480" stroke-width="2.5" stroke-linejoin="round"/>
-      <path d="M-5 0v-12a5 5 0 0 1 10 0V0z" fill="#3b2a55"/><rect x="-3" y="-50" width="6" height="8" rx="3" fill="#FFC857"/>
-      <path d="M0 -74v-14l12 4-12 4" fill="#D64045"/>
-    </g>
-    <text class="nom-chateau" x="${cx}" y="${cy - 100}">Château fort de Sedan</text>
-    ${et ? `<g class="etoile-ville" role="button" tabindex="0" aria-label="L'étoile de ${esc(ville.nom)}" transform="translate(${et.x},${et.y})">
-      <circle class="halo" r="54" fill="url(#glow)"/><circle class="cible" r="48" fill="transparent"/>
-      <use href="#etoile5" x="-26" y="-26" width="52" height="52"/>
-    </g>
-    <text class="nom-ville" x="${nomX}" y="${nomY}">${esc(ville.nom)}</text>
-    <g class="main-aide" transform="translate(${et.x + 16},${et.y + 18})" aria-hidden="true"><use href="#main" x="-20" y="-6" width="60" height="70"/></g>
-    <g class="voyageuse" aria-hidden="true"><g transform="scale(${versGauche ? -1 : 1} 1)"><circle cx="0" cy="-8" r="30" fill="url(#glow)"/><use href="#souris-side" x="-34" y="-40" width="68" height="52"/></g>
-      <animateMotion id="vol-carte" begin="indefinite" dur="2.4s" fill="freeze" calcMode="spline" keySplines="0.4 0 0.6 1" keyTimes="0;1" path="${trajet}"/></g>` : ''}
-  </svg>
-</section>`;
+      this.etoile = et;
+      $('.lv-garde', r).innerHTML = window.OUVERTURE.garde({ etoile: et, trajet, ville: ville.nom, enfant: C.enfant, aide: T(D.origine.aide) });
+      if (!et) r.querySelector('.origine').classList.add('sans-etoile');
+    },
+    // Le livre est ouvert : Quenotte se présente, l'enfant touche son étoile, puis on plonge sur les Ardennes
+    carte(r) {
+      const mien = this.jetonCarte, encore = () => this.jetonCarte === mien;
+      etape(() => { complete(0); fondu(() => show(1, { scene: 0 }), 500); });
+      const sec = $('.origine', r), svg = $('.lv-garde svg', r), et = this.etoile;
       const ensuite = async () => {
-        if (!encoreCarte()) return;
-        await NARR.dire(B(D.origineVille)); if (!encoreCarte()) return;
+        if (!encore()) return;
+        await NARR.dire(B(D.origineVille)); if (!encore()) return;
         NARR.action(A.icone('suite') + ' ' + T(D.origineVille.bouton), async () => {
           SON.unlock(); SON.play('clic'); NARR.action(null);
           complete(0);
           await fondu(() => show(1, { scene: State.unlocked > 1 ? 0 : State.scene }), 900);
         });
       };
+      // Le zoom sur les Ardennes, les lieux, puis le chemin jusqu'à la maison de l'enfant
+      const voyage = async () => {
+        if (!encore()) return;
+        await window.OUVERTURE.zoom(svg, RM); if (!encore()) return;
+        await window.OUVERTURE.voyage(svg, RM, ms => wait(ms), encore); if (!encore()) return;
+        sec.classList.add('arrive'); SON.play('etoile');
+        ensuite();
+      };
       const dit = NARR.dire(B(D.origine));
-      if (!et) { dit.then(() => { this.tCarte = setTimeout(ensuite, RM ? 0 : 600); }); return; }
-      const sec = $('.origine', r), etoile = $('.etoile-ville', r);
-      dit.then(() => { if (!sec.classList.contains('trace-fait')) $('.main-aide', r).classList.add('on'); });
+      if (!et) { dit.then(() => wait(RM ? 0 : 600)).then(voyage); return; }
+      const etoile = $('.etoile-ville', r);
+      dit.then(() => { if (encore() && !sec.classList.contains('trace-fait')) $('.main-aide', r).classList.add('on'); });
       let touche = false;
       const toucher = async () => {
         if (touche) return; touche = true;
         SON.unlock(); SON.play('filante');
-        sec.classList.add('trace-fait'); $('.main-aide', r).classList.remove('on');
-        // Le chemin se dessine du château jusqu'à l'étoile, Quenotte le suit
-        const trace = $('.trace', r), L = trace.getTotalLength();
-        if (!RM) {
+        sec.classList.add('trace-fait', 'vole'); $('.main-aide', r).classList.remove('on');
+        // Le chemin se dessine du château jusqu'à l'étoile
+        const trace = $('.trace', r);
+        if (trace && !RM) {
+          const L = trace.getTotalLength();
           trace.style.strokeDasharray = L + ' ' + L; trace.style.strokeDashoffset = L;
           trace.getBoundingClientRect();
-          trace.style.transition = 'stroke-dashoffset 2.4s cubic-bezier(.4,0,.6,1)'; trace.style.strokeDashoffset = 0;
-          try { $('#vol-carte', r).beginElement(); } catch (e) { }
+          trace.style.transition = 'stroke-dashoffset 1.2s cubic-bezier(.4,0,.6,1)'; trace.style.strokeDashoffset = 0;
         }
-        sec.classList.add(RM ? 'arrive' : 'vole');
-        await wait(RM ? 50 : 2400);
-        sec.classList.add('arrive'); SON.play('etoile');
-        ensuite();
+        await wait(RM ? 50 : 1500);
+        voyage();
       };
       etoile.addEventListener('click', toucher);
       etoile.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toucher(); } });

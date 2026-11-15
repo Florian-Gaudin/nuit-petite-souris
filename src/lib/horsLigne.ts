@@ -14,7 +14,19 @@ export function racineSite(): string {
 
 export function activerHorsLigne(): void {
   if (plateforme.natif || import.meta.env.DEV || !('serviceWorker' in navigator)) return;
-  const enregistrer = () => navigator.serviceWorker.register(racineSite() + 'sw.js').catch(e => console.warn('Hors connexion indisponible :', e));
+  const enregistrer = () => navigator.serviceWorker.register(racineSite() + 'sw.js').then(reg => {
+    // L'appli installée reste souvent ouverte en arrière-plan : à chaque retour, on demande s'il existe une nouvelle version
+    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') reg.update().catch(() => { }); });
+  }).catch(e => console.warn('Hors connexion indisponible :', e));
+  // Une nouvelle version vient de prendre le relais : on recharge, mais seulement quand l'enfant n'est pas en pleine
+  // lecture (l'appli revient au premier plan), pour ne jamais couper une scène
+  const dejaControle = !!navigator.serviceWorker.controller;
+  let aRecharger = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (!dejaControle) return; // la toute première installation : rien à recharger
+    if (document.visibilityState === 'hidden') location.reload(); else aRecharger = true;
+  });
+  document.addEventListener('visibilitychange', () => { if (aRecharger && document.visibilityState === 'visible') location.reload(); });
   // Le script de la page s'exécute parfois après son chargement complet (événement « load » déjà passé)
   if (document.readyState === 'complete') enregistrer(); else window.addEventListener('load', enregistrer, { once: true });
 }

@@ -612,7 +612,7 @@ body.mode-choix .fil,body.mode-choix .bandeau{display:none}
 .carte-france{flex:1;min-height:0;width:100%;display:block}
 .carte-france .pays{fill:#2b3470;stroke:#8e97d6;stroke-width:3;stroke-linejoin:round}
 .carte-france .outre-mer rect{fill:#2b3470;stroke:#8e97d6;stroke-width:3;stroke-dasharray:10 8}
-.carte-france text{font-family:var(--display);font-weight:800;text-anchor:middle;paint-order:stroke;stroke:#141A3A;stroke-width:8px;stroke-linejoin:round}
+.carte-france:not(.lv-svg) text{font-family:var(--display);font-weight:800;text-anchor:middle;paint-order:stroke;stroke:#141A3A;stroke-width:8px;stroke-linejoin:round}
 .carte-france .outre-mer text{fill:var(--muet);font-size:28px}
 .carte-france .nom-chateau{fill:#e6e0f5;font-size:30px}
 .carte-france .nom-ville{fill:var(--lanterne);font-size:42px;opacity:0;transition:opacity .6s}
@@ -980,3 +980,43 @@ html.grand-texte .livre-ancien .livre-texte p{font-size:1.5rem}
 .decor-foret .tap.fuit .halo,.decor-foret .tap.fuit .indice{transition:opacity .4s;opacity:0}
 @keyframes sanglier-fuit{0%{transform:none}18%{transform:translateY(-10px)}30%{transform:translate(20px,0)}45%{transform:translate(90px,-8px)}60%{transform:translate(170px,0)}75%{transform:translate(260px,-8px)}100%{transform:translate(480px,0)}}
 @media (prefers-reduced-motion:reduce){.decor-foret .tap.fuit .sanglier{animation:none;opacity:0}}
+
+/* ---------- L'ouverture : la couverture du livre, puis la page de garde ---------- */
+.origine.ouverture-livre{background:radial-gradient(circle at 50% 35%,#4a2e1a,#1a0f08 75%);gap:6px;padding:8px 8px 6px}
+.lv-scene{flex:1 1 auto;min-height:0;width:100%;display:flex;justify-content:center}
+.lv-ecran{position:relative;height:100%;width:100%;max-width:min(100%,calc((100dvh - var(--fil-h) - var(--bandeau-h)) * .5));perspective:1700px}
+.lv-garde,.lv-couverture{position:absolute;inset:0}
+.lv-garde svg,.lv-couverture svg{width:100%;height:100%;display:block}
+.lv-couverture{border:0;padding:0;margin:0;background:none;cursor:pointer;transform-origin:left center;backface-visibility:hidden;transition:transform 1.3s cubic-bezier(.62,0,.28,1);z-index:2}
+.lv-couverture:disabled{cursor:default}
+.lv-couverture:focus-visible{outline:3px solid var(--lanterne);outline-offset:-4px;border-radius:12px}
+.lv-ecran.ouvert .lv-couverture{transform:rotateY(-165deg);pointer-events:none}
+.lv-ombre{position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.55),transparent 70%);opacity:0;pointer-events:none;z-index:1}
+.lv-ecran.ouvert .lv-ombre{animation:lv-ombre 1.4s ease-out}
+@keyframes lv-ombre{0%{opacity:.9}100%{opacity:0}}
+.lv-titre-or{animation:lv-reflet 4s ease-in-out infinite}
+@keyframes lv-reflet{0%,100%{opacity:1}50%{opacity:.8}}
+.lv-scintille{animation:lv-scintille 2.4s ease-in-out infinite}
+.lv-scintille:nth-child(2n){animation-delay:-.8s}.lv-scintille:nth-child(3n){animation-delay:-1.6s}
+@keyframes lv-scintille{0%,100%{opacity:.25}50%{opacity:1}}
+.lv-lanterne{animation:lv-lanterne 2.2s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+@keyframes lv-lanterne{0%,100%{opacity:.35;transform:scale(.9)}50%{opacity:.7;transform:scale(1.1)}}
+.lv-invite{animation:lv-invite 1.8s ease-in-out infinite}
+@keyframes lv-invite{0%,100%{opacity:.55}50%{opacity:1}}
+.lv-balayage{animation:lv-balayage 5s ease-in-out infinite}
+@keyframes lv-balayage{0%,60%{transform:translateX(-260px)}100%{transform:translateX(260px)}}
+.lv-lieu{opacity:0;transition:opacity .5s}.lv-lieu.vu{opacity:1}
+.lv-consigne{animation:lv-invite 1.6s ease-in-out infinite}
+.origine.trace-fait .lv-consigne{display:none}
+/* La France sur parchemin (la carte de l'ancienne version restait sombre) */
+.lv-svg.carte-france .pays{fill:#efdcae;stroke:#8B5A3C;stroke-width:1.4}
+.lv-svg.carte-france .outre-mer rect{fill:#efdcae;stroke:#8B5A3C;stroke-width:1.2}
+.lv-svg.carte-france .outre-mer text{fill:#5c3a24}
+.lv-svg.carte-france text{stroke:none}
+.lv-svg.carte-france .nom-chateau,.lv-svg.carte-france .nom-ville,.lv-svg.carte-france .outre-mer text{text-anchor:middle}
+.lv-svg.carte-france .nom-chateau{fill:#5c3a24;font-family:var(--serif);font-style:italic;font-weight:400;font-size:28px}
+.lv-svg.carte-france .nom-ville{fill:#7a1f1f;font-family:var(--serif);font-size:34px}
+.lv-svg.carte-france .trajet{stroke:#D64045;stroke-width:2.6;stroke-dasharray:5 6}
+.ouverture-livre .retour-choix{flex:none}
+@media (prefers-reduced-motion:reduce){.lv-couverture,.lv-lieu{transition:none}.lv-titre-or,.lv-scintille,.lv-lanterne,.lv-invite,.lv-balayage,.lv-consigne,.lv-ecran.ouvert .lv-ombre{animation:none}}
+.carnet.mode-livre,.carnet.mode-livre *{touch-action:pan-y}
