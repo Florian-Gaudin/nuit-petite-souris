@@ -156,13 +156,17 @@ ${o.pierre ? '<rect x="-14" y="-40" width="28" height="18" rx="2" fill="#cbbfa8"
       + '<ellipse cx="60" cy="52" rx="34" ry="13" fill="#b9801a"/><ellipse cx="60" cy="48" rx="34" ry="13" fill="#E8B04A"/><ellipse cx="60" cy="46" rx="27" ry="9" fill="#F6CF7A"/>'
       + '<g fill="#fff">' + [[48, 44], [56, 48], [64, 43], [72, 47], [52, 50], [68, 50], [60, 45], [44, 48], [76, 44]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="1.6"/>`).join('') + '</g>'
       + '<path d="M60 47L94 52l-6 8z" fill="#FFF6E0" opacity=".9"/><path d="M92 62l10-3v6z" fill="#E8B04A" stroke="#b9801a"/>',
-    // La légende : le livre ouvert, Bayard et les quatre casques des frères
-    legende: '<rect width="120" height="90" fill="#3a2f6b"/>' + etoilesC(10)
-      + '<path d="M10 80V22q25-10 50 0 25-10 50 0v58q-25-10-50 0-25-10-50 0z" fill="#FFF6E0" stroke="#8B5A3C" stroke-width="2"/><path d="M60 22v58" stroke="#8B5A3C" stroke-width="2"/>'
-      + '<g transform="translate(34,52) scale(.24)"><ellipse cx="0" cy="58" rx="80" ry="32" fill="#6b4a33"/><path d="M54 44l34-46 26 10-18 54z" fill="#6b4a33"/><ellipse cx="112" cy="0" rx="30" ry="15" fill="#6b4a33" transform="rotate(28 112 0)"/><g fill="#5c3c28"><rect x="-56" y="70" width="13" height="58" rx="5"/><rect x="-34" y="70" width="13" height="58" rx="5"/><rect x="30" y="70" width="13" height="58" rx="5"/><rect x="52" y="70" width="13" height="58" rx="5"/></g><path d="M-72 36q-36 6-34 50q10-18 30-30z" fill="#4a3222"/></g>'
-      + '<g>' + [[72, '#D64045'], [84, '#3E7C8F'], [96, '#FFC857'], [108, '#3E9A6B']].map(([x, c], k) => `<path d="M${x - 6} ${52 + (k % 2) * 6}a6 5.5 0 0 1 12 0z" fill="#dfe2ee" stroke="#8a90a8"/><path d="M${x} ${46 + (k % 2) * 6}q-1-7 5-8q-3 4-2 8z" fill="${c}"/>`).join('') + '</g>',
+    // La légende : un livre ancien ouvert, et sur ses pages Bayard au galop avec les quatre frères (le dessin du théâtre)
+    legende: () => '<rect width="120" height="90" fill="#3a2f6b"/>' + etoilesC(12)
+      + '<path d="M4 86V18q28-9 56 0 28-9 56 0v68q-28-9-56 0-28-9-56 0z" fill="#7a1f1f"/>'
+      + '<path d="M7 83V20q26-8 53 0 27-8 53 0v63q-26-8-53 0-27-8-53 0z" fill="#f0dfb4" stroke="#C9A227" stroke-width="1.2"/>'
+      + '<path d="M60 20v63" stroke="#8B5A3C" stroke-width="1.6"/><path d="M56 21v61M64 21v61" stroke="#c9a978" stroke-width="3" opacity=".5"/>'
+      + '<rect x="12" y="24" width="9" height="9" fill="#2b3a8f" stroke="#C9A227" stroke-width="1"/><text x="16.5" y="31.4" text-anchor="middle" font-family="Libre Baskerville, serif" font-weight="700" font-size="7.5" fill="#FFF6E0">B</text>'
+      + '<g stroke="#8a6a4a" stroke-width=".9" opacity=".55">' + [26, 30, 34].map(y => `<path d="M24 ${y}h28M68 ${y}h38"/>`).join('') + '</g>'
+      + '<path d="M10 80q50-10 100 0" fill="none" stroke="#9ab86a" stroke-width="3" opacity=".7"/>'
+      + `<g transform="translate(57,40) scale(.225)">${window.THEATRE.dessins.bayard(true)}</g>`,
   };
-  const icone = id => `<svg viewBox="0 0 120 90" aria-hidden="true">${ICONES[id] || ''}</svg>`;
+  const icone = id => { const d = ICONES[id]; return `<svg viewBox="0 0 120 90" aria-hidden="true">${typeof d === 'function' ? d() : d || ''}</svg>`; };
 
   // ---------- La fenêtre du carnet ----------
   function ouvrir(o) {
