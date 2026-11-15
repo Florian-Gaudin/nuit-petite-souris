@@ -495,10 +495,20 @@ input,textarea,[contenteditable]{-webkit-user-select:text;user-select:text;-webk
 @keyframes apparait{from{opacity:0}to{opacity:1}}
 .cam-souris,.cam-bateau{transition:transform 1.8s ease-in-out}
 .cam.instant .cam-souris,.cam.instant .cam-bateau,.cam.instant .det{transition:none!important;animation:none!important}
-.cam #dent1{transition:transform 1.2s ease-in,opacity 1.2s}
-.cam #dent1.prise{transform:translate(-50px,-40px) scale(.2);opacity:0}
-.cam .cam-mot{opacity:0;transform:translate(-40px,-30px) scale(.4);transition:transform 1s ease-out,opacity .8s}
-.cam .cam-mot.pose{opacity:1;transform:none}
+/* La chambre en gros plan sur l'oreiller : la patte prend la dent, puis glisse le petit mot */
+.cam #cam-chambre{transform-box:view-box;transform-origin:0 0;transition:transform 1s ease-in-out}
+.cam.zoom #cam-chambre{transform:translate(200px,150px) scale(3.2) translate(-88px,-172px)}
+.cam #patte{opacity:0;transform:translate(84px,244px) rotate(80deg);transition:transform .75s ease-in-out,opacity .3s}
+.cam.zoom #patte{opacity:1}
+.cam #patte.tend{transform:translate(85px,176px) rotate(80deg)}
+.cam #patte.pose{transform:translate(84px,178px) rotate(80deg)}
+.cam #patte .patte-lettre{opacity:0}
+.cam #patte.lettre .patte-lettre{opacity:1}
+.cam #dent1{transition:transform .75s ease-in-out,opacity .3s .55s}
+.cam #dent1.prise{transform:translate(0,68px);opacity:0}
+.cam .cam-mot{opacity:0;transition:opacity .2s}
+.cam .cam-mot.pose{opacity:1}
+.cam.instant #cam-chambre,.cam.instant #patte,.cam.instant #dent1{transition:none!important}
 .cam #cs2.coucou use{animation:coucou .5s ease-in-out 3}
 @keyframes coucou{0%,100%{transform:rotate(0)}50%{transform:rotate(-8deg)}}
 .cam-grain{position:absolute;inset:0;pointer-events:none;z-index:4;background:repeating-linear-gradient(0deg,rgba(0,0,0,.22) 0 2px,transparent 2px 4px);mix-blend-mode:multiply}
@@ -1116,3 +1126,6 @@ html.grand-texte .livre-ancien .livre-texte p{font-size:1.5rem}
 .decor-lievre .arrivee .quenotte use{animation:trotte .45s ease-in-out 4}
 @keyframes arrivee-souris{from{transform:translateX(-260px)}to{transform:none}}
 @media (prefers-reduced-motion:reduce){.decor-lievre .arrivee,.decor-lievre .arrivee .quenotte use{animation:none}}
+
+/* Les mots propres à l'enfant (prénom, ville, chat, doudou…) en gras dans le bandeau */
+.bandeau-texte b.perso{font-weight:800}

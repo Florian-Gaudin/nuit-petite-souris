@@ -644,7 +644,7 @@
     },
     mount(r) {
       const self = this, cam = $('#cam', r), dets = $('#dets', r), ts = $('#cam-ts', r), nom = $('#cam-nom', r);
-      const cs1 = $('#cs1', r), cs2 = $('#cs2', r), bat = $('#bateau2', r), dent = $('#dent1', r), mot = $('#mot1', r), salon = $('#cam-salon', r), chambre = $('#cam-chambre', r);
+      const patte = $('#patte', r), cs2 = $('#cs2', r), bat = $('#bateau2', r), dent = $('#dent1', r), mot = $('#mot1', r), salon = $('#cam-salon', r), chambre = $('#cam-chambre', r);
       heure('02:47'); MUS.ambiance('camera');
       etape(() => { complete(3); badge('hibou'); show(4); });
       const mv = (el, x, y) => { el.style.transform = `translate(${x}px,${y}px)`; };
@@ -670,32 +670,35 @@
         });
       };
       const evenements = [
-        [0.3, () => { mv(cs2, -90, 200); mv(bat, -40, 236); mv(cs1, -90, 232); }],
+        [0.3, () => { mv(cs2, -90, 200); mv(bat, -40, 236); }],
         [0.6, () => chuchote(D.camera.intro)],
         [1.1, () => det('cheminee', C.cachetteEtiquette, 25, 40, 50, 43, 'bas')],
         [1.9, () => { mv(cs2, 40, 200); mv(bat, 90, 236); SON.play('pas'); }],
         [3.8, () => { mv(cs2, 70, 56); mv(bat, 120, 92); SON.play('pas'); rm('cheminee'); }],
         [5, () => { mv(bat, 160, 84); }],
-        [5.8, () => { det('bateau', C.cadeau === 'piece' ? 'PIÈCE – SÈCHE' : 'BILLET – SÈCHE', 38, 26, 30, 12); chuchote(D.camera.cheminee); }],
+        [5.8, () => { det('bateau', C.cadeau === 'piece' ? 'PIÈCE' : 'BILLET – SÈCHE', 38, 26, 30, 12); chuchote(D.camera.cheminee); }],
         [7.3, () => { cs2.classList.add('coucou'); }],
         [8.8, () => { cs2.classList.remove('coucou'); mv(cs2, -90, 200); SON.play('pas'); rm('bateau'); }],
+        // La chambre : un plan large, puis un gros plan sur l'oreiller où l'on ne voit que la patte de Quenotte
         [10.2, () => { salon.setAttribute('hidden', ''); chambre.removeAttribute('hidden'); nom.textContent = 'CAM 2 · CHAMBRE'; dets.innerHTML = ''; SON.play('bip'); chuchote(D.camera.chambre); }],
-        [13.8, () => { mv(cs1, 60, 232); SON.play('pas'); }],
-        [17.6, () => { mv(cs1, 62, 122); SON.play('pas'); }],
-        [20.8, () => { dent.classList.add('prise'); chuchote(D.camera.dent); }],
-        [21.6, () => det('dent', 'DENT – TROUVÉE', 30, 54, 5, 6, 'droite')],
-        [23.6, () => { mot.classList.add('pose'); SON.play('papier'); rm('dent'); det('mot', 'PETIT MOT – SOUS L\'OREILLER', 28, 54, 8, 7, 'droite'); }],
-        [27.6, () => { mv(cs1, 220, 236); SON.play('pas'); rm('mot'); }],
-        [29.6, () => det('lit', 'SOUS LE LIT – MONSTRES : 0', 8, 79, 20, 6)],
-        [33.6, () => { mv(cs1, -90, 236); SON.play('pas'); rm('lit'); chuchote(D.camera.fin); }],
-        [36.2, () => { cam.classList.add('fin'); $('#btn-revoir', r).hidden = false; SON.play('alerte'); heure('02:52'); NARR.action(T(D.camera.bouton) + ' ' + A.icone('suite'), () => { complete(3); badge('hibou'); show(4); }); }],
+        [10.8, () => { cam.classList.add('zoom'); nom.textContent = 'CAM 2 · ZOOM ×3'; SON.play('bip'); }],
+        [11.8, () => det('dent', 'DENT – TROUVÉE', 42, 42, 10, 13, 'droite')],
+        [12.2, () => { patte.classList.add('tend'); SON.play('pas'); }],
+        [13.0, () => { patte.classList.remove('tend'); dent.classList.add('prise'); rm('dent'); }],
+        [13.6, () => chuchote(D.camera.dent)],
+        [13.9, () => { patte.classList.add('lettre', 'pose'); SON.play('papier'); }],
+        [14.8, () => { mot.classList.add('pose'); patte.classList.remove('lettre', 'pose'); det('mot', 'PETIT MOT – SOUS L\'OREILLER', 35, 40, 21, 21, 'droite'); }],
+        [16.2, () => { cam.classList.remove('zoom'); nom.textContent = 'CAM 2 · CHAMBRE'; rm('mot'); }],
+        [17.2, () => det('lit', 'SOUS LE LIT – MONSTRES : 0', 8, 79, 20, 6)],
+        [18.4, () => { rm('lit'); chuchote(D.camera.fin); }],
+        [19.2, () => { cam.classList.add('fin'); $('#btn-revoir', r).hidden = false; SON.play('alerte'); heure('02:52'); NARR.action(T(D.camera.bouton) + ' ' + A.icone('suite'), () => { complete(3); badge('hibou'); show(4); }); }],
       ];
       const VITESSE_CAMERA = 1.4;
       const finAt = evenements[evenements.length - 1][0];
       let debut = null, idx = 0, fini = false;
       const horo = s => { const t = 2 * 3600 + 47 * 60 + Math.floor(s * 7); ts.textContent = dateCam() + ' ' + pad(Math.floor(t / 3600)) + ':' + pad(Math.floor(t / 60) % 60) + ':' + pad(t % 60); heure(pad(Math.floor(t / 3600)) + ':' + pad(Math.floor(t / 60) % 60)); };
       const boucle = now => {
-        // Le film est joué un peu plus vite que son minutage (environ vingt-six secondes)
+        // Le film est joué un peu plus vite que son minutage (environ quatorze secondes)
         if (fini || !encore()) return; if (debut == null) debut = now - tTest * 1000 / VITESSE_CAMERA;
         const s = (now - debut) / 1000 * VITESSE_CAMERA;
         while (idx < evenements.length && s >= evenements[idx][0] && !pause) evenements[idx++][1]();
@@ -707,7 +710,7 @@
       const lancer = () => {
         cancelAnimationFrame(self.raf); fini = false; debut = null; idx = 0; pause = false;
         cam.classList.remove('fin'); cam.classList.add('instant'); dets.innerHTML = ''; NARR.action(null);
-        chambre.setAttribute('hidden', ''); salon.removeAttribute('hidden'); nom.textContent = 'CAM 1 · SALON'; dent.classList.remove('prise'); mot.classList.remove('pose'); cs2.classList.remove('coucou');
+        chambre.setAttribute('hidden', ''); salon.removeAttribute('hidden'); nom.textContent = 'CAM 1 · SALON'; dent.classList.remove('prise'); mot.classList.remove('pose'); cs2.classList.remove('coucou'); cam.classList.remove('zoom'); patte.classList.remove('tend', 'lettre', 'pose');
         evenements[0][1](); $('#btn-revoir', r).hidden = true;
         requestAnimationFrame(() => { cam.classList.remove('instant'); self.raf = requestAnimationFrame(boucle); });
       };
@@ -1138,6 +1141,8 @@ ${places.map(dent).join('')}
     setTimeout(() => { if (passerEtape === null && affichages === vue) etape(f); }, 1200);
   };
   NARR.init();
+  // Les mots propres à l'enfant, en gras dans le bandeau (la rivière seulement si les parents l'ont nommée)
+  NARR.personnaliser([C.enfant, C.ville, C.chat, C.poupee, C.frere].concat(C.profil && C.profil.riviere ? [C.riviere, C.Riviere] : []));
   buildFil();
   // Premier toucher : on autorise les sons et on lance la musique d'ambiance
   const GESTES = ['pointerdown', 'touchend', 'click', 'keydown'];

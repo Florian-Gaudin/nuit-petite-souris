@@ -29,14 +29,36 @@ window.NARR = (function () {
     mesure();
   }
 
-  // Découpe en petits groupes de mots (coupés aux virgules et aux fins de phrase)
+  // Les mots propres à l'enfant (prénom, ville, chat, doudou…) : écrits en gras dans le bandeau
+  let gras = null;
+  function personnaliser(valeurs) {
+    const v = (valeurs || []).filter(x => x && String(x).trim().length > 1).map(String)
+      .sort((a, b) => b.length - a.length).map(x => x.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+    gras = v.length ? new RegExp('(?<![\\p{L}\\p{N}])(?:' + v.join('|') + ')(?![\\p{L}\\p{N}])', 'gu') : null;
+  }
+  const echappe = c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c] || c);
+  // Découpe en petits groupes de mots (coupés aux virgules et aux fins de phrase), en HTML : les mots
+  // personnalisés y sont entourés de <b class="perso">
   function groupes(t) {
-    const mots = t.split(/\s+/).filter(Boolean), out = []; let cur = [];
+    const masque = new Uint8Array(t.length);
+    if (gras) { gras.lastIndex = 0; let m; while ((m = gras.exec(t))) for (let k = m.index; k < m.index + m[0].length; k++) masque[k] = 1; }
+    const mots = [], re = /\S+/g; let m;
+    while ((m = re.exec(t))) {
+      let h = '', b = false;
+      for (let k = m.index; k < m.index + m[0].length; k++) {
+        if (masque[k] && !b) { h += '<b class="perso">'; b = true; }
+        if (!masque[k] && b) { h += '</b>'; b = false; }
+        h += echappe(t[k]);
+      }
+      if (b) h += '</b>';
+      mots.push({ brut: m[0], html: h });
+    }
+    const out = []; let cur = [];
     mots.forEach(m => {
       cur.push(m);
-      if (cur.length >= 3 || /[,.!?…:]$/.test(m) || (cur.length >= 2 && /[»]$/.test(m))) { out.push(cur.join(' ')); cur = []; }
+      if (cur.length >= 3 || /[,.!?…:]$/.test(m.brut) || (cur.length >= 2 && /[»]$/.test(m.brut))) { out.push(cur.map(x => x.html).join(' ')); cur = []; }
     });
-    if (cur.length) out.push(cur.join(' '));
+    if (cur.length) out.push(cur.map(x => x.html).join(' '));
     return out;
   }
   const MIN_POLICE = 16;
@@ -70,7 +92,7 @@ window.NARR = (function () {
     el.appendChild(mes);
     let besoin = 0;
     for (const t of liste) {
-      mes.style.fontSize = ''; mes.textContent = t;
+      mes.style.fontSize = ''; mes.innerHTML = groupes(t).join(' ');
       let h = mes.scrollHeight;
       if (grand) h = Math.min(h, maxH); // grand texte : un texte très long défile
       else if (h > maxH) { mes.style.fontSize = MIN_POLICE + 'px'; h = Math.max(maxH, mes.scrollHeight); }
@@ -129,7 +151,7 @@ window.NARR = (function () {
     expression((b && b.expr) || 'sourire');
     el.classList.toggle('chuchote', (b && b.expr) === 'chuchote');
     const gs = groupes(t);
-    texte.innerHTML = gs.map(g => `<span class="mot">${g.replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]))}</span>`).join(' ');
+    texte.innerHTML = gs.map(g => `<span class="mot">${g}</span>`).join(' ');
     ajuster(); // tous les mots sont déjà en place (invisibles) : la taille est calculée sur le texte complet
     const spans = Array.prototype.slice.call(texte.querySelectorAll('.mot'));
     return new Promise(resolve => {
@@ -197,7 +219,7 @@ window.NARR = (function () {
     const max = parseFloat(getComputedStyle(texte).maxHeight);
     return el.offsetHeight - texte.offsetHeight + (isFinite(max) ? max : texte.offsetHeight);
   }
-  return { fixer, hauteurMax, init, dire, attendre, continuer, interrompre, action, cacher, expression, get interrompu() { return !!inter; }, get attend() { return !!attente || !!enCours; }, get lit() { return !!enCours; }, get visible() { return !el.classList.contains('cache'); } };
+  return { personnaliser, fixer, hauteurMax, init, dire, attendre, continuer, interrompre, action, cacher, expression, get interrompu() { return !!inter; }, get attend() { return !!attente || !!enCours; }, get lit() { return !!enCours; }, get visible() { return !el.classList.contains('cache'); } };
 })();
 
 // Module ES (chargé par src/main.ts) : le contenu reste un script qui expose ses objets sur window.

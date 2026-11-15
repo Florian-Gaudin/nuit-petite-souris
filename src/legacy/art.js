@@ -316,9 +316,6 @@ ${etoiles(40, 1000, 500, 5)}
   <!-- oreiller -->
   <path d="M72 170q-6-28 22-28h30q14 0 14 16v10q-10 8-34 8t-32-6z" fill="#0f4a1b" stroke="#39FF14" stroke-width="2"/>
   <path d="M84 148q16-3 40 0" fill="none" stroke="#1d7a2c" stroke-width="1.5"/>
-  <!-- la dent et le petit mot, glissés au bord de l'oreiller -->
-  <g id="dent1"><use href="#dent-cam" x="124" y="165" width="12" height="12"/></g>
-  <g id="mot1" class="cam-mot"><use href="#mot-cam" x="114" y="163" width="26" height="19"/></g>
   <!-- l'enfant endormi -->
   ${window.DESSINS.enfantCam(window.CONFIG.profil.genre)}
   <!-- la couverture qui épouse le corps, avec ses plis -->
@@ -331,7 +328,14 @@ ${etoiles(40, 1000, 500, 5)}
   <circle cx="188" cy="166" r="4.5" fill="#0f4a1b" stroke="#39FF14" stroke-width="1.8"/>
   <!-- une chaussette oubliée -->
   <path d="M30 262q-10 10 0 16 8 4 14-4l4-22h-10z" fill="none" stroke="#2fbf2f" stroke-width="1.5"/>
-  <g id="cs1" class="cam-souris"><use href="#souris-cam" width="70" height="54"/></g>
+  <!-- la dent et le petit mot, qui dépassent du coin de l'oreiller -->
+  <g id="dent1"><use href="#dent-cam" x="78" y="165" width="12" height="12"/></g>
+  <g id="mot1" class="cam-mot"><use href="#mot-cam" x="70" y="163" width="26" height="19"/></g>
+  <!-- la patte de Quenotte, qui monte du bas du gros plan : elle prend la dent, puis glisse le petit mot -->
+  <g id="patte" class="cam-patte"><g class="patte-lettre" transform="rotate(-80)"><use href="#mot-cam" x="-13" y="-9" width="26" height="19"/></g>
+    <path d="M4-5L90-10V10L4 5Z" fill="#0b3a14" stroke="#39FF14" stroke-width="1.4" stroke-linejoin="round"/>
+    <ellipse cx="2" cy="0" rx="7" ry="6.2" fill="#0f4a1b" stroke="#39FF14" stroke-width="1.4"/>
+    <g fill="#0f4a1b" stroke="#39FF14" stroke-width="1"><circle cx="-4.5" cy="-4.2" r="2"/><circle cx="-6" cy="0" r="2"/><circle cx="-4.5" cy="4.2" r="2"/></g></g>
 </g>
 </svg>`;
   }
