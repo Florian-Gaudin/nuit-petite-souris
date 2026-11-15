@@ -1017,10 +1017,11 @@ ${surprises.map(s => { const [x, y] = centre(s.c, s.l); return `<g class="surpri
       window.removeEventListener('keydown', this.clavier); clearTimeout(this.tAide);
       const zone = $('#epi', r), places = window.PLACES_DENTS, P = window.PROFIL.profil;
       const deja = new Set(P.dents.deja), cible = places.find(t => t.d === P.dents.nuit);
-      const dent = t => `<g transform="translate(${t.x.toFixed(1)} ${t.y.toFixed(1)}) rotate(${t.angle.toFixed(1)})"><rect x="${-t.l / 2}" y="${-t.h / 2}" width="${t.l}" height="${t.h}" rx="7" ${t.d === P.dents.nuit ? 'class="place-nuit" fill="none" stroke="#FFC857" stroke-width="2.5" stroke-dasharray="5 4"' : deja.has(t.d) ? 'class="deja" fill="#fff" stroke="#F2A3B5" stroke-width="2"' : 'fill="none" stroke="#6b4a6e" stroke-width="1.5" opacity=".6"'}/></g>`;
+      const dent = t => `<g transform="translate(${t.x.toFixed(1)} ${t.y.toFixed(1)}) rotate(${t.angle.toFixed(1)})"><path d="${window.FORME_DENT(t)}" stroke-linejoin="round" ${t.d === P.dents.nuit ? 'class="place-nuit" fill="none" stroke="#FFC857" stroke-width="2.5" stroke-dasharray="5 4"' : deja.has(t.d) ? 'class="deja" fill="#fff" stroke="#F2A3B5" stroke-width="2"' : 'fill="none" stroke="#6b4a6e" stroke-width="1.5" opacity=".6"'}/></g>`;
       zone.innerHTML = `<svg class="boite" viewBox="0 0 340 400" role="img" aria-label="La boîte à trésors : fais glisser ta dent jusqu'à sa place">
 <rect x="6" y="20" width="328" height="290" rx="22" fill="#6E4630" stroke="#4a2e1e" stroke-width="5"/><rect x="20" y="34" width="300" height="262" rx="16" fill="#3a1f3d"/>
 <g class="paillettes" fill="#FFC857">${[[40, 60], [300, 70], [60, 270], [290, 260], [170, 150]].map(([a, b]) => `<circle cx="${a}" cy="${b}" r="2"/>`).join('')}</g>
+<path d="${window.GENCIVES()}" fill="none" stroke="#5a2f4f" stroke-width="26" stroke-linecap="round" stroke-linejoin="round" opacity=".7"/>
 ${places.map(dent).join('')}
 <text x="170" y="155" text-anchor="middle" font-family="Baloo 2, sans-serif" font-size="15" font-weight="800" fill="#FFC857">${esc(C.enfant)}</text>
 <g class="dent-a-ranger" tabindex="0" role="button" aria-label="Ta dent : fais-la glisser jusqu'à sa place" transform="translate(170,355)"><circle r="34" fill="url(#glow)"/><use href="#dent" x="-20" y="-20" width="40" height="40"/></g>

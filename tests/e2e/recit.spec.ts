@@ -42,8 +42,8 @@ test('Inès : troisième dent, licorne, frère Tom dans la chambre, 10 € sur l
   await page.goto('certificat/#p=' + code(INES));
   await expect(page.locator('.dip-texte')).toContainText('3e dent de lait, une incisive latérale du bas');
   await expect(page.locator('.dip-sign')).toContainText('Paillette');
-  await expect(page.locator('.machoire rect[fill="#D64045"]')).toHaveCount(1);
-  await expect(page.locator('.machoire rect[fill="#F2A3B5"]')).toHaveCount(2);
+  await expect(page.locator('.machoire path[fill="#D64045"]')).toHaveCount(1);
+  await expect(page.locator('.machoire path[fill="#F2A3B5"]')).toHaveCount(2);
 });
 
 test('Jade : appartement au bord de la Seine, doudou linge', async ({ page }) => {

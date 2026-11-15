@@ -53,3 +53,15 @@ test("« Grand texte » : le texte de l'histoire grandit, défile si besoin, et 
   expect(await taille()).toBeGreaterThan(avant * 1.6);
   expect(await audit(page, 'grand texte', ECART_HISTOIRE)).toEqual([]);
 });
+
+test("pas de défilement dans les scènes du voyage, même quand le bandeau change de hauteur", async ({ page }) => {
+  for (const taille of [{ width: 360, height: 640 }, { width: 412, height: 915 }]) {
+    await page.setViewportSize(taille);
+    for (let n = 0; n < 10; n++) {
+      await ouvrir(page, `?chapitre=1&scene=${n}#exemple`);
+      await page.waitForTimeout(500);
+      const deborde = await page.evaluate(() => document.documentElement.scrollHeight - innerHeight);
+      expect(deborde, `scène ${n}, ${taille.width} × ${taille.height}`).toBeLessThanOrEqual(1);
+    }
+  }
+});

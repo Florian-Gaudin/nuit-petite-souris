@@ -304,7 +304,8 @@ window.SCENES = (function () {
   function cadre() {
     if (!svg || !wrap) return;
     const W = wrap.clientWidth || 700;
-    const mesure = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--bandeau-h')) || 0;
+    // Le bandeau change de hauteur avec son texte : on réserve sa hauteur maximale (pas de défilement, pas de décor qui saute)
+    const mesure = (window.NARR && NARR.hauteurMax && NARR.hauteurMax()) || parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--bandeau-h')) || 0;
     const band = mesure || (W > 700 ? 180 : 160);
     // Hauteur disponible : de la position réelle du cadre jusqu'au bandeau (marge de 30 px)
     const haut = wrap.getBoundingClientRect().top + (window.pageYOffset || 0);

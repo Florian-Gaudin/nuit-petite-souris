@@ -148,7 +148,13 @@ window.NARR = (function () {
     actions.appendChild(b); b.classList.add('pop'); return b;
   }
   function cacher(on) { el.classList.toggle('cache', !!on); }
-  return { init, dire, attendre, continuer, interrompre, action, cacher, expression, get interrompu() { return !!inter; }, get attend() { return !!attente || !!enCours; }, get lit() { return !!enCours; }, get visible() { return !el.classList.contains('cache'); } };
+  // La hauteur du bandeau quand son texte occupe toute la place permise : les décors la réservent (jamais de défilement)
+  function hauteurMax() {
+    if (!el || !texte) return 0;
+    const max = parseFloat(getComputedStyle(texte).maxHeight);
+    return el.offsetHeight - texte.offsetHeight + (isFinite(max) ? max : texte.offsetHeight);
+  }
+  return { hauteurMax, init, dire, attendre, continuer, interrompre, action, cacher, expression, get interrompu() { return !!inter; }, get attend() { return !!attente || !!enCours; }, get lit() { return !!enCours; }, get visible() { return !el.classList.contains('cache'); } };
 })();
 
 // Module ES (chargé par src/main.ts) : le contenu reste un script qui expose ses objets sur window.

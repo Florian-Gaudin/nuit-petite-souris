@@ -2,7 +2,7 @@
   // Schéma des 20 dents de lait, vu de face (la droite de l'enfant est à gauche du schéma).
   // Deux modes : choisir la dent tombée cette nuit, ou cocher celles déjà tombées.
   import { nomDent, rangDent, varianteDent } from '../lib/profil';
-  import { PLACES, ETOILE } from '../lib/geometrieDents';
+  import { PLACES, ETOILE, formeDent, gencives } from '../lib/geometrieDents';
 
   let { nuit = $bindable(), deja = $bindable() }: { nuit: number | null; deja: number[] } = $props();
   let mode = $state<'nuit' | 'deja'>(nuit == null ? 'nuit' : 'deja');
@@ -53,6 +53,7 @@
     <text x="332" y="154" class="cote fin">sa gauche</text>
     <text x="170" y="12" class="arcade">en haut</text>
     <text x="170" y="296" class="arcade">en bas</text>
+    <path class="gencive" d={gencives()} />
     {#each DENTS as t (t.d)}
       <g
         class="dent {etat(t.d)}"
@@ -63,7 +64,7 @@
         onclick={() => toucher(t.d)}
         onkeydown={(e) => clavier(e, t.d)}
       >
-        <rect x={-t.l / 2} y={-t.h / 2} width={t.l} height={t.h} rx="7" />
+        <path d={formeDent(t)} />
         {#if etat(t.d) === 'nuit'}<path class="etoile" d={ETOILE} />{/if}
       </g>
     {/each}
@@ -77,6 +78,8 @@
 </div>
 
 <style>
+  .gencive { fill: none; stroke: #F6C3CD; stroke-width: 26; stroke-linecap: round; stroke-linejoin: round; }
+  .dent path:not(.etoile) { stroke-linejoin: round; }
   .schema { display: flex; flex-direction: column; gap: 10px; }
   .modes { display: flex; flex-wrap: wrap; gap: 8px; }
   .modes button { flex: 1 1 180px; display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; border-radius: 14px; border: 2px solid #e2d3ad; background: #fff; font: 700 1rem var(--display); color: var(--encre); cursor: pointer; }
@@ -90,10 +93,10 @@
   .cote.fin { text-anchor: end; }
   .arcade { font: 700 11px var(--display); fill: #7a6220; text-anchor: middle; }
   .dent { cursor: pointer; outline: none; }
-  .dent rect { fill: #fff; stroke: #b9a77a; stroke-width: 2; transition: fill .15s; }
-  .dent:hover rect, .dent:focus-visible rect { stroke: var(--encre); stroke-width: 3; }
-  .dent.deja rect { fill: #f3ead6; stroke: #8a8fa3; stroke-dasharray: 4 3; }
-  .dent.nuit rect { fill: var(--rouge); stroke: var(--rouge2); }
+  .dent path:not(.etoile) { fill: #fff; stroke: #b9a77a; stroke-width: 2; transition: fill .15s; }
+  .dent:hover path:not(.etoile), .dent:focus-visible path:not(.etoile) { stroke: var(--encre); stroke-width: 3; }
+  .dent.deja path:not(.etoile) { fill: #f3ead6; stroke: #8a8fa3; stroke-dasharray: 4 3; }
+  .dent.nuit path:not(.etoile) { fill: var(--rouge); stroke: var(--rouge2); }
   .etoile { fill: #FFC857; }
   .resume { margin: 0; padding: 10px 14px; border-radius: 12px; background: #fff; border: 1px solid #e2d3ad; font-size: 1rem; line-height: 1.4; }
   .resume.aide { color: #7a6220; }
