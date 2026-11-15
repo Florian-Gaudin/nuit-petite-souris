@@ -24,7 +24,8 @@
 .dip-badges-bloc{flex:1 1 260px;display:flex;flex-direction:column;align-items:center;gap:6px}
 .dip-badges-titre{font-family:'Baloo 2',sans-serif;font-weight:800;font-size:1.05rem;color:#7a6220;letter-spacing:.04em}
 .dip-compte{display:inline-block;margin-left:6px;background:#C9A227;color:#fff;border-radius:999px;padding:0 9px;font-size:.9rem}
-.dip-badges{display:flex;flex-wrap:wrap;justify-content:center;gap:10px}
+/* Trois badges par ligne : la colonne reste compacte */
+.dip-badges{display:grid;grid-template-columns:repeat(3,86px);justify-content:center;gap:8px 10px}
 .dip-badge-info{min-height:2.8em;margin:2px 0 0;font-family:'Baloo 2',sans-serif;font-size:.85rem;line-height:1.35;color:#5c4a1e;text-align:center;max-width:30em}
 button.badge-dip{background:none;border:0;padding:4px 2px;border-radius:10px;cursor:pointer;color:inherit;-webkit-tap-highlight-color:transparent}
 button.badge-dip.choisi,button.badge-dip:hover{background:rgba(201,162,39,.16)}
@@ -43,14 +44,21 @@ button.badge-dip.choisi,button.badge-dip:hover{background:rgba(201,162,39,.16)}
 @media print{
   @page{size:A4 portrait;margin:12mm}
   html,body{background:#fff!important;color:#000}
-  .diplome{box-shadow:none;border-radius:0;padding:0;width:100%;min-height:calc(297mm - 26mm)}
-  .dip-bord{min-height:calc(297mm - 26mm);display:flex;flex-direction:column;justify-content:space-between;padding:18mm 14mm 14mm}
-  .dip-nom{font-size:3.4rem}
-  .dip-entete{font-size:1.9rem}
-  .dip-texte{font-size:1.1rem}
-  .badge-dip{width:92px;font-size:.78rem}
+  /* Tout le diplôme sur une seule page A4 : la mâchoire à gauche, les badges sur cinq colonnes à droite */
+  .diplome{box-shadow:none;border-radius:0;padding:0;width:100%;height:calc(297mm - 25mm);box-sizing:border-box;break-inside:avoid;page-break-inside:avoid;overflow:hidden}
+  .dip-bord{height:100%;box-sizing:border-box;display:flex;flex-direction:column;justify-content:space-between;padding:12mm 10mm 9mm}
+  .dip-nom{font-size:3rem}
+  .dip-entete{font-size:1.7rem}
+  .dip-texte{font-size:1.02rem;line-height:1.45}
+  .dip-decerne{margin-top:8px}
+  .dip-milieu{flex-wrap:nowrap;align-items:center;gap:8mm;margin-top:6px}
+  .dip-machoire{flex:0 0 52mm}
+  .dip-badges-bloc{flex:1 1 auto}
+  .dip-badges{grid-template-columns:repeat(5,1fr);gap:6px 4px;width:100%}
+  .badge-dip{width:auto;font-size:.72rem}
+  .dip-pied{margin-top:8px;flex-wrap:nowrap}
+  .tampon{width:100px;height:100px}
   .dip-badge-info{display:none}
-  .tampon{width:120px;height:120px}
   *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
 

@@ -160,3 +160,16 @@ test("la forêt : le sanglier touché s'enfuit", async ({ page }) => {
   await expect(s).toHaveClass(/fuit/);
   expect(await page.evaluate(() => (window as any).APP.state.ardennes)).toContain('foret.sanglier'); // le secret est bien compté
 });
+
+test("les cartes sans feuille de chêne se trouvent aussi pendant le voyage (galette, marionnettes), sans compter pour le badge", async ({ page }) => {
+  await ouvrir(page, '?reset=1#exemple');
+  await ouvrir(page, '?chapitre=1&scene=2#exemple');
+  await page.locator('.tap[data-el="galette"]').dispatchEvent('click');
+  await expect(page.locator('#toast')).toContainText('Nouvelle carte dans le carnet des Ardennes : La galette au sucre');
+  const etat = await page.evaluate(() => (window as any).APP.state.ardennes);
+  expect(etat).toContain('place.galette');
+  // Dans le carnet, la carte porte le tampon « Trouvé pendant le voyage »
+  await page.evaluate(() => { const A = (window as any).APP; A.state.unlocked = 5; A.state.fini = true; A.show(5, { diplome: true }); });
+  await page.locator('#btn-carnet5').click();
+  await expect(page.locator('.carte-ard.trouvee', { hasText: 'galette' })).toHaveCount(1);
+});

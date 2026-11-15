@@ -97,6 +97,17 @@
     SON.play('etoile');
     if (n === SECRETS_ARDENNES.length) setTimeout(() => badge('ardennais'), 1500);
   }
+  // Les cartes du carnet sans feuille de chêne : trouvées en vivant le moment qu'elles racontent (elles ne
+  // comptent pas pour le badge, réservé aux six secrets à la feuille de chêne)
+  function carteArd(sceneId, el) {
+    const cle = sceneId + '.' + el, AR = window.ARDENNES;
+    if (SECRETS_ARDENNES.indexOf(cle) >= 0 || !AR) return;
+    const c = AR.cartes.find(k => k.secret === cle); if (!c) return;
+    const liste = State.ardennes || (State.ardennes = []);
+    if (liste.indexOf(cle) >= 0) return;
+    liste.push(cle); save();
+    toast(AR.nouvelleCarte.replace('{titre}', c.titre), `<svg class="badge-ico" width="34" height="34" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2" fill="#FFF6E0" stroke="#8B5A3C" stroke-width="1.5"/><path d="M8 8h8M8 12h8M8 16h5" stroke="#8B5A3C" stroke-width="1.4" stroke-linecap="round"/></svg>`);
+  }
   function complete(n) { if (State.unlocked < n + 1) { State.unlocked = n + 1; save(); } }
   // ---------- Plein écran ----------
   // Aucun navigateur n'autorise le plein écran sans geste : on le demande au premier toucher.
@@ -233,7 +244,7 @@
       <button class="trait-taille" data-t="8" aria-label="Crayon fin">●</button><button class="trait-taille choisie" data-t="18" aria-label="Gros crayon">⬤</button>
       <button class="gomme" aria-label="Gomme">Gomme</button>
     </div>
-    <div class="actions-dessin"><button class="btn btn-petit" data-a="effacer">Tout effacer</button><button class="btn btn-petit" data-a="annuler">Fermer</button><button class="btn btn-or" data-a="envoyer">Envoyer à ${esc(C.souris)}</button></div>
+    <div class="actions-dessin"><button class="btn btn-petit" data-a="effacer">Tout effacer</button><button class="btn btn-or" data-a="envoyer">Envoyer à ${esc(C.souris)}</button></div>
   </div>
 </div>`);
     const fen = document.body.lastElementChild, toile = $('.toile', fen), g = toile.getContext('2d');
@@ -253,7 +264,6 @@
     $('.gomme', fen).onclick = e => { gomme = true; $$('.couleur', fen).forEach(x => x.classList.remove('choisie')); e.currentTarget.classList.add('choisie'); };
     const fermer = () => { fen.remove(); if (apres) apres(); };
     $('[data-a="effacer"]', fen).onclick = () => { fond(); invite.hidden = false; aDessine = false; };
-    $('[data-a="annuler"]', fen).onclick = fermer;
     $('[data-a="envoyer"]', fen).onclick = () => {
       window.STOCKAGE.ecrire(CLE_DESSIN, toile.toDataURL('image/jpeg', 0.82));
       SON.play('badge'); toast(T(D.dessin.merci), A.icone('patte')); fermer();
@@ -479,7 +489,7 @@
       sceneDemande = null;
       etape(() => window.SCENES.passer());
       window.SCENES.monter($('#ch1', r), {
-        state: State, config: C, T, heure, etoile, ardennais, toast, save,
+        state: State, config: C, T, heure, etoile, ardennais, carteArd, toast, save,
         sceneFaite(i) { if (State.scene < i + 1) { State.scene = Math.min(D.scenes.length - 1, i + 1); save(); } },
         fondu,
         finChapitre() { complete(1); badge('detective'); show(2); },

@@ -429,6 +429,7 @@ window.SCENES = (function () {
     g.classList.add('vu');
     const act = ACTIONS[sc.id][id]; if (act) act(g, null, 0, deuxieme);
     if (premiere) { if (estArdennais(id)) ctx.ardennais(sc.id, id); else ctx.etoile(sc.id, id); compteSecrets(); }
+    if (ctx.carteArd) ctx.carteArd(sc.id, id);
     mainsIndices(false);
     enSecret = true; svg.classList.add('secret'); aideStop();
     const ok = await NARR.interrompre(bulle(deuxieme && el.bulle2 ? el.bulle2 : el.bulle));
@@ -462,6 +463,8 @@ window.SCENES = (function () {
     }
     const apres = APRES[sc.id] && APRES[sc.id][id];
     if (apres) { await apres(g); if (mien !== jeton) return; }
+    if (ctx.carteArd) ctx.carteArd(sc.id, id); // la carte du carnet qui raconte ce moment
+
     if (el.reponse) {
       await NARR.dire(derniere = bulle(el.reponse)); if (mien !== jeton) return;
       // Dernier élément et pas de pont : le bouton arrive tout de suite, sans toucher supplémentaire

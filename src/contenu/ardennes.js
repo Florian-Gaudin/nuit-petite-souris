@@ -15,6 +15,8 @@ window.ARDENNES = {
   titre: "Le carnet des Ardennes",
   intro: "Pendant mon voyage, j'ai traversé les Ardennes, mon pays. Voici ce que je sais de ses trésors. Touche une carte pour la lire !",
   trouve: "Trouvé pendant le voyage !",
+  // Quand l'enfant découvre, pendant le voyage, ce que raconte une carte (sans feuille de chêne)
+  nouvelleCarte: "Nouvelle carte dans le carnet des Ardennes : {titre}",
   aVoir: "À voir",
 
   // ---------- Les cartes « Le savais-tu ? » ----------
@@ -69,7 +71,7 @@ window.ARDENNES = {
       photo: null,
     },
     {
-      id: "meuse", titre: "La Meuse et ses boucles", secret: null,
+      id: "meuse", titre: "La Meuse et ses boucles", secret: "montgolfiere.bruleur",
       texte: [
         "La Meuse traverse les Ardennes en faisant de grandes boucles : on les appelle des méandres.",
         "Vue d'en haut, elle ressemble à un ruban qui se tortille entre les collines couvertes de forêts.",
@@ -109,7 +111,7 @@ window.ARDENNES = {
       photo: null,
     },
     {
-      id: "marionnette", titre: "La capitale des marionnettes", secret: null,
+      id: "marionnette", titre: "La capitale des marionnettes", secret: "place.marionnettiste",
       texte: [
         "Charleville est la capitale mondiale de la marionnette.",
         "Tous les deux ans, des marionnettistes du monde entier y viennent pour un grand festival.",
@@ -119,7 +121,7 @@ window.ARDENNES = {
       photo: null,
     },
     {
-      id: "galette", titre: "La galette au sucre", secret: null,
+      id: "galette", titre: "La galette au sucre", secret: "place.galette",
       texte: [
         "La galette au sucre est un gâteau des Ardennes : une pâte toute moelleuse, avec du sucre et du beurre dessus.",
         "On la partage au goûter, ou le dimanche matin. Miam !",

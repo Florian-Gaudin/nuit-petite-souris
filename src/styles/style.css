@@ -992,7 +992,7 @@ html.grand-texte .livre-ancien .livre-texte p{font-size:1.5rem}
 .decor-foret .tap.fuit .sanglier{animation:sanglier-fuit 1.6s ease-in forwards}
 .decor-foret .tap.fuit .zz{display:none}
 .decor-foret .tap.fuit .halo,.decor-foret .tap.fuit .indice{transition:opacity .4s;opacity:0}
-@keyframes sanglier-fuit{0%{transform:none}18%{transform:translateY(-10px)}30%{transform:translate(20px,0)}45%{transform:translate(90px,-8px)}60%{transform:translate(170px,0)}75%{transform:translate(260px,-8px)}100%{transform:translate(480px,0)}}
+@keyframes sanglier-fuit{0%{transform:none;opacity:1}18%{transform:translateY(-10px)}30%{transform:translate(16px,-4px)}45%{transform:translate(60px,-16px)}60%{transform:translate(110px,-50px)}75%{transform:translate(170px,-100px);opacity:1}100%{transform:translate(260px,-150px);opacity:0}}
 @media (prefers-reduced-motion:reduce){.decor-foret .tap.fuit .sanglier{animation:none;opacity:0}}
 
 /* ---------- L'ouverture : la couverture du livre, puis la page de garde ---------- */
@@ -1089,7 +1089,7 @@ html.grand-texte .livre-ancien .livre-texte p{font-size:1.5rem}
 .carte-livre:hover,.carte-livre:focus-visible{border-color:#f6e08a}
 .carte-livre .livre-mini{flex:none;width:96px}
 .carte-livre .livre-mini svg{width:100%;height:auto;max-width:none;border-radius:0;filter:drop-shadow(0 4px 6px rgba(0,0,0,.4))}
-.carte-livre .livre-txt{display:flex;flex-direction:column;gap:4px;min-width:0}
+.carte-livre .livre-txt{display:flex;flex-direction:column;gap:4px;min-width:0;padding-right:58px} /* place pour le ruban du coin */
 .carte-livre strong{font-family:var(--serif);font-size:1.15rem;color:#f6e08a}
 .carte-livre small{font-size:.9rem;font-weight:600;color:#F3E3BF}
 /* Le reflet doré qui balaie la carte, et quelques étincelles */
@@ -1099,7 +1099,7 @@ html.grand-texte .livre-ancien .livre-texte p{font-size:1.5rem}
 .carte-livre .etincelle::before,.carte-livre .etincelle::after{content:'';position:absolute;left:50%;top:50%;width:14px;height:2px;margin:-1px 0 0 -7px;background:#ffe9a0;border-radius:2px}
 .carte-livre .etincelle::after{transform:rotate(90deg)}
 @keyframes etincelle{0%,100%{opacity:0;transform:scale(.4)}50%{opacity:1;transform:scale(1)}}
-.ruban-livre{position:absolute;top:14px;right:-38px;transform:rotate(35deg);background:#C9A227;color:#3b2a00;font:800 .7rem var(--display);padding:3px 40px;box-shadow:0 2px 4px rgba(0,0,0,.3)}
+.ruban-livre{position:absolute;top:24px;right:-46px;transform:rotate(35deg);background:#C9A227;color:#3b2a00;font:800 .7rem var(--display);padding:3px 40px;box-shadow:0 2px 4px rgba(0,0,0,.3)}
 /* Dans la carte : le livre fermé respire, comme pour dire « ouvre-moi » */
 .livre-ferme{display:block;margin:0 auto;border:0;padding:0;background:none;cursor:pointer;width:min(62%,240px);animation:livre-respire 2.4s ease-in-out infinite alternate}
 .livre-ferme svg{display:block;width:100%;height:auto;filter:drop-shadow(0 8px 14px rgba(60,30,10,.4))}

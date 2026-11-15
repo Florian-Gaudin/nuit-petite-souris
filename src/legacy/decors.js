@@ -59,7 +59,7 @@ ${tap('sac', 'Le sac de Quenotte', `${halo(0, 10, 56)}
 
   // ---------- 2. La forêt des Ardennes ----------
   function foret(nuit) {
-    const sx = 120, sy = 362, sw = 170;
+    const sx = 104, sy = 418, sw = 170;
     const L = A.pointSouris(sx, sy, sw, 'lanterne');
     const champi = (x, y, s, i) => `<g class="champi" data-sub="${i}" transform="translate(${x},${y}) scale(${s})"><circle class="champi-lueur" cx="0" cy="-16" r="70" fill="url(#halo-or)"/><rect x="-10" y="-10" width="20" height="34" rx="7" fill="#E9E2D6"/><path class="chapeau" d="M-36-6q36-48 72 0z" fill="#6b4a5a"/><circle class="pois" cx="-12" cy="-22" r="4" fill="#9a7a8a"/><circle class="pois" cx="10" cy="-30" r="3" fill="#9a7a8a"/><circle class="pois" cx="18" cy="-14" r="3.5" fill="#9a7a8a"/></g>`;
     let fars = '';
@@ -68,23 +68,32 @@ ${tap('sac', 'Le sac de Quenotte', `${halo(0, 10, 56)}
 ${A.fond(nuit, 31, null)}
 <rect x="0" y="-1100" width="1000" height="1700" fill="#0d1430" opacity=".45"/>
 ${fars}
-<path d="M0 600V480Q500 460 1000 480V600Z" fill="#14271f"/>
-<path d="M-20 560Q300 470 520 500T1020 470" fill="none" stroke="#2b3b36" stroke-width="70" stroke-linecap="round"/>
-<g fill="#1a1226"><rect x="30" y="0" width="52" height="490"/><path d="M10 490q46-30 92 0z"/><rect x="560" y="0" width="58" height="490"/><path d="M540 490q49-30 98 0z"/><rect x="905" y="0" width="62" height="490"/><path d="M885 490q51-30 102 0z"/></g>
+<defs><linearGradient id="foret-rayon" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e8ecff" stop-opacity=".3"/><stop offset="1" stop-color="#e8ecff" stop-opacity=".06"/></linearGradient></defs>
+<!-- Les grands troncs, plantés à différentes hauteurs de la colline -->
+<g fill="#1a1226"><rect x="196" y="-300" width="46" height="820"/><rect x="368" y="-300" width="40" height="770"/><rect x="900" y="-300" width="54" height="480"/></g>
+<!-- La colline : elle monte du bas à gauche vers le haut à droite, avec une clairière à mi-pente -->
+<path d="M-20 610V556Q120 546 240 516Q360 482 430 446L660 428Q720 420 760 330Q800 232 880 192Q940 166 1020 162V610Z" fill="#14271f"/>
+<path d="M-20 610V580Q200 570 320 540Q420 510 470 470L640 452Q740 440 790 360Q830 290 900 250Q960 226 1020 224V610Z" fill="#10201a" opacity=".7"/>
+<!-- Le sentier en lacets, du pied de la colline jusqu'au sommet -->
+<path d="M140 566Q300 560 330 520Q350 488 440 470Q560 450 640 436Q700 424 700 392Q700 350 760 316Q820 270 860 214" fill="none" stroke="#2b3b36" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M140 566Q300 560 330 520Q350 488 440 470Q560 450 640 436Q700 424 700 392Q700 350 760 316Q820 270 860 214" fill="none" stroke="#3a4e46" stroke-width="3" stroke-dasharray="2 14" stroke-linecap="round"/>
+<!-- La clairière et le rayon de lune qui perce les arbres -->
+<path class="rayon-lune" d="M482-60H578L700 450H420Z" fill="url(#foret-rayon)"/>
+<ellipse cx="560" cy="440" rx="140" ry="20" fill="#3d5e4c" opacity=".85"/>
 <g fill="#0f2a22"><rect x="0" y="-1100" width="1000" height="1140"/><ellipse cx="100" cy="30" rx="260" ry="115"/><ellipse cx="220" cy="-150" rx="320" ry="130" fill="#132e26"/><ellipse cx="700" cy="-230" rx="360" ry="140" fill="#0c2219"/><ellipse cx="420" cy="-420" rx="420" ry="160" fill="#11291f"/><ellipse cx="880" cy="-520" rx="300" ry="150" fill="#0c2219"/><ellipse cx="120" cy="-600" rx="300" ry="130" fill="#132e26"/><ellipse cx="500" cy="10" rx="310" ry="125"/><ellipse cx="900" cy="30" rx="260" ry="115"/></g>
-<g class="brume" fill="#cfd3ee" opacity=".08"><ellipse cx="300" cy="505" rx="220" ry="26"/><ellipse cx="750" cy="525" rx="260" ry="30"/></g>
-${tap('champignons', 'Les champignons lumineux', `${halo(330, 455, 60)}${halo(480, 480, 60)}${halo(600, 452, 60)}${champi(330, 470, 1, 0)}${champi(480, 496, 1.15, 1)}${champi(600, 466, 0.95, 2)}`)}
+<g class="brume" fill="#cfd3ee" opacity=".08"><ellipse cx="260" cy="560" rx="220" ry="24"/><ellipse cx="560" cy="452" rx="200" ry="22"/><ellipse cx="860" cy="230" rx="160" ry="20"/></g>
+${tap('champignons', 'Les champignons lumineux', `${halo(300, 528, 60)}${halo(452, 490, 56)}${halo(752, 344, 56)}${champi(300, 544, 1.1, 0)}${champi(452, 506, 1, 1)}${champi(752, 360, .95, 2)}`)}
 ${tap('buisson', 'Un buisson qui tremble', `${halo(0, -10, 85)}
   <g class="renard"><path d="M40 10q40-30 40 10" fill="none" stroke="#E07A3F" stroke-width="12" stroke-linecap="round"/><path d="M72 18q14-6 10 8" fill="none" stroke="#FFF4D6" stroke-width="10" stroke-linecap="round"/><ellipse cx="10" cy="14" rx="42" ry="20" fill="#E07A3F"/><ellipse cx="4" cy="22" rx="24" ry="10" fill="#FFF4D6"/><circle cx="-36" cy="2" r="19" fill="#E07A3F"/><path d="M-48-10l-6-20 16 10zM-24-10l6-20-16 10z" fill="#E07A3F"/><path d="M-52 6q-10 4-14 10 6 2 14 0z" fill="#FFF4D6"/><circle cx="-58" cy="12" r="3" fill="#2B2B33"/><circle cx="-40" cy="-1" r="3.2" fill="#2B2B33"/><circle cx="-39" cy="-2" r="1" fill="#fff"/><g fill="#E07A3F"><rect x="-18" y="26" width="10" height="14" rx="4"/><rect x="18" y="26" width="10" height="14" rx="4"/></g></g>
-  <g class="buisson"><circle cx="-40" cy="-6" r="34" fill="#1E3F36"/><circle cx="0" cy="-26" r="42" fill="#24483E"/><circle cx="44" cy="-6" r="36" fill="#1E3F36"/><circle cx="6" cy="4" r="34" fill="#2F5D50"/></g>`, 'transform="translate(830,470)"')}
+  <g class="buisson"><circle cx="-40" cy="-6" r="34" fill="#1E3F36"/><circle cx="0" cy="-26" r="42" fill="#24483E"/><circle cx="44" cy="-6" r="36" fill="#1E3F36"/><circle cx="6" cy="4" r="34" fill="#2F5D50"/></g>`, 'transform="translate(842,200)"')}
 ${tap('sanglier', 'Un sanglier endormi sous les fougères', `${halo(0, -14, 70)}<g class="sanglier">
   <path d="M-46 4q-14-4-12-16" fill="none" stroke="#3a2618" stroke-width="4" stroke-linecap="round"/>
-  <ellipse cx="-4" cy="-10" rx="44" ry="24" fill="#7a5238" stroke="#c9a27a" stroke-width="1.5"/><path d="M-36-30q14-10 30-6q16-8 30 2" fill="none" stroke="#2a1a10" stroke-width="5" stroke-linecap="round"/>
-  <path class="tete" d="M30-24q20-4 30 14l8 4q2 8-6 10l-24 2q-14-4-14-16z" fill="#8a6044" stroke="#c9a27a" stroke-width="1.5"/><ellipse cx="66" cy="-2" rx="6" ry="5" fill="#8a6a5a"/><path d="M50 2q6 2 6-6" fill="none" stroke="#FFF6E0" stroke-width="3" stroke-linecap="round"/>
+  <ellipse cx="-4" cy="-10" rx="44" ry="24" fill="#8a5e40" stroke="#e3c49a" stroke-width="2"/><path d="M-36-30q14-10 30-6q16-8 30 2" fill="none" stroke="#2a1a10" stroke-width="5" stroke-linecap="round"/>
+  <path class="tete" d="M30-24q20-4 30 14l8 4q2 8-6 10l-24 2q-14-4-14-16z" fill="#9a6c4c" stroke="#e3c49a" stroke-width="2"/><ellipse cx="66" cy="-2" rx="6" ry="5" fill="#8a6a5a"/><path d="M50 2q6 2 6-6" fill="none" stroke="#FFF6E0" stroke-width="3" stroke-linecap="round"/>
   <path d="M34-24l6-12 6 12z" fill="#3a2618"/><path class="oeil" d="M44-12q3 2 6 0" fill="none" stroke="#1a110a" stroke-width="2" stroke-linecap="round"/>
   <g class="zz" fill="#cfd3ee" font-family="Baloo 2, sans-serif" font-weight="800"><text x="58" y="-34" font-size="14">z</text><text x="68" y="-46" font-size="10">z</text></g>
-</g>${'<path transform="translate(-40,18) scale(0.9)" d="M0 0q-6-30 6-60M0-10l-16-10M0-22l-14-12M2-34l-12-12M3-46l-9-10M0-10l14-12M1-22l13-13M3-34l10-12" fill="none" stroke="#2F5D50" stroke-width="4" stroke-linecap="round"/><path transform="translate(-6,20) scale(1)" d="M0 0q-6-30 6-60M0-10l-16-10M0-22l-14-12M2-34l-12-12M3-46l-9-10M0-10l14-12M1-22l13-13M3-34l10-12" fill="none" stroke="#2F5D50" stroke-width="4" stroke-linecap="round"/><path transform="translate(30,20) scale(0.8)" d="M0 0q-6-30 6-60M0-10l-16-10M0-22l-14-12M2-34l-12-12M3-46l-9-10M0-10l14-12M1-22l13-13M3-34l10-12" fill="none" stroke="#2F5D50" stroke-width="4" stroke-linecap="round"/>'}`, 'transform="translate(690,590) scale(1.15)"')}
-${tap('luciole', 'Une luciole', `<animateMotion dur="18s" repeatCount="indefinite" path="M200 300C350 200 500 380 650 280S850 200 900 320S600 420 400 340S220 380 200 300"/>${halo(0, 0, 44)}<circle r="34" fill="transparent"/><circle class="lum" r="16" fill="url(#halo-or)"/><circle r="4.5" fill="#FFF4D6"/>`)}
+</g>${'<path transform="translate(-74,14) scale(0.7)" d="M0 0q-6-30 6-60M0-10l-16-10M0-22l-14-12M2-34l-12-12M3-46l-9-10M0-10l14-12M1-22l13-13M3-34l10-12" fill="none" stroke="#2F5D50" stroke-width="4" stroke-linecap="round"/><path transform="translate(96,14) scale(0.8)" d="M0 0q-6-30 6-60M0-10l-16-10M0-22l-14-12M2-34l-12-12M3-46l-9-10M0-10l14-12M1-22l13-13M3-34l10-12" fill="none" stroke="#2F5D50" stroke-width="4" stroke-linecap="round"/><path transform="translate(118,14) scale(0.65)" d="M0 0q-6-30 6-60M0-10l-16-10M0-22l-14-12M2-34l-12-12M3-46l-9-10M0-10l14-12M1-22l13-13M3-34l10-12" fill="none" stroke="#2F5D50" stroke-width="4" stroke-linecap="round"/>'}`, 'transform="translate(540,438) scale(1.6)"')}
+${tap('luciole', 'Une luciole', `<animateMotion dur="18s" repeatCount="indefinite" path="M220 420C330 300 480 360 620 300S820 120 880 110S760 320 560 360S300 480 220 420"/>${halo(0, 0, 44)}<circle r="34" fill="transparent"/><circle class="lum" r="16" fill="url(#halo-or)"/><circle r="4.5" fill="#FFF4D6"/>`)}
 <rect class="dore" x="0" y="-1100" width="1000" height="1700" fill="#FFC857" opacity="0"/>
 ${lueur(L.x, L.y, 120)}
 ${A.souris(sx, sy, sw, 'class="quenotte trotte"')}
