@@ -140,7 +140,7 @@ test('le livre occupe tout l\'écran, et sa page garde la même taille sur les q
   // Toutes les cartes : on sort du plein écran ; et les cartes ont toutes la même hauteur
   await page.locator('[data-a="grille"]').click();
   await expect(page.locator('.carnet.mode-livre')).toHaveCount(0);
-  const hauteurs = await page.locator('.carte-ard').evaluateAll(l => [...new Set(l.map(e => Math.round(e.getBoundingClientRect().height)))]);
+  const hauteurs = await page.locator('.carte-ard:not(.carte-livre)').evaluateAll(l => [...new Set(l.map(e => Math.round(e.getBoundingClientRect().height)))]);
   expect(hauteurs).toHaveLength(1);
 });
 

@@ -977,7 +977,8 @@ html.grand-texte .livre-ancien .livre-texte p{font-size:1.5rem}
 .carnet.mode-livre .livre-folio{flex:none}
 .carnet-pages.livre-bas{flex:none;max-width:720px;margin:0 auto}
 /* Les cartes du carnet : toutes de la même taille, titre sur une ou deux lignes */
-.carnet-grille{grid-auto-rows:auto} /* chaque ligne prend la hauteur de ses cartes (la carte du livre, plus haute, est à part) */
+.carnet-grille{grid-auto-rows:1fr} /* toutes les cartes à la même hauteur (le livre est à part, au-dessus) */
+.carnet-une{list-style:none;margin:0 0 10px;padding:0}
 .carnet-grille li{display:flex}
 .carte-ard{height:100%;justify-content:flex-start}
 .livre-haut .carnet-chemin{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
