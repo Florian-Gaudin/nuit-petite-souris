@@ -29,7 +29,7 @@
 button.badge-dip{background:none;border:0;padding:4px 2px;border-radius:10px;cursor:pointer;color:inherit;-webkit-tap-highlight-color:transparent}
 button.badge-dip.choisi,button.badge-dip:hover{background:rgba(201,162,39,.16)}
 .badge-dip{display:flex;flex-direction:column;align-items:center;gap:2px;width:86px;font-family:'Baloo 2',sans-serif;font-weight:700;font-size:.72rem;line-height:1.1;color:#1F2235}
-.badge-dip.off{opacity:.3;filter:grayscale(1)}
+.badge-dip.off{filter:grayscale(1)}.badge-dip.off svg{opacity:.35}.badge-dip.off span{color:#5a5470} /* nom lisible (contraste AA), dessin estompé */
 .badge-ico{display:block}
 .dip-pied{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:12px;margin-top:18px;text-align:left}
 .dip-date{font-size:.9rem;line-height:1.4;color:#5c4a1e;flex:1 1 150px}

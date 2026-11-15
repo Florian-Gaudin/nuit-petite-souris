@@ -44,6 +44,12 @@ window.SON = (function () {
     fanfare() { [523, 659, 784, 1047, 1319].forEach((f, i) => tone(f, 0.4, 'triangle', 0.2, i * 0.14)); tone(1568, 0.8, 'triangle', 0.18, 0.75); },
     clic() { tone(900, 0.05, 'square', 0.05); },
     toc() { tone(420, 0.06, 'triangle', 0.12); },
+    // Le théâtre : les trois coups du bâton, les applaudissements, les rires, le galop et le hennissement
+    coup() { bruit(0.09, 0.5, 0, 180, 1.2); tone(95, 0.2, 'sine', 0.35); },
+    applaudir() { for (let i = 0; i < 26; i++) bruit(0.045, 0.1 + Math.random() * 0.1, i * 0.045 + Math.random() * 0.03, 1800 + Math.random() * 1500, 0.8); },
+    rire() { [0, 0.16, 0.32].forEach((w, i) => tone(700 + i * 60, 0.11, 'triangle', 0.12, w, 900 + i * 60)); },
+    galop() { [0, 0.12, 0.36, 0.48].forEach(w => bruit(0.06, 0.25, w, 350, 1.5)); },
+    hennir() { tone(900, 0.55, 'sawtooth', 0.05, 0, 520); tone(1000, 0.45, 'triangle', 0.08, 0.06, 620); },
     pas() { bruit(0.05, 0.07, 0, 600); },
     mmh() { tone(300, 0.18, 'sawtooth', 0.1); tone(420, 0.3, 'sawtooth', 0.1, 0.16); },
     baillement() { tone(200, 0.8, 'triangle', 0.12, 0, 420); },

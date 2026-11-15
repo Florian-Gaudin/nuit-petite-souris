@@ -353,22 +353,33 @@ window.SCENES = (function () {
     SON.unlock();
     if (sc.bonus.indexOf(id) >= 0) { bonus(g, id, el); return; }
     const pos = chaine.indexOf(id);
+    // Les trois coups : une fois le Grand Marionnettiste touché, chaque toucher frappe un coup, même pendant son animation
+    if (id === 'marionnettiste' && ctx.config.secret && g.classList.contains('vu') && !enSecret && !NARR.interrompu) {
+      if (pos < idx && REJOUE[id]) { const act = ACTIONS[sc.id][id]; if (act) act(g); }
+      secret(); return;
+    }
     // Pendant la lecture d'un secret, l'histoire principale attend le bouton « Suite »
     if (enSecret || NARR.interrompu) { SON.play('toc'); g.classList.remove('refus'); void g.getBBox(); g.classList.add('refus'); return; }
     if (pos < idx) {
       // Élément obligatoire déjà fait : certains rejouent leur animation
       if (REJOUE[id]) { const act = ACTIONS[sc.id][id]; if (act) act(g); }
-      if (id === 'marionnettiste' && ctx.config.secret) secret();
       return;
     }
     if (pos > idx) { SON.play('toc'); return; }
     // Pas avant la phrase qui le demande, et pas pendant qu'elle s'écrit : l'histoire se lit dans l'ordre
     if (!g.classList.contains('cible') || NARR.lit) { SON.play('toc'); g.classList.remove('refus'); void g.getBBox(); g.classList.add('refus'); return; }
+    if (id === 'marionnettiste' && ctx.config.secret) secret(); // le premier toucher compte déjà comme un coup
     obligatoire(g, id, el, e);
   }
+  // Les trois coups du théâtre : chaque toucher sur le Grand Marionnettiste frappe un coup (clin d'œil, rideau qui frémit, lumière)
   function secret() {
-    secretTaps++; clearTimeout(secretT); secretT = setTimeout(() => { secretTaps = 0; }, 2500);
-    if (secretTaps >= 3) { secretTaps = 0; ctx.scene13(); }
+    const g = $('.tap[data-el="marionnettiste"]', svg);
+    const efface = () => { if (g) g.classList.remove('coup1', 'coup2', 'coup3'); };
+    secretTaps++; clearTimeout(secretT);
+    SON.play('coup');
+    efface(); if (g) { void g.getBBox(); for (let i = 1; i <= Math.min(secretTaps, 3); i++) g.classList.add('coup' + i); }
+    if (secretTaps >= 3) { secretTaps = 0; secretT = setTimeout(() => { efface(); ctx.scene13(); }, RM ? 0 : 800); return; }
+    secretT = setTimeout(() => { secretTaps = 0; efface(); }, 3000);
   }
 
   // Un secret se touche à tout moment : l'histoire se met en pause le temps de son texte, puis reprend

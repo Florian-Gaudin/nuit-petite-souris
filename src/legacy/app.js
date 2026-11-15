@@ -461,24 +461,9 @@
     unmount() { window.SCENES.demonter(); },
   };
 
+  // La 13e scène : le théâtre de marionnettes du Grand Marionnettiste (src/legacy/theatre.js)
   function scene13() {
-    const v = document.createElement('div'); v.className = 'voile';
-    v.innerHTML = `<div class="scene13" role="dialog" aria-label="La treizième scène du Grand Marionnettiste">
-      <div class="rideau g"></div><div class="rideau d"></div>
-      <div class="s13-in"><div class="s13-titre">La 13<sup>e</sup> scène</div><div class="tableau" id="tab13"></div><p class="tab-txt" id="tab13-txt"></p>
-      <div class="tab-actions"><button class="btn btn-grand btn-or" id="tab13-next">Suivant</button></div></div></div>`;
-    document.body.appendChild(v);
-    const tabs = D.scene13; let i = 0;
-    const montre = () => { $('#tab13', v).innerHTML = A.tableau13(i); $('#tab13-txt', v).textContent = T(tabs[i]); $('#tab13-next', v).textContent = i < tabs.length - 1 ? 'Suivant' : 'Fermer le rideau'; };
-    requestAnimationFrame(() => { v.classList.add('on'); setTimeout(() => v.classList.add('ouvert'), RM ? 0 : 500); });
-    SON.play('papier'); montre();
-    $('#tab13-next', v).onclick = () => {
-      i++;
-      if (i >= tabs.length) {
-        v.classList.remove('ouvert');
-        setTimeout(() => { v.remove(); if (!State.secret) { State.secret = true; save(); } badge('scene13'); }, RM ? 0 : 600);
-      } else montre();
-    };
+    window.THEATRE.ouvrir({ T, fin: () => { if (!State.secret) { State.secret = true; save(); } badge('scene13'); } });
   }
 
   // ---------- Chapitre 2 : 1, 2, 3, soleil avec le chat ----------

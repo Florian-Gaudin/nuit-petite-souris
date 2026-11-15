@@ -1,6 +1,10 @@
 // Dessins personnalisés selon le profil : doudou, cachette filmée, enfant et frère ou sœur endormis.
 // Caméra : style vision nocturne (repère 400 × 300). Fenêtre d'Aiglemont : silhouettes sombres.
 import type { Cachette, Genre, TypeDoudou } from './profil';
+import { DOUDOUS } from '../parents/icones';
+
+// La tête du doudou en couleurs (marionnette du théâtre), dans un repère 48 × 48
+export const doudouIcone = (type: TypeDoudou): string => DOUDOUS[type].svg;
 
 const VERT = '#39FF14', VERT2 = '#2fbf2f', FOND = '#0f4a1b', FOND2 = '#0b3a14', TRAIT = '#1d7a2c';
 const trait = (w = 2) => `stroke="${VERT}" stroke-width="${w}"`;
@@ -109,5 +113,5 @@ export function fratrieCam(g: Genre): string {
     + `</g>`;
 }
 
-declare global { interface Window { DESSINS: { doudouCam: typeof doudouCam; silhouetteFenetre: typeof silhouetteFenetre; cachetteCam: typeof cachetteCam; enfantCam: typeof enfantCam; fratrieCam: typeof fratrieCam } } }
-window.DESSINS = { doudouCam, silhouetteFenetre, cachetteCam, enfantCam, fratrieCam };
+declare global { interface Window { DESSINS: { doudouIcone: typeof doudouIcone; doudouCam: typeof doudouCam; silhouetteFenetre: typeof silhouetteFenetre; cachetteCam: typeof cachetteCam; enfantCam: typeof enfantCam; fratrieCam: typeof fratrieCam } } }
+window.DESSINS = { doudouIcone, doudouCam, silhouetteFenetre, cachetteCam, enfantCam, fratrieCam };

@@ -144,27 +144,6 @@
         6
       ],
       "texte": "À la prochaine dent !"
-    },
-    {
-      "chemin": [
-        "scene13",
-        0
-      ],
-      "texte": "Scène treize : la nuit de la deuxième dent de Clémentine."
-    },
-    {
-      "chemin": [
-        "scene13",
-        1
-      ],
-      "texte": "Le chat Pantoufle ronfle. Clémentine a aidé la souris à passer."
-    },
-    {
-      "chemin": [
-        "scene13",
-        2
-      ],
-      "texte": "Les deux dents jumelles sont réunies au château."
     }
   ]
 }

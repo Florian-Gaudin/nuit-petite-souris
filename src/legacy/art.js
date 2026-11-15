@@ -173,6 +173,7 @@ ${C.cadeau === 'piece'
       terrier: '<circle cx="24" cy="24" r="22" fill="#6b4a33"/><path d="M2 20h44" stroke="#3E7C50" stroke-width="4"/><path d="M10 40v-8a14 14 0 0 1 28 0v8z" fill="#2a1a10"/><circle cx="24" cy="33" r="6" fill="#C9A227" stroke="#8a6a12" stroke-width="1.6"/><path d="M21 31.5h6M21 34.5h6" stroke="#8a6a12" stroke-width="1.2"/><circle cx="14" cy="13" r="1.6" fill="#FFC857"/><circle cx="34" cy="11" r="1.2" fill="#FFC857"/>',
       pilote: '<circle cx="24" cy="24" r="22" fill="#5B8DD6"/><g fill="#fff" opacity=".9"><circle cx="12" cy="33" r="5"/><circle cx="18" cy="30" r="6"/><circle cx="24" cy="34" r="4.5"/></g><path d="M24 7a10 10 0 0 1 10 10c0 6-6 10-8 12h-4c-2-2-8-6-8-12A10 10 0 0 1 24 7z" fill="#D64045"/><path d="M24 7c-3 3-4 7-4 10s2 9 2 12h4c0-3 2-8 2-12s-1-7-4-10z" fill="#FFC857"/><rect x="21" y="32" width="6" height="5" rx="1" fill="#8B5A3C"/><path d="M22 29v3M26 29v3" stroke="#2a1a10" stroke-width=".8"/>',
       artiste: '<circle cx="24" cy="24" r="22" fill="#FFF6E0"/><path d="M12 30c-4-10 6-20 16-17 8 2 10 10 5 13-3 2-6-1-8 2s1 6-3 7c-4 1-8-1-10-5z" fill="#e8d4b8" stroke="#C9A227" stroke-width="1"/><circle cx="18" cy="21" r="2.4" fill="#D64045"/><circle cx="24" cy="17" r="2.4" fill="#5B8DD6"/><circle cx="30" cy="19" r="2.4" fill="#3E9A6B"/><circle cx="17" cy="28" r="2.4" fill="#FFC857"/><path d="M38 9l-12 18 -2 4 3.5-2.5 12-18z" fill="#E8833A" stroke="#8a4a1a" stroke-width=".8"/>',
+      mystere: '<circle cx="24" cy="24" r="22" fill="#5a5470"/><text x="24" y="32" font-family="Baloo 2, sans-serif" font-weight="800" font-size="24" fill="#cfd3ee" text-anchor="middle">?</text>',
       scene13: '<circle cx="24" cy="24" r="22" fill="#D64045"/><rect x="10" y="12" width="28" height="24" rx="2" fill="#141A3A"/><path d="M10 12q7 10 0 24zM38 12q-7 10 0 24z" fill="#9a2a32"/><text x="24" y="30" font-family="Baloo 2" font-weight="800" font-size="12" fill="#FFC857" text-anchor="middle">13</text>',
     };
     return `<svg class="badge-ico" width="${t}" height="${t}" viewBox="0 0 48 48" aria-hidden="true">${dessins[id] || ''}</svg>`;
@@ -328,13 +329,6 @@ ${etoiles(40, 1000, 500, 5)}
   }
 
   // ---------- Chapitre secret : trois tableaux ----------
-  function tableau13(i) {
-    const fondT = `<defs>${CIEL}</defs><rect width="300" height="200" fill="url(#gciel)"/>${etoiles(25, 300, 200, 13 + i)}`;
-    if (i === 0) return `<svg viewBox="0 0 300 200">${fondT}<rect x="120" y="20" width="60" height="160" fill="#232c66"/><circle cx="150" cy="52" r="14" fill="#F3EFE6"/><rect x="141" y="66" width="18" height="40" rx="6" fill="#F3EFE6"/><path d="M141 75l-14 18M159 75l14 18" stroke="#F3EFE6" stroke-width="4" stroke-linecap="round"/><path d="M144 52q3 3 6 0M150 52q3 3 6 0" stroke="#2B2B33" stroke-width="1.5" fill="none"/><rect y="180" width="300" height="20" fill="#1A2A26"/><use href="#souris-side" x="40" y="118" width="80" height="62"/></svg>`;
-    if (i === 1) return `<svg viewBox="0 0 300 200">${fondT}<rect y="160" width="300" height="40" fill="#1A2A26"/><g transform="translate(60,60) scale(.8)"><path d="M20 90C-20 100-25 50 10 60" fill="none" stroke="#E8A552" stroke-width="14" stroke-linecap="round"/><ellipse cx="90" cy="92" rx="80" ry="40" fill="#E8A552"/><circle cx="156" cy="72" r="36" fill="#E8A552"/><path d="M126 50l-4-30 26 14zM186 50l4-30-26 14z" fill="#E8A552"/><g fill="none" stroke="#2B2B33" stroke-width="3" stroke-linecap="round"><path d="M136 72q8 6 16 0M164 72q8 6 16 0"/></g><path d="M152 84h8l-4 5z" fill="#F2A3B5"/><text x="196" y="30" class="z">z</text><text x="216" y="10" class="z petit">z</text></g><use href="#souris-side" x="10" y="100" width="70" height="54"/></svg>`;
-    return `<svg viewBox="0 0 300 200">${fondT}<rect x="60" y="60" width="180" height="110" rx="10" fill="#F3EFE6"/><rect x="60" y="150" width="180" height="20" fill="#A79E95"/><use href="#dent" x="92" y="86" width="50" height="50"/><use href="#dent" x="158" y="86" width="50" height="50"/><path d="M150 128l-7-7a4 4 0 0 1 7-5 4 4 0 0 1 7 5z" fill="#D64045"/><text x="150" y="80" font-family="Baloo 2" font-weight="800" font-size="12" fill="#1F2235" text-anchor="middle">salle des jumelles</text></svg>`;
-  }
-
   // ---------- La lampe de poche : la maison dans le noir, le doigt promène la lumière ----------
   function lampeSVG() {
     const C = window.CONFIG, nom = C.enfant;
@@ -384,7 +378,7 @@ ${porte(720, plaque)}
     return `<g class="saison saison-${s}" aria-hidden="true">${p}</g>`;
   }
 
-  return { lampeSVG, saison, saisonSVG, symboles, icone, badgeIcone, portrait, cielSVG, jeuSVG, camSVG, enveloppeSVG, tableau13, lune, luneSVG, etoiles, fond, souris, pointSouris, CIEL };
+  return { lampeSVG, saison, saisonSVG, symboles, icone, badgeIcone, portrait, cielSVG, jeuSVG, camSVG, enveloppeSVG, lune, luneSVG, etoiles, fond, souris, pointSouris, CIEL };
 })();
 
 // Module ES (chargé par src/main.ts) : le contenu reste un script qui expose ses objets sur window.

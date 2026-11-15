@@ -9,13 +9,13 @@ test('Clémentine : textes identiques mot pour mot à la première histoire', as
   await ouvrir(page, '?reset=1#exemple');
   const ecarts: string[] = [];
   for (const { chemin, texte } of ORIGINE.textes) {
-    const nouveau = chemin[0] === 'lettre' || chemin[0] === 'scene13'
+    const nouveau = chemin[0] === 'lettre'
       ? await page.evaluate(([liste, i]) => { const W = window as any; const l = W.DATA[liste].map((x: any) => { const r = W.RECIT.resoudre(x); return r == null ? null : String(typeof r === 'string' ? r : r.txt).replace(/\{(\w+)\}/g, (m: string, k: string) => W.CONFIG[k] ?? m); }).filter((x: any) => x != null); return l[i as number]; }, chemin)
       : await rendu(page, chemin);
     if (nouveau !== texte) ecarts.push(`${chemin.join('.')}\n  avant : ${texte}\n  après : ${nouveau}`);
   }
   expect(ecarts, ecarts.join('\n')).toEqual([]);
-  expect(ORIGINE.textes.length).toBeGreaterThanOrEqual(21);
+  expect(ORIGINE.textes.length).toBeGreaterThanOrEqual(18); // l'ancienne scène 13 (3 textes) est devenue le théâtre
 });
 
 test('Léo : première dent, garçon, sans doudou, 50 € sur le bureau', async ({ page }) => {

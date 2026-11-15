@@ -17,11 +17,12 @@ window.CERTIFICAT = (function () {
     const C = window.CONFIG, D = window.DATA;
     const T = s0 => { const s = window.RECIT.resoudre(s0); return s == null ? '' : String(s).replace(/\{(\w+)\}/g, (m, k) => (C[k] != null ? C[k] : m)); };
     const gagnes = opts.badges || [];
-    const visibles = D.badges.filter(b => !b.secret || opts.secret);
+    const visibles = D.badges; // le badge secret aussi : en grisé, avec son indice, tant qu'il n'est pas trouvé
     const nbGagnes = visibles.filter(b => gagnes.indexOf(b.id) >= 0).length;
     const badges = visibles.map(b => {
       const ok = gagnes.indexOf(b.id) >= 0, msg = T(ok ? b.obtenu : b.aGagner);
-      return `<button type="button" class="badge-dip ${ok ? '' : 'off'}" data-nom="${esc(T(b.nom))}" data-ok="${ok ? 1 : 0}" data-info="${esc(msg)}" title="${esc(msg)}">${window.ART.badgeIcone(b.id, 46)}<span>${esc(T(b.nom))}</span></button>`;
+      const cache = b.secret && !ok, nom = T(cache ? b.nomCache : b.nom);
+      return `<button type="button" class="badge-dip ${ok ? '' : 'off'}" data-nom="${esc(nom)}" data-ok="${ok ? 1 : 0}" data-info="${esc(msg)}" title="${esc(msg)}">${window.ART.badgeIcone(cache ? 'mystere' : b.id, 46)}<span>${esc(nom)}</span></button>`;
     }).join('');
     // Témoin : le doudou, sinon le frère ou la sœur de la chambre, sinon la lune
     const temoin = C.aDoudou ? C.poupee + ' (dormait)' : C.fratrieACote ? C.frere + ' (dormait)' : 'la lune (veillait)';

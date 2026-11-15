@@ -364,12 +364,30 @@ window.DATA = {
   diplome: { txt: "Bravo {enfant} ! Voici ton diplôme officiel, signé de ma patte. Tu peux l'imprimer avec un grand.", expr: "joie" },
   billetTrouve: { txt: "Tu l'as {trouvee} ? {Il} est {sec} maintenant. {Il} est à toi !", expr: "joie" },
 
-  // ---------- Chapitre secret : la 13e scène du Grand Marionnettiste ----------
-  scene13: [
-    { variante: { premiere: "Scène treize : la nuit de la toute première dent de {enfant}.", jumelle: "Scène treize : la nuit de la {ordinal} dent de {enfant}.", suite: "Scène treize : la nuit de la {ordinal} dent de {enfant}." } },
-    "Le chat {chat} ronfle. {enfant} a aidé la souris à passer.",
-    { variante: { premiere: "La première dent brille dans la boîte à trésors du château.", jumelle: "Les deux dents jumelles sont réunies au château.", suite: "La collection du château compte une dent de plus." } },
-  ],
+  // ---------- Chapitre secret : la 13e scène, le théâtre du Grand Marionnettiste ----------
+  theatre: {
+    marionnettiste: "Le Grand Marionnettiste",
+    affiche: "Ce soir : {enfant} et la dent d'or",
+    pantin: "Le pantin",
+    dent: "La dent",
+    rires: "Hi hi hi !",
+    ouverture: "Toc, toc, toc ! Mesdames, messieurs… et toi, {enfant} ! Bienvenue à la treizième scène : celle que personne n'a jamais vue.",
+    salut: "Voici ma troupe ! Touche chaque marionnette : elle te saluera.",
+    salutFini: "Quelle belle troupe ! Que le spectacle commence…",
+    danse: { doudou: { oui: "Premier numéro : la danse de {poupee} ! Tire son fil vers le haut, et {poupee} sautera.", non: "Premier numéro : la danse du petit pantin ! Tire son fil vers le haut, et il sautera." } },
+    danseEncore: ["Plus haut !", "Encore !", "Magnifique !", "Un dernier saut !"],
+    danseBravo: "Bravo ! Tu as des doigts de marionnettiste.",
+    chat: "Deuxième numéro, le plus difficile : {chat} dort au milieu de la scène. Fais passer {souris} en tirant son fil tout doucement…",
+    chatReveil: "Oh ! {chat} a ouvert un œil… Doucement, doucement !",
+    chatEncore: "Ouf, {chat} s'est rendormi. On recommence, tout doucement…",
+    chatOuf: "Bravo ! {chat} n'a rien entendu. Le public retenait son souffle… et applaudit !",
+    bayard: "Troisième numéro ! Tout droit venus de la forêt des Ardennes : le cheval Bayard et les quatre chevaliers souris !",
+    bayardFin: "Ils ont galopé toute la nuit pour saluer {enfant}. Touche Bayard : il te dira bonjour à sa façon !",
+    final: { variante: { premiere: "Et voici la vedette de la soirée : la toute première dent de {enfant}, qui monte au château !", jumelle: "Et voici la vedette de la soirée : la {ordinal} dent de {enfant}, qui rejoint sa jumelle au château !", suite: "Et voici la vedette de la soirée : la {ordinal} dent de {enfant}, qui rejoint la collection du château !" } },
+    applaudir: "Applaudis la troupe ! Plus tu applaudis, plus elle salue.",
+    merci: "Merci, merci ! Quelle salle formidable ! Reviens quand tu veux : je garde toujours une treizième scène pour toi.",
+    boutons: { suite: "Suite", fil: "Tirer le fil", filQuenotte: "Le fil de Quenotte : fais-la avancer tout doucement", applaudir: "Applaudir", fermer: "Fermer le rideau", quitter: "Quitter le spectacle" },
+  },
 
   // ---------- Badges du diplôme ----------
   badges: [
@@ -388,7 +406,7 @@ window.DATA = {
     { id: "terrier", nom: "Fouille-terrier", chapitre: 5, obtenu: "Tu as trouvé les 4 trésors cachés dans le terrier de {souris}.", aGagner: "Trouve les 4 trésors cachés dans le terrier de {souris}." },
     { id: "pilote", nom: "Pilote des nuages", chapitre: 5, obtenu: "Tu as ramené la montgolfière au château sans toucher un seul nuage.", aGagner: "Ramène la montgolfière au château sans toucher un seul nuage." },
     { id: "artiste", nom: "Artiste de la nuit", obtenu: "Tu as fait un dessin pour {souris}.", aGagner: "Fais un dessin pour {souris}, sous sa lettre." },
-    { id: "scene13", nom: "Scène 13", secret: true, obtenu: "Tu as découvert la 13e scène secrète du Grand Marionnettiste !", aGagner: "Un secret bien caché…" },
+    { id: "scene13", nom: "Scène 13", secret: true, nomCache: "Scène secrète", obtenu: "Tu as frappé les trois coups et vu la 13e scène du Grand Marionnettiste !", aGagner: "Au théâtre, on frappe trois coups avant le spectacle… Le Grand Marionnettiste attend toujours les siens." },
   ],
 };
 
