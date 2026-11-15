@@ -1020,3 +1020,49 @@ html.grand-texte .livre-ancien .livre-texte p{font-size:1.5rem}
 .ouverture-livre .retour-choix{flex:none}
 @media (prefers-reduced-motion:reduce){.lv-couverture,.lv-lieu{transition:none}.lv-titre-or,.lv-scintille,.lv-lanterne,.lv-invite,.lv-balayage,.lv-consigne,.lv-ecran.ouvert .lv-ombre{animation:none}}
 .carnet.mode-livre,.carnet.mode-livre *{touch-action:pan-y}
+
+/* ---------- Les illustrations du livre de la légende : des boucles douces, sans à-coup ---------- */
+.livre-vignette [class^="lva-"]{transform-box:fill-box}
+.lva-flotte{animation:lva-flotte 3s ease-in-out infinite alternate}
+@keyframes lva-flotte{from{transform:translateY(0)}to{transform:translateY(-4px)}}
+.lva-souffle{transform-origin:50% 100%;animation:lva-souffle 3.2s ease-in-out infinite alternate}
+@keyframes lva-souffle{from{transform:scaleY(1)}to{transform:scaleY(1.035)}}
+.lva-balance{transform-origin:50% 100%;animation:lva-balance 2.8s ease-in-out infinite alternate}
+@keyframes lva-balance{from{transform:rotate(-3deg)}to{transform:rotate(3deg)}}
+.lva-agite{transform-origin:50% 100%;animation:lva-agite .35s ease-in-out infinite alternate}
+@keyframes lva-agite{from{transform:rotate(-4deg)}to{transform:rotate(4deg)}}
+.lva-grelotte{transform-origin:50% 100%;animation:lva-grelotte .16s linear infinite alternate}
+@keyframes lva-grelotte{from{transform:translateX(-.8px)}to{transform:translateX(.8px)}}
+.lva-drapeau{transform-origin:0 50%;animation:lva-drapeau 1.3s ease-in-out infinite alternate}
+@keyframes lva-drapeau{from{transform:skewY(-6deg) scaleX(.94)}to{transform:skewY(6deg) scaleX(1)}}
+.lva-pulse{transform-origin:center;animation:lva-pulse 1s ease-in-out infinite alternate}
+@keyframes lva-pulse{from{transform:scale(.9)}to{transform:scale(1.2)}}
+.lva-lueur{transform-origin:center;animation:lva-lueur 1.8s ease-in-out infinite alternate}
+@keyframes lva-lueur{from{opacity:.7;transform:scale(.94)}to{opacity:1;transform:scale(1.06)}}
+.lva-scintille{animation:lva-scintille 2s ease-in-out infinite alternate}
+@keyframes lva-scintille{from{opacity:.25}to{opacity:1}}
+.lva-tangue{transform-origin:50% 100%;animation:lva-tangue 2.6s ease-in-out infinite alternate}
+@keyframes lva-tangue{from{transform:rotate(-4deg) translateY(0)}to{transform:rotate(4deg) translateY(-3px)}}
+.lva-nage{animation:lva-nage 3.4s ease-in-out infinite alternate}
+@keyframes lva-nage{from{transform:translate(-14px,0)}to{transform:translate(14px,-3px)}}
+.lva-marche{transform-origin:50% 100%;animation:lva-marche 2.4s ease-in-out infinite alternate}
+@keyframes lva-marche{0%{transform:translate(-8px,0)}25%{transform:translate(-4px,-3px)}50%{transform:translate(0,0)}75%{transform:translate(4px,-3px)}100%{transform:translate(8px,0)}}
+.lva-saute{animation:lva-saute .7s ease-in-out infinite alternate}
+@keyframes lva-saute{from{transform:translateY(0)}to{transform:translateY(-6px)}}
+/* Ce qui monte (cœurs, notes) ou tombe (neige) apparaît et disparaît en fondu : la boucle ne se voit pas */
+.lva-monte{animation:lva-monte 3.6s linear infinite}
+@keyframes lva-monte{0%{opacity:0;transform:translateY(16px)}20%{opacity:1}80%{opacity:1}100%{opacity:0;transform:translateY(-30px)}}
+.lva-tombe{animation:lva-tombe 6s linear infinite}
+@keyframes lva-tombe{0%{opacity:0;transform:translate(0,-10px)}10%{opacity:.9}90%{opacity:.9}100%{opacity:0;transform:translate(14px,170px)}}
+.lva-parole{animation:lva-parole 1.8s ease-in-out infinite}
+@keyframes lva-parole{0%,100%{opacity:.15}35%{opacity:1}}
+/* L'eau qui coule : le décalage des pointillés vaut exactement un motif, la boucle est parfaite */
+.lva-courant{animation:lva-courant 1.6s linear infinite}
+@keyframes lva-courant{from{stroke-dashoffset:0}to{stroke-dashoffset:-20}}
+/* Bayard au galop : le corps rebondit, les jambes vont et viennent */
+.lva-galop{animation:lva-galop .5s ease-in-out infinite alternate}
+@keyframes lva-galop{from{transform:translateY(0)}to{transform:translateY(-5px)}}
+.lva-galop .pattes rect{transform-box:fill-box;transform-origin:50% 0;animation:lva-jambe .5s ease-in-out infinite alternate}
+.lva-galop .pattes .p2,.lva-galop .pattes .p4{animation-direction:alternate-reverse}
+@keyframes lva-jambe{from{transform:rotate(-20deg)}to{transform:rotate(20deg)}}
+@media (prefers-reduced-motion:reduce){.livre-vignette [class^="lva-"],.livre-vignette .lva-galop .pattes rect{animation:none}}

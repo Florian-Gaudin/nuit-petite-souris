@@ -38,64 +38,73 @@ ${o.pierre ? '<rect x="-14" y="-40" width="28" height="18" rx="2" fill="#cbbfa8"
   const sapins = (xs, y, h, c) => xs.map(x => `<path d="M${x} ${y}l${h * 0.35}-${h} ${h * 0.35} ${h}z" fill="${c}"/>`).join('');
 
   // ---------- Les illustrations du livre ----------
+  // Une classe d'animation en boucle autour d'un dessin (le dessin garde sa propre position) ; --r : décalage
+  const anim = (cls, contenu, retard) => `<g class="${cls}"${retard != null ? ` style="animation-delay:${retard}s"` : ''}>${contenu}</g>`;
+  const scintillent = (n, graine) => { let s = ''; for (let i = 0; i < n; i++) s += anim('lva-scintille', `<circle cx="${(i * 73 + graine) % 320}" cy="${(i * 37 + graine) % 90}" r="${i % 3 ? 1 : 1.5}" fill="#FFF6E0"/>`, -(i * 0.37 % 2).toFixed(2)); return s; };
+  const neige = () => [...Array(18)].map((_, i) => anim('lva-tombe', `<circle cx="${(i * 47) % 320}" cy="0" r="2" fill="#fff"/>`, -(i * 0.43 % 6).toFixed(2))).join('');
+  const galop = (x, y, s, avec) => anim('lva-galop', bayard(x, y, s, avec));
   const VIGNETTES = [
-    // Couverture : Bayard et les quatre chevaliers souris
-    () => ciel('#1b2250', '#3a2f6b') + etoiles(24) + '<path d="M0 170q80-30 160-10t160-14v54H0z" fill="#1E3F36"/>' + bayard(150, 60, 0.62),
-    // 1. Charlemagne fait chevaliers les quatre frères
+    // Couverture : Bayard galope, les étoiles scintillent
+    () => ciel('#1b2250', '#3a2f6b') + scintillent(24, 0) + '<path d="M0 170q80-30 160-10t160-14v54H0z" fill="#1E3F36"/>' + galop(150, 60, 0.62),
+    // 1. Charlemagne fait chevaliers les quatre frères : l'épée se lève et s'abaisse, les bannières ondulent
     () => '<rect width="320" height="200" fill="#4a3260"/><g fill="#5c3f75">' + [40, 120, 200, 280].map(x => `<path d="M${x - 26} 200V60a26 26 0 0 1 52 0v140z"/>`).join('') + '</g><rect y="170" width="320" height="30" fill="#6b4a33"/>'
-      + '<path d="M150 20v40l-12-8-12 8V20zM270 20v40l-12-8-12 8V20z" fill="#D64045"/>'
-      + souris(70, 130, 1.5, { couronne: true, cape: '#6b3fa0', epee: true })
-      + [[150, '#D64045'], [190, '#3E7C8F'], [230, '#FFC857'], [270, '#3E9A6B']].map(([x, p]) => souris(x, 150, 1.05, { casque: p })).join(''),
-    // 2. La fée Oriande offre Bayard à Renaut
-    () => ciel('#141a40', '#2b356f') + etoiles(30) + '<circle cx="270" cy="34" r="16" fill="#F3EFE6"/><rect y="168" width="320" height="32" fill="#1E3F36"/>' + sapins([10, 290], 170, 70, '#173229')
-      + souris(70, 136, 1.4, { robe: '#F2A3B5', baguette: true }) + '<g fill="#FFC857">' + [[110, 80], [128, 66], [118, 100], [140, 90]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="2"/>`).join('') + '</g>'
-      + bayard(205, 70, 0.6, false),
-    // 3. La partie d'échecs qui tourne mal
+      + anim('lva-drapeau', '<path d="M150 20v40l-12-8-12 8V20z" fill="#D64045"/>') + anim('lva-drapeau', '<path d="M270 20v40l-12-8-12 8V20z" fill="#D64045"/>', -0.7)
+      + anim('lva-souffle', souris(70, 130, 1.5, { couronne: true, cape: '#6b3fa0', epee: true }))
+      + [[150, '#D64045'], [190, '#3E7C8F'], [230, '#FFC857'], [270, '#3E9A6B']].map(([x, p], i) => anim('lva-flotte', souris(x, 150, 1.05, { casque: p }), -i * 0.6)).join(''),
+    // 2. La fée Oriande offre Bayard à Renaut : la baguette scintille, Bayard respire
+    () => ciel('#141a40', '#2b356f') + scintillent(30, 11) + anim('lva-lueur', '<circle cx="270" cy="34" r="16" fill="#F3EFE6"/>') + '<rect y="168" width="320" height="32" fill="#1E3F36"/>' + sapins([10, 290], 170, 70, '#173229')
+      + anim('lva-balance', souris(70, 136, 1.4, { robe: '#F2A3B5', baguette: true }))
+      + [[110, 80], [128, 66], [118, 100], [140, 90]].map(([x, y], i) => anim('lva-scintille', `<circle cx="${x}" cy="${y}" r="2.4" fill="#FFC857"/>`, -i * 0.45)).join('')
+      + anim('lva-souffle', bayard(205, 70, 0.6, false)),
+    // 3. La partie d'échecs qui tourne mal : les deux joueurs s'agitent, le « ! » palpite
     () => '<rect width="320" height="200" fill="#4a3260"/><rect y="150" width="320" height="50" fill="#6b4a33"/><rect x="110" y="118" width="100" height="40" fill="#8B5A3C"/>'
       + '<g>' + [...Array(16)].map((_, i) => `<rect x="${120 + (i % 8) * 10}" y="${108 + Math.floor(i / 8) * 6}" width="10" height="6" fill="${(i + Math.floor(i / 8)) % 2 ? '#2B2B33' : '#F3EFE6'}"/>`).join('') + '</g>'
-      + souris(70, 128, 1.35, { casque: '#D64045', fache: true }) + souris(250, 128, 1.35, { cape: '#9a2a32', fache: true })
-      + '<path d="M160 70l-6 16h12z" fill="#2B2B33"/><text x="160" y="56" text-anchor="middle" font-family="Baloo 2, sans-serif" font-weight="800" font-size="26" fill="#FFC857">!</text>',
-    // 4. Bayard emporte les quatre frères jusqu'en Ardenne
+      + anim('lva-agite', souris(70, 128, 1.35, { casque: '#D64045', fache: true })) + anim('lva-agite', souris(250, 128, 1.35, { cape: '#9a2a32', fache: true }), -0.35)
+      + anim('lva-flotte', '<path d="M160 70l-6 16h12z" fill="#2B2B33"/>') + anim('lva-pulse', '<text x="160" y="56" text-anchor="middle" font-family="Baloo 2, sans-serif" font-weight="800" font-size="26" fill="#FFC857">!</text>'),
+    // 4. Bayard emporte les quatre frères jusqu'en Ardenne : il galope, la rivière coule
     () => ciel('#2b356f', '#5b6fb0') + '<path d="M0 150q60-50 120-20t110-30 90 10v90H0z" fill="#2F5D50"/><path d="M0 180c60-20 90 10 150-4s110-26 170-6v30H0z" fill="#7FB8C7" opacity=".8"/>'
-      + chateau(268, 112, 0.32) + bayard(110, 70, 0.5),
-    // 5. Un pèlerin révèle la cachette à Charlemagne
+      + '<path class="lva-courant" d="M0 186c60-20 90 10 150-4s110-26 170-6" fill="none" stroke="#cfe9f0" stroke-width="2" stroke-dasharray="10 10"/>'
+      + chateau(268, 112, 0.32) + galop(110, 70, 0.5),
+    // 5. Un pèlerin révèle la cachette à Charlemagne : il parle, les mots s'envolent
     () => ciel('#3e7c8f', '#9fd0dd') + '<rect y="160" width="320" height="40" fill="#5c8a4a"/><g fill="#F3EFE6" stroke="#c9b9a6">' + [[240, 160], [290, 160], [200, 166]].map(([x, y]) => `<path d="M${x - 22} ${y}l22-34 22 34z"/>`).join('') + '</g>'
-      + souris(80, 128, 1.4, { chapeau: true, baton: true, robe: '#8a7a5c' }) + souris(160, 128, 1.4, { couronne: true, cape: '#6b3fa0' })
-      + '<g fill="#fff"><circle cx="110" cy="80" r="3"/><circle cx="120" cy="76" r="3"/><circle cx="130" cy="72" r="3"/></g>',
-    // 6. La grande bataille, puis la fuite sur Bayard
+      + anim('lva-balance', souris(80, 128, 1.4, { chapeau: true, baton: true, robe: '#8a7a5c' })) + anim('lva-souffle', souris(160, 128, 1.4, { couronne: true, cape: '#6b3fa0' }), -1)
+      + [[110, 80], [120, 76], [130, 72]].map(([x, y], i) => anim('lva-parole', `<circle cx="${x}" cy="${y}" r="3" fill="#fff"/>`, (i * 0.4).toFixed(1))).join(''),
+    // 6. La grande bataille, puis la fuite sur Bayard : les lances s'entrechoquent, Bayard s'enfuit au galop
     () => ciel('#2b356f', '#6b4a6e') + '<rect x="0" y="40" width="90" height="160" fill="#8a8395"/><path d="M0 40h10v-10h10v10h10v-10h10v10h10v-10h10v10h10v-10h10v10h10" fill="none" stroke="#8a8395" stroke-width="10"/><path d="M28 200v-60a17 17 0 0 1 34 0v60z" fill="#2b2b33"/><rect y="180" width="320" height="20" fill="#5c8a4a"/>'
-      + souris(110, 150, 1, { casque: '#8a90a8', lance: true }) + souris(140, 156, 1, { casque: '#8a90a8', lance: true })
-      + '<g fill="#FFC857">' + [[125, 100], [170, 120]].map(([x, y]) => `<path transform="translate(${x},${y})" d="M0-8l2 6 6 0-5 4 2 6-5-4-5 4 2-6-5-4 6 0z"/>`).join('') + '</g>' + bayard(250, 82, 0.42),
-    // 7. L'hiver dans la forêt, puis le retour chez leur maman
+      + anim('lva-agite', souris(110, 150, 1, { casque: '#8a90a8', lance: true })) + anim('lva-agite', souris(140, 156, 1, { casque: '#8a90a8', lance: true }), -0.3)
+      + [[125, 100], [170, 120]].map(([x, y], i) => anim('lva-pulse', `<path transform="translate(${x},${y})" d="M0-8l2 6 6 0-5 4 2 6-5-4-5 4 2-6-5-4 6 0z" fill="#FFC857"/>`, -i * 0.5)).join('') + galop(250, 82, 0.42),
+    // 7. L'hiver dans la forêt, puis le retour chez leur maman : la neige tombe, la fenêtre brille
     () => ciel('#3a4366', '#8a93b8') + '<rect y="160" width="320" height="40" fill="#F3EFE6"/>' + '<g stroke="#4a3a2c" stroke-width="4" stroke-linecap="round">' + [30, 80].map(x => `<path d="M${x} 162V90M${x} 120l-14-14M${x} 104l12-12"/>`).join('') + '</g>'
-      + '<g fill="#fff">' + [...Array(18)].map((_, i) => `<circle cx="${(i * 47) % 320}" cy="${(i * 29) % 150}" r="2"/>`).join('') + '</g>'
-      + [110, 130, 150, 170].map((x, i) => souris(x, 150, 0.8, { casque: ['#D64045', '#3E7C8F', '#FFC857', '#3E9A6B'][i] })).join('')
-      + '<rect x="220" y="100" width="90" height="62" fill="#c9b9a6"/><path d="M212 100l53-34 53 34z" fill="#6b4a33"/><rect x="240" y="116" width="22" height="20" fill="#FFC857"/>' + souris(290, 150, 1, { robe: '#3E7C8F' }),
-    // 8. Le grand combat gagné chez le roi Yon
+      + neige()
+      + [110, 130, 150, 170].map((x, i) => anim('lva-grelotte', souris(x, 150, 0.8, { casque: ['#D64045', '#3E7C8F', '#FFC857', '#3E9A6B'][i] }), -i * 0.15)).join('')
+      + '<rect x="220" y="100" width="90" height="62" fill="#c9b9a6"/><path d="M212 100l53-34 53 34z" fill="#6b4a33"/>' + anim('lva-lueur', '<rect x="240" y="116" width="22" height="20" fill="#FFC857"/>') + anim('lva-souffle', souris(290, 150, 1, { robe: '#3E7C8F' })),
+    // 8. Le grand combat gagné chez le roi Yon : les drapeaux claquent, la foule acclame
     () => ciel('#3e7c8f', '#9fd0dd') + '<rect y="150" width="320" height="50" fill="#c9a466"/><path d="M0 150h320" stroke="#8B5A3C" stroke-width="6"/>'
-      + '<g>' + [[40, '#D64045'], [110, '#FFC857'], [210, '#3E7C8F'], [280, '#3E9A6B']].map(([x, c]) => `<path d="M${x} 150V60" stroke="#6b4a33" stroke-width="3"/><path d="M${x} 62h28l-8 8 8 8h-28z" fill="${c}"/>`).join('') + '</g>'
-      + souris(160, 120, 1.5, { casque: '#D64045', lance: true }) + '<path d="M196 92h20v6a10 10 0 0 1-20 0zM202 108h8v8h-8z" fill="#FFC857"/>'
-      + '<g fill="#A79E95">' + [20, 50, 80, 230, 260, 290].map(x => `<circle cx="${x}" cy="186" r="9"/>`).join('') + '</g>',
-    // 9. Le mariage de Renaut, et le château de Montauban
+      + [[40, '#D64045'], [110, '#FFC857'], [210, '#3E7C8F'], [280, '#3E9A6B']].map(([x, c], i) => `<path d="M${x} 150V60" stroke="#6b4a33" stroke-width="3"/>` + anim('lva-drapeau', `<path d="M${x} 62h28l-8 8 8 8h-28z" fill="${c}"/>`, -i * 0.35)).join('')
+      + anim('lva-souffle', souris(160, 120, 1.5, { casque: '#D64045', lance: true })) + anim('lva-pulse', '<path d="M196 92h20v6a10 10 0 0 1-20 0zM202 108h8v8h-8z" fill="#FFC857"/>')
+      + [20, 50, 80, 230, 260, 290].map((x, i) => anim('lva-saute', `<circle cx="${x}" cy="186" r="9" fill="#A79E95"/>`, -i * 0.2)).join(''),
+    // 9. Le mariage de Renaut, et le château de Montauban : des cœurs s'envolent
     () => ciel('#F2A3B5', '#FFF6E0') + chateau(250, 160, 0.4) + '<rect y="160" width="320" height="40" fill="#5c8a4a"/>'
-      + souris(100, 130, 1.4, { casque: '#D64045' }) + souris(150, 130, 1.4, { voile: true, robe: '#FFF6E0' })
-      + '<g fill="#D64045">' + [[125, 70], [140, 56], [110, 54]].map(([x, y]) => `<path transform="translate(${x},${y})" d="M0 6l-6-6a3.5 3.5 0 0 1 6-4 3.5 3.5 0 0 1 6 4z"/>`).join('') + '</g>',
-    // 10. La paix, puis un très long voyage par-delà la mer
+      + anim('lva-balance', souris(100, 130, 1.4, { casque: '#D64045' })) + anim('lva-balance', souris(150, 130, 1.4, { voile: true, robe: '#FFF6E0' }), -1.2)
+      + [[125, 80], [140, 70], [110, 66], [132, 90]].map(([x, y], i) => anim('lva-monte', `<path transform="translate(${x},${y})" d="M0 6l-6-6a3.5 3.5 0 0 1 6-4 3.5 3.5 0 0 1 6 4z" fill="#D64045"/>`, -i * 0.9)).join(''),
+    // 10. La paix, puis un très long voyage par-delà la mer : le bateau tangue sur les vagues
     () => ciel('#9fd0dd', '#FFF6E0') + '<rect y="150" width="160" height="50" fill="#5c8a4a"/><rect x="160" y="140" width="160" height="60" fill="#3E7C8F"/>'
-      + souris(50, 122, 1.2, { couronne: true, cape: '#6b3fa0' }) + souris(100, 122, 1.2, { casque: '#D64045' }) + '<circle cx="75" cy="128" r="5" fill="#A79E95"/>'
-      + '<path d="M210 140h80l-12 16h-56z" fill="#8B5A3C"/><path d="M250 140V80" stroke="#6b4a33" stroke-width="3"/><path d="M252 84l30 20h-30z" fill="#FFF6E0"/><path d="M180 160q10-4 20 0t20 0 20 0 20 0 20 0" fill="none" stroke="#9fd0dd" stroke-width="2"/>',
-    // 11. Renaut aide à bâtir la cathédrale de Cologne
+      + anim('lva-souffle', souris(50, 122, 1.2, { couronne: true, cape: '#6b3fa0' })) + anim('lva-souffle', souris(100, 122, 1.2, { casque: '#D64045' }), -1) + '<circle cx="75" cy="128" r="5" fill="#A79E95"/>'
+      + anim('lva-tangue', '<path d="M210 140h80l-12 16h-56z" fill="#8B5A3C"/><path d="M250 140V80" stroke="#6b4a33" stroke-width="3"/><path d="M252 84l30 20h-30z" fill="#FFF6E0"/>')
+      + '<path class="lva-courant" d="M170 162q10-4 20 0t20 0 20 0 20 0 20 0 20 0 20 0" fill="none" stroke="#9fd0dd" stroke-width="2" stroke-dasharray="10 10"/>',
+    // 11. Renaut aide à bâtir la cathédrale de Cologne : il porte sa pierre, pas à pas
     () => ciel('#9fd0dd', '#FFF6E0') + '<rect y="170" width="320" height="30" fill="#c9b9a6"/>'
       + '<path d="M170 170V80l20-30 20 30v90zM240 170V100l16-20 16 20v70zM200 170V110h50v60z" fill="#b8a585"/><g stroke="#8B5A3C" stroke-width="2.5">' + [170, 190, 210, 240, 270].map(x => `<path d="M${x - 4} 172V66"/>`).join('') + '<path d="M160 120h120M160 90h70"/></g>'
-      + souris(90, 140, 1.4, { pierre: true, robe: '#8a7a5c' }),
-    // 12. Le Rhin emporte Renaut, entouré de lumières et de chants
-    () => ciel('#0d1030', '#1b2250') + etoiles(36) + '<rect y="110" width="320" height="90" fill="#1d3a5a"/><path d="M0 112q40-6 80 0t80 0 80 0 80 0" fill="none" stroke="#7FB8C7" stroke-width="2" opacity=".6"/>'
-      + '<g>' + [[60, 128], [120, 140], [180, 124], [240, 138], [290, 126]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="10" fill="#FFC857" opacity=".25"/><circle cx="${x}" cy="${y}" r="3.4" fill="#FFC857"/>`).join('') + '</g>'
-      + '<path d="M140 150h44l-6 8h-32z" fill="#cfd3ee" opacity=".85"/><path d="M162 150v-14" stroke="#cfd3ee" stroke-width="2"/>'
-      + '<g fill="#E8833A">' + [[110, 172], [160, 180], [210, 170]].map(([x, y]) => `<ellipse cx="${x}" cy="${y}" rx="11" ry="5"/><path d="M${x - 10} ${y}l-8-5v10z"/>`).join('') + '</g>'
-      + '<g fill="#FFF6E0" font-family="Baloo 2, sans-serif" font-size="14">' + [[70, 70], [250, 60], [160, 50]].map(([x, y]) => `<text x="${x}" y="${y}">♪</text>`).join('') + '</g>',
+      + anim('lva-marche', souris(90, 140, 1.4, { pierre: true, robe: '#8a7a5c' })),
+    // 12. Le Rhin emporte Renaut, entouré de lumières et de chants : les lumières vacillent, les poissons nagent
+    () => ciel('#0d1030', '#1b2250') + scintillent(36, 5) + '<rect y="110" width="320" height="90" fill="#1d3a5a"/>'
+      + '<path class="lva-courant" d="M0 112q40-6 80 0t80 0 80 0 80 0" fill="none" stroke="#7FB8C7" stroke-width="2" stroke-dasharray="10 10" opacity=".6"/>'
+      + [[60, 128], [120, 140], [180, 124], [240, 138], [290, 126]].map(([x, y], i) => anim('lva-lueur', `<circle cx="${x}" cy="${y}" r="10" fill="#FFC857" opacity=".25"/><circle cx="${x}" cy="${y}" r="3.4" fill="#FFC857"/>`, -i * 0.5)).join('')
+      + anim('lva-tangue', '<path d="M140 150h44l-6 8h-32z" fill="#cfd3ee" opacity=".85"/><path d="M162 150v-14" stroke="#cfd3ee" stroke-width="2"/>')
+      + [[110, 172], [160, 180], [210, 170]].map(([x, y], i) => anim('lva-nage', `<ellipse cx="${x}" cy="${y}" rx="11" ry="5" fill="#E8833A"/><path d="M${x - 10} ${y}l-8-5v10z" fill="#E8833A"/>`, -i * 1.1)).join('')
+      + [[70, 70], [250, 60], [160, 50]].map(([x, y], i) => anim('lva-monte', `<text x="${x}" y="${y}" fill="#FFF6E0" font-family="Baloo 2, sans-serif" font-size="14">♪</text>`, -i * 1.2)).join(''),
     // Fin : Bayard galope encore, la nuit, dans la forêt des Ardennes
-    () => ciel('#0d1030', '#1b2250') + etoiles(30) + '<circle cx="60" cy="40" r="18" fill="#F3EFE6"/><rect y="170" width="320" height="30" fill="#14271f"/>' + sapins([0, 30, 250, 280, 300], 172, 80, '#0f2a22') + bayard(150, 74, 0.52, false),
+    () => ciel('#0d1030', '#1b2250') + scintillent(30, 17) + anim('lva-lueur', '<circle cx="60" cy="40" r="18" fill="#F3EFE6"/>') + '<rect y="170" width="320" height="30" fill="#14271f"/>' + sapins([0, 30, 250, 280, 300], 172, 80, '#0f2a22') + galop(150, 74, 0.52, false),
   ];
 
   // ---------- Les illustrations des cartes : de petites scènes (repère 120 × 90) ----------
