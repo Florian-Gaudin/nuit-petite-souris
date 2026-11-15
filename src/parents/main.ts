@@ -3,6 +3,8 @@ import '../styles/style.css';
 import './parents.css';
 import { mount } from 'svelte';
 import '../lib/plateforme';
+import { activerTypographie } from '../lib/typographie';
+activerTypographie(); // une espace insécable devant ! et ?
 import { initStockage } from '../lib/stockage';
 import App from './App.svelte';
 import { activerHorsLigne } from '../lib/horsLigne';

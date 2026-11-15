@@ -4,6 +4,8 @@
 import './styles/style.css';
 import './styles/diplome.css';
 import './lib/plateforme';
+import { activerTypographie } from './lib/typographie';
+activerTypographie(); // une espace insécable devant ! et ?
 import { initStockage } from './lib/stockage';
 import { installerProfil } from './lib/profilCourant';
 import { activerHorsLigne } from './lib/horsLigne';

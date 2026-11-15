@@ -76,7 +76,7 @@ export async function pngQr(texte: string, opts: { titre?: string; icone?: strin
   g.fillStyle = '#FFF4D6';
   g.font = '700 46px "Baloo 2", "Trebuchet MS", sans-serif';
   g.fillText('Scanne-moi pour découvrir', L / 2, 1330, L - 80);
-  g.fillText('le voyage de Quenotte !', L / 2, 1385, L - 80);
+  g.fillText('le voyage de Quenotte !', L / 2, 1385, L - 80);
 
   return new Promise((ok, ko) => canvas.toBlob(b => (b ? ok(b) : ko(new Error('PNG impossible'))), 'image/png'));
 }

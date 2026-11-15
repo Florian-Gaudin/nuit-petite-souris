@@ -2,6 +2,8 @@
 import '../styles/style.css';
 import { svgQr } from '../lib/qr';
 import '../lib/plateforme';
+import { activerTypographie } from '../lib/typographie';
+activerTypographie(); // une espace insécable devant ! et ?
 import { initStockage } from '../lib/stockage';
 import { installerProfil, baseHistoire } from '../lib/profilCourant';
 import { activerHorsLigne } from '../lib/horsLigne';

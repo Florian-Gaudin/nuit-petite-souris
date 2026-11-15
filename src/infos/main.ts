@@ -2,6 +2,8 @@
 import '../styles/style.css';
 import './infos.css';
 import { activerHorsLigne } from '../lib/horsLigne';
+import { activerTypographie } from '../lib/typographie';
+activerTypographie(); // une espace insécable devant ! et ?
 import { EMAIL_CONTACT } from '../lib/contact';
 
 activerHorsLigne();
