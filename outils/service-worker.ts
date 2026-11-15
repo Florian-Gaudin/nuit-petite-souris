@@ -14,7 +14,8 @@ function fichiersPublics(dossier: string): string[] {
     }
   };
   try { parcourir(dossier); } catch { /* pas de dossier public */ }
-  return out;
+  // La vidéo de présentation n'est pas mise en cache à l'installation (trop lourde, inutile hors ligne)
+  return out.filter(f => !f.startsWith('video/'));
 }
 
 const SW = (version: string, fichiers: string[]) => `// Service worker de « La nuit de la Petite Souris » (généré à la construction, ne pas modifier)

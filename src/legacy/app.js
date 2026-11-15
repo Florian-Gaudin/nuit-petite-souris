@@ -18,6 +18,10 @@
 
   // ---------- Progression (mémorisée en local) ----------
   const KEY = 'souris.progression.' + window.PROFIL.id; // une progression par profil (plusieurs enfants, plusieurs dents)
+  // Grand texte (accessibilité) : un réglage de l'appareil, gardé même quand on recommence l'histoire
+  const CLE_GRAND = 'souris.grand';
+  const grandTexte = on => { document.documentElement.classList.toggle('grand-texte', on); window.dispatchEvent(new Event('resize')); };
+  grandTexte(window.STOCKAGE.lire(CLE_GRAND) === '1');
   const State = { unlocked: 0, scene: 0, etoiles: {}, badges: [], secret: false, nuit: null, fini: false };
   function calcNuit() { const d = new Date(); if (d.getHours() < 12) d.setDate(d.getDate() - 1); return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
   function load() {
@@ -110,6 +114,7 @@
         <button class="btn-ico" id="btn-prefs" aria-label="Préférences" aria-haspopup="true" aria-expanded="false">${A.icone('reglages')}</button>
         <div class="prefs-menu" id="prefs-menu" role="menu" hidden>
           <button role="menuitem" id="pref-son"></button>
+          <button role="menuitem" id="pref-grand" aria-pressed="false"></button>
           ${PLEIN.api && !PLEIN.appli ? `<button role="menuitem" id="pref-plein"></button>` : ''}
           <a role="menuitem" id="pref-changer" href="./"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5L12 4l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z" fill="currentColor"/></svg> Retour à l'accueil</a>
           <a role="menuitem" id="pref-parents" href="parents/">${A.icone('famille')} Espace parents</a>
@@ -122,6 +127,9 @@
     const majPrefs = () => {
       $('#pref-son').innerHTML = A.icone(SON.muet ? 'muet' : 'son') + (SON.muet ? ' Son et musique : coupés' : ' Son et musique : activés');
       if ($('#pref-plein')) $('#pref-plein').innerHTML = A.icone(PLEIN.actif() ? 'reduire' : 'plein') + (PLEIN.actif() ? ' Quitter le plein écran' : ' Plein écran');
+      const grand = document.documentElement.classList.contains('grand-texte');
+      $('#pref-grand').innerHTML = `<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><text x="1" y="19" font-size="13" font-weight="800" fill="currentColor" font-family="sans-serif">A</text><text x="10" y="20" font-size="19" font-weight="800" fill="currentColor" font-family="sans-serif">A</text></svg> Grand texte : ${grand ? 'activé' : 'désactivé'}`;
+      $('#pref-grand').setAttribute('aria-pressed', String(grand));
       $('#pref-reset').innerHTML = A.icone('recommencer') + " Recommencer l'histoire"; $('#pref-reset').classList.remove('confirme');
     };
     const fermerMenu = () => { menu.hidden = true; bPrefs.setAttribute('aria-expanded', 'false'); };
@@ -130,6 +138,11 @@
     menu.onclick = e => e.stopPropagation();
     document.addEventListener('click', () => { if (!menu.hidden) fermerMenu(); });
     $('#pref-son').onclick = () => { SON.unlock(); const m = SON.toggle(); majPrefs(); toast(m ? 'Son et musique coupés' : 'Son et musique activés'); };
+    $('#pref-grand').onclick = () => {
+      const on = !document.documentElement.classList.contains('grand-texte');
+      window.STOCKAGE.ecrire(CLE_GRAND, on ? '1' : '0'); grandTexte(on); majPrefs();
+      toast(on ? 'Grand texte activé' : 'Texte de taille normale');
+    };
     if ($('#pref-plein')) $('#pref-plein').onclick = () => {
       if (PLEIN.actif()) { PLEIN.sortir(); try { sessionStorage.removeItem('souris.plein'); } catch (e) { } } else PLEIN.entrer();
       fermerMenu();

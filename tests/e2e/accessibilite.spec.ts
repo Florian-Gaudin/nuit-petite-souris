@@ -3,7 +3,7 @@ import { test, expect, type Page } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import { ouvrir } from './aide';
 
-// L'histoire bloque encore le zoom à deux doigts (pour les jeux tactiles) : seul écart connu, signalé à part
+// L'histoire bloque le zoom à deux doigts (jeux tactiles) ; le réglage « Grand texte » le remplace (technique WCAG G178)
 const ECART_HISTOIRE = ['meta-viewport'];
 
 async function audit(page: Page, nom: string, ignorer: string[] = []) {
@@ -34,4 +34,21 @@ test('la page Informations : depuis l\'accueil et les réglages', async ({ page 
   await page.locator('#btn-prefs').click();
   await page.locator('#pref-infos').click();
   await expect(page.locator('#accessibilite h2')).toHaveText('Accessibilité');
+});
+
+test("« Grand texte » : le texte de l'histoire grandit, défile si besoin, et le réglage est gardé", async ({ page }) => {
+  await ouvrir(page, '?reset=1#exemple');
+  const taille = () => page.locator('#bandeau-texte').evaluate(e => parseFloat(getComputedStyle(e).fontSize));
+  const avant = await taille();
+  await page.locator('#btn-prefs').click();
+  await expect(page.locator('#pref-grand')).toContainText('désactivé');
+  await page.locator('#pref-grand').click();
+  await expect(page.locator('#pref-grand')).toHaveAttribute('aria-pressed', 'true');
+  expect(await taille()).toBeGreaterThan(avant * 1.6);
+  // Un texte trop long ne rétrécit pas : il défile dans le bandeau
+  expect(await page.locator('#bandeau-texte').evaluate(e => getComputedStyle(e).overflowY)).toBe('auto');
+  // Toujours actif après rechargement, et même après « Recommencer »
+  await ouvrir(page, '?reset=1#exemple');
+  expect(await taille()).toBeGreaterThan(avant * 1.6);
+  expect(await audit(page, 'grand texte', ECART_HISTOIRE)).toEqual([]);
 });

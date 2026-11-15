@@ -781,3 +781,14 @@ body.mode-choix .btn-passer{display:none}
 /* Accueil : le lien vers les informations, discret */
 .lien-infos{position:relative;z-index:1;color:var(--muet);font-size:.78rem;text-decoration:underline;text-underline-offset:3px;min-height:28px;display:inline-flex;align-items:center}
 @media (max-height:600px){.lien-infos{min-height:22px;font-size:.7rem}}
+
+/* ---------- Grand texte (réglage d'accessibilité) : le texte de l'histoire environ deux fois plus grand ---------- */
+html.grand-texte{font-size:125%}
+html.grand-texte body{font-size:22px}
+html.grand-texte .bandeau-texte{font-size:1.6rem;line-height:1.3;max-height:min(300px,38vh);overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y}
+html.grand-texte .bandeau{max-height:52vh}
+html.grand-texte .prefs-menu{max-height:calc(100vh - var(--fil-h) - 20px);overflow-y:auto}
+@media (min-width:700px){
+  html.grand-texte body{font-size:23px}
+  html.grand-texte .bandeau-texte{font-size:1.9rem;max-height:min(300px,36vh)}
+}

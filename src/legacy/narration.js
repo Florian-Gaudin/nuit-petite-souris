@@ -43,6 +43,10 @@ window.NARR = (function () {
   function ajuster() {
     if (!texte) return;
     texte.style.fontSize = '';
+    // Grand texte : la taille choisie est gardée ; un texte trop long défile dans le bandeau
+    const grand = document.documentElement.classList.contains('grand-texte');
+    if (grand) texte.tabIndex = 0; else texte.removeAttribute('tabindex'); // zone qui défile : atteignable au clavier
+    if (grand) { texte.scrollTop = 0; return; }
     let fs = parseFloat(getComputedStyle(texte).fontSize) || 16;
     const min = Math.max(11, fs * 0.66);
     let n = 0;
