@@ -1,13 +1,13 @@
-// Typographie française : une espace insécable devant « ! » et « ? », partout où du texte s'affiche
+// Typographie française : une espace insécable devant « ! », « ? », « : » et « ; », partout où du texte s'affiche
 // (histoire, espace parents, pages annexes). Appliquée à l'affichage : aucun texte n'est oublié,
 // même ceux ajoutés plus tard. Les adresses (liens, QR code) ne sont pas touchées.
 const INSECABLE = ' ';
 
 export function typographier(t: string): string {
-  if (!/[!?]/.test(t) || /:\/\/|#p=/.test(t)) return t;
+  if (!/[!?:;]/.test(t) || /:\/\/|#p=/.test(t)) return t;
   return t
-    // « Bravo ! » : l'espace ordinaire devient insécable
-    .replace(/[ \t]+([!?])/g, INSECABLE + '$1')
+    // « Bravo ! », « Contact : » : l'espace ordinaire devient insécable
+    .replace(/[ \t]+([!?:;])/g, INSECABLE + '$1')
     // « Bravo! » : on ajoute l'espace manquante (seulement en fin de phrase, pas au milieu d'une adresse)
     .replace(/([\p{L}\d»)…])([!?])(?=$|[\s!?»"'’)…])/gu, '$1' + INSECABLE + '$2');
 }

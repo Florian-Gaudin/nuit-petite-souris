@@ -82,11 +82,11 @@ test("le bandeau garde la même hauteur pendant toute une scène, et le texte ne
   expect(Math.min(...polices)).toBeGreaterThanOrEqual(16);
 });
 
-test("typographie : une espace insécable devant ! et ? partout où du texte s'affiche", async ({ page }) => {
+test("typographie : une espace insécable devant ! ? : et ; partout où du texte s'affiche", async ({ page }) => {
   const verifier = async (nom: string) => {
     const fautes = await page.evaluate(() => {
       const out: string[] = [], m = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
-      for (let n = m.nextNode(); n; n = m.nextNode()) { const t = (n as Text).data; if (/ [!?]/.test(t) && !/:\/\/|#p=/.test(t) && !(n.parentElement && n.parentElement.closest('script,style'))) out.push(t.trim().slice(0, 60)); }
+      for (let n = m.nextNode(); n; n = m.nextNode()) { const t = (n as Text).data; if (/ [!?:;]/.test(t) && !/:\/\/|#p=/.test(t) && !(n.parentElement && n.parentElement.closest('script,style'))) out.push(t.trim().slice(0, 60)); }
       return out;
     });
     expect(fautes, nom + ' : ' + fautes.join(' | ')).toEqual([]);

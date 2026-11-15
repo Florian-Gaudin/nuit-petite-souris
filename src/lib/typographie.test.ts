@@ -5,6 +5,9 @@ describe('typographie : espace insécable devant ! et ?', () => {
   it('remplace les espaces ordinaires', () => {
     expect(typographier('Bravo ! Tu viens ?')).toBe('Bravo ! Tu viens ?');
   });
+  it('vaut aussi devant les deux-points et le point-virgule', () => {
+    expect(typographier('Contact : Florian ; merci')).toBe('Contact : Florian ; merci');
+  });
   it('ajoute une espace manquante en fin de phrase', () => {
     expect(typographier('Coucou! Et toi?')).toBe('Coucou ! Et toi ?');
   });
