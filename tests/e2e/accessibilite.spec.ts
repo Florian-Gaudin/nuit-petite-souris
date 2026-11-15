@@ -30,6 +30,7 @@ test('la page Informations : depuis l\'accueil et les réglages', async ({ page 
   await expect(page.locator('h1')).toHaveText('Informations');
   await expect(page.locator('#confidentialite')).toContainText('Aucune donnée personnelle');
   await expect(page.locator('#mentions')).toContainText('GitHub, Inc.');
+  await expect(page.locator('#mentions a[href="mailto:lanuitdelapetitesouris@gmail.com"]')).toHaveCount(1);
   await ouvrir(page, '#exemple');
   await page.locator('#btn-prefs').click();
   await page.locator('#pref-infos').click();
