@@ -32,9 +32,9 @@ test('par le QR code : directement l\'accueil personnalisé, sans écran de choi
 });
 
 test('« Changer d\'histoire » ramène à l\'écran de choix', async ({ page }) => {
-  // Depuis l'accueil : le lien sous le titre
+  // Depuis la couverture : « Retour à l'accueil » dans le menu des réglages
   await ouvrir(page, '#p=' + code(LEO));
-  await page.locator('.retour-choix').click();
+  await page.locator('#btn-prefs').click(); await page.locator('#pref-changer').click();
   await expect(page.locator('.ecran-choix')).toBeVisible();
   await expect(page.locator('.carte-choix.reprendre')).toContainText('Léo');
   // En pleine histoire : le menu Préférences
@@ -105,7 +105,7 @@ test('débuter, changer d\'histoire, reprendre : sur place, sans recharger (le p
   expect(new URL(page.url()).hash).toBe('#exemple');
   expect(await marque()).toBe(1);
   // Changer d'histoire, puis revenir : toujours la même page
-  await page.locator('.retour-choix').click();
+  await page.locator('#btn-prefs').click(); await page.locator('#pref-changer').click();
   await expect(page.locator('.ecran-choix')).toBeVisible();
   await expect(page.locator('.carte-choix.voyage')).toContainText('Clémentine');
   expect(await marque()).toBe(1);
@@ -114,7 +114,7 @@ test('débuter, changer d\'histoire, reprendre : sur place, sans recharger (le p
   await expect(bandeau(page)).toContainText('Coucou Léo');
   // Puis changer d'histoire et reprendre Léo : sur place cette fois
   await page.evaluate(() => { (window as any).MARQUE = 2; });
-  await page.locator('.retour-choix').click();
+  await page.locator('#btn-prefs').click(); await page.locator('#pref-changer').click();
   await expect(page.locator('.carte-choix.reprendre')).toContainText('Léo');
   await expect(page.locator('.carte-choix.voyage')).toContainText('Clémentine');
   await page.locator('.carte-choix.reprendre').click();

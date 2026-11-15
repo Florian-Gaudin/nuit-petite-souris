@@ -21,6 +21,15 @@ window.ARDENNES = {
   // secret : le secret à la feuille de chêne qui lui correspond pendant le voyage (scène.élément), ou null
   cartes: [
     {
+      id: "legende", titre: "La légende des quatre fils Aymon", secret: null, livre: true,
+      texte: [
+        "Il y a très, très longtemps, quatre frères et leur cheval magique, Bayard, ont vécu de grandes aventures dans les Ardennes.",
+        "Le Grand Marionnettiste raconte leur histoire en douze tableaux. Ouvre le livre !",
+      ],
+      aVoir: "L'horloge du Grand Marionnettiste, à Charleville.",
+      photo: null,
+    },
+    {
       id: "foret", titre: "La forêt et le sanglier", secret: "foret.sanglier",
       texte: [
         "La forêt des Ardennes est immense : elle continue en Belgique et au Luxembourg.",
@@ -118,15 +127,6 @@ window.ARDENNES = {
       aVoir: "Chez les boulangers des Ardennes.",
       photo: null,
     },
-    {
-      id: "legende", titre: "La légende des quatre fils Aymon", secret: null, livre: true,
-      texte: [
-        "Il y a très, très longtemps, quatre frères et leur cheval magique, Bayard, ont vécu de grandes aventures dans les Ardennes.",
-        "Le Grand Marionnettiste raconte leur histoire en douze tableaux. Ouvre le livre !",
-      ],
-      aVoir: "L'horloge du Grand Marionnettiste, à Charleville.",
-      photo: null,
-    },
   ],
 
   // ---------- Le livre : la légende des quatre fils Aymon en douze tableaux ----------
@@ -137,7 +137,11 @@ window.ARDENNES = {
       "À Charleville, le Grand Marionnettiste la raconte toutes les heures, de dix heures à vingt et une heures. Et le samedi soir, à vingt et une heures quinze, il raconte les douze tableaux à la suite.",
       "Va la voir !",
     ],
-    ouvrir: "Ouvrir le livre",
+    ouvrir: "Ouvrir le livre : douze tableaux",
+    // Sur la carte de la légende : le ruban, le sous-titre et l'invitation de Quenotte
+    ruban: "Livre à feuilleter",
+    sousTitre: "Un livre ancien à feuilleter, en douze tableaux",
+    invitation: "Viens, je vais te montrer l'histoire de Bayard ! Touche le livre pour l'ouvrir.",
     tableaux: [
       { heure: "Dix heures", texte: "L'empereur Charlemagne fait chevaliers les quatre fils du duc Aymon d'Ardenne : Renaut, Allard, Guichard et Richard. Quelle fête au palais !" },
       { heure: "Onze heures", texte: "La fée Oriande offre à Renaut, son filleul, un cheval-fée : Bayard. Il est si magique qu'il peut porter les quatre frères à la fois, et sauter par-dessus les rivières !" },

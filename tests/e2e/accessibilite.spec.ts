@@ -22,7 +22,7 @@ test('audit WCAG 2.1 AA : tous les écrans', async ({ page }) => {
   await page.evaluate(() => { const A = (window as any).APP; A.state.unlocked = 5; A.state.fini = true; A.show(5, { diplome: true }); });
   await page.locator('#btn-carnet5').click(); pb.push(...await audit(page, 'carnet', ECART_HISTOIRE));
   await page.locator('.carte-ard').first().click(); pb.push(...await audit(page, 'carte', ECART_HISTOIRE));
-  await page.locator('[data-a="grille"]').click(); await page.locator('.carte-ard').last().click(); await page.locator('[data-a="livre"]').click(); await page.keyboard.press('ArrowRight');
+  await page.locator('[data-a="grille"]').click(); await page.locator('.carte-livre').click(); await page.locator('[data-a="livre"]').click(); await page.keyboard.press('ArrowRight');
   pb.push(...await audit(page, 'livre', ECART_HISTOIRE));
   await page.keyboard.press('Escape');
   for (const p of ['parents/', 'mot/#exemple', 'certificat/#exemple', 'infos/']) {

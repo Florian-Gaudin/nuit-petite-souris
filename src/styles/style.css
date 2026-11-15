@@ -996,9 +996,9 @@ html.grand-texte .livre-ancien .livre-texte p{font-size:1.5rem}
 @media (prefers-reduced-motion:reduce){.decor-foret .tap.fuit .sanglier{animation:none;opacity:0}}
 
 /* ---------- L'ouverture : la couverture du livre, puis la page de garde ---------- */
-.origine.ouverture-livre{background:radial-gradient(circle at 50% 35%,#4a2e1a,#1a0f08 75%);gap:6px;padding:8px 8px 6px}
+.origine.ouverture-livre{background:radial-gradient(circle at 50% 35%,#4a2e1a,#1a0f08 75%);gap:6px;padding:6px}
 .lv-scene{flex:1 1 auto;min-height:0;width:100%;display:flex;justify-content:center}
-.lv-ecran{position:relative;height:100%;width:100%;max-width:min(100%,calc((100dvh - var(--fil-h) - var(--bandeau-h)) * .5));perspective:1700px}
+.lv-ecran{position:relative;height:100%;width:100%;perspective:1700px}
 .lv-garde,.lv-couverture{position:absolute;inset:0}
 .lv-garde svg,.lv-couverture svg{width:100%;height:100%;display:block}
 .lv-couverture{border:0;padding:0;margin:0;background:none;cursor:pointer;transform-origin:left center;backface-visibility:hidden;transition:transform 1.3s cubic-bezier(.62,0,.28,1);z-index:2}
@@ -1081,3 +1081,30 @@ html.grand-texte .livre-ancien .livre-texte p{font-size:1.5rem}
 @keyframes lva-jambe{from{transform:rotate(-20deg)}to{transform:rotate(20deg)}}
 @media (prefers-reduced-motion:reduce){.livre-vignette [class^="lva-"],.livre-vignette .lva-galop .pattes rect{animation:none}}
 .livre-ancien.vers-suivante,.livre-ancien.vers-precedente{overflow:hidden} /* toute la feuille épouse la courbure */
+
+/* ---------- La carte de la légende : un trésor en tête du carnet ---------- */
+.carnet-grille .li-livre{grid-column:1/-1}
+.carte-livre{position:relative;overflow:hidden;flex-direction:row;justify-content:flex-start;gap:14px;padding:12px 16px;min-height:0;text-align:left;
+  background:linear-gradient(135deg,#862424,#5a1818);color:#F3E3BF;border:3px solid #C9A227;box-shadow:inset 0 0 0 2px #f6e08a,0 0 18px rgba(255,200,87,.45)}
+.carte-livre:hover,.carte-livre:focus-visible{border-color:#f6e08a}
+.carte-livre .livre-mini{flex:none;width:96px}
+.carte-livre .livre-mini svg{width:100%;height:auto;max-width:none;border-radius:0;filter:drop-shadow(0 4px 6px rgba(0,0,0,.4))}
+.carte-livre .livre-txt{display:flex;flex-direction:column;gap:4px;min-width:0}
+.carte-livre strong{font-family:var(--serif);font-size:1.15rem;color:#f6e08a}
+.carte-livre small{font-size:.9rem;font-weight:600;color:#F3E3BF}
+/* Le reflet doré qui balaie la carte, et quelques étincelles */
+.carte-livre::after{content:'';position:absolute;top:0;bottom:0;left:-40%;width:30%;background:linear-gradient(100deg,transparent,rgba(255,236,160,.35),transparent);animation:carte-reflet 3.6s ease-in-out infinite;pointer-events:none}
+@keyframes carte-reflet{0%,55%{transform:translateX(0)}100%{transform:translateX(480%)}}
+.carte-livre .etincelle{position:absolute;width:8px;height:8px;pointer-events:none;background:radial-gradient(circle,#fff6c8 0 30%,transparent 70%);animation:etincelle 1.8s ease-in-out infinite}
+.carte-livre .etincelle::before,.carte-livre .etincelle::after{content:'';position:absolute;left:50%;top:50%;width:14px;height:2px;margin:-1px 0 0 -7px;background:#ffe9a0;border-radius:2px}
+.carte-livre .etincelle::after{transform:rotate(90deg)}
+@keyframes etincelle{0%,100%{opacity:0;transform:scale(.4)}50%{opacity:1;transform:scale(1)}}
+.ruban-livre{position:absolute;top:14px;right:-38px;transform:rotate(35deg);background:#C9A227;color:#3b2a00;font:800 .7rem var(--display);padding:3px 40px;box-shadow:0 2px 4px rgba(0,0,0,.3)}
+/* Dans la carte : le livre fermé respire, comme pour dire « ouvre-moi » */
+.livre-ferme{display:block;margin:0 auto;border:0;padding:0;background:none;cursor:pointer;width:min(62%,240px);animation:livre-respire 2.4s ease-in-out infinite alternate}
+.livre-ferme svg{display:block;width:100%;height:auto;filter:drop-shadow(0 8px 14px rgba(60,30,10,.4))}
+.livre-ferme:focus-visible{outline:3px solid var(--lanterne);outline-offset:4px;border-radius:6px}
+@keyframes livre-respire{from{transform:scale(1) rotate(-1deg)}to{transform:scale(1.04) rotate(1deg)}}
+.carte-invitation{margin:10px auto 0;max-width:34em;padding:10px 14px;border-radius:14px;background:#fff;border:2px solid #C9A227;font-weight:700;color:#7a1f1f;text-align:center}
+.btn-livre{width:100%;max-width:440px;min-height:56px;font-size:1.15rem}
+@media (prefers-reduced-motion:reduce){.carte-livre::after,.carte-livre .etincelle,.livre-ferme{animation:none}}

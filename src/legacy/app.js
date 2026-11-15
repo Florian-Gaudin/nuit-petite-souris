@@ -310,26 +310,39 @@
   <div class="lv-scene"><div class="lv-ecran">
     <div class="lv-garde"></div>
     <div class="lv-ombre" aria-hidden="true"></div>
-    <button type="button" class="lv-couverture" aria-label="Ouvrir le livre : La nuit de la Petite Souris, l'histoire de ${esc(C.enfant)}"${surprise ? ' disabled' : ''}>${window.OUVERTURE.couverture({
-      enfant: C.enfant,
-      ligne1: surprise ? 'Rendez-vous ' + C.reveilTexte + ' !' : C.ville,
-      ligne2: surprise ? '' : nuitTexte(),
-      invite: surprise ? '' : 'Touche la couverture pour ouvrir le livre',
-    })}</button>
+    <button type="button" class="lv-couverture" aria-label="Ouvrir le livre : La nuit de la Petite Souris, l'histoire de ${esc(C.enfant)}"${surprise ? ' disabled' : ''}></button>
   </div></div>
-  <a class="retour-choix" href="./">${A.icone('changer')} Changer d'histoire</a>
 </section>`;
     },
     mount(r) {
       heure('—'); MUS.ambiance('accueil');
       etape(() => { complete(0); fondu(() => show(1, { scene: 0 }), 500); });
       const mien = this.jetonCarte = (this.jetonCarte || 0) + 1, encore = () => this.jetonCarte === mien;
-      $('.retour-choix', r).onclick = changerHistoire;
-      if (window.PROFIL.surprise) { NARR.dire(B(D.surprise)); return; }
-      this.preparerCarte(r);
+      // Le livre occupe toute la largeur : la hauteur du dessin suit la forme de l'écran
+      // (le bandeau prend sa hauteur un peu après : on redessine tant que le livre est fermé)
+      const ecran = $('.lv-ecran', r), surprise = window.PROFIL.surprise;
       let ouvert = false;
+      const dessiner = () => {
+        const b = ecran.getBoundingClientRect();
+        const h = b.width > 0 && b.height > 0 ? window.OUVERTURE.hauteur(320 * b.height / b.width) : 640;
+        if (this.h && Math.abs(h - this.h) < 3) return;
+        this.h = h;
+        $('.lv-couverture', r).innerHTML = window.OUVERTURE.couverture({
+          h, enfant: C.enfant,
+          ligne1: surprise ? 'Rendez-vous ' + C.reveilTexte + ' !' : C.ville,
+          ligne2: surprise ? '' : nuitTexte(),
+          invite: surprise ? '' : 'Touche la couverture pour ouvrir le livre',
+        });
+        if (!surprise) this.preparerCarte(r);
+      };
+      this.h = 0; dessiner();
+      if (this.taille) this.taille.disconnect();
+      this.taille = typeof ResizeObserver === 'function' ? new ResizeObserver(() => { if (!ouvert && encore()) dessiner(); }) : null;
+      if (this.taille) this.taille.observe(ecran);
+      if (surprise) { NARR.dire(B(D.surprise)); return; }
       const ouvrir = async () => {
         if (ouvert) return; ouvert = true;
+        if (this.taille) { this.taille.disconnect(); this.taille = null; }
         SON.unlock(); SON.play('page'); NARR.action(null);
         $('.lv-ecran', r).classList.add('ouvert');
         await wait(RM ? 50 : 1300); if (!encore()) return;
@@ -339,7 +352,7 @@
       NARR.dire(B(D.accueil));
       NARR.action(A.icone('lanterne') + ' ' + T(D.accueil.bouton), ouvrir);
     },
-    unmount() { this.jetonCarte = (this.jetonCarte || 0) + 1; },
+    unmount() { this.jetonCarte = (this.jetonCarte || 0) + 1; if (this.taille) { this.taille.disconnect(); this.taille = null; } },
     // La page de garde, dessinée dès le départ sous la couverture
     preparerCarte(r) {
       const K = window.CARTE, ville = window.PROFIL.profil.ville;
@@ -359,7 +372,7 @@
         trajet = `M${cx} ${cy}Q${borne((cx + et.x) / 2 + nx * h).toFixed(0)} ${borne((cy + et.y) / 2 + ny * h).toFixed(0)} ${et.x} ${et.y}`;
       }
       this.etoile = et;
-      $('.lv-garde', r).innerHTML = window.OUVERTURE.garde({ etoile: et, trajet, ville: ville.nom, enfant: C.enfant, aide: T(D.origine.aide) });
+      $('.lv-garde', r).innerHTML = window.OUVERTURE.garde({ h: this.h, etoile: et, trajet, ville: ville.nom, enfant: C.enfant, aide: T(D.origine.aide) });
       if (!et) r.querySelector('.origine').classList.add('sans-etoile');
     },
     // Le livre est ouvert : Quenotte se présente, l'enfant touche son étoile, puis on plonge sur les Ardennes
