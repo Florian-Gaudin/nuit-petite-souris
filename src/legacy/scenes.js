@@ -342,6 +342,7 @@ window.SCENES = (function () {
     if (vwIdeal >= 1000) {
       // Écran large et bas (tablette en paysage) : la scène entière, un peu moins large, centrée
       svg.setAttribute('viewBox', '0 0 1000 600'); svg.style.width = Math.round(H / 0.6) + 'px'; svg.style.height = H + 'px';
+      ciel(0, 600);
     } else {
       // Écran en hauteur : on recadre sur la partie utile (décor plus grand), puis on ajoute du ciel si besoin
       const z = ZONES[sc.id] || [0, 1000];
@@ -352,7 +353,15 @@ window.SCENES = (function () {
       const y0 = sc.id === 'etoiles' ? Math.min(0, (600 - vh) / 2) : 600 - vh;
       svg.setAttribute('viewBox', `${x0.toFixed(0)} ${y0.toFixed(0)} ${vw.toFixed(0)} ${vh.toFixed(0)}`);
       svg.style.width = '100%'; svg.style.height = Math.round(vh * W / vw) + 'px';
+      ciel(y0, vh);
     }
+  }
+  // Les éléments du ciel (data-ciel="x,part,ymax") montent avec le ciel visible : la lune reste haut dans l'image
+  function ciel(y0, vh) {
+    $$('[data-ciel]', svg).forEach(g => {
+      const [x, part, ymax] = g.dataset.ciel.split(',').map(Number);
+      g.setAttribute('transform', `translate(${x},${Math.min(ymax, y0 + vh * part).toFixed(0)})`);
+    });
   }
   function compteSecrets() {
     const el = $('#secrets-n', root); if (!el) return;
@@ -399,6 +408,7 @@ window.SCENES = (function () {
     }
     if (pos > idx) { SON.play('toc'); return; }
     // Pas avant la phrase qui le demande, et pas pendant qu'elle s'écrit : l'histoire se lit dans l'ordre
+    if (pos === idx && (NARR.lit || (NARR.attend && !g.classList.contains('cible')))) { NARR.continuer(); return; }
     if (!g.classList.contains('cible') || NARR.lit) { SON.play('toc'); g.classList.remove('refus'); void g.getBBox(); g.classList.add('refus'); return; }
     if (id === 'marionnettiste' && ctx.config.secret) secret(); // le premier toucher compte déjà comme un coup
     obligatoire(g, id, el, e);

@@ -232,8 +232,10 @@ input,textarea,[contenteditable]{-webkit-user-select:text;user-select:text;-webk
 @keyframes envol{0%{transform:translateY(-62px);opacity:1}30%{transform:translate(-60px,-140px) scale(.95)}100%{transform:translate(-520px,-560px) scale(.55);opacity:0}}
 @keyframes aile-g{0%,100%{transform:rotate(0)}50%{transform:rotate(55deg)}}
 @keyframes aile-d{0%,100%{transform:rotate(0)}50%{transform:rotate(-55deg)}}
-.decor-chateau .billet-sac{transition:transform .8s cubic-bezier(.3,1.3,.5,1)}
-.decor-chateau .tap.vu .billet-sac{transform:translateY(-38px)}
+.decor-chateau .billet-sac{transform-box:fill-box;transform-origin:center}
+.decor-chateau .tap.vu .billet-sac{animation:billet-poche 1.8s cubic-bezier(.45,0,.3,1) forwards}
+@keyframes billet-poche{0%{transform:none}30%{transform:translateY(-62px) rotate(-6deg)}100%{transform:translate(-220px,-28px) scale(.37) rotate(-6deg)}}
+@media (prefers-reduced-motion:reduce){.decor-chateau .tap.vu .billet-sac{animation:none;transform:translate(-220px,-28px) scale(.37) rotate(-6deg)}}
 
 /* Forêt */
 .decor-foret .champi .chapeau,.decor-foret .champi rect{transition:fill .5s}
@@ -291,7 +293,7 @@ input,textarea,[contenteditable]{-webkit-user-select:text;user-select:text;-webk
 .decor-lievre .tap[data-etape="2"] .oreilles-couchees,.decor-lievre .tap[data-etape="3"] .oreilles-couchees,.decor-lievre.galop .oreilles-couchees{opacity:0}
 .decor-lievre .tap:not([data-etape="0"]) .zzz{display:none}
 .decor-lievre .monture{transform-box:view-box;transition:transform 2.6s cubic-bezier(.4,0,.6,1)}
-.decor-lievre.galop .monture{transform:translate(330px,0)}
+.decor-lievre.galop .monture{transform:translate(436px,-81px) scale(.86)}
 .decor-lievre.galop .monture-in>*{animation:bond-lievre .43s ease-in-out infinite}
 @keyframes bond-lievre{0%,100%{transform:translateY(0)}50%{transform:translateY(-36px)}}
 .decor-lievre .cavaliere{opacity:0}
@@ -319,9 +321,9 @@ input,textarea,[contenteditable]{-webkit-user-select:text;user-select:text;-webk
 .decor-meuse .bulles-eau circle{animation:bulle 3.2s ease-in infinite}
 .decor-meuse .bulles-eau circle:nth-child(2){animation-delay:1s}.decor-meuse .bulles-eau circle:nth-child(3){animation-delay:2s}
 @keyframes bulle{0%{opacity:0;transform:translateY(10px)}30%{opacity:.9}100%{opacity:0;transform:translateY(-26px)}}
-.decor-meuse .poisson{opacity:0;transform:translate(470px,480px)}
+.decor-meuse .poisson{opacity:0;transform:translate(410px,480px)}
 .decor-meuse .tap.saute .poisson{animation:saut-poisson 1.5s ease-out}
-@keyframes saut-poisson{0%{opacity:0;transform:translate(470px,480px) rotate(-35deg)}25%{opacity:1}50%{transform:translate(470px,392px) rotate(0)}80%{opacity:1}100%{opacity:0;transform:translate(470px,485px) rotate(40deg)}}
+@keyframes saut-poisson{0%{opacity:0;transform:translate(410px,480px) rotate(-35deg)}25%{opacity:1}50%{transform:translate(410px,392px) rotate(0)}80%{opacity:1}100%{opacity:0;transform:translate(410px,485px) rotate(40deg)}}
 .decor-meuse .pli{display:none}
 .decor-meuse .tap[data-etape="0"] .pli0,.decor-meuse .tap[data-etape="1"] .pli1,.decor-meuse .tap[data-etape="2"] .pli2,.decor-meuse .tap[data-etape="3"] .pli3{display:block;animation:pop .35s ease-out}
 .decor-meuse .tap.parti{opacity:0;transition:opacity .4s}
@@ -368,14 +370,14 @@ input,textarea,[contenteditable]{-webkit-user-select:text;user-select:text;-webk
 @keyframes flamme{0%{opacity:.4;transform:scale(.5)}30%{opacity:1;transform:scale(1.5)}100%{opacity:.6;transform:scale(.8)}}
 @keyframes flamme-douce{from{transform:scale(.75)}to{transform:scale(.95)}}
 .decor-montgolfiere .ballon-in{transform-box:view-box;transform-origin:0 0;transition:transform 3.6s cubic-bezier(.45,0,.3,1)}
-.decor-montgolfiere.vole .ballon-in{transform:translate(380px,-210px) rotate(3deg)}
+.decor-montgolfiere.vole .ballon-in{transform:translate(330px,-170px) rotate(3deg)}
 .decor-montgolfiere.vole .ballon-in .tap .halo{display:none}
 .decor-montgolfiere .lumieres-loin rect{animation:lueur 2.5s ease-in-out infinite alternate}
 .decor-montgolfiere .meuse-vue{animation:reflet 3s ease-in-out infinite alternate}
-.decor-montgolfiere .filante{opacity:0;transform:translate(480px,120px)}
+.decor-montgolfiere .filante{opacity:0;transform:translate(210px,84px)}
 .decor-montgolfiere .tap.file .filante{animation:filante 1.4s ease-in forwards}
 .decor-montgolfiere .tap.file .etoile-vive{opacity:0;transition:opacity .2s}
-@keyframes filante{0%{opacity:1;transform:translate(480px,120px)}100%{opacity:0;transform:translate(160px,280px)}}
+@keyframes filante{0%{opacity:1;transform:translate(210px,84px)}100%{opacity:0;transform:translate(-110px,244px)}}
 .decor-montgolfiere .vol-oies{transform-box:view-box}
 .decor-montgolfiere .vol-oies path{animation:aile-oie .6s ease-in-out infinite alternate}
 .decor-montgolfiere .tap.passe .vol-oies{animation:oies 3s ease-in-out forwards}
@@ -740,7 +742,7 @@ html{touch-action:pan-x pan-y}
 .dessin-titre{display:flex;align-items:center;justify-content:center;gap:8px;font-size:1.35rem;color:var(--lanterne)}
 .dessin-titre .ico{width:24px;height:24px}
 .dessin-texte{margin:0;color:var(--muet);max-width:32em}
-.decor-lievre.repart .monture{transition:transform 1.5s cubic-bezier(.5,0,.8,.6);transform:translate(900px,0)}
+.decor-lievre.repart .monture{transition:transform 1.5s cubic-bezier(.5,0,.8,.6);transform:translate(800px,-9px) scale(.5)}
 /* Frotter la buée en glissant le doigt : le navigateur ne doit pas prendre le geste pour un défilement
    (touch-action est ignoré sur les éléments internes d'un SVG par certains navigateurs : on le pose sur le dessin entier) */
 .decor-fenetre{touch-action:none}
@@ -1108,3 +1110,9 @@ html.grand-texte .livre-ancien .livre-texte p{font-size:1.5rem}
 .carte-invitation{margin:10px auto 0;max-width:34em;padding:10px 14px;border-radius:14px;background:#fff;border:2px solid #C9A227;font-weight:700;color:#7a1f1f;text-align:center}
 .btn-livre{width:100%;max-width:440px;min-height:56px;font-size:1.15rem}
 @media (prefers-reduced-motion:reduce){.carte-livre::after,.carte-livre .etincelle,.livre-ferme{animation:none}}
+
+/* En route vers la ville : Quenotte arrive à pied par la gauche, juste descendue de la montgolfière */
+.decor-lievre .arrivee{animation:arrivee-souris 1.8s cubic-bezier(.3,.6,.4,1) both}
+.decor-lievre .arrivee .quenotte use{animation:trotte .45s ease-in-out 4}
+@keyframes arrivee-souris{from{transform:translateX(-260px)}to{transform:none}}
+@media (prefers-reduced-motion:reduce){.decor-lievre .arrivee,.decor-lievre .arrivee .quenotte use{animation:none}}

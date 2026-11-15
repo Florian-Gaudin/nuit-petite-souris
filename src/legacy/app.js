@@ -672,30 +672,30 @@
       const evenements = [
         [0.3, () => { mv(cs2, -90, 200); mv(bat, -40, 236); mv(cs1, -90, 232); }],
         [0.6, () => chuchote(D.camera.intro)],
-        [1.4, () => det('cheminee', C.cachetteEtiquette, 25, 40, 50, 43, 'bas')],
-        [2.6, () => { mv(cs2, 40, 200); mv(bat, 90, 236); SON.play('pas'); }],
-        [6.2, () => { mv(cs2, 70, 56); mv(bat, 120, 92); SON.play('pas'); rm('cheminee'); }],
-        [8.2, () => { mv(bat, 160, 84); }],
-        [9.6, () => { det('bateau', C.cadeau === 'piece' ? 'PIÈCE – SÈCHE' : 'BILLET – SÈCHE', 38, 26, 30, 12); chuchote(D.camera.cheminee); }],
-        [12.5, () => { cs2.classList.add('coucou'); }],
-        [14.5, () => { cs2.classList.remove('coucou'); mv(cs2, -90, 200); SON.play('pas'); rm('bateau'); }],
-        [16, () => { salon.setAttribute('hidden', ''); chambre.removeAttribute('hidden'); nom.textContent = 'CAM 2 · CHAMBRE'; dets.innerHTML = ''; SON.play('bip'); chuchote(D.camera.chambre); }],
-        [19.6, () => { mv(cs1, 60, 232); SON.play('pas'); }],
-        [23.4, () => { mv(cs1, 62, 122); SON.play('pas'); }],
-        [26.6, () => { dent.classList.add('prise'); chuchote(D.camera.dent); }],
-        [27.4, () => det('dent', 'DENT – TROUVÉE', 30, 54, 5, 6, 'droite')],
-        [29.4, () => { mot.classList.add('pose'); SON.play('papier'); rm('dent'); det('mot', 'PETIT MOT – SOUS L\'OREILLER', 28, 54, 8, 7, 'droite'); }],
-        [33.4, () => { mv(cs1, 220, 236); SON.play('pas'); rm('mot'); }],
-        [35.4, () => det('lit', 'SOUS LE LIT – MONSTRES : 0', 8, 79, 20, 6)],
-        [39.4, () => { mv(cs1, -90, 236); SON.play('pas'); rm('lit'); chuchote(D.camera.fin); }],
-        [42, () => { cam.classList.add('fin'); $('#btn-revoir', r).hidden = false; SON.play('alerte'); heure('02:52'); NARR.action(T(D.camera.bouton) + ' ' + A.icone('suite'), () => { complete(3); badge('hibou'); show(4); }); }],
+        [1.1, () => det('cheminee', C.cachetteEtiquette, 25, 40, 50, 43, 'bas')],
+        [1.9, () => { mv(cs2, 40, 200); mv(bat, 90, 236); SON.play('pas'); }],
+        [3.8, () => { mv(cs2, 70, 56); mv(bat, 120, 92); SON.play('pas'); rm('cheminee'); }],
+        [5, () => { mv(bat, 160, 84); }],
+        [5.8, () => { det('bateau', C.cadeau === 'piece' ? 'PIÈCE – SÈCHE' : 'BILLET – SÈCHE', 38, 26, 30, 12); chuchote(D.camera.cheminee); }],
+        [7.3, () => { cs2.classList.add('coucou'); }],
+        [8.8, () => { cs2.classList.remove('coucou'); mv(cs2, -90, 200); SON.play('pas'); rm('bateau'); }],
+        [10.2, () => { salon.setAttribute('hidden', ''); chambre.removeAttribute('hidden'); nom.textContent = 'CAM 2 · CHAMBRE'; dets.innerHTML = ''; SON.play('bip'); chuchote(D.camera.chambre); }],
+        [13.8, () => { mv(cs1, 60, 232); SON.play('pas'); }],
+        [17.6, () => { mv(cs1, 62, 122); SON.play('pas'); }],
+        [20.8, () => { dent.classList.add('prise'); chuchote(D.camera.dent); }],
+        [21.6, () => det('dent', 'DENT – TROUVÉE', 30, 54, 5, 6, 'droite')],
+        [23.6, () => { mot.classList.add('pose'); SON.play('papier'); rm('dent'); det('mot', 'PETIT MOT – SOUS L\'OREILLER', 28, 54, 8, 7, 'droite'); }],
+        [27.6, () => { mv(cs1, 220, 236); SON.play('pas'); rm('mot'); }],
+        [29.6, () => det('lit', 'SOUS LE LIT – MONSTRES : 0', 8, 79, 20, 6)],
+        [33.6, () => { mv(cs1, -90, 236); SON.play('pas'); rm('lit'); chuchote(D.camera.fin); }],
+        [36.2, () => { cam.classList.add('fin'); $('#btn-revoir', r).hidden = false; SON.play('alerte'); heure('02:52'); NARR.action(T(D.camera.bouton) + ' ' + A.icone('suite'), () => { complete(3); badge('hibou'); show(4); }); }],
       ];
       const VITESSE_CAMERA = 1.4;
       const finAt = evenements[evenements.length - 1][0];
       let debut = null, idx = 0, fini = false;
       const horo = s => { const t = 2 * 3600 + 47 * 60 + Math.floor(s * 7); ts.textContent = dateCam() + ' ' + pad(Math.floor(t / 3600)) + ':' + pad(Math.floor(t / 60) % 60) + ':' + pad(t % 60); heure(pad(Math.floor(t / 3600)) + ':' + pad(Math.floor(t / 60) % 60)); };
       const boucle = now => {
-        // Le film est joué un peu plus vite que son minutage (environ trente secondes au lieu de quarante-deux)
+        // Le film est joué un peu plus vite que son minutage (environ vingt-six secondes)
         if (fini || !encore()) return; if (debut == null) debut = now - tTest * 1000 / VITESSE_CAMERA;
         const s = (now - debut) / 1000 * VITESSE_CAMERA;
         while (idx < evenements.length && s >= evenements[idx][0] && !pause) evenements[idx++][1]();

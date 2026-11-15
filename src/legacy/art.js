@@ -36,9 +36,9 @@ window.ART = (function () {
   }
 
   // Quenotte de profil, à l'échelle : w = largeur en unités de la scène (le symbole fait 130 × 100)
-  function souris(x, y, w, attrs) {
+  function souris(x, y, w, attrs, symbole) {
     const s = (w / 130).toFixed(3);
-    return `<g ${attrs || ''} transform="translate(${x},${y}) scale(${s})"><use href="#souris-side" width="130" height="100"/></g>`;
+    return `<g ${attrs || ''} transform="translate(${x},${y}) scale(${s})"><use href="#${symbole || 'souris-side'}" width="130" height="100"/></g>`;
   }
   // Position de la lanterne (et du sac) d'une souris placée avec souris(x, y, w)
   function pointSouris(x, y, w, quoi) {
@@ -88,6 +88,24 @@ window.ART = (function () {
   <path d="M18 70 C -4 72, -2 44, 22 52" fill="none" stroke="#A79E95" stroke-width="5" stroke-linecap="round"/>
   <ellipse cx="38" cy="56" rx="15" ry="18" fill="#8B5A3C"/>
   <g transform="rotate(-18 38 40)"><rect x="29" y="33" width="19" height="11" rx="1.5" fill="${K.moyen}" stroke="${K.fonce}" stroke-width="1"/><text x="38.5" y="41.5" font-family="Share Tech Mono, monospace" font-size="${V.length > 1 ? 6 : 7}" fill="${K.fonce}" text-anchor="middle">${V}€</text></g>
+  <path d="M26 44 q12 -6 24 0" fill="none" stroke="#6E4630" stroke-width="3" stroke-linecap="round"/>
+  <ellipse cx="60" cy="64" rx="38" ry="25" fill="#A79E95"/>
+  <ellipse cx="66" cy="72" rx="24" ry="14" fill="#EFE8DD"/>
+  <ellipse class="pied p1" cx="46" cy="90" rx="10" ry="5" fill="#E7B4B4"/><ellipse class="pied p2" cx="72" cy="90" rx="10" ry="5" fill="#E7B4B4"/>
+  <circle cx="106" cy="27" r="11" fill="#A79E95"/><circle cx="106" cy="27" r="6" fill="#F2A3B5"/>
+  <circle cx="96" cy="48" r="23" fill="#A79E95"/>
+  <circle cx="86" cy="26" r="12" fill="#A79E95"/><circle cx="86" cy="26" r="7" fill="#F2A3B5"/>
+  <circle cx="104" cy="46" r="3.2" fill="#2B2B33"/><circle cx="105.2" cy="44.8" r="1" fill="#fff"/>
+  <circle cx="118" cy="54" r="3.5" fill="#E98BA0"/>
+  <g stroke="#6B6560" stroke-width="1.2" stroke-linecap="round"><path d="M112 56 L126 50"/><path d="M112 58 L126 62"/></g>
+  <path d="M74 60 q14 8 28 -2 l2 8 q-14 10 -30 2z" fill="#D64045"/>
+  <path d="M74 60 q-14 2 -22 14 l6 3 q8 -10 18 -11z" fill="#D64045"/>
+  <path d="M92 70 L104 84" stroke="#6E4630" stroke-width="2.5" stroke-linecap="round"/>
+  <rect x="98" y="82" width="14" height="14" rx="4" fill="#FFC857" stroke="#B9801A" stroke-width="1.5"/>
+</symbol>
+<symbol id="souris-side-sans" viewBox="0 0 130 100">
+  <path d="M18 70 C -4 72, -2 44, 22 52" fill="none" stroke="#A79E95" stroke-width="5" stroke-linecap="round"/>
+  <ellipse cx="38" cy="56" rx="15" ry="18" fill="#8B5A3C"/>
   <path d="M26 44 q12 -6 24 0" fill="none" stroke="#6E4630" stroke-width="3" stroke-linecap="round"/>
   <ellipse cx="60" cy="64" rx="38" ry="25" fill="#A79E95"/>
   <ellipse cx="66" cy="72" rx="24" ry="14" fill="#EFE8DD"/>

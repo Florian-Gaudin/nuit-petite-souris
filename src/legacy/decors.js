@@ -48,7 +48,7 @@ ${tap('feuillage', 'Le feuillage de l’arbre', `${halo(803, 255, 105)}
   <g transform="translate(800,250)"><g class="hulotte"><path class="aile ag" d="M-16 6q-26 6-22 34q14-6 22-24z" fill="#8B5A3C"/><path class="aile ad" d="M16 6q26 6 22 34q-14-6-22-24z" fill="#8B5A3C"/><ellipse cx="0" cy="20" rx="19" ry="24" fill="#8B5A3C"/><ellipse cx="0" cy="24" rx="10" ry="16" fill="#C9A98A"/><circle cx="0" cy="-4" r="18" fill="#A0724A"/><path d="M-16-14l-6-14 14 6zM16-14l6-14-14 6z" fill="#A0724A"/><circle cx="-7" cy="-6" r="7.5" fill="#FFF4D6"/><circle cx="7" cy="-6" r="7.5" fill="#FFF4D6"/><circle cx="-7" cy="-6" r="3.5" fill="#2B2B33"/><circle cx="7" cy="-6" r="3.5" fill="#2B2B33"/><path d="M-3 1l3 6 3-6z" fill="#FFC857"/></g></g>`)}
 <rect class="noir" x="0" y="-1100" width="1000" height="1700" fill="#050816" opacity=".45"/>
 ${lueur(L.x, L.y, 150)}
-${A.souris(sx, sy, sw, 'class="quenotte"')}
+${A.souris(sx, sy, sw, 'class="quenotte"', 'souris-side-sans')}
 ${tap('lanterne', 'La lanterne de Quenotte', `${halo(L.x.toFixed(0), L.y.toFixed(0), 40)}<circle cx="${L.x.toFixed(0)}" cy="${L.y.toFixed(0)}" r="44" fill="transparent"/>`)}
 ${tap('sac', 'Le sac de Quenotte', `${halo(0, 10, 56)}
   <g class="billet-sac"><use href="#billet" x="-26" y="-14" width="52" height="28" transform="rotate(-12)"/></g>
@@ -110,7 +110,7 @@ ${A.souris(sx, sy, sw, 'class="quenotte trotte"')}
     const nomRiviere = window.CONFIG.Riviere;
     return `<svg class="decor decor-meuse" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet" role="group" aria-label="${nomRiviere} sous la lune, avec ${window.CONFIG.leCadeau} et son bateau">
 ${A.fond(nuit, 41, null)}
-<g transform="translate(700,110)"><circle r="60" fill="#FFF4D6" opacity=".07"/><path d="M10 -36A38 38 0 1 0 10 36A40 40 0 0 1 10 -36Z" fill="#FFF4D6"/></g>
+<g class="lune-haute" data-ciel="560,.2,60" transform="translate(560,60)"><circle r="60" fill="#FFF4D6" opacity=".07"/><path d="M10 -36A38 38 0 1 0 10 36A40 40 0 0 1 10 -36Z" fill="#FFF4D6"/></g>
 <defs><linearGradient id="geau" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4a8ea3"/><stop offset="1" stop-color="#2b5f70"/></linearGradient></defs>
 <g class="grands-arbres">
   <rect x="96" y="40" width="34" height="300" fill="#1a1226"/><rect x="900" y="20" width="38" height="300" fill="#1a1226"/>
@@ -123,8 +123,8 @@ ${A.fond(nuit, 41, null)}
 <g class="lumieres"><path d="M700 330Q800 290 900 296T1000 288V330Z" fill="#1E3F36"/><path d="M720 318q80-16 160-12M760 324q90-10 180-8" fill="none" stroke="#2F5D50" stroke-width="3"/><g fill="#1b2250"><rect x="874" y="278" width="22" height="16"/><path d="M872 278l13-10 13 10z"/><rect x="900" y="282" width="26" height="12"/><rect x="930" y="276" width="16" height="18"/><path d="M928 276l10-12 10 12z"/></g>${lum}</g>
 <rect y="330" width="1000" height="270" fill="url(#geau)"/>
 <g class="vagues" fill="none" stroke="#7FB8C7" stroke-width="2.5" stroke-linecap="round" opacity=".5"><path d="M-100 400q20-8 40 0t40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0"/><path d="M-100 470q20-8 40 0t40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0" opacity=".7"/><path d="M-100 540q20-8 40 0t40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0" opacity=".5"/></g>
-${tap('reflet', 'Le reflet de la lune', `${halo(700, 420, 70)}<g transform="translate(700,421) scale(1.2,-.42)"><path class="reflet" d="M10 -36A38 38 0 1 0 10 36A40 40 0 0 1 10 -36Z" fill="#FFF4D6" opacity=".6"/></g><g class="ronds" fill="none" stroke="#FFF4D6" stroke-width="2"><ellipse cx="700" cy="420" rx="30" ry="9"/><ellipse cx="700" cy="420" rx="30" ry="9"/><ellipse cx="700" cy="420" rx="30" ry="9"/></g>`)}
-${tap('bulles', 'Des bulles dans l’eau', `${halo(470, 440, 60)}<g class="bulles-eau" fill="none" stroke="#cfe9f0" stroke-width="2"><circle cx="458" cy="462" r="5"/><circle cx="476" cy="470" r="7"/><circle cx="490" cy="455" r="4"/></g>
+${tap('reflet', 'Le reflet de la lune', `${halo(590, 420, 70)}<g transform="translate(590,421) scale(1.2,-.42)"><path class="reflet" d="M10 -36A38 38 0 1 0 10 36A40 40 0 0 1 10 -36Z" fill="#FFF4D6" opacity=".6"/></g><g class="ronds" fill="none" stroke="#FFF4D6" stroke-width="2"><ellipse cx="590" cy="420" rx="30" ry="9"/><ellipse cx="590" cy="420" rx="30" ry="9"/><ellipse cx="590" cy="420" rx="30" ry="9"/></g>`)}
+${tap('bulles', 'Des bulles dans l’eau', `${halo(410, 440, 60)}<g class="bulles-eau" fill="none" stroke="#cfe9f0" stroke-width="2"><circle cx="398" cy="462" r="5"/><circle cx="416" cy="470" r="7"/><circle cx="430" cy="455" r="4"/></g>
   <g class="poisson"><g class="poisson-in"><ellipse cx="0" cy="0" rx="28" ry="13" fill="#9fd0dd" stroke="#5f9fb0" stroke-width="2"/><path d="M26-2l16-12v28l-16-12z" fill="#9fd0dd" stroke="#5f9fb0" stroke-width="2"/><circle cx="-14" cy="-3" r="3" fill="#2B2B33"/><path d="M-6-13q6-8 12 0" fill="none" stroke="#5f9fb0" stroke-width="2"/></g></g>`, 'transform="translate(0,0)"')}
 <path d="M0 600V380Q120 360 240 400L300 600Z" fill="#24483E"/><path d="M0 600V440Q120 430 230 470L260 600Z" fill="#1A2A26"/>
 <path d="M1000 600V360Q900 350 780 400L720 600Z" fill="#24483E"/><path d="M1000 600V430Q900 420 790 460L760 600Z" fill="#1A2A26"/>
@@ -263,8 +263,11 @@ ${tap('quenotte', 'Quenotte', `${halo(195, 430, 95)}${A.souris(sx, sy, sw, 'clas
     const ville = window.CONFIG.ville;
     // Le panneau d'entrée de ville : le nom est resserré s'il est long
     const largeur = Math.min(176, ville.length * 15);
+    // Les sillons suivent la courbe de la colline du milieu
     let sillons = '';
-    for (let i = 0; i < 6; i++) sillons += `<path d="M-20 ${440 + i * 28}Q500 ${410 + i * 30} 1020 ${430 + i * 26}" fill="none" stroke="#1A2A26" stroke-width="5" opacity=".6"/>`;
+    for (let i = 0; i < 6; i++) sillons += `<path d="M-20 ${452 + i * 22}Q200 ${408 + i * 24} 420 ${426 + i * 22}Q640 ${446 + i * 20} 760 ${358 + i * 26}Q840 ${310 + i * 26} 1020 ${326 + i * 25}" fill="none" stroke="#1A2A26" stroke-width="4" opacity=".5"/>`;
+    // Le village tout en haut de la colline, avec ses fenêtres allumées et son clocher
+    const maisons = [[720, 208, 34, 22], [758, 200, 30, 30], [880, 202, 36, 24], [920, 208, 30, 18], [960, 204, 34, 22]].map(([x, y, w, h]) => `<rect x="${x}" y="${y - h}" width="${w}" height="${h}" fill="#1b2250"/><path d="M${x - 3} ${y - h}l${w / 2 + 3}-${h * 0.6} ${w / 2 + 3} ${h * 0.6}z" fill="#141a3c"/><rect x="${x + w / 2 - 2}" y="${y - h + 6}" width="4" height="5" fill="#FFC857"/>`).join('');
     const corps = '#A47B54', ventre = '#D9BE97';
     const lievreDessin = `<ellipse cx="-34" cy="-14" rx="28" ry="15" fill="#8E6844"/><ellipse class="corps-lievre" cx="0" cy="-36" rx="60" ry="34" fill="${corps}"/><ellipse cx="10" cy="-22" rx="38" ry="16" fill="${ventre}"/><circle cx="-60" cy="-46" r="11" fill="#F3EFE6"/>
 <g class="oreilles-couchees"><ellipse cx="22" cy="-80" rx="36" ry="8" fill="${corps}" transform="rotate(-12 22 -80)"/><ellipse cx="22" cy="-80" rx="26" ry="3.5" fill="#E9A9B5" transform="rotate(-12 22 -80)"/></g>
@@ -275,13 +278,23 @@ ${tap('quenotte', 'Quenotte', `${halo(195, 430, 95)}${A.souris(sx, sy, sw, 'clas
 <g class="zzz"><text x="70" y="-110" class="z">z</text><text x="88" y="-128" class="z petit">z</text></g>`;
     return `<svg class="decor decor-lievre" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet" role="group" aria-label="Un lièvre endormi dans les champs, et le panneau de ${ville}">
 ${A.fond(nuit, 91, { x: 560, y: 90, r: 28 })}
-<path d="M0 420Q250 370 520 400T1000 380V600H0Z" fill="#1E3F36"/>
-<path d="M0 450Q300 420 600 440T1000 430V600H0Z" fill="#24483E"/>${sillons}
-${tap('epouvantail', 'Un épouvantail', `${halo(640, 330, 70)}<path d="M640 300v150" stroke="#6E4630" stroke-width="7"/><path d="M590 332h100" stroke="#6E4630" stroke-width="6" stroke-linecap="round"/><path d="M612 326h56l8 56h-72z" fill="#3E7C8F"/><path d="M612 326l-20 26M668 326l20 26" stroke="#3E7C8F" stroke-width="10" stroke-linecap="round"/><path d="M590 352l-8 8M690 352l8 8" stroke="#E2C27A" stroke-width="4" stroke-linecap="round"/><circle cx="640" cy="304" r="20" fill="#E2C27A"/><path d="M632 300h4M646 300h4M632 312q8 5 16 0" stroke="#6E4630" stroke-width="2.5" stroke-linecap="round"/><g class="chapeau"><ellipse cx="640" cy="288" rx="32" ry="7" fill="#6E4630"/><path d="M624 288q2-26 16-26t16 26z" fill="#8B5A3C"/><path d="M624 282h32" stroke="#D64045" stroke-width="4"/></g>`)}
-<g class="panneau" transform="translate(880,470)"><path d="M-70 0v-118M70 0v-118" stroke="#9aa0b5" stroke-width="7"/><rect x="-100" y="-196" width="200" height="80" rx="8" fill="#F3EFE6" stroke="#D64045" stroke-width="7"/><text x="0" y="-146" font-family="Baloo 2, Trebuchet MS, sans-serif" font-size="26" font-weight="800" fill="#1F2235" text-anchor="middle" textLength="${largeur}" lengthAdjust="spacingAndGlyphs">${ville}</text></g>
-${tap('herisson', 'Un hérisson', `${halo(230, 520, 54)}<g class="herisson-in"><path d="M196 532q4-40 40-40q30 0 38 34z" fill="#6b5040"/><g stroke="#3b2a20" stroke-width="3" stroke-linecap="round"><path d="M206 512l-8-10M220 500l-4-12M236 496l2-13M252 500l8-11M264 510l10-6"/></g><path d="M268 526q14-2 18 6q-8 6-20 2z" fill="#D9BE97"/><circle cx="285" cy="530" r="3" fill="#2B2B33"/><circle cx="272" cy="524" r="2" fill="#2B2B33"/></g>`, 'transform="translate(260,20)"')}
-${lueur(L.x, L.y, 100)}
-${A.souris(sx, sy, sw, 'class="quenotte"')}
+<!-- Au loin, la grande colline et le village -->
+<path d="M-20 600V440Q200 380 420 300Q600 232 760 210Q880 196 1020 204V600Z" fill="#2a3468"/>
+<g class="village">${maisons}<rect x="800" y="150" width="26" height="56" fill="#1b2250"/><path d="M796 150l17-46 17 46z" fill="#141a3c"/><path d="M813 96v-10M808 90h10" stroke="#9aa0b5" stroke-width="2"/><rect x="809" y="166" width="8" height="12" rx="4" fill="#FFC857"/></g>
+<!-- La colline du milieu, ses haies et ses sillons -->
+<path d="M-20 600V430Q200 384 420 402Q640 422 760 332Q840 284 1020 302V600Z" fill="#1E3F36"/>${sillons}
+<g fill="#173229"><circle cx="150" cy="418" r="22"/><circle cx="176" cy="414" r="18"/><circle cx="700" cy="372" r="20"/><circle cx="724" cy="364" r="16"/><circle cx="960" cy="306" r="20"/></g>
+<!-- Le champ du premier plan -->
+<path d="M-20 600V508Q300 478 600 528T1020 512V600Z" fill="#24483E"/>
+<!-- Le chemin qui serpente jusqu'au panneau -->
+<path d="M30 576Q260 548 380 510Q520 468 600 424Q700 370 760 336Q820 302 900 300" fill="none" stroke="#3a4e46" stroke-width="26" stroke-linecap="round"/>
+<path d="M30 576Q260 548 380 510Q520 468 600 424Q700 370 760 336Q820 302 900 300" fill="none" stroke="#52665c" stroke-width="2" stroke-dasharray="3 12" stroke-linecap="round"/>
+${tap('epouvantail', 'Un épouvantail', `${halo(640, 330, 70)}<path d="M640 300v150" stroke="#6E4630" stroke-width="7"/><path d="M590 332h100" stroke="#6E4630" stroke-width="6" stroke-linecap="round"/><path d="M612 326h56l8 56h-72z" fill="#3E7C8F"/><path d="M612 326l-20 26M668 326l20 26" stroke="#3E7C8F" stroke-width="10" stroke-linecap="round"/><path d="M590 352l-8 8M690 352l8 8" stroke="#E2C27A" stroke-width="4" stroke-linecap="round"/><circle cx="640" cy="304" r="20" fill="#E2C27A"/><path d="M632 300h4M646 300h4M632 312q8 5 16 0" stroke="#6E4630" stroke-width="2.5" stroke-linecap="round"/><g class="chapeau"><ellipse cx="640" cy="288" rx="32" ry="7" fill="#6E4630"/><path d="M624 288q2-26 16-26t16 26z" fill="#8B5A3C"/><path d="M624 282h32" stroke="#D64045" stroke-width="4"/></g>`, 'transform="translate(-50,-56)"')}
+<g class="panneau" transform="translate(890,312) scale(.82)"><path d="M-70 0v-118M70 0v-118" stroke="#9aa0b5" stroke-width="7"/><rect x="-100" y="-196" width="200" height="80" rx="8" fill="#F3EFE6" stroke="#D64045" stroke-width="7"/><text x="0" y="-146" font-family="Baloo 2, Trebuchet MS, sans-serif" font-size="26" font-weight="800" fill="#1F2235" text-anchor="middle" textLength="${largeur}" lengthAdjust="spacingAndGlyphs">${ville}</text></g>
+${tap('herisson', 'Un hérisson', `${halo(230, 520, 54)}<g class="herisson-in"><path d="M196 532q4-40 40-40q30 0 38 34z" fill="#6b5040"/><g stroke="#3b2a20" stroke-width="3" stroke-linecap="round"><path d="M206 512l-8-10M220 500l-4-12M236 496l2-13M252 500l8-11M264 510l10-6"/></g><path d="M268 526q14-2 18 6q-8 6-20 2z" fill="#D9BE97"/><circle cx="285" cy="530" r="3" fill="#2B2B33"/><circle cx="272" cy="524" r="2" fill="#2B2B33"/></g>`, 'transform="translate(420,34)"')}
+<!-- Quenotte vient de descendre de la montgolfière : elle arrive à pied par la gauche -->
+<g class="arrivee">${lueur(L.x, L.y, 100)}
+${A.souris(sx, sy, sw, 'class="quenotte"')}</g>
 <g class="monture"><g class="monture-in" transform="translate(400,478)">
 ${tap('lievre', 'Un lièvre endormi', `${halo(10, -50, 90)}${lievreDessin}`, 'data-etape="0"')}
 <g class="cavaliere">${A.souris(-40, -146, 96)}</g>
@@ -375,6 +388,7 @@ ${A.souris(sx, sy, sw, 'class="quenotte"')}
       + '<path d="M0 500Q220 470 460 500T1000 470V600H0Z" fill="#1E3F36"/>'
       + '<g fill="#173229">' + [30, 90, 150, 520, 580, 640, 700].map(x => '<path d="M' + x + ' 520l18-44 18 44z"/>').join('') + '</g>'
       + '<path class="meuse-vue" d="M-10 560C120 540 160 590 300 570S520 530 600 560S820 600 1010 560" fill="none" stroke="#7FB8C7" stroke-width="10" stroke-linecap="round" opacity=".75"/>'
+      + '<path d="M-20 600V446Q150 406 250 406Q370 408 450 462Q500 494 560 504V600Z" fill="#1E3F36"/><path d="M60 432Q250 396 420 452" fill="none" stroke="#2F5D50" stroke-width="4" opacity=".6"/>'
       + '<g class="lumieres-loin">' + lumieresCharleville + lumieresVille + '</g>'
       + '<path d="M840 456l8-8 8 8M868 452l8-9 8 9M900 456l7-7 7 7" fill="none" stroke="#3E7C8F" stroke-width="2"/>'
       // secrets des Ardennes : le château fort de Sedan, les toits d'ardoise, le Cabaret Vert
@@ -386,8 +400,8 @@ ${A.souris(sx, sy, sw, 'class="quenotte"')}
         + '<path d="M-2-24l8-12 8 12z" fill="#5fa3a3"/>'
         + '<g class="fenetres" fill="#FFC857">' + [[-58, -18], [-40, -20], [-24, -18], [6, -30], [18, -28], [34, -26]].map(([x, y]) => '<rect x="' + x + '" y="' + y + '" width="3" height="5"/>').join('') + '</g>'
         + '<path d="M-66 0h116" stroke="#9c7a48" stroke-width="2"/></g>')
-      + tap('ardoises', "Des toits d'ardoise qui brillent", halo(352, 505, 60) + '<g class="ardoises">'
-        + [[318, 512, 30], [352, 504, 36], [390, 514, 28]].map(([x, y, l]) => '<rect x="' + (x - l / 2) + '" y="' + y + '" width="' + l + '" height="16" fill="#cfc3a8"/><path d="M' + (x - l / 2 - 4) + ' ' + y + 'l' + (l / 2 + 4) + '-16 ' + (l / 2 + 4) + ' 16z" fill="#4a5478"/><path class="reflet" d="M' + (x - 6) + ' ' + (y - 10) + 'l8-5" stroke="#e8e2ee" stroke-width="2" stroke-linecap="round"/>').join('')
+      + tap('ardoises', "Des toits d'ardoise qui brillent", halo(232, 512, 60) + '<g class="ardoises">'
+        + [[198, 518, 30], [232, 510, 36], [270, 520, 28]].map(([x, y, l]) => '<rect x="' + (x - l / 2) + '" y="' + y + '" width="' + l + '" height="16" fill="#cfc3a8"/><path d="M' + (x - l / 2 - 4) + ' ' + y + 'l' + (l / 2 + 4) + '-16 ' + (l / 2 + 4) + ' 16z" fill="#4a5478"/><path class="reflet" d="M' + (x - 6) + ' ' + (y - 10) + 'l8-5" stroke="#e8e2ee" stroke-width="2" stroke-linecap="round"/>').join('')
         + '</g>')
       + tap('cabaret', 'Une scène de concert qui brille, au loin', halo(470, 540, 58) + '<g class="cabaret" transform="translate(470,548)">'
         + '<path d="M-26 10l-30-60M26 10l30-60M0 10v-66" stroke="#7CD65A" stroke-width="10" opacity=".25" stroke-linecap="round"/>'
@@ -399,11 +413,11 @@ ${A.souris(sx, sy, sw, 'class="quenotte"')}
         + [['#7CD65A', -38, 0], ['#5fe0ff', -18, 1], ['#ffffff', 0, 2], ['#7CD65A', 18, 3], ['#5fe0ff', 38, 4]].map(([c, a, k]) => '<g transform="translate(470,540)"><g class="rayon r' + k + '" style="--a:' + a + 'deg"><path d="M-3 0L-26-900L26-900L3 0Z" fill="' + c + '" opacity=".38"/><path d="M-1 0L-6-900L6-900L1 0Z" fill="' + c + '" opacity=".85"/></g></g>').join('')
         + '</g>'
       // secret : une étoile qui scintille… et file quand on la touche
-      + tap('etoile', 'Une étoile qui scintille', halo(480, 120, 46) + '<g class="filante"><path d="M0 0L-120 60" stroke="#FFF4D6" stroke-width="3" stroke-linecap="round" opacity=".8"/><circle r="5" fill="#FFF4D6"/></g><path class="etoile-vive" d="M480 106l3.5 8 8.5 1-6.2 6 1.6 8.6-7.4-4.2-7.4 4.2 1.6-8.6-6.2-6 8.5-1z" fill="#FFF4D6"/>')
+      + tap('etoile', 'Une étoile qui scintille', halo(210, 84, 46) + '<g class="filante"><path d="M0 0L-120 60" stroke="#FFF4D6" stroke-width="3" stroke-linecap="round" opacity=".8"/><circle r="5" fill="#FFF4D6"/></g><path class="etoile-vive" d="M210 70l3.5 8 8.5 1-6.2 6 1.6 8.6-7.4-4.2-7.4 4.2 1.6-8.6-6.2-6 8.5-1z" fill="#FFF4D6"/>')
       // secret : un vol d'oies sauvages
-      + tap('oies', "Un vol d'oies sauvages", halo(405, 240, 66) + '<g class="vol-oies">' + [[0, 0], [-26, -14], [-52, -28], [-26, 14], [-52, 28]].map(([dx, dy]) => '<path transform="translate(' + (432 + dx) + ' ' + (240 + dy) + ')" d="M0 0q-9-9-18-4q9-1 14 6q-12 2-20 10q12-4 24-10z" fill="#cfd3ee"/>').join('') + '</g>')
+      + tap('oies', "Un vol d'oies sauvages", halo(498, 300, 66) + '<g class="vol-oies">' + [[0, 0], [-26, -14], [-52, -28], [-26, 14], [-52, 28]].map(([dx, dy]) => '<path transform="translate(' + (525 + dx) + ' ' + (300 + dy) + ')" d="M0 0q-9-9-18-4q9-1 14 6q-12 2-20 10q12-4 24-10z" fill="#cfd3ee"/>').join('') + '</g>')
       // la montgolfière et son brûleur (élément à toucher trois fois)
-      + '<g class="quenotte ballon" transform="translate(250,488)"><g class="ballon-in">'
+      + '<g class="quenotte ballon" transform="translate(250,412)"><g class="ballon-in">'
       + tap('bruleur', 'Le brûleur de la montgolfière', halo(0, -122, 50) + enveloppe + nacelle, 'data-etape="0"')
       + '</g></g>'
       + '</svg>';
