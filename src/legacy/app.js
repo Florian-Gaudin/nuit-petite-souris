@@ -185,6 +185,9 @@
     if (courant && courant.unmount) { try { courant.unmount(); } catch (e) { } }
     SON.ronfleStop(); NARR.action(null); NARR.cacher(false);
     courantN = n; courant = Chapitres[n];
+    // Le bandeau garde la même hauteur pendant toute l'étape (celle de son plus long texte)
+    const TEXTES = { 0: ['accueil', 'surprise', 'origine', 'origineVille'], 2: ['jeu'], 3: ['camera'], 4: ['lettreIntro', 'lettreFin'], 5: opts.diplome ? ['diplome', 'billetTrouve'] : ['epilogue'] };
+    NARR.fixer(TEXTES[n] ? TEXTES[n].map(k => D[k]) : null, T);
     root.innerHTML = courant.render(opts); root.className = 'scene ch-' + n;
     window.scrollTo(0, 0); updateFil(n); courant.mount(root, opts);
   }
@@ -470,6 +473,7 @@
   const Ch2 = {
     // Dans la maison plongée dans le noir : le doigt promène la lumière jusqu'à la porte de la chambre
     lampe(r) {
+      NARR.fixer([D.lampe], T);
       etape(() => { complete(2); badge('passechat'); show(3); });
       const self = this; NARR.action(null); heure('02:42');
       $('.ch2', r).innerHTML = `<h2 class="decor-titre"><span class="decor-heure">La nuit dernière à 2 h 42</span>Dans le noir</h2><div class="lampe-wrap">${A.lampeSVG()}</div>`;

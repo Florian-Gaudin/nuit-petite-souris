@@ -361,15 +361,6 @@ test("le bouton « Passer » reste là d'une scène à l'autre (histoire termin�
   await expect(page.locator('#btn-passer')).toBeVisible();
 });
 
-test('le bandeau prend la hauteur de son texte, sans dépasser le maximum', async ({ page }) => {
-  await ouvrir(page, '?chapitre=1#exemple');
-  const h = (txt: string) => page.evaluate(async t => { await (window as any).NARR.dire({ txt: t }, { vite: 'instant' }); const e = document.querySelector('#bandeau-texte') as HTMLElement; return { h: e.clientHeight, plein: e.scrollHeight <= e.clientHeight + 1 }; }, txt);
-  const court = await h('Coucou !');
-  const long = await h('Il était une fois une toute petite souris qui voyageait la nuit, de maison en maison, avec un grand sac rempli de pièces, de billets et de petits mots, pour récupérer les dents tombées des enfants endormis.');
-  expect(court.h).toBeLessThan(long.h);
-  expect(long.h).toBeLessThanOrEqual(108);
-  expect(long.plein).toBe(true); // tout le texte tient, sans défilement
-});
 
 test("pas de bouton « Passer » sur le diplôme, la dernière étape", async ({ page }) => {
   await ouvrir(page, '?reset=1#exemple');

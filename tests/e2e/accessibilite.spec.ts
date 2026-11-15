@@ -65,3 +65,19 @@ test("pas de défilement dans les scènes du voyage, même quand le bandeau chan
     }
   }
 });
+
+test("le bandeau garde la même hauteur pendant toute une scène, et le texte ne descend jamais sous 16 px", async ({ page }) => {
+  await page.setViewportSize({ width: 360, height: 640 });
+  await ouvrir(page, '?reset=1#exemple');
+  await ouvrir(page, '?chapitre=1&scene=0#exemple');
+  const mesures: number[] = [], polices: number[] = [];
+  for (let i = 0; i < 8; i++) {
+    mesures.push(await page.locator('#bandeau').evaluate(e => e.offsetHeight));
+    polices.push(await page.locator('#bandeau-texte').evaluate(e => parseFloat(getComputedStyle(e).fontSize)));
+    if (await page.locator('#bandeau.attente .bandeau-suite').isVisible()) await page.locator('.bandeau-suite').click();
+    else { const c = page.locator('.tap.cible'); if (await c.count()) await c.first().dispatchEvent('click'); }
+    await page.waitForTimeout(400);
+  }
+  expect(new Set(mesures).size, mesures.join(', ')).toBe(1);
+  expect(Math.min(...polices)).toBeGreaterThanOrEqual(16);
+});

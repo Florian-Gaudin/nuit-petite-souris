@@ -21,7 +21,7 @@ window.MUSIQUE = (function () {
     jeu: { root: 329.63, gamme: MIN, tempo: 72, densite: 0.2, nappe: 0, grave: 1, vol: 0.85 },
     camera: { root: 329.63, gamme: MIN, tempo: 50, densite: 0.2, nappe: 0.3, grave: 0, vol: 0.55 },
     lettre: { root: 349.23, gamme: MAJ, tempo: 54, densite: 0.5, nappe: 0.8, grave: 0, vol: 1, tendre: true },
-    theatre: { root: 523.25, gamme: MAJ, tempo: 132, densite: 0.9, nappe: 0.1, grave: 0, vol: 0.9 },
+    theatre: { root: 261.63, gamme: MAJ, tempo: 112, densite: 0.8, nappe: 0.35, grave: 0, vol: 0.9 },
     diplome: { root: 523.25, gamme: MAJ, tempo: 92, densite: 0.8, nappe: 0.4, grave: 0, vol: 1 },
     silence: null,
   };

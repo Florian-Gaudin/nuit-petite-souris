@@ -15,7 +15,8 @@ async function troisCoups(page: Page) {
     await page.waitForTimeout(300);
   }
   await toucher(page, corps);
-  await expect(m).toHaveClass(/coup1/); // un clin d'œil
+  await expect(m).toHaveClass(/coup1/); // un clin d'œil, « TOC ! », une première étoile
+  await expect(page.locator('#toast')).toContainText('trois coups');
   await toucher(page, corps);
   await expect(m).toHaveClass(/coup2/); // le rideau de sa fenêtre frémit
   await toucher(page, corps);
@@ -28,11 +29,16 @@ test('les trois coups ouvrent le théâtre ; le spectacle complet donne le badge
   const txt = page.locator('.th-txt');
   await expect(txt).toContainText('treizième scène');
   await expect(page.locator('.th-affiche')).toContainText('Clémentine et la dent d');
+  await expect(page.locator('.theatre')).not.toContainText('Pantoufle'); // le chat n'est pas encore connu à ce moment de l'histoire
   await page.waitForTimeout(400); await capture(page, 't0-ouverture');
   // 1. Le salut : chaque marionnette salue quand on la touche
   await page.locator('.th-actions button').click();
   await expect(txt).toContainText('Voici ma troupe');
-  for (const id of ['souris', 'doudou', 'chat', 'dent']) await page.locator(`.marionnette[data-p="${id}"]`).click();
+  for (const id of ['souris', 'doudou', 'chat', 'dent']) {
+    await page.locator(`.marionnette[data-p="${id}"]`).click();
+    await expect(page.locator(`.marionnette[data-p="${id}"]`)).toHaveClass(/salue-ok/); // révérence, bulle, étoile
+  }
+  await expect(page.locator('.th-bulle').first()).toBeVisible();
   await expect(txt).toContainText('Quelle belle troupe');
   await capture(page, 't1-salut');
   // 2. La danse du doudou : tirer le fil cinq fois
@@ -55,13 +61,19 @@ test('les trois coups ouvrent le théâtre ; le spectacle complet donne le badge
   await expect(txt).toContainText("n'a rien entendu");
   // 4. Bayard et les quatre chevaliers souris
   await page.locator('.th-actions button').click();
-  await expect(txt).toContainText('Bayard', { timeout: 8000 });
+  await expect(txt).toContainText('Troisième numéro');
+  await page.waitForTimeout(800);
+  await expect(txt).toContainText('Troisième numéro'); // le texte reste, le temps de le lire
+  await page.locator('.th-actions button').click();
   await expect(txt).toContainText('Touche Bayard', { timeout: 8000 });
   await page.locator('.marionnette[data-p="bayard"]').click();
   await capture(page, 't4-bayard');
   // 5. Le final : la dent monte au château, on applaudit, puis on ferme le rideau
   await page.locator('.th-actions button').click();
   await expect(txt).toContainText('vedette de la soirée');
+  await page.waitForTimeout(800);
+  await expect(txt).toContainText('vedette de la soirée');
+  await page.locator('.th-actions button').click();
   await expect(page.locator('#th-clap')).toBeVisible({ timeout: 8000 });
   for (let i = 0; i < 6; i++) await page.locator('#th-clap').click();
   await expect(txt).toContainText('Quelle salle formidable');

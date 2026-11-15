@@ -243,6 +243,7 @@ window.SCENES = (function () {
     fermer();
     const mien = ++jeton;
     courant = n; sc = D.scenes[n];
+    NARR.fixer([sc, D.indices], T);
     root.innerHTML = frise(n) + `<div class="decor-wrap" id="decor-wrap"><h2 class="decor-titre"><span class="decor-heure">${heureTexte(sc.heure)}</span>${T(sc.titre)}</h2><div class="secrets" id="secrets" title="Secrets découverts dans cette image"><svg viewBox="0 0 24 24"><use href="#etoile5"/></svg><span id="secrets-n"></span></div>${DESSINS[sc.id](ctx.state.nuit)}</div>`;
     wrap = $('#decor-wrap', root); svg = $('svg.decor', root);
     if (sc.id === 'fenetre') frotterBuee();
@@ -376,11 +377,18 @@ window.SCENES = (function () {
   function secret() {
     const g = $('.tap[data-el="marionnettiste"]', svg);
     const efface = () => { if (g) g.classList.remove('coup1', 'coup2', 'coup3'); };
+    if (g && !g.querySelector('.coups')) {
+      // Le compteur des coups (trois étoiles), le « TOC ! » et l'onde, ajoutés au Grand Marionnettiste
+      const etoile = (x, i) => `<path class="c c${i}" transform="translate(${x},118) scale(1.25)" d="M0 -8l2.4 5 5.4.6-4 3.7 1.1 5.3L0 3.9l-4.9 2.7 1.1-5.3-4-3.7 5.4-.6z" fill="#FFC857" stroke="#9a6a12" stroke-width="1"/>`;
+      g.insertAdjacentHTML('beforeend', `<g class="coups" pointer-events="none"><circle class="onde" cx="846" cy="182" r="30" fill="none" stroke="#FFC857" stroke-width="4"/><g class="pips"><circle cx="820" cy="118" r="9" fill="#151a40" opacity=".6"/><circle cx="846" cy="118" r="9" fill="#151a40" opacity=".6"/><circle cx="872" cy="118" r="9" fill="#151a40" opacity=".6"/>${etoile(820, 1)}${etoile(846, 2)}${etoile(872, 3)}</g><text class="toc" x="846" y="92" text-anchor="middle" font-family="Baloo 2, sans-serif" font-weight="800" font-size="34" fill="#FFC857" stroke="#3b2a00" stroke-width="1.5">TOC !</text></g>`);
+    }
     secretTaps++; clearTimeout(secretT);
-    SON.play('coup');
-    efface(); if (g) { void g.getBBox(); for (let i = 1; i <= Math.min(secretTaps, 3); i++) g.classList.add('coup' + i); }
-    if (secretTaps >= 3) { secretTaps = 0; secretT = setTimeout(() => { efface(); ctx.scene13(); }, RM ? 0 : 800); return; }
-    secretT = setTimeout(() => { secretTaps = 0; efface(); }, 3000);
+    const n = Math.min(secretTaps, 3);
+    SON.play('coup' + n);
+    efface(); if (g) { g.classList.remove('frappe'); void g.getBBox(); g.classList.add('frappe'); for (let i = 1; i <= n; i++) g.classList.add('coup' + i); }
+    if (n < 3 && ctx.toast) ctx.toast(D.theatre['toc' + n]);
+    if (secretTaps >= 3) { secretTaps = 0; secretT = setTimeout(() => { efface(); ctx.scene13(); }, RM ? 0 : 1100); return; }
+    secretT = setTimeout(() => { secretTaps = 0; efface(); if (g) g.classList.remove('frappe'); }, 6000);
   }
 
   // Un secret se touche à tout moment : l'histoire se met en pause le temps de son texte, puis reprend
