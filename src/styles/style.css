@@ -934,3 +934,26 @@ html.grand-texte .livre-ancien .livre-texte p{font-size:1.5rem}
 .perle.perle-dip[hidden]{display:none}
 .perle.perle-dip svg{width:20px;height:20px}
 .perle.perle-dip.active{background:var(--lanterne);border-color:#fff;transform:scale(1.18);box-shadow:0 0 0 4px rgba(255,200,87,.3)}
+
+/* Le livre en plein écran : la page garde la même taille d'une page à l'autre */
+.carnet.mode-livre{padding:0;background:#1a0f08}
+.carnet.mode-livre .atelier-in{width:100%;max-width:none;height:100%;max-height:none;border-radius:0;overflow:hidden;background:radial-gradient(circle at 50% 35%,#4a2e1a,#1a0f08 75%);padding:max(10px,env(safe-area-inset-top,0px)) max(10px,env(safe-area-inset-right,0px)) max(10px,env(safe-area-inset-bottom,0px)) max(10px,env(safe-area-inset-left,0px))}
+.carnet.mode-livre .actions-dessin{display:none}
+.carnet.mode-livre .carnet-corps{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;gap:10px}
+.livre-haut{flex:none;display:flex;align-items:center;gap:8px;width:100%;max-width:720px;margin:0 auto}
+.livre-haut .carnet-chemin{flex:1;color:#e8d4b8}
+.livre-haut .btn{min-height:38px;padding:0 12px}
+.carnet.mode-livre .livre-ancien{flex:1 1 auto;min-height:0;width:100%;max-width:720px;margin:0 auto;display:flex}
+.carnet.mode-livre .livre-page{flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden}
+.carnet.mode-livre .livre-vignette{flex:none}
+.carnet.mode-livre .livre-ancien .livre-vignette svg{max-height:36vh;width:100%}
+.carnet.mode-livre .livre-texte{flex:1 1 auto;min-height:0;overflow-y:auto}
+.carnet.mode-livre .livre-folio{flex:none}
+.carnet-pages.livre-bas{flex:none;max-width:720px;margin:0 auto}
+/* Les cartes du carnet : toutes de la même taille, titre sur une ou deux lignes */
+.carnet-grille{grid-auto-rows:1fr}
+.carnet-grille li{display:flex}
+.carte-ard{height:100%;justify-content:flex-start}
+.livre-haut .carnet-chemin{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.carnet-pages.livre-bas{height:50px;align-items:stretch}
+.carnet-pages.livre-bas .btn{height:50px;min-height:0;box-sizing:border-box}

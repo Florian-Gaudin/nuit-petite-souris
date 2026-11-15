@@ -27,7 +27,7 @@ ${A.fond(nuit, 21, { x: 830, y: 95, r: 34 })}
 <g>${sapins([0, 60, 130, 200, 700, 760, 900, 960], 470, 150, '#1E3F36')}${sapins([30, 100, 170, 730, 820, 930], 480, 110, '#24483E')}</g>
 <path d="M0 600V470Q250 450 500 470T1000 460V600Z" fill="#24483E"/>
 <path d="M0 600V500Q500 480 1000 500V600Z" fill="#1A2A26"/>
-<g id="chateau-svg">
+<g id="chateau-svg" transform="translate(480,500) scale(.84) translate(-480,-500)">
   <!-- Le château fort de Sedan : le glacis vert, les longs corps de logis, les tours rondes coiffées d'ardoise -->
   <path d="M150 500L215 420H745L810 500Z" fill="#2F5D50"/><path d="M215 420H745" stroke="#24483E" stroke-width="4"/>
   <rect x="300" y="236" width="370" height="70" fill="#c9a466"/><path d="M286 238L318 196H652L684 238Z" fill="#5b6182"/>

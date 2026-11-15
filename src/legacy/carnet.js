@@ -183,14 +183,14 @@ ${o.pierre ? '<rect x="-14" y="-40" width="28" height="18" rx="2" fill="#cbbfa8"
     let vue = 'grille', page = 0;
 
     const grille = () => {
-      vue = 'grille';
+      vue = 'grille'; fen.classList.remove('mode-livre');
       corps.innerHTML = `<h2>${feuille(26)} ${esc(AR.titre)}</h2><p class="carnet-intro">${esc(T(AR.intro))}</p>
 <ul class="carnet-grille">${AR.cartes.map((c, i) => `<li><button type="button" class="carte-ard${c.secret && trouves.indexOf(c.secret) >= 0 ? ' trouvee' : ''}" data-i="${i}">${icone(c.id)}<span>${esc(c.titre)}</span>${c.secret && trouves.indexOf(c.secret) >= 0 ? `<em class="tampon-ard" title="${esc(AR.trouve)}">${feuille(16)}<span class="visuellement-cache">${esc(AR.trouve)}</span></em>` : ''}</button></li>`).join('')}</ul>`;
       corps.querySelectorAll('.carte-ard').forEach(b => b.onclick = () => { son('papier'); carte(+b.dataset.i); });
       titreFocus();
     };
     const carte = i => {
-      vue = 'carte'; page = i;
+      vue = 'carte'; page = i; fen.classList.remove('mode-livre');
       const c = AR.cartes[i], n = AR.cartes.length;
       const photo = c.photo && c.photo.fichier ? `<figure class="carte-photo"><img src="cartes/${esc(c.photo.fichier)}" alt="${esc(c.photo.description || c.titre)}">${c.photo.credit ? `<figcaption>${esc(c.photo.credit)}</figcaption>` : ''}</figure>` : `<div class="carte-dessin">${icone(c.id)}</div>`;
       const poeme = c.poeme ? `<blockquote class="carte-poeme"><p class="carte-poeme-titre">${esc(c.poeme.titre)}</p>${c.poeme.vers.map(v => `<span>${esc(v)}</span>`).join('')}</blockquote>` : '';
@@ -200,13 +200,13 @@ ${o.pierre ? '<rect x="-14" y="-40" width="28" height="18" rx="2" fill="#cbbfa8"
 <div class="carnet-nav">${c.livre ? `<button type="button" class="btn btn-or" data-a="livre">${esc(AR.livre.ouvrir)}</button>` : ''}<div class="carnet-pages">${i > 0 ? '<button type="button" class="btn btn-petit" data-a="prec">◂ Précédente</button>' : ''}${i < n - 1 ? '<button type="button" class="btn btn-petit" data-a="suiv">Suivante ▸</button>' : ''}</div><button type="button" class="btn btn-petit" data-a="grille">Toutes les cartes</button></div>`;
       const act = (a, f) => { const b = corps.querySelector(`[data-a="${a}"]`); if (b) b.onclick = f; };
       act('prec', () => { son('papier'); carte(i - 1); }); act('suiv', () => { son('papier'); carte(i + 1); });
-      act('grille', grille); act('livre', () => { son('papier'); livre(0); });
+      act('grille', grille); act('livre', () => { son('page'); livre(0); });
       titreFocus();
     };
     // Les pages du livre : la couverture, les douze tableaux, la fin, puis la treizième scène
     const L = AR.livre, NB = L.tableaux.length + 3;
     const livre = p => {
-      vue = 'livre'; page = Math.max(0, Math.min(NB - 1, p));
+      vue = 'livre'; page = Math.max(0, Math.min(NB - 1, p)); fen.classList.add('mode-livre');
       let titre, heure = '', textes, dessin;
       if (page === 0) { titre = L.titre; textes = L.couverture; dessin = VIGNETTES[0](); }
       else if (page <= L.tableaux.length) { const t = L.tableaux[page - 1]; titre = `Tableau ${page}`; heure = t.heure; textes = [t.texte]; dessin = VIGNETTES[page](); }
@@ -227,7 +227,7 @@ ${o.pierre ? '<rect x="-14" y="-40" width="28" height="18" rx="2" fill="#cbbfa8"
         // La lettrine est décorative : le texte complet reste lu tel quel par les lecteurs d'écran
         return `<p class="avec-lettrine"><span class="lettrine" aria-hidden="true">${esc(txt[0])}</span><span class="visuellement-cache">${esc(txt[0])}</span>${esc(txt.slice(1))}</p>`;
       };
-      corps.innerHTML = `<p class="carnet-chemin">${esc(L.titre)} · page ${page + 1} sur ${NB}</p>
+      corps.innerHTML = `<div class="livre-haut"><p class="carnet-chemin">Page ${page + 1} sur ${NB}</p><button type="button" class="btn btn-petit" data-a="grille">Toutes les cartes</button><button type="button" class="btn btn-petit" data-a="fermer-livre" aria-label="Fermer le carnet">✕</button></div>
 <article class="livre-ancien${sens ? ' ' + sens : ''}">
   <div class="livre-page">
     ${heure ? `<p class="livre-heure">${esc(heure)}</p>` : ''}<h2>${esc(titre)}</h2>
@@ -237,10 +237,10 @@ ${o.pierre ? '<rect x="-14" y="-40" width="28" height="18" rx="2" fill="#cbbfa8"
     <p class="livre-folio" aria-hidden="true">— ${page + 1} —</p>
   </div>
 </article>
-<div class="carnet-nav"><div class="carnet-pages">${page > 0 ? '<button type="button" class="btn btn-petit" data-a="prec">◂ Précédente</button>' : ''}${page < NB - 1 ? `<button type="button" class="btn btn-or" data-a="suiv">${page === 0 ? 'Commencer ▸' : 'Suivante ▸'}</button>` : ''}</div><button type="button" class="btn btn-petit" data-a="grille">Toutes les cartes</button></div>`;
+<div class="carnet-pages livre-bas">${page > 0 ? '<button type="button" class="btn btn-petit" data-a="prec">◂ Précédente</button>' : ''}${page < NB - 1 ? `<button type="button" class="btn btn-or" data-a="suiv">${page === 0 ? 'Commencer ▸' : 'Suivante ▸'}</button>` : ''}</div>`;
       sens = '';
       const act = (a, f) => { const b = corps.querySelector(`[data-a="${a}"]`); if (b) b.onclick = f; };
-      act('prec', () => tourner(-1)); act('suiv', () => tourner(1)); act('grille', grille);
+      act('prec', () => tourner(-1)); act('suiv', () => tourner(1)); act('grille', grille); act('fermer-livre', () => fermer());
       // Tourner la page en la faisant glisser du doigt (vers la gauche : page suivante)
       const feuille = corps.querySelector('.livre-ancien');
       let x0 = null, y0 = 0;
@@ -258,7 +258,7 @@ ${o.pierre ? '<rect x="-14" y="-40" width="28" height="18" rx="2" fill="#cbbfa8"
     const tourner = d => {
       const p = page + d;
       if (p < 0 || p > NB - 1) return;
-      son('papier'); sens = d > 0 ? 'vers-suivante' : 'vers-precedente';
+      son('page'); sens = d > 0 ? 'vers-suivante' : 'vers-precedente';
       livre(p);
     };
 

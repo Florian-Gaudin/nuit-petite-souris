@@ -67,10 +67,10 @@ test('le carnet des Ardennes : depuis le diplôme et le menu, cartes, poème, li
   await page.locator('[data-a="grille"]').click();
   await page.locator('.carte-ard', { hasText: 'légende' }).click();
   await page.locator('[data-a="livre"]').click();
-  await expect(page.locator('.carnet-chemin')).toContainText('page 1 sur 15');
+  await expect(page.locator('.carnet-chemin')).toContainText('Page 1 sur 15');
   for (let p = 2; p <= 15; p++) {
     await page.keyboard.press('ArrowRight');
-    await expect(page.locator('.carnet-chemin')).toContainText(`page ${p} sur 15`);
+    await expect(page.locator('.carnet-chemin')).toContainText(`Page ${p} sur 15`);
     if (CAPTURES && [2, 4, 7, 13, 14].includes(p)) await page.locator('.livre-vignette').screenshot({ path: CAPTURES + `/livre-${p}.png` });
   }
   await expect(page.locator('.livre-texte')).toContainText('encore cachée'); // la treizième scène, pas encore trouvée
@@ -106,10 +106,31 @@ test('le livre ancien : lettrine, et la page se tourne en la faisant glisser', a
     await page.mouse.move(b.x + b.width * a, y, { steps: 8 }); await page.mouse.up();
   };
   await glisser(0.8, 0.2); // vers la gauche : page suivante
-  await expect(page.locator('.carnet-chemin')).toContainText('page 2 sur 15');
+  await expect(page.locator('.carnet-chemin')).toContainText('Page 2 sur 15');
   await expect(page.locator('.livre-page h2')).toHaveText('Premier tableau');
   await expect(page.locator('.livre-ancien .lettrine')).toHaveText('L');
   if (CAPTURES) await page.screenshot({ path: CAPTURES + '/livre-ancien-2.png' });
   await glisser(0.2, 0.8); // vers la droite : page précédente
-  await expect(page.locator('.carnet-chemin')).toContainText('page 1 sur 15');
+  await expect(page.locator('.carnet-chemin')).toContainText('Page 1 sur 15');
+});
+
+test('le livre occupe tout l\'écran, et sa page garde la même taille sur les quinze pages', async ({ page }) => {
+  await diplome(page);
+  await page.locator('#btn-carnet5').click();
+  await page.locator('.carte-ard', { hasText: 'légende' }).click();
+  await page.locator('[data-a="livre"]').click();
+  await expect(page.locator('.carnet.mode-livre')).toHaveCount(1);
+  const tailles = new Set<string>();
+  for (let p = 1; p <= 15; p++) {
+    const b = (await page.locator('.livre-page').boundingBox())!;
+    tailles.add(Math.round(b.width) + '×' + Math.round(b.height));
+    if (process.env.CAPTURES && (p === 2 || p === 15)) await page.screenshot({ path: process.env.CAPTURES + `/livre-plein-${p}.png` });
+    if (p < 15) await page.keyboard.press('ArrowRight');
+  }
+  expect([...tailles]).toHaveLength(1);
+  // Toutes les cartes : on sort du plein écran ; et les cartes ont toutes la même hauteur
+  await page.locator('[data-a="grille"]').click();
+  await expect(page.locator('.carnet.mode-livre')).toHaveCount(0);
+  const hauteurs = await page.locator('.carte-ard').evaluateAll(l => [...new Set(l.map(e => Math.round(e.getBoundingClientRect().height)))]);
+  expect(hauteurs).toHaveLength(1);
 });
