@@ -39,7 +39,9 @@
     return m1 === m2 ? `nuit du ${d1.getDate()} au ${d2.getDate()} ${m2} ${d2.getFullYear()}` : `nuit du ${d1.getDate()} ${m1} au ${d2.getDate()} ${m2} ${d2.getFullYear()}`;
   }
   function dateCam() { const d = new Date(State.nuit + 'T12:00:00'); d.setDate(d.getDate() + 1); return pad(d.getDate()) + '/' + pad(d.getMonth() + 1) + '/' + d.getFullYear(); }
-  function nbEtoiles() { return Object.keys(State.etoiles).reduce((n, k) => n + (State.etoiles[k] || []).length, 0); }
+  // Seules comptent les étoiles qui existent encore dans l'histoire (un élément renommé, comme l'ancien fromage, est ignoré)
+  const etoilesValides = k => { const sc = D.scenes.find(s => s.id === k); return sc ? (State.etoiles[k] || []).filter(e => sc.bonus.indexOf(e) >= 0) : []; };
+  function nbEtoiles() { return Object.keys(State.etoiles).reduce((n, k) => n + etoilesValides(k).length, 0); }
   const totalEtoiles = D.scenes.reduce((n, s) => n + s.bonus.length, 0);
 
   // Paramètres d'adresse pour tester : ?reset=1 efface tout, ?chapitre=3 débloque jusqu'au chapitre 3,
@@ -82,7 +84,7 @@
     liste.push(el); State.indices = true; save(); // une étoile trouvée : le conseil des secrets n'est plus utile
     const n = nbEtoiles();
     const sc = D.scenes.find(s => s.id === sceneId);
-    toast((sc && liste.length >= sc.bonus.length ? D.etoilesToutes : D.etoile) + ' (' + n + '/' + totalEtoiles + ')', `<svg class="badge-ico" width="34" height="34" viewBox="0 0 24 24"><use href="#etoile5"/></svg>`);
+    toast((sc && etoilesValides(sceneId).length >= sc.bonus.length ? D.etoilesToutes : D.etoile) + ' (' + n + '/' + totalEtoiles + ')', `<svg class="badge-ico" width="34" height="34" viewBox="0 0 24 24"><use href="#etoile5"/></svg>`);
     SON.play('etoile');
     D.badges.filter(b => b.etoiles && n >= b.etoiles).forEach(b => setTimeout(() => badge(b.id), 1500));
   }

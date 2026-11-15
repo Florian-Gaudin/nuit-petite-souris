@@ -1138,3 +1138,8 @@ html.grand-texte .livre-ancien .livre-texte p{font-size:1.5rem}
 
 /* Le nom du meuble filmé suffit : pas de cadre autour */
 .det.etiquette{border-color:transparent;box-shadow:none}
+
+/* La forêt : en partant, Quenotte suit le sentier qui monte jusqu'en haut de la colline */
+.decor-foret .depart.part{transition:none;animation:monte-chemin 2.3s ease-in-out forwards}
+@keyframes monte-chemin{0%{transform:none}15%{transform:translate(141px,-21px)}30%{transform:translate(251px,-71px)}55%{transform:translate(451px,-105px)}68%{transform:translate(511px,-149px)}82%{transform:translate(571px,-225px)}92%{opacity:1}100%{transform:translate(690px,-340px);opacity:0}}
+@media (prefers-reduced-motion:reduce){.decor-foret .depart.part{animation:none;opacity:0}}

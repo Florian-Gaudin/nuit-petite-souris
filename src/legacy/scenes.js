@@ -365,7 +365,7 @@ window.SCENES = (function () {
   }
   function compteSecrets() {
     const el = $('#secrets-n', root); if (!el) return;
-    el.textContent = ((ctx.state.etoiles && ctx.state.etoiles[sc.id]) || []).length + '/' + sc.bonus.length;
+    el.textContent = ((ctx.state.etoiles && ctx.state.etoiles[sc.id]) || []).filter(e => sc.bonus.indexOf(e) >= 0).length + '/' + sc.bonus.length;
     const ea = $('#ardennes-n', root);
     if (ea) ea.textContent = (sc.ardennes || []).filter(i => (ctx.state.ardennes || []).indexOf(sc.id + '.' + i) >= 0).length + '/' + sc.ardennes.length;
   }
@@ -456,6 +456,11 @@ window.SCENES = (function () {
     aideStop();
     const act = ACTIONS[sc.id][id];
     if (el.etapes) {
+      // Les étoiles à relier : il faut toucher celle qui clignote (au clavier, Entrée suffit)
+      if (g.querySelector('.pt') && !(e && e.type === 'keydown')) {
+        const pt = e && e.target && e.target.closest ? e.target.closest('.pt') : null;
+        if (!pt || !pt.classList.contains('prochaine')) { SON.play('toc'); aideLance(); return; }
+      }
       let sub = e && e.target && e.target.closest ? e.target.closest('[data-sub]') : null;
       if (sub && sub.classList.contains('allume')) sub = null;
       // Touché à côté (sur le halo) : c'est le plus proche du doigt qui répond, pas le suivant dans l'ordre
@@ -513,7 +518,9 @@ window.SCENES = (function () {
     const lueur = sc.id === 'meuse' ? null : $('.lueur', svg); if (lueur) grp.appendChild(lueur);
     grp.appendChild(q); q.classList.add('trotte');
     void grp.getBBox(); grp.classList.add('part');
-    for (let i = 0; i < 4 && !RM; i++) { SON.play('pas'); await wait(320); }
+    // Dans la forêt, Quenotte grimpe le sentier jusqu'en haut de la colline : un peu plus long
+    const pas = sc.id === 'foret' ? 7 : 4;
+    for (let i = 0; i < pas && !RM; i++) { SON.play('pas'); await wait(320); }
     await wait(RM ? 100 : 250);
   }
   async function fini(mien) {

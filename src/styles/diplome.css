@@ -25,7 +25,7 @@
 .dip-badges-titre{font-family:'Baloo 2',sans-serif;font-weight:800;font-size:1.05rem;color:#7a6220;letter-spacing:.04em}
 .dip-compte{display:inline-block;margin-left:6px;background:#C9A227;color:#fff;border-radius:999px;padding:0 9px;font-size:.9rem}
 /* Trois badges par ligne : la colonne reste compacte */
-.dip-badges{display:grid;grid-template-columns:repeat(3,86px);justify-content:center;gap:8px 10px}
+.dip-badges{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 10px;max-width:278px;margin:0 auto} /* trois par ligne ; la dernière ligne est centrée */
 .dip-badge-info{min-height:2.8em;margin:2px 0 0;font-family:'Baloo 2',sans-serif;font-size:.85rem;line-height:1.35;color:#5c4a1e;text-align:center;max-width:30em}
 button.badge-dip{background:none;border:0;padding:4px 2px;border-radius:10px;cursor:pointer;color:inherit;-webkit-tap-highlight-color:transparent}
 button.badge-dip.choisi,button.badge-dip:hover{background:rgba(201,162,39,.16)}
@@ -54,8 +54,8 @@ button.badge-dip.choisi,button.badge-dip:hover{background:rgba(201,162,39,.16)}
   .dip-milieu{flex-wrap:nowrap;align-items:center;gap:8mm;margin-top:6px}
   .dip-machoire{flex:0 0 52mm}
   .dip-badges-bloc{flex:1 1 auto}
-  .dip-badges{grid-template-columns:repeat(5,1fr);gap:6px 4px;width:100%}
-  .badge-dip{width:auto;font-size:.72rem}
+  .dip-badges{max-width:none;gap:6px 4px;width:100%}
+  .badge-dip{width:18%;font-size:.72rem}
   .dip-pied{margin-top:8px;flex-wrap:nowrap}
   .tampon{width:100px;height:100px}
   .dip-badge-info{display:none}
