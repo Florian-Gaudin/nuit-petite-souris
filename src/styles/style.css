@@ -920,11 +920,25 @@ html.grand-texte .carte-texte p,html.grand-texte .livre-texte p{font-size:1.5rem
   text-shadow:0 1px 0 #7a1f1f,0 0 6px rgba(255,200,87,.6)}
 .livre-astuce{margin:10px 0 0;text-align:center;font-style:italic;font-size:.9rem;color:#7a5a3a}
 .livre-folio{margin:8px 0 0;text-align:center;font-size:.85rem;color:#7a5a3a}
-.livre-ancien.vers-suivante{animation:page-suivante .55s ease-out}
-.livre-ancien.vers-precedente{animation:page-precedente .55s ease-out;transform-origin:right center}
-@keyframes page-suivante{from{transform:perspective(1400px) rotateY(-75deg);opacity:.3}to{transform:none;opacity:1}}
-@keyframes page-precedente{from{transform:perspective(1400px) rotateY(75deg);opacity:.3}to{transform:none;opacity:1}}
-@media (prefers-reduced-motion:reduce){.livre-ancien.vers-suivante,.livre-ancien.vers-precedente{animation:none}}
+/* La page tourne lentement en se courbant : le bord libre s'arrondit, une ombre glisse sur la feuille */
+.livre-ancien.vers-suivante{animation:page-suivante 1.15s cubic-bezier(.25,.6,.3,1);transform-origin:left center}
+.livre-ancien.vers-precedente{animation:page-precedente 1.15s cubic-bezier(.25,.6,.3,1);transform-origin:right center}
+.livre-ancien::after{content:'';position:absolute;inset:0;pointer-events:none;border-radius:inherit;opacity:0}
+.livre-ancien.vers-suivante::after{animation:page-ombre-g 1.15s ease-out}
+.livre-ancien.vers-precedente::after{animation:page-ombre-d 1.15s ease-out}
+@keyframes page-suivante{
+  0%{transform:perspective(1600px) rotateY(-88deg) skewY(-5deg) scaleX(.92);border-radius:4px 46% 46% 4px / 4px 18% 18% 4px}
+  45%{transform:perspective(1600px) rotateY(-38deg) skewY(-4deg) scaleX(.97);border-radius:4px 30% 30% 4px / 4px 12% 12% 4px}
+  80%{transform:perspective(1600px) rotateY(-8deg) skewY(-1deg);border-radius:4px 10% 10% 4px / 4px 4% 4% 4px}
+  100%{transform:none;border-radius:8px}}
+@keyframes page-precedente{
+  0%{transform:perspective(1600px) rotateY(88deg) skewY(5deg) scaleX(.92);border-radius:46% 4px 4px 46% / 18% 4px 4px 18%}
+  45%{transform:perspective(1600px) rotateY(38deg) skewY(4deg) scaleX(.97);border-radius:30% 4px 4px 30% / 12% 4px 4px 12%}
+  80%{transform:perspective(1600px) rotateY(8deg) skewY(1deg);border-radius:10% 4px 4px 10% / 4% 4px 4px 4%}
+  100%{transform:none;border-radius:8px}}
+@keyframes page-ombre-g{0%{opacity:1;background:linear-gradient(90deg,rgba(40,20,5,.05) 0%,rgba(40,20,5,.45) 70%,rgba(255,240,200,.35) 100%)}100%{opacity:0;background:linear-gradient(90deg,rgba(40,20,5,.05) 0%,rgba(40,20,5,.45) 70%,rgba(255,240,200,.35) 100%)}}
+@keyframes page-ombre-d{0%{opacity:1;background:linear-gradient(270deg,rgba(40,20,5,.05) 0%,rgba(40,20,5,.45) 70%,rgba(255,240,200,.35) 100%)}100%{opacity:0;background:linear-gradient(270deg,rgba(40,20,5,.05) 0%,rgba(40,20,5,.45) 70%,rgba(255,240,200,.35) 100%)}}
+@media (prefers-reduced-motion:reduce){.livre-ancien.vers-suivante,.livre-ancien.vers-precedente,.livre-ancien.vers-suivante::after,.livre-ancien.vers-precedente::after{animation:none}}
 html.grand-texte .livre-ancien .livre-texte p{font-size:1.5rem}
 
 /* Le ruban avec le diplôme (histoire terminée) : sept pastilles, un peu plus serrées */
@@ -1066,3 +1080,4 @@ html.grand-texte .livre-ancien .livre-texte p{font-size:1.5rem}
 .lva-galop .pattes .p2,.lva-galop .pattes .p4{animation-direction:alternate-reverse}
 @keyframes lva-jambe{from{transform:rotate(-20deg)}to{transform:rotate(20deg)}}
 @media (prefers-reduced-motion:reduce){.livre-vignette [class^="lva-"],.livre-vignette .lva-galop .pattes rect{animation:none}}
+.livre-ancien.vers-suivante,.livre-ancien.vers-precedente{overflow:hidden} /* toute la feuille épouse la courbure */

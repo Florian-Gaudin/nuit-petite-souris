@@ -133,12 +133,12 @@ window.SON = (function () {
     alerte() { tone(880, 0.12, 'square', 0.08); tone(660, 0.12, 'square', 0.08, 0.16); tone(880, 0.12, 'square', 0.08, 0.32); },
     bip() { tone(1200, 0.08, 'square', 0.07); },
     cachet() { bruit(0.12, 0.35, 0, 900); bruit(0.25, 0.2, 0.08, 500); },
-    // Une page qui tourne : la feuille glisse lentement contre la suivante (environ trois quarts de seconde),
+    // Une page qui tourne : la feuille glisse lentement contre la suivante (environ une seconde, comme le mouvement de la page),
     // puis retombe à plat avec un petit souffle grave
     page() {
-      glisse(0.75, 0.16, 0, 700, 2600, 1300);
-      glisse(0.5, 0.05, 0.12, 3200, 5200, 2800);
-      bruit(0.16, 0.07, 0.7, 260, 0.7);
+      glisse(1.05, 0.16, 0, 650, 2500, 1200);
+      glisse(0.7, 0.05, 0.18, 3000, 5000, 2600);
+      bruit(0.18, 0.07, 1.0, 260, 0.7);
     },
     papier() { bruit(0.3, 0.12, 0, 2500); },
     pli() { bruit(0.12, 0.18, 0, 3000); bruit(0.08, 0.1, 0.1, 1800); },
