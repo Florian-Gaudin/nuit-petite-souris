@@ -118,7 +118,9 @@
   function boutonPlein() { if (boutonPlein.maj) boutonPlein.maj(); }
   function buildFil() {
     const maison = `<button class="perle maison" data-n="0" aria-label="Revenir au début de l'histoire" title="Revenir au début"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5L12 4l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z" fill="#fff"/></svg></button>`;
-    const perles = maison + [1, 2, 3, 4, 5].map(i => `<button class="perle" data-n="${i}" aria-label="Chapitre ${i}"><span>${i}</span></button>`).join('');
+    const perles = maison + [1, 2, 3, 4, 5].map(i => `<button class="perle" data-n="${i}" aria-label="Chapitre ${i}"><span>${i}</span></button>`).join('')
+      // Le diplôme, en accès direct une fois l'histoire terminée
+      + `<button class="perle perle-dip" data-n="dip" aria-label="Mon diplôme" title="Mon diplôme" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="12" rx="2" fill="#FFF6E0" stroke="#C9A227" stroke-width="1.5"/><path d="M6 9h9M6 12h6" stroke="#8a7a5c" stroke-width="1.4" stroke-linecap="round"/><circle cx="17" cy="14" r="3" fill="#D64045"/><path d="M15.5 16.5l-1 4 2.5-1.5 2.5 1.5-1-4" fill="#D64045"/></svg></button>`;
     $('#fil').innerHTML = `<div class="fil-in">
       <div class="ruban" aria-label="Progression de l'histoire">${perles}<div class="fil-souris"><svg viewBox="0 0 130 100"><use href="#souris-side"/></svg></div></div>
       <div class="prefs">
@@ -170,11 +172,20 @@
       b.classList.add('confirme'); b.innerHTML = A.icone('recommencer') + ' Sûr ? Touche encore pour tout effacer';
       clearTimeout(b.t); b.t = setTimeout(majPrefs, 4000);
     };
-    $$('.perle').forEach(p => p.onclick = () => { const n = +p.dataset.n; if (n <= State.unlocked) show(n); else toast('Termine d\'abord le chapitre ' + (n - 1) + ' !'); });
+    $$('.perle').forEach(p => p.onclick = () => {
+      if (p.dataset.n === 'dip') { if (State.fini) show(5, { diplome: true }); return; }
+      const n = +p.dataset.n; if (n <= State.unlocked) show(n); else toast('Termine d\'abord le chapitre ' + (n - 1) + ' !');
+    });
   }
+  let surDiplome = false;
   function updateFil(n) {
-    $$('.perle').forEach(p => { const i = +p.dataset.n; p.classList.toggle('faite', i < State.unlocked); p.classList.toggle('active', i === n); p.classList.toggle('ouverte', i <= State.unlocked); });
-    const s = $('.fil-souris'); if (s) s.style.left = n === 0 ? '5%' : [21, 37.5, 54, 70.5, 87][n - 1] + '%';
+    const dip = !!State.fini, ruban = $('.ruban');
+    if (ruban) ruban.classList.toggle('avec-diplome', dip);
+    const pd = $('.perle.perle-dip'); if (pd) { pd.hidden = !dip; pd.classList.toggle('active', surDiplome); }
+    $$('.perle:not(.perle-dip)').forEach(p => { const i = +p.dataset.n; p.classList.toggle('faite', i < State.unlocked); p.classList.toggle('active', i === n && !surDiplome); p.classList.toggle('ouverte', i <= State.unlocked); });
+    // La petite souris du ruban se pose sur la pastille en cours (positions resserrées avec le diplôme)
+    const pos = dip ? [4, 18, 32, 46, 60, 74, 89] : [5, 21, 37.5, 54, 70.5, 87];
+    const s = $('.fil-souris'); if (s) s.style.left = (surDiplome ? pos[6] : pos[n]) + '%';
     document.body.dataset.chapitre = n;
   }
   // Fondu au noir entre deux tableaux : on assombrit, on change, on rallume
@@ -203,6 +214,7 @@
     const TEXTES = { 0: ['accueil', 'surprise', 'origine', 'origineVille'], 2: ['jeu'], 3: ['camera'], 4: ['lettreIntro', 'lettreFin'], 5: opts.diplome ? ['diplome', 'billetTrouve'] : ['epilogue'] };
     NARR.fixer(TEXTES[n] ? TEXTES[n].map(k => D[k]) : null, T);
     root.innerHTML = courant.render(opts); root.className = 'scene ch-' + n;
+    surDiplome = n === 5 && !!opts.diplome;
     window.scrollTo(0, 0); updateFil(n); courant.mount(root, opts);
   }
 
@@ -1093,7 +1105,7 @@ ${places.map(dent).join('')}
       if (!(opts && opts.diplome)) { this.retour(r); return; }
       heure('03:40'); MUS.ambiance('diplome');
       const premiere = !State.fini;
-      complete(5); if (premiere) { State.fini = true; save(); }
+      complete(5); if (premiere) { State.fini = true; save(); updateFil(5); }
       rangerDansAlbum();
       badge('jumelle');
       if (premiere) SON.play('fanfare');

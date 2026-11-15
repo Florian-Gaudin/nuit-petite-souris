@@ -926,3 +926,11 @@ html.grand-texte .carte-texte p,html.grand-texte .livre-texte p{font-size:1.5rem
 @keyframes page-precedente{from{transform:perspective(1400px) rotateY(75deg);opacity:.3}to{transform:none;opacity:1}}
 @media (prefers-reduced-motion:reduce){.livre-ancien.vers-suivante,.livre-ancien.vers-precedente{animation:none}}
 html.grand-texte .livre-ancien .livre-texte p{font-size:1.5rem}
+
+/* Le ruban avec le diplôme (histoire terminée) : sept pastilles, un peu plus serrées */
+.ruban.avec-diplome .perle.maison{left:4%}
+.ruban.avec-diplome .perle[data-n="1"]{left:18%}.ruban.avec-diplome .perle[data-n="2"]{left:32%}.ruban.avec-diplome .perle[data-n="3"]{left:46%}.ruban.avec-diplome .perle[data-n="4"]{left:60%}.ruban.avec-diplome .perle[data-n="5"]{left:74%}
+.perle.perle-dip{left:89%;display:grid;place-items:center;background:var(--nuit3);border-color:var(--lanterne)}
+.perle.perle-dip[hidden]{display:none}
+.perle.perle-dip svg{width:20px;height:20px}
+.perle.perle-dip.active{background:var(--lanterne);border-color:#fff;transform:scale(1.18);box-shadow:0 0 0 4px rgba(255,200,87,.3)}

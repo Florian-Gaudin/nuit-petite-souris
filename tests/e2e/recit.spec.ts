@@ -418,3 +418,15 @@ test("un élément touché trop tôt tremble sur place, sans sauter dans le coin
   const pendant = (await billet.boundingBox())!;
   expect(Math.abs(pendant.x - avant.x)).toBeLessThan(20);
 });
+
+test("le ruban : la pastille du diplôme apparaît une fois l'histoire terminée, et y mène directement", async ({ page }) => {
+  await ouvrir(page, '?reset=1#exemple');
+  await expect(page.locator('.perle.perle-dip')).toBeHidden();
+  await page.evaluate(() => { const A = (window as any).APP; A.state.unlocked = 5; A.state.fini = true; A.show(1, { scene: 0 }); });
+  await expect(page.locator('.perle.perle-dip')).toBeVisible();
+  if (process.env.CAPTURES) await page.locator('#fil').screenshot({ path: process.env.CAPTURES + '/ruban-diplome.png' });
+  await page.locator('.perle.perle-dip').click();
+  await expect(page.locator('.diplome-wrap')).toBeVisible();
+  await expect(page.locator('.perle.perle-dip')).toHaveClass(/active/);
+  await expect(page.locator('.perle[data-n="5"]')).not.toHaveClass(/active/);
+});
