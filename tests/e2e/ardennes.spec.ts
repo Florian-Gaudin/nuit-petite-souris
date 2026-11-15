@@ -48,3 +48,45 @@ test("le terrier : les quatre trésors des Ardennes, dans la barre et au fond de
   expect(ids).toEqual(['ardoise', 'fer', 'pantin', 'plume']);
   await expect(page.locator('.surprise')).toHaveCount(4);
 });
+
+async function diplome(page: Page, secret = false) {
+  await ouvrir(page, '?reset=1#exemple');
+  await page.evaluate(s => { const A = (window as any).APP; A.state.unlocked = 5; A.state.fini = true; A.state.secret = s; A.show(5, { diplome: true }); }, secret);
+}
+
+test('le carnet des Ardennes : depuis le diplôme et le menu, cartes, poème, livre au clavier', async ({ page }) => {
+  test.setTimeout(120000);
+  await diplome(page);
+  await page.locator('#btn-carnet5').click();
+  await expect(page.locator('.carnet h2')).toContainText('Le carnet des Ardennes');
+  await expect(page.locator('.carte-ard')).toHaveCount(10);
+  if (CAPTURES) await page.screenshot({ path: CAPTURES + '/carnet-grille.png' });
+  await page.locator('.carte-ard', { hasText: 'Rimbaud' }).click();
+  await expect(page.locator('.carte-poeme')).toContainText('Par les soirs bleus');
+  if (CAPTURES) await page.screenshot({ path: CAPTURES + '/carnet-rimbaud.png' });
+  await page.locator('[data-a="grille"]').click();
+  await page.locator('.carte-ard', { hasText: 'légende' }).click();
+  await page.locator('[data-a="livre"]').click();
+  await expect(page.locator('.carnet-chemin')).toContainText('page 1 sur 15');
+  for (let p = 2; p <= 15; p++) {
+    await page.keyboard.press('ArrowRight');
+    await expect(page.locator('.carnet-chemin')).toContainText(`page ${p} sur 15`);
+    if (CAPTURES && [2, 4, 7, 13, 14].includes(p)) await page.locator('.livre-vignette').screenshot({ path: CAPTURES + `/livre-${p}.png` });
+  }
+  await expect(page.locator('.livre-texte')).toContainText('encore cachée'); // la treizième scène, pas encore trouvée
+  await page.keyboard.press('Escape');
+  await expect(page.locator('.carnet')).toHaveCount(0);
+  // Le menu des réglages, une fois l'histoire terminée
+  await page.locator('#btn-prefs').click();
+  await page.locator('#pref-carnet').click();
+  await expect(page.locator('.carnet')).toBeVisible();
+});
+
+test("le livre : la treizième page s'ouvre quand la scène secrète a été trouvée", async ({ page }) => {
+  await diplome(page, true);
+  await page.locator('#btn-carnet5').click();
+  await page.locator('.carte-ard', { hasText: 'légende' }).click();
+  await page.locator('[data-a="livre"]').click();
+  for (let p = 2; p <= 15; p++) await page.keyboard.press('ArrowRight');
+  await expect(page.locator('.livre-texte')).toContainText('sauf toi, Clémentine');
+});

@@ -401,7 +401,7 @@ window.DATA = {
     final: { variante: { premiere: "Et voici la vedette de la soirée : la toute première dent de {enfant}, qui va monter au château !", jumelle: "Et voici la vedette de la soirée : la {ordinal} dent de {enfant}, qui va rejoindre sa jumelle au château !", suite: "Et voici la vedette de la soirée : la {ordinal} dent de {enfant}, qui va rejoindre la collection du château !" } },
     applaudir: "Applaudis la troupe ! Elle adore ça.",
     encouragements: ["Plus fort ! La troupe t'entend à peine…", "Encore ! Le public se réveille !", "Bravo ! Bis ! Bis !", "Écoute la salle ! Encore un peu…", "Quelle ovation ! On continue ?"],
-    merci: "Merci, merci ! Quelle salle formidable ! Reviens quand tu veux : je garde toujours une treizième scène pour toi.",
+    merci: "Merci, merci ! Quelle salle formidable ! Et l'histoire de Bayard en douze tableaux t'attend dans le carnet des Ardennes, après ton diplôme.",
     cris: ["Bravo !", "Bis !", "Hourra !", "Youpi !", "Encore !", "Magnifique !"],
     toc1: "Toc ! Le Grand Marionnettiste attend… trois coups ?",
     toc2: "Toc, toc ! Encore un coup !",

@@ -128,6 +128,7 @@
           <button role="menuitem" id="pref-grand" aria-pressed="false"></button>
           ${PLEIN.api && !PLEIN.appli ? `<button role="menuitem" id="pref-plein"></button>` : ''}
           <a role="menuitem" id="pref-changer" href="./"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5L12 4l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z" fill="currentColor"/></svg> Retour à l'accueil</a>
+          <button role="menuitem" id="pref-carnet" hidden><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1C14 1 15 3 14.5 4.5C17 4 18 6 16 7.5C19 7.5 19.5 10 17 11C19.5 11.5 19 14.5 16 14C17 16 15.5 17.5 13.2 17L12.6 19V22.5H11.4V19L10.8 17C8.5 17.5 7 16 8 14C5 14.5 4.5 11.5 7 11C4.5 10 5 7.5 8 7.5C6 6 7 4 9.5 4.5C9 3 10 1 12 1Z" fill="currentColor"/></svg> Le carnet des Ardennes</button>
           <a role="menuitem" id="pref-parents" href="parents/">${A.icone('famille')} Espace parents</a>
           <a role="menuitem" id="pref-infos" href="infos/"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 10.5v6M12 7.2v.1" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg> Informations</a>
           <button role="menuitem" id="pref-reset" class="danger">${A.icone('recommencer')} Recommencer l'histoire</button>
@@ -138,6 +139,7 @@
     const majPrefs = () => {
       $('#pref-son').innerHTML = A.icone(SON.muet ? 'muet' : 'son') + (SON.muet ? ' Son et musique : coupés' : ' Son et musique : activés');
       if ($('#pref-plein')) $('#pref-plein').innerHTML = A.icone(PLEIN.actif() ? 'reduire' : 'plein') + (PLEIN.actif() ? ' Quitter le plein écran' : ' Plein écran');
+      $('#pref-carnet').hidden = !State.fini; // une fois l'histoire terminée
       const grand = document.documentElement.classList.contains('grand-texte');
       $('#pref-grand').innerHTML = `<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><text x="1" y="19" font-size="13" font-weight="800" fill="currentColor" font-family="sans-serif">A</text><text x="10" y="20" font-size="19" font-weight="800" fill="currentColor" font-family="sans-serif">A</text></svg> Grand texte : ${grand ? 'activé' : 'désactivé'}`;
       $('#pref-grand').setAttribute('aria-pressed', String(grand));
@@ -149,6 +151,7 @@
     menu.onclick = e => e.stopPropagation();
     document.addEventListener('click', () => { if (!menu.hidden) fermerMenu(); });
     $('#pref-son').onclick = () => { SON.unlock(); const m = SON.toggle(); majPrefs(); toast(m ? 'Son et musique coupés' : 'Son et musique activés'); };
+    $('#pref-carnet').onclick = () => { fermerMenu(); ouvrirCarnet(); };
     $('#pref-grand').onclick = () => {
       const on = !document.documentElement.classList.contains('grand-texte');
       window.STOCKAGE.ecrire(CLE_GRAND, on ? '1' : '0'); grandTexte(on); majPrefs();
@@ -253,6 +256,10 @@
     const P = window.PROFIL.profil, a = lireAlbum().filter(x => x.id !== window.PROFIL.id);
     a.push({ id: window.PROFIL.id, code: window.PROFIL.code, prenom: P.prenom, nuit: State.nuit, dent: P.dents.nuit, deja: P.dents.deja });
     window.STOCKAGE.ecrire(CLE_ALBUM, JSON.stringify(a.slice(-60)));
+  }
+  // Le carnet des Ardennes : les cartes « Le savais-tu ? » et le livre de la légende (après le diplôme)
+  function ouvrirCarnet() {
+    window.CARNET.ouvrir({ T, state: State, son: n => SON.play(n) });
   }
   function album() {
     const a = lireAlbum(), parEnfant = {};
@@ -1072,6 +1079,7 @@ ${places.map(dent).join('')}
   <div class="diplome-wrap">${window.CERTIFICAT.html({ badges: State.badges.concat(State.badges.indexOf('jumelle') < 0 ? ['jumelle'] : []), secret: State.secret, nuitTexte: nuitTexte(), etoiles: nbEtoiles(), total: totalEtoiles })}</div>
   <div class="fin">
     <a class="btn btn-grand btn-or" id="btn-imprimer" href="certificat/?${qs}#p=${window.PROFIL.code}" target="_blank" rel="noopener">${A.icone('imprimer')} Imprimer le diplôme</a>
+    <button class="btn btn-petit" id="btn-carnet5"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1C14 1 15 3 14.5 4.5C17 4 18 6 16 7.5C19 7.5 19.5 10 17 11C19.5 11.5 19 14.5 16 14C17 16 15.5 17.5 13.2 17L12.6 19V22.5H11.4V19L10.8 17C8.5 17.5 7 16 8 14C5 14.5 4.5 11.5 7 11C4.5 10 5 7.5 8 7.5C6 6 7 4 9.5 4.5C9 3 10 1 12 1Z" fill="currentColor"/></svg> Le carnet des Ardennes</button>
     <button class="btn btn-petit" id="btn-album5">${A.icone('etoile')} ${esc(T(D.album.titre))}</button>
     <button class="btn btn-petit" id="btn-revoir5">Revoir l'histoire</button>
   </div>
@@ -1092,6 +1100,7 @@ ${places.map(dent).join('')}
       window.CERTIFICAT.brancher($('.diplome-wrap', r));
       $('#btn-revoir5', r).onclick = () => show(1, { scene: 0 });
       $('#btn-album5', r).onclick = album;
+      $('#btn-carnet5', r).onclick = ouvrirCarnet;
       // Après l'atelier, le diplôme se redessine avec le nouveau dessin
       $('#btn-dessin5', r).onclick = () => { SON.play('clic'); atelier(() => show(5, { diplome: true })); };
     },

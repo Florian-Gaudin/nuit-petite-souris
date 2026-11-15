@@ -872,3 +872,29 @@ html.grand-texte .th-txt{font-size:1.6rem}
 .decor-montgolfiere .tap.joue .notes{animation:notes 1.6s ease-out}
 @keyframes notes{from{transform:none;opacity:1}to{transform:translateY(-40px);opacity:0}}
 @media (prefers-reduced-motion:reduce){.decor .tap.ardennais .indice.feuille,.decor-foret .sanglier .zz{animation:none}}
+
+/* ---------- Le carnet des Ardennes ---------- */
+.visuellement-cache{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.carnet .atelier-in{max-width:760px}
+.carnet h2{display:flex;align-items:center;gap:8px;margin:0;font-size:1.45rem}
+.carnet h2:focus{outline:none}
+.carnet-intro{margin:0;font-size:1.05rem}
+.carnet-chemin{margin:0;font-size:.85rem;font-weight:700;color:#7a5a3a}
+.carnet-grille{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(138px,1fr));gap:10px}
+.carte-ard{position:relative;width:100%;min-height:118px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:10px 8px;border-radius:16px;border:2px solid #e2d3ad;background:#fff;color:var(--encre);font:700 .95rem/1.2 var(--display);text-align:center;cursor:pointer}
+.carte-ard svg{width:52px;height:52px}
+.carte-ard:hover,.carte-ard:focus-visible{border-color:var(--lanterne2);outline:3px solid var(--lanterne);outline-offset:1px}
+.carte-ard.trouvee{border-color:#9BC53D}
+.tampon-ard{position:absolute;top:6px;right:6px}
+.tampon-ard .feuille-ico,.carte-trouvee .feuille-ico{width:18px;height:18px;margin:0}
+.carte-dessin{display:flex;justify-content:center}.carte-dessin svg{width:96px;height:96px}
+.carte-photo{margin:0}.carte-photo img{width:100%;max-height:42vh;object-fit:cover;border-radius:14px}.carte-photo figcaption{font-size:.8rem;color:#5a5470}
+.carte-texte p,.livre-texte p{margin:0 0 8px;font-size:1.1rem;line-height:1.45}
+.carte-poeme{margin:6px 0 10px;padding:10px 14px;border-left:4px solid var(--lanterne);background:#fff;border-radius:10px;font-family:var(--serif);font-style:italic;display:flex;flex-direction:column;gap:2px}
+.carte-poeme-titre{margin:0 0 4px!important;font-style:normal;font-weight:700;font-size:1rem!important}
+.carte-avoir{color:#3E6B1F}
+.carte-trouvee{display:flex;align-items:center;gap:6px;font-weight:700;color:#3E6B1F}
+.carnet-nav{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.livre-heure{margin:0;font-weight:800;color:var(--rouge2);font-size:1.05rem}
+.livre-vignette svg{display:block;width:100%;max-height:42vh;border-radius:14px;border:4px solid #2a8c7e}
+html.grand-texte .carte-texte p,html.grand-texte .livre-texte p{font-size:1.5rem}

@@ -38,6 +38,7 @@ try {
   // L'ordre compte : chaque fichier s'appuie sur ceux d'avant (window.CONFIG, window.DATA…).
   await import('./lib/carte');
   await import('./legacy/data.js');
+  await import('./contenu/ardennes.js');
   await import('./lib/dessins');
   await import('./legacy/art.js');
   await import('./legacy/decors.js');
@@ -46,6 +47,7 @@ try {
   await import('./legacy/narration.js');
   await import('./legacy/scenes.js');
   await import('./legacy/theatre.js');
+  await import('./legacy/carnet.js');
   await import('./lib/machoire');
   await import('./legacy/certificat.js');
   await import('./legacy/app.js');

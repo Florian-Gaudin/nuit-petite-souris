@@ -51,7 +51,7 @@ window.THEATRE = (function () {
 <path d="M-1-11q-3-14 10-16q-5 7-3 15z" fill="${plumet}"/>
 <circle cx="-11" cy="-9" r="7" fill="#A79E95"/><circle cx="-11" cy="-9" r="3.8" fill="#F2A3B5"/><circle cx="11" cy="-11" r="7" fill="#A79E95"/><circle cx="11" cy="-11" r="3.8" fill="#F2A3B5"/>
 </g>`;
-  const dessinBayard = () => `<g class="bayard-m" transform="scale(1.3)">
+  const dessinBayard = (avecChevaliers = true) => `<g class="bayard-m" transform="scale(1.3)">
 <path d="M-72 36q-36 6-34 50q10-18 30-30z" fill="#4a3222"/>
 <g class="pattes" fill="#5c3c28"><rect class="p1" x="-56" y="70" width="13" height="58" rx="5"/><rect class="p2" x="-34" y="70" width="13" height="58" rx="5"/><rect class="p3" x="30" y="70" width="13" height="58" rx="5"/><rect class="p4" x="52" y="70" width="13" height="58" rx="5"/></g>
 <g fill="#2a1a10"><rect x="-58" y="122" width="17" height="9" rx="2"/><rect x="-36" y="122" width="17" height="9" rx="2"/><rect x="28" y="122" width="17" height="9" rx="2"/><rect x="50" y="122" width="17" height="9" rx="2"/></g>
@@ -62,7 +62,7 @@ window.THEATRE = (function () {
 <path d="M60 38q12-30 34-48q-8 22-14 52z" fill="#2a1a10"/>
 <path d="M-50 40h96l-6 34h-84z" fill="#2b3470"/><path d="M-50 40h96" stroke="#C9A227" stroke-width="3"/><path d="M-44 74h84" stroke="#C9A227" stroke-width="3"/>
 <g fill="#C9A227"><path d="M-30 50l4 8 8 1-6 6 2 8-8-4-8 4 2-8-6-6 8-1z"/><path d="M14 50l4 8 8 1-6 6 2 8-8-4-8 4 2-8-6-6 8-1z"/></g>
-<g class="chevaliers" transform="translate(0,6)">${chevalier(-66, '#D64045')}${chevalier(-28, '#3E7C8F')}${chevalier(10, '#FFC857')}${chevalier(48, '#3E9A6B')}</g>
+${avecChevaliers ? `<g class="chevaliers" transform="translate(0,6)">${chevalier(-66, '#D64045')}${chevalier(-28, '#3E7C8F')}${chevalier(10, '#FFC857')}${chevalier(48, '#3E9A6B')}</g>` : ''}
 </g>`;
   const dessinChateau = () => `<g class="th-chateau">
 <rect x="-64" y="-118" width="128" height="118" fill="#8a8395"/><rect x="-80" y="-158" width="38" height="158" fill="#9a93a5"/><rect x="42" y="-158" width="38" height="158" fill="#9a93a5"/>
@@ -490,7 +490,8 @@ ${maison()}
     lever();
   }
 
-  return { ouvrir };
+  // Les dessins partagés avec le livre de la légende (carnet des Ardennes)
+  return { ouvrir, dessins: { bayard: dessinBayard, chevalier, chateau: dessinChateau } };
 })();
 
 // Module ES (chargé par src/main.ts) : le contenu reste un script qui expose ses objets sur window.

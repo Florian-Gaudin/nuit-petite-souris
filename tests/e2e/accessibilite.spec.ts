@@ -18,6 +18,13 @@ test('audit WCAG 2.1 AA : tous les écrans', async ({ page }) => {
   await ouvrir(page, '?reset=1'); pb.push(...await audit(page, 'accueil', ECART_HISTOIRE));
   await ouvrir(page, '#exemple'); pb.push(...await audit(page, 'chapitre 0', ECART_HISTOIRE));
   for (const n of [1, 2, 3, 4]) { await ouvrir(page, `?chapitre=${n}#exemple`); pb.push(...await audit(page, 'chapitre ' + n, ECART_HISTOIRE)); }
+  // Le carnet des Ardennes et le livre de la légende
+  await page.evaluate(() => { const A = (window as any).APP; A.state.unlocked = 5; A.state.fini = true; A.show(5, { diplome: true }); });
+  await page.locator('#btn-carnet5').click(); pb.push(...await audit(page, 'carnet', ECART_HISTOIRE));
+  await page.locator('.carte-ard').first().click(); pb.push(...await audit(page, 'carte', ECART_HISTOIRE));
+  await page.locator('[data-a="grille"]').click(); await page.locator('.carte-ard').last().click(); await page.locator('[data-a="livre"]').click(); await page.keyboard.press('ArrowRight');
+  pb.push(...await audit(page, 'livre', ECART_HISTOIRE));
+  await page.keyboard.press('Escape');
   for (const p of ['parents/', 'mot/#exemple', 'certificat/#exemple', 'infos/']) {
     await page.goto(p); await page.waitForTimeout(800); pb.push(...await audit(page, p));
   }
