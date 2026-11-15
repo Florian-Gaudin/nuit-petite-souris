@@ -111,7 +111,7 @@
         <div class="prefs-menu" id="prefs-menu" role="menu" hidden>
           <button role="menuitem" id="pref-son"></button>
           ${PLEIN.api && !PLEIN.appli ? `<button role="menuitem" id="pref-plein"></button>` : ''}
-          <a role="menuitem" id="pref-changer" href="./">${A.icone('changer')} Changer d'histoire</a>
+          <a role="menuitem" id="pref-changer" href="./"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5L12 4l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z" fill="currentColor"/></svg> Retour à l'accueil</a>
           <a role="menuitem" id="pref-parents" href="parents/">${A.icone('famille')} Espace parents</a>
           <button role="menuitem" id="pref-reset" class="danger">${A.icone('recommencer')} Recommencer l'histoire</button>
         </div>
@@ -396,7 +396,7 @@
     <a class="carte-choix voyage" href="#exemple"><span class="ic">${A.icone('etoile')}</span><span><b>Débuter le voyage avec Quenotte</b><small>Découvre l'histoire de ${esc(exemple)}</small></span></a>
     <a class="carte-choix parents" href="parents/"><span class="ic">${A.icone('famille')}</span><span><b>Je suis un parent</b><small>Préparer l'histoire personnalisée pour mon enfant</small></span></a>
   </nav>
-  ${lireAlbum().length ? `<button class="lien-album" id="lien-album">${A.icone('etoile')} ${esc(T(D.album.titre))}</button>` : ''}
+  <button class="lien-album" id="lien-album">${A.icone('etoile')} ${esc(T(D.album.titre))}</button>
   ${window.DON_POSSIBLE ? `<p class="don-accueil"><span class="phrase">Gratuite pour toutes les familles, l'appli vit grâce à vos petits dons.</span> <a href="parents/#don"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z" fill="currentColor"/></svg>Faire un don</a></p>` : ''}
 </section>`;
     // Sans recharger la page (le plein écran est gardé) quand l'histoire choisie est déjà chargée ;
@@ -408,7 +408,7 @@
       document.body.classList.remove('mode-choix');
       show(0);
     };
-    const la = $('#lien-album', root); if (la) la.onclick = album;
+    $('#lien-album', root).onclick = album;
     const exempleCharge = window.PROFIL.origine === 'choix' || window.PROFIL.origine === 'exemple';
     if (exempleCharge) $('.carte-choix.voyage', root).onclick = surPlace('#exemple', 'exemple');
     if (m && m.code === window.PROFIL.code) $('.carte-choix.reprendre', root).onclick = surPlace('#p=' + m.code, 'adresse');

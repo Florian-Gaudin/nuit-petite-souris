@@ -217,6 +217,13 @@ test("répondre à Quenotte (dessin) et l'album des dents", async ({ page }) => 
   await page.locator('.album .supprimer').click();
   await expect(page.locator('.album-page')).toHaveCount(0);
   await expect(page.locator('.album')).toContainText("L'album se remplit");
+  // L'album vide reste accessible depuis l'accueil
+  await page.locator('.album [data-a="fermer"]').click();
+  await ouvrir(page, '?reset=1#exemple');
+  await page.locator('#btn-prefs').click();
+  await expect(page.locator('#pref-changer')).toContainText("Retour à l'accueil");
+  await page.locator('#pref-changer').click();
+  await expect(page.locator('#lien-album')).toBeVisible();
 });
 
 test("le lièvre repart au galop, Quenotte sur le dos, et sort par la droite", async ({ page }) => {
