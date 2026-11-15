@@ -973,3 +973,10 @@ html.grand-texte .livre-ancien .livre-texte p{font-size:1.5rem}
 @keyframes flash-concert{0%{opacity:.12}35%{opacity:0}100%{opacity:0}}
 @media (prefers-reduced-motion:reduce){.decor-montgolfiere.concert .rayon,.decor-montgolfiere.concert .lasers .flash{animation:none}}
 .livre-ancien,.livre-ancien *{touch-action:pan-y}
+/* La forêt : le sanglier touché s'enfuit en galopant vers la droite */
+.decor-foret .sanglier{transform-box:fill-box}
+.decor-foret .tap.fuit .sanglier{animation:sanglier-fuit 1.6s ease-in forwards}
+.decor-foret .tap.fuit .zz{display:none}
+.decor-foret .tap.fuit .halo,.decor-foret .tap.fuit .indice{transition:opacity .4s;opacity:0}
+@keyframes sanglier-fuit{0%{transform:none}18%{transform:translateY(-10px)}30%{transform:translate(20px,0)}45%{transform:translate(90px,-8px)}60%{transform:translate(170px,0)}75%{transform:translate(260px,-8px)}100%{transform:translate(480px,0)}}
+@media (prefers-reduced-motion:reduce){.decor-foret .tap.fuit .sanglier{animation:none;opacity:0}}

@@ -49,7 +49,12 @@ window.SCENES = (function () {
       sac() { SON.play('papier'); },
     },
     foret: {
-      sanglier(g) { g.classList.remove('reveil'); void g.getBBox(); g.classList.add('reveil'); SON.play('grogne'); },
+      // Le sanglier se réveille en sursaut, grogne… et s'enfuit dans la forêt
+      sanglier(g) {
+        if (g.classList.contains('fuit')) return;
+        g.classList.add('reveil', 'fuit'); SON.play('grogne');
+        [500, 700, 900, 1100].forEach(t => setTimeout(() => SON.play('pas'), RM ? 0 : t));
+      },
       champignons(g, sub, etape) { if (sub) sub.classList.add('allume'); SON.play('champignon'); if (etape >= 3) svg.classList.add('dore'); },
       buisson() { SON.play('buisson'); setTimeout(() => SON.play('renard'), 600); },
       luciole(g) { g.classList.add('vole'); SON.play('luciole'); },

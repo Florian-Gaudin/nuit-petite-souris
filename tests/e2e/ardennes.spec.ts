@@ -151,3 +151,12 @@ test('le Cabaret Vert : des lasers balaient le ciel pendant la musique', async (
   await page.locator('.tap[data-el="cabaret"]').dispatchEvent('click');
   await expect(page.locator('svg.decor-montgolfiere.concert')).toHaveCount(1);
 });
+
+test("la forêt : le sanglier touché s'enfuit", async ({ page }) => {
+  await ouvrir(page, '?reset=1#exemple');
+  await ouvrir(page, '?chapitre=1&scene=1#exemple');
+  const s = page.locator('.tap[data-el="sanglier"]');
+  await s.dispatchEvent('click');
+  await expect(s).toHaveClass(/fuit/);
+  expect(await page.evaluate(() => (window as any).APP.state.ardennes)).toContain('foret.sanglier'); // le secret est bien compté
+});
