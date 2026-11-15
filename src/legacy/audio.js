@@ -45,6 +45,11 @@ window.SON = (function () {
     clic() { tone(900, 0.05, 'square', 0.05); },
     toc() { tone(420, 0.06, 'triangle', 0.12); },
     // Le théâtre : les trois coups du brigadier (bâton sur le plancher), puis des sons chauds, graves et doux
+    // Les secrets des Ardennes
+    grogne() { bruit(0.18, 0.2, 0, 220, 2); bruit(0.14, 0.16, 0.22, 200, 2); },
+    plume() { bruit(0.35, 0.06, 0, 1400, 0.6); },
+    trompette() { [392, 523, 659].forEach((f, i) => tone(f, 0.35, 'triangle', 0.1, i * 0.14)); tone(784, 0.6, 'triangle', 0.1, 0.42); },
+    concert() { [196, 247, 294, 247, 330, 294].forEach((f, i) => { tone(f, 0.18, 'triangle', 0.12, i * 0.16); bruit(0.04, 0.12, i * 0.16, 150, 1); }); },
     coup() { tone(68, 0.4, 'sine', 0.55); bruit(0.12, 0.45, 0, 300, 0.8); tone(68, 0.3, 'sine', 0.18, 0.17); bruit(0.08, 0.14, 0.17, 300, 0.8); },
     coup1() { sons.coup(); tone(196, 0.7, 'triangle', 0.12, 0.08); },
     coup2() { sons.coup(); tone(247, 0.7, 'triangle', 0.12, 0.08); },

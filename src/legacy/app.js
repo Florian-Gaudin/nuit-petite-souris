@@ -86,6 +86,17 @@
     SON.play('etoile');
     D.badges.filter(b => b.etoiles && n >= b.etoiles).forEach(b => setTimeout(() => badge(b.id), 1500));
   }
+  // Les secrets des Ardennes (feuille de chêne) : à part des étoiles ; tous trouvés = badge « Ardennais d'honneur »
+  const SECRETS_ARDENNES = D.scenes.reduce((l, s) => l.concat((s.ardennes || []).map(i => s.id + '.' + i)), []);
+  function ardennais(sceneId, el) {
+    const cle = sceneId + '.' + el, liste = State.ardennes || (State.ardennes = []);
+    if (liste.indexOf(cle) >= 0) return;
+    liste.push(cle); save();
+    const n = SECRETS_ARDENNES.filter(c => liste.indexOf(c) >= 0).length;
+    toast((n === SECRETS_ARDENNES.length ? D.ardennesTous : D.ardennesTrouve) + ' (' + n + '/' + SECRETS_ARDENNES.length + ')', `<svg class="badge-ico" width="34" height="34" viewBox="0 0 24 24"><path d="M12 1C14 1 15 3 14.5 4.5C17 4 18 6 16 7.5C19 7.5 19.5 10 17 11C19.5 11.5 19 14.5 16 14C17 16 15.5 17.5 13.2 17L12.6 19V22.5H11.4V19L10.8 17C8.5 17.5 7 16 8 14C5 14.5 4.5 11.5 7 11C4.5 10 5 7.5 8 7.5C6 6 7 4 9.5 4.5C9 3 10 1 12 1Z" fill="#9BC53D" stroke="#3E6B1F"/></svg>`);
+    SON.play('etoile');
+    if (n === SECRETS_ARDENNES.length) setTimeout(() => badge('ardennais'), 1500);
+  }
   function complete(n) { if (State.unlocked < n + 1) { State.unlocked = n + 1; save(); } }
   // ---------- Plein écran ----------
   // Aucun navigateur n'autorise le plein écran sans geste : on le demande au premier toucher.
@@ -454,7 +465,7 @@
       sceneDemande = null;
       etape(() => window.SCENES.passer());
       window.SCENES.monter($('#ch1', r), {
-        state: State, config: C, T, heure, etoile, toast, save,
+        state: State, config: C, T, heure, etoile, ardennais, toast, save,
         sceneFaite(i) { if (State.scene < i + 1) { State.scene = Math.min(D.scenes.length - 1, i + 1); save(); } },
         fondu,
         finChapitre() { complete(1); badge('detective'); show(2); },

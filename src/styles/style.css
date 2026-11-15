@@ -352,8 +352,8 @@ input,textarea,[contenteditable]{-webkit-user-select:text;user-select:text;-webk
 .decor-place .geant .bras-d{transform-box:fill-box;transform-origin:0 0}
 .decor-place .tap.danse .geant .bras-d{animation:coucou-bras .5s ease-in-out 4}
 @keyframes coucou-bras{0%,100%{transform:rotate(0)}50%{transform:rotate(-70deg)}}
-.decor-place .fromage{transform-box:fill-box;transform-origin:center;transition:transform .5s}
-.decor-place .tap.croque .fromage{transform:scale(.7) translateX(10px)}
+.decor-place .galette{transform-box:fill-box;transform-origin:center;transition:transform .5s}
+.decor-place .tap.croque .galette{transform:scale(.7) translateX(10px)}
 .decor-place .miettes{opacity:0;transition:opacity .4s}
 .decor-place .tap.croque .miettes{opacity:1}
 
@@ -851,3 +851,24 @@ html.grand-texte .prefs-menu{max-height:calc(100vh - var(--fil-h) - 20px);overfl
 .th-fil input{width:100%;height:36px;accent-color:var(--rouge)}
 html.grand-texte .th-txt{font-size:1.6rem}
 @media (prefers-reduced-motion:reduce){.th-svg .th-rideau,.th-svg .marionnette,.th-svg .th-decor-chateau .th-chateau{transition-duration:.01s}.th-svg .zzz,.th-svg.parle .bouche{animation:none}}
+
+/* ---------- Les secrets des Ardennes (feuille de chêne) ---------- */
+.secrets .feuille-ico{width:18px;height:18px;fill:#9BC53D;margin-left:6px}
+.decor .tap.ardennais .indice.feuille{animation:feuille 2.4s ease-in-out infinite}
+@keyframes feuille{0%,100%{opacity:.75}50%{opacity:1}}
+.decor-foret .sanglier .zz{animation:zzz 2.4s ease-in-out infinite}
+.decor-foret .tap.reveil .sanglier{animation:reniflement .6s ease-in-out 2}
+.decor-foret .tap.reveil .zz{display:none}
+@keyframes reniflement{50%{transform:translateY(-4px)}}
+.decor-place .tap.lue .plaque rect{fill:#FFF6E0}
+.decor-place .plume{transform-box:fill-box;transform-origin:0 100%}
+.decor-place .tap.vole .plume{animation:plume-vole 1.2s ease-in-out}
+@keyframes plume-vole{30%{transform:rotate(-14deg)}60%{transform:rotate(10deg)}}
+.decor-montgolfiere .tap.allume .sedan .fenetres{filter:drop-shadow(0 0 4px #FFC857)}
+.decor-montgolfiere .ardoises .reflet{opacity:.3}
+.decor-montgolfiere .tap.luit .reflet{animation:reflet 1.4s ease-in-out}
+@keyframes reflet{50%{opacity:1}}
+.decor-montgolfiere .cabaret .notes{transform-box:fill-box}
+.decor-montgolfiere .tap.joue .notes{animation:notes 1.6s ease-out}
+@keyframes notes{from{transform:none;opacity:1}to{transform:translateY(-40px);opacity:0}}
+@media (prefers-reduced-motion:reduce){.decor .tap.ardennais .indice.feuille,.decor-foret .sanglier .zz{animation:none}}

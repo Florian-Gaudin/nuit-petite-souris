@@ -31,6 +31,9 @@ window.SCENES = (function () {
   // À la fin de certaines scènes, avant le « pont »
   const FIN = { place() { const g = $('.tap[data-el="marionnettiste"]', svg); if (g) g.classList.add('montre'); } };
   const T = s => ctx.T(s);
+  // La feuille de chêne des secrets des Ardennes (repère 24 × 24)
+  const FEUILLE = 'M12 1C14 1 15 3 14.5 4.5C17 4 18 6 16 7.5C19 7.5 19.5 10 17 11C19.5 11.5 19 14.5 16 14C17 16 15.5 17.5 13.2 17L12.6 19V22.5H11.4V19L10.8 17C8.5 17.5 7 16 8 14C5 14.5 4.5 11.5 7 11C4.5 10 5 7.5 8 7.5C6 6 7 4 9.5 4.5C9 3 10 1 12 1Z';
+  const estArdennais = id => (sc.ardennes || []).indexOf(id) >= 0;
   const bulle = b0 => { const b = window.RECIT.resoudre(b0); return b ? { txt: T(b.txt), expr: b.expr } : null; };
 
   // ---------- Ce qui se passe à l'écran quand on touche un élément ----------
@@ -45,6 +48,7 @@ window.SCENES = (function () {
       sac() { SON.play('papier'); },
     },
     foret: {
+      sanglier(g) { g.classList.remove('reveil'); void g.getBBox(); g.classList.add('reveil'); SON.play('grogne'); },
       champignons(g, sub, etape) { if (sub) sub.classList.add('allume'); SON.play('champignon'); if (etape >= 3) svg.classList.add('dore'); },
       buisson() { SON.play('buisson'); setTimeout(() => SON.play('renard'), 600); },
       luciole(g) { g.classList.add('vole'); SON.play('luciole'); },
@@ -57,12 +61,17 @@ window.SCENES = (function () {
     place: {
       marionnettiste(g) { g.classList.remove('danse'); void g.getBBox(); g.classList.add('danse'); SON.play('pantin'); },
       fenetre() { SON.play('pigeon'); },
-      fromage(g) { g.classList.add('croque'); SON.play('croque'); },
+      galette(g) { g.classList.add('croque'); SON.play('croque'); },
+      plaque(g) { g.classList.add('lue'); SON.play('bois'); },
+      plume(g) { g.classList.remove('vole'); void g.getBBox(); g.classList.add('vole'); SON.play('plume'); },
     },
     montgolfiere: {
       bruleur(g, sub, etape) { SON.play('bruleur'); const f = $('.flamme', svg); f.classList.remove('feu'); void f.getBBox(); f.classList.add('feu'); },
       etoile(g) { g.classList.remove('file'); void g.getBBox(); g.classList.add('file'); SON.play('filante'); },
       oies(g) { g.classList.remove('passe'); void g.getBBox(); g.classList.add('passe'); SON.play('oies'); },
+      sedan(g) { g.classList.add('allume'); SON.play('trompette'); },
+      ardoises(g) { g.classList.remove('luit'); void g.getBBox(); g.classList.add('luit'); SON.play('harpe'); },
+      cabaret(g) { g.classList.remove('joue'); void g.getBBox(); g.classList.add('joue'); SON.play('concert'); },
     },
     etoiles: {
       // Chaque toucher allume l'étoile suivante et trace le trait qui la relie ; la main d'aide passe à la suivante
@@ -244,7 +253,7 @@ window.SCENES = (function () {
     const mien = ++jeton;
     courant = n; sc = D.scenes[n];
     NARR.fixer([sc, D.indices], T);
-    root.innerHTML = frise(n) + `<div class="decor-wrap" id="decor-wrap"><h2 class="decor-titre"><span class="decor-heure">${heureTexte(sc.heure)}</span>${T(sc.titre)}</h2><div class="secrets" id="secrets" title="Secrets découverts dans cette image"><svg viewBox="0 0 24 24"><use href="#etoile5"/></svg><span id="secrets-n"></span></div>${DESSINS[sc.id](ctx.state.nuit)}</div>`;
+    root.innerHTML = frise(n) + `<div class="decor-wrap" id="decor-wrap"><h2 class="decor-titre"><span class="decor-heure">${heureTexte(sc.heure)}</span>${T(sc.titre)}</h2><div class="secrets" id="secrets" title="Secrets découverts dans cette image"><svg viewBox="0 0 24 24"><use href="#etoile5"/></svg><span id="secrets-n"></span>${(sc.ardennes || []).length ? `<svg class="feuille-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="${FEUILLE}"/></svg><span id="ardennes-n"></span>` : ''}</div>${DESSINS[sc.id](ctx.state.nuit)}</div>`;
     wrap = $('#decor-wrap', root); svg = $('svg.decor', root);
     if (sc.id === 'fenetre') frotterBuee();
     if (sc.id === 'etoiles') { const p1 = $('.pt-1', svg); if (p1) p1.classList.add('prochaine'); }
@@ -265,7 +274,7 @@ window.SCENES = (function () {
     ctx.heure(sc.heure); MUS.ambiance(sc.ambiance);
     cadre(); window.addEventListener('resize', cadre);
     chaine = sc.oblig.slice(); idx = 0; secretTaps = 0; occupe = false;
-    const vus = (ctx.state.etoiles && ctx.state.etoiles[sc.id]) || [];
+    const vus = (ctx.state.etoiles && ctx.state.etoiles[sc.id]) || [], vusArd = ctx.state.ardennes || [];
     $$('.tap', svg).forEach(g => {
       const id = g.dataset.el;
       if (sc.bonus.indexOf(id) >= 0) {
@@ -273,6 +282,11 @@ window.SCENES = (function () {
         // Une petite étoile qui clignote au-dessus de chaque secret
         const h = g.querySelector('.halo');
         if (h) { const cx = +h.getAttribute('cx'), cy = +h.getAttribute('cy'), r = +h.getAttribute('r'); g.insertAdjacentHTML('beforeend', `<g class="indice" transform="translate(${cx},${(cy - r * 0.8).toFixed(0)})"><use href="#etoile5" x="-15" y="-15" width="30" height="30"/></g>`); }
+      }
+      if (estArdennais(id)) {
+        g.classList.add('bonus', 'ardennais'); if (vusArd.indexOf(sc.id + '.' + id) >= 0) g.classList.add('deja');
+        const h = g.querySelector('.halo');
+        if (h) { const cx = +h.getAttribute('cx'), cy = +h.getAttribute('cy'), r = +h.getAttribute('r'); g.insertAdjacentHTML('beforeend', `<g class="indice feuille" transform="translate(${cx},${(cy - r * 0.8).toFixed(0)})"><path transform="translate(-13,-13) scale(1.1)" d="${FEUILLE}" fill="#9BC53D" stroke="#3E6B1F" stroke-width="1"/></g>`); }
       }
       g.addEventListener('click', e => onTap(g, e));
       g.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onTap(g, e); } });
@@ -329,6 +343,8 @@ window.SCENES = (function () {
   function compteSecrets() {
     const el = $('#secrets-n', root); if (!el) return;
     el.textContent = ((ctx.state.etoiles && ctx.state.etoiles[sc.id]) || []).length + '/' + sc.bonus.length;
+    const ea = $('#ardennes-n', root);
+    if (ea) ea.textContent = (sc.ardennes || []).filter(i => (ctx.state.ardennes || []).indexOf(sc.id + '.' + i) >= 0).length + '/' + sc.ardennes.length;
   }
   function fermer() {
     jeton++; aideStop(); window.removeEventListener('resize', cadre); cancelAnimationFrame(raf); clearTimeout(bougeT); clearTimeout(secretT);
@@ -353,7 +369,7 @@ window.SCENES = (function () {
     const id = g.dataset.el, el = sc.elements[id];
     if (!el) return;
     SON.unlock();
-    if (sc.bonus.indexOf(id) >= 0) { bonus(g, id, el); return; }
+    if (sc.bonus.indexOf(id) >= 0 || estArdennais(id)) { bonus(g, id, el); return; }
     const pos = chaine.indexOf(id);
     // Les trois coups : une fois le Grand Marionnettiste touché, chaque toucher frappe un coup, même pendant son animation
     if (id === 'marionnettiste' && ctx.config.secret && g.classList.contains('vu') && !enSecret && !NARR.interrompu) {
@@ -398,7 +414,7 @@ window.SCENES = (function () {
     const deuxieme = g.classList.contains('vu');
     g.classList.add('vu');
     const act = ACTIONS[sc.id][id]; if (act) act(g, null, 0, deuxieme);
-    if (premiere) { ctx.etoile(sc.id, id); compteSecrets(); }
+    if (premiere) { if (estArdennais(id)) ctx.ardennais(sc.id, id); else ctx.etoile(sc.id, id); compteSecrets(); }
     mainsIndices(false);
     enSecret = true; svg.classList.add('secret'); aideStop();
     const ok = await NARR.interrompre(bulle(deuxieme && el.bulle2 ? el.bulle2 : el.bulle));

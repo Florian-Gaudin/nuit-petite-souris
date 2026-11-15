@@ -92,5 +92,5 @@ test('quitter le spectacle en cours : pas de badge ; le diplôme montre le badge
   const b = page.locator('.badge-dip', { hasText: 'Scène secrète' });
   await expect(b).toHaveClass(/off/);
   await expect(b).toHaveAttribute('data-info', /trois coups/);
-  await expect(page.locator('.dip-compte')).toContainText('/12');
+  await expect(page.locator('.dip-compte')).toContainText('/13');
 });

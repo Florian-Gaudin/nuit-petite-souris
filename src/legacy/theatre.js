@@ -189,6 +189,8 @@ ${maison()}
     const bras = { g: $('.bras.g'), d: $('.bras.d') };
     let ouvert = true, raf = 0, focusX = 300, parleT = 0;
     const minuteurs = [];
+    // Un temps de lecture : le même, animations réduites ou non
+    const lent = (fn, ms) => { const t = setTimeout(() => { if (ouvert) fn(); }, ms); minuteurs.push(t); return t; };
     const plus = (fn, ms) => { const t = setTimeout(() => { if (ouvert) fn(); }, RM ? Math.min(ms, 120) : ms); minuteurs.push(t); return t; };
 
     // Les marionnettes et leurs fils (Bayard, plus lourd, en a deux)
@@ -383,7 +385,7 @@ ${maison()}
           dire(T(D.chatReveil));
           const recule = Math.max(0, val - 26); r.value = String(recule); avance(recule);
           histoire = [{ v: recule, t: now }];
-          plus(() => { chat.classList.remove('oeil'); reveil = false; histoire = [{ v: +r.value, t: performance.now() }]; dire(T(D.chatEncore)); }, 1400);
+          lent(() => { chat.classList.remove('oeil'); reveil = false; histoire = [{ v: +r.value, t: performance.now() }]; dire(T(D.chatEncore)); }, 1400);
           return;
         }
         avance(val);

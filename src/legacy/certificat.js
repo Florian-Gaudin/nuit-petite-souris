@@ -8,7 +8,9 @@ window.CERTIFICAT = (function () {
 <defs><path id="cercleTxt" d="M60 60m-44 0a44 44 0 1 1 88 0a44 44 0 1 1 -88 0"/></defs>
 <circle cx="60" cy="60" r="56" fill="none" stroke="#C9A227" stroke-width="3"/><circle cx="60" cy="60" r="50" fill="none" stroke="#C9A227" stroke-width="1"/>
 <text font-family="Libre Baskerville, serif" font-size="9.5" fill="#C9A227" letter-spacing="1.5"><textPath href="#cercleTxt">CHÂTEAU DES DENTS DE LAIT · ARDENNES · VU ET APPROUVÉ ·</textPath></text>
-<use href="#dent" x="44" y="40" width="32" height="32"/><text x="60" y="88" text-anchor="middle" font-family="Baloo 2, sans-serif" font-weight="800" font-size="11" fill="#C9A227">OFFICIEL</text>
+<use href="#dent" x="47" y="26" width="26" height="26"/>
+<g fill="#C9A227"><ellipse cx="58" cy="70" rx="17" ry="9"/><path d="M71 64q10-1 13 8l3 1q0 4-3 4l-12 1q-6-2-6-8z"/><path d="M71 64l3-6 3 6z"/><path d="M45 74v6M52 76v5M64 76v5M70 75v5" stroke="#C9A227" stroke-width="3" stroke-linecap="round"/><path d="M42 68q-6 0-5-6" fill="none" stroke="#C9A227" stroke-width="2"/></g>
+<text x="60" y="97" text-anchor="middle" font-family="Baloo 2, sans-serif" font-weight="800" font-size="9" fill="#C9A227">OFFICIEL</text>
 </svg>`;
   }
 
@@ -48,7 +50,7 @@ window.CERTIFICAT = (function () {
       </div>
     </div>
     <div class="dip-pied">
-      <div class="dip-date">Fait à ${esc(C.ville)},<br>${esc(opts.nuitTexte || '')}</div>
+      <div class="dip-date">Fait au château de Quenotte,<br>forêt des Ardennes,<br>${esc(opts.nuitTexte || '')}</div>
       <div class="dip-tampon">${tamponSVG()}</div>
       <div class="dip-sign"><span class="sign">${esc(C.souris)}</span><small>Petite Souris des Ardennes</small><small>Témoin officiel : ${esc(temoin)}</small></div>
     </div>

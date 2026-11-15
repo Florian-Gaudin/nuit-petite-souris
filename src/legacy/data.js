@@ -57,7 +57,7 @@ window.DATA = {
     {
       id: "foret", titre: "La forêt des Ardennes", heure: "01:05", ambiance: "foret",
       intro: { txt: "Me voilà dans la grande forêt. Les arbres sont si hauts qu'ils cachent la lune. Je trottine sur mes petites pattes, mais je n'y vois presque rien.", expr: "chuchote" },
-      oblig: ["champignons"], bonus: ["buisson", "luciole"],
+      oblig: ["champignons"], bonus: ["buisson", "luciole"], ardennes: ["sanglier"],
       elements: {
         champignons: {
           demande: { txt: "Tu vois ces champignons sur le chemin ? On dirait qu'ils brillent un petit peu. Touche-les, pour voir !", expr: "surprise" },
@@ -66,35 +66,41 @@ window.DATA = {
         },
         buisson: { bulle: { txt: "Bonsoir, petite souris ! Je suis le renard. Je veille sur la forêt pendant que tout le monde dort. Je sais où tu vas : continue tout droit, tu vas entendre l'eau.", expr: "surprise" } },
         luciole: { bulle: { txt: "Cette luciole connaît tous les raccourcis ! Elle fait des zigzags pour me montrer la route.", expr: "clin" } },
+        sanglier: { bulle: { txt: "Chut… un sanglier ronfle sous les fougères ! C'est l'animal des Ardennes. Son cousin, le Woinic, est le plus grand sanglier du monde : dix mètres de haut !", expr: "chuchote" } },
       },
       pont: { txt: "Au bout du chemin, j'aperçois les lumières de Charleville !", expr: "sourire" },
     },
     {
       id: "place", titre: "La place Ducale", heure: "01:30", ambiance: "place",
       intro: { txt: "Quelle belle place ! C'est la place Ducale, avec ses grandes arcades. Je me faufile d'arcade en arcade sans faire de bruit.", expr: "sourire" },
-      oblig: ["marionnettiste"], bonus: ["fenetre", "fromage"],
+      oblig: ["marionnettiste"], bonus: ["fenetre", "galette"], ardennes: ["plaque", "plume"],
       elements: {
         marionnettiste: {
           demande: { txt: "Regarde là-haut : c'est le Grand Marionnettiste ! Je crois qu'il m'a vue passer. Touche-le, pour voir ce qu'il fait.", expr: "surprise" },
-          reponse: { txt: "Il a vu passer une petite souris et il me fait coucou ! Il fait même danser un pantin pour moi.", expr: "joie" },
+          reponse: { txt: "Il me fait coucou et fait danser un pantin pour moi ! Ici, à Charleville, c'est la capitale des marionnettes.", expr: "joie" },
         },
         fenetre: { bulle: { txt: "Chut, un pigeon dort derrière la fenêtre. Oh, je l'ai réveillé ! Pardon, monsieur le pigeon.", expr: "chuchote" } },
-        fromage: { bulle: { txt: "Pause fromage ! Avec tous ces kilomètres, j'avais bien mérité un petit morceau. Miam.", expr: "joie" } },
+        galette: { bulle: { txt: "Pause goûter : une part de galette au sucre, la spécialité des Ardennes ! Avec tous ces kilomètres, je l'ai bien méritée. Miam.", expr: "joie" } },
+        plaque: { bulle: { txt: "Cette place a plus de quatre cents ans ! C'est le prince Charles de Gonzague qui l'a fait construire. Elle ressemble à une célèbre place de Paris : la place des Vosges.", expr: "surprise" } },
+        plume: { bulle: { txt: "Une grande plume dépasse de cette fenêtre… On dirait celle d'Arthur Rimbaud, un grand poète né ici, à Charleville. Il rêvait de voyages… comme moi !", expr: "clin" } },
       },
-      pont: { txt: "Le Grand Marionnettiste m'indique le chemin : au bout de la place, une montgolfière m'attend !", expr: "sourire" },
+      pont: { txt: "Toutes les heures, il raconte l'histoire de quatre frères et de leur cheval magique, Bayard. On dit même qu'il cache une treizième scène… Allez, une montgolfière m'attend !", expr: "sourire" },
     },
     {
       id: "montgolfiere", titre: "Au-dessus des Ardennes", heure: "01:50", ambiance: "montgolfiere",
       intro: { txt: "Au bout de la place, une petite montgolfière rouge et jaune m'attend, posée dans l'herbe. Je grimpe dans la nacelle avec ma lanterne et mon sac. Mais pour décoller, il faut réchauffer l'air du ballon.", expr: "joie" },
-      oblig: ["bruleur"], bonus: ["etoile", "oies"],
+      oblig: ["bruleur"], bonus: ["etoile", "oies"], ardennes: ["sedan", "ardoises", "cabaret"],
       elements: {
         bruleur: {
           demande: { txt: "Touche le brûleur, juste au-dessus de la nacelle, pour faire une grande flamme. Il faut trois flammes pour décoller !", expr: "clin" },
           etapes: ["Fouuu… le ballon se gonfle !", "Fouuuu… il se redresse !", "Fouuuuu… on décolle !"],
-          reponse: { txt: "On s'envole ! Je vois les Ardennes qui dorment, et la Meuse qui brille comme un ruban d'argent. Le vent me pousse tout droit vers {ville}.", expr: "joie" },
+          reponse: { txt: "On s'envole ! Je vois les Ardennes qui dorment, et la Meuse qui fait de grandes boucles, comme un ruban d'argent. Le vent me pousse tout droit vers {ville}.", expr: "joie" },
         },
         etoile: { bulle: { txt: "Une étoile filante ! Vite, fais un vœu. Moi, j'ai fait le mien : que ta dent arrive bien au château.", expr: "surprise" } },
         oies: { bulle: { txt: "Des oies sauvages volent à côté de moi. Elles cancanent « Bon voyage, {souris} ! » et filent vers le sud.", expr: "surprise" } },
+        sedan: { bulle: { txt: "Là-bas, ce grand château aux murs épais, c'est le château fort de Sedan : le plus grand château fort d'Europe ! On pourrait s'y perdre.", expr: "surprise" } },
+        ardoises: { bulle: { txt: "Les toits brillent sous la lune : ils sont en ardoise, une pierre grise et bleue qu'on tire du sol des Ardennes.", expr: "sourire" } },
+        cabaret: { bulle: { txt: "Tu entends cette musique ? Chaque été, au bord de la Meuse, le festival du Cabaret Vert fait danser des milliers de gens !", expr: "joie" } },
       },
       pont: { txt: "La montgolfière monte, monte… jusqu'au milieu des étoiles !", expr: "surprise" },
     },
@@ -235,6 +241,9 @@ window.DATA = {
   ],
 
   // Première scène : Quenotte explique les secrets (une seule fois)
+  // Les secrets des Ardennes (feuille de chêne) : à part des étoiles, ils mènent au badge et aux cartes « Le savais-tu ? »
+  ardennesTrouve: "Un secret des Ardennes !",
+  ardennesTous: "Tous les secrets des Ardennes !",
   indices: { txt: "Un conseil : dans chaque image, deux secrets brillent avec une petite étoile. Touche-les quand tu veux, chacun te donnera une étoile découverte !", expr: "clin" },
 
   // Petites phrases quand on découvre un bonus
@@ -416,6 +425,7 @@ window.DATA = {
     { id: "terrier", nom: "Fouille-terrier", chapitre: 5, obtenu: "Tu as trouvé les 4 trésors cachés dans le terrier de {souris}.", aGagner: "Trouve les 4 trésors cachés dans le terrier de {souris}." },
     { id: "pilote", nom: "Pilote des nuages", chapitre: 5, obtenu: "Tu as ramené la montgolfière au château sans toucher un seul nuage.", aGagner: "Ramène la montgolfière au château sans toucher un seul nuage." },
     { id: "artiste", nom: "Artiste de la nuit", obtenu: "Tu as fait un dessin pour {souris}.", aGagner: "Fais un dessin pour {souris}, sous sa lettre." },
+    { id: "ardennais", nom: "{Ardennaise} d'honneur", ardennes: true, obtenu: "Tu as trouvé tous les secrets des Ardennes, ceux qui brillent avec une feuille de chêne. Bienvenue chez toi !", aGagner: "Trouve tous les secrets des Ardennes : pendant le voyage, ils brillent avec une petite feuille de chêne." },
     { id: "scene13", nom: "Scène 13", secret: true, nomCache: "Scène secrète", obtenu: "Tu as frappé les trois coups et vu la 13e scène du Grand Marionnettiste !", aGagner: "Au théâtre, on frappe trois coups avant le spectacle… Le Grand Marionnettiste attend toujours les siens." },
   ],
 };

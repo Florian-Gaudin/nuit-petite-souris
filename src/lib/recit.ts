@@ -58,6 +58,7 @@ export function vocabulaire(p: Profil) {
     amie: f ? 'amie' : 'ami',
     Amie: f ? 'Amie' : 'Ami',
     Exploratrice: f ? 'Exploratrice' : 'Explorateur',
+    Ardennaise: f ? 'Ardennaise' : 'Ardennais',
     Collectionneuse: f ? 'Collectionneuse' : 'Collectionneur',
     aDoudou,
     aFratrie: !!fr,
