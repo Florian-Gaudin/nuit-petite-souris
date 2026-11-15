@@ -204,3 +204,15 @@ test("répondre à Quenotte (dessin) et l'album des dents", async ({ page }) => 
   await page.locator('#lien-album').click();
   await expect(page.locator('.album-page h3')).toHaveText('Clémentine');
 });
+
+test("le lièvre repart au galop, Quenotte sur le dos, et sort par la droite", async ({ page }) => {
+  await ouvrir(page, '?reset=1#exemple');
+  await ouvrir(page, '?chapitre=1&scene=6#exemple');
+  for (let i = 0; i < 60 && !(await page.locator('#bandeau-actions button', { hasText: 'Scène suivante' }).count()); i++) {
+    if (await page.locator('#bandeau.attente .bandeau-suite').isVisible()) await page.locator('.bandeau-suite').click();
+    else if (await page.locator('.tap[data-el="lievre"].cible').count() && !(await page.evaluate(() => (window as any).NARR.lit))) await page.locator('.tap[data-el="lievre"] .corps-lievre').click({ force: true });
+    await page.waitForTimeout(250);
+  }
+  await page.locator('#bandeau-actions button', { hasText: 'Scène suivante' }).click();
+  await expect(page.locator('svg.decor-lievre.repart')).toHaveCount(1);
+});

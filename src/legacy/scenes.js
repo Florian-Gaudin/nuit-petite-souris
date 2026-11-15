@@ -424,6 +424,13 @@ window.SCENES = (function () {
   // La souris trottine vers la droite et sort de l'image
   async function sortie() {
     if (!svg) return;
+    // Le lièvre repart au galop, Quenotte sur le dos, et sort par la droite
+    if (sc.id === 'lievre') {
+      svg.classList.add('galop', 'repart');
+      for (let i = 0; i < 4 && !RM; i++) { SON.play('pas'); await wait(330); }
+      await wait(RM ? 100 : 300);
+      return;
+    }
     const q = sc.id === 'meuse' ? $('.rive-d', svg) : $('.quenotte:not(.rive-g)', svg);
     if (!q) return;
     const grp = document.createElementNS('http://www.w3.org/2000/svg', 'g'); grp.setAttribute('class', 'depart');
