@@ -38,3 +38,13 @@ test('le diplôme : sanglier dans le tampon, fait au château de Quenotte, badge
   await expect(page.locator('.dip-compte')).toContainText('/13');
   if (CAPTURES) await page.locator('.dip-pied').screenshot({ path: CAPTURES + '/ard-diplome.png' });
 });
+
+test("le terrier : les quatre trésors des Ardennes, dans la barre et au fond des impasses", async ({ page }) => {
+  await ouvrir(page, '?reset=1#exemple');
+  await page.evaluate(() => { const A = (window as any).APP; A.state.fini = true; A.state.unlocked = 5; A.show(5); });
+  await page.locator('#btn-passer').click();
+  await expect(page.locator('svg.terrier')).toBeVisible();
+  const ids = await page.locator('.tresor').evaluateAll(l => l.map(e => (e as HTMLElement).dataset.id));
+  expect(ids).toEqual(['ardoise', 'fer', 'pantin', 'plume']);
+  await expect(page.locator('.surprise')).toHaveCount(4);
+});

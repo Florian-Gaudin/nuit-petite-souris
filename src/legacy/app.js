@@ -881,15 +881,16 @@ ${[0, 1, 2, 3, 4, 5].map(i => `<g class="nuage" data-n="${i}" transform="transla
         return 99;
       };
       impasses.sort((p, q) => distance(p[0], p[1]) - distance(q[0], q[1]) || p[0] - q[0]);
-      const SURPRISES = ['ver', 'carotte', 'fossile', 'piece'], choisies = [];
+      // Les trésors des Ardennes, cachés au fond des impasses
+      const SURPRISES = ['ardoise', 'fer', 'pantin', 'plume'], choisies = [];
       for (const p of impasses) { if (choisies.length >= 4) break; if (choisies.every(q => Math.abs(q[0] - p[0]) >= 3)) choisies.push(p); }
       choisies.sort((p, q) => p[0] - q[0]);
       const surprises = choisies.map((p, i) => ({ id: SURPRISES[i], c: p[0], l: p[1], vue: false }));
       const DESSIN_SURPRISE = {
-        ver: '<path d="M-22 6q8-14 16 0t16 0 14-4" fill="none" stroke="#E98BA0" stroke-width="7" stroke-linecap="round"/><circle cx="24" cy="1" r="1.6" fill="#2B2B33"/>',
-        carotte: '<path d="M-20 -6l34 6-34 6z" fill="#E8833A"/><path d="M14 0l10-8M14 0l12 0M14 0l10 8" stroke="#3E9A6B" stroke-width="3" stroke-linecap="round"/>',
-        fossile: '<circle r="16" fill="#cbbfa8"/><path d="M0 0m-10 0a10 10 0 1 0 10-10a6 6 0 1 1-6 6a3 3 0 1 0 3-3" fill="none" stroke="#8a7a5c" stroke-width="2.4"/>',
-        piece: '<circle r="13" fill="#C9A227" stroke="#8a6a12" stroke-width="2.5"/><path d="M-5-4h10M-5 4h10" stroke="#8a6a12" stroke-width="2"/>',
+        ardoise: '<path d="M-24-8l36-8 12 18-36 8z" fill="#6b5b8a" stroke="#45395e" stroke-width="2" stroke-linejoin="round"/><path d="M-16-6l28-6M-12 0l28-6" stroke="#8d7cb0" stroke-width="1.5" stroke-linecap="round"/>',
+        fer: '<path d="M-13-17v13a13 13 0 0 0 26 0v-13" fill="none" stroke="#9aa0b5" stroke-width="8" stroke-linecap="round"/><g fill="#45395e"><circle cx="-13" cy="-9" r="1.6"/><circle cx="-11" cy="2" r="1.6"/><circle cx="13" cy="-9" r="1.6"/><circle cx="11" cy="2" r="1.6"/></g>',
+        pantin: '<circle cx="0" cy="-14" r="7" fill="#FFC857"/><circle cx="-2.4" cy="-15" r="1.2" fill="#2B2B33"/><circle cx="2.4" cy="-15" r="1.2" fill="#2B2B33"/><rect x="-6" y="-6" width="12" height="16" rx="3" fill="#D64045"/><path d="M-6-3l-10 8M6-3l10 8M-3 10l-4 12M3 10l4 12" stroke="#FFC857" stroke-width="3.5" stroke-linecap="round"/>',
+        plume: '<path d="M-18 16C-6-2 6-14 22-20C16-6 4 6-14 18z" fill="#FFF6E0" stroke="#cfd3ee" stroke-width="1.4"/><path d="M-18 18L20-18" stroke="#8a90a8" stroke-width="1.4"/>',
       };
       // ---------- Le dessin : couches de terre, cailloux, racines, galeries ----------
       let galeries = '', clair = '';
