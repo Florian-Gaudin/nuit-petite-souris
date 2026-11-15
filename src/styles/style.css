@@ -1192,3 +1192,5 @@ html.grand-texte .livre-ancien .livre-texte p{font-size:1.5rem}
 .carnet5-txt em{font-style:normal;font-weight:800;color:#FFC857;animation:lv-invite 1.8s ease-in-out infinite}
 @media (prefers-reduced-motion:reduce){.carte-carnet5::after,.carte-carnet5 .etincelle,.carnet5-txt em{animation:none}}
 .carte-carnet5 .ruban-livre{top:18px;right:-36px;padding:3px 36px}
+/* Menu des réglages ouvert : il passe devant tout, bandeau compris */
+.fil.menu-ouvert{z-index:40}

@@ -181,9 +181,9 @@
       $('#pref-carnet').hidden = !carnetVu; $('#pref-album').hidden = !albumVu; $('#groupe-tresors').hidden = !carnetVu && !albumVu;
       $('#pref-reset').innerHTML = A.icone('recommencer') + " Recommencer l'histoire"; $('#pref-reset').classList.remove('confirme');
     };
-    const fermerMenu = () => { menu.hidden = true; bPrefs.setAttribute('aria-expanded', 'false'); };
+    const fermerMenu = () => { menu.hidden = true; bPrefs.setAttribute('aria-expanded', 'false'); document.getElementById('fil').classList.remove('menu-ouvert'); };
     boutonPlein.maj = majPrefs;
-    bPrefs.onclick = e => { e.stopPropagation(); if (menu.hidden) { majPrefs(); menu.hidden = false; bPrefs.setAttribute('aria-expanded', 'true'); } else fermerMenu(); };
+    bPrefs.onclick = e => { e.stopPropagation(); if (menu.hidden) { majPrefs(); menu.hidden = false; bPrefs.setAttribute('aria-expanded', 'true'); document.getElementById('fil').classList.add('menu-ouvert'); } else fermerMenu(); };
     menu.onclick = e => e.stopPropagation();
     document.addEventListener('click', () => { if (!menu.hidden) fermerMenu(); });
     $('#pref-son').onclick = () => { SON.unlock(); const m = SON.toggle(); majPrefs(); toast(m ? 'Son et musique coupés' : 'Son et musique activés'); };
