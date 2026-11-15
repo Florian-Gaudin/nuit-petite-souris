@@ -20,6 +20,10 @@
   const KEY = 'souris.progression.' + window.PROFIL.id; // une progression par profil (plusieurs enfants, plusieurs dents)
   // Grand texte (accessibilité) : un réglage de l'appareil, gardé même quand on recommence l'histoire
   const CLE_GRAND = 'souris.grand';
+  // Le vibreur (mini-jeu du chat) : activé par défaut, coupé depuis les réglages
+  const CLE_VIBRE = 'souris.vibreur';
+  const vibreurActif = () => window.STOCKAGE.lire(CLE_VIBRE) !== '0';
+  const vibrer = ms => { if (!vibreurActif()) return; try { navigator.vibrate && navigator.vibrate(ms); } catch (e) { } };
   const grandTexte = on => { document.documentElement.classList.toggle('grand-texte', on); window.dispatchEvent(new Event('resize')); };
   grandTexte(window.STOCKAGE.lire(CLE_GRAND) === '1');
   const State = { unlocked: 0, scene: 0, etoiles: {}, badges: [], secret: false, nuit: null, fini: false };
@@ -138,26 +142,43 @@
       <div class="ruban" aria-label="Progression de l'histoire">${perles}<div class="fil-souris"><svg viewBox="0 0 130 100"><use href="#souris-side"/></svg></div></div>
       <div class="prefs">
         <button class="btn-ico" id="btn-prefs" aria-label="Préférences" aria-haspopup="true" aria-expanded="false">${A.icone('reglages')}</button>
-        <div class="prefs-menu" id="prefs-menu" role="menu" hidden>
-          <button role="menuitem" id="pref-son"></button>
-          <button role="menuitem" id="pref-grand" aria-pressed="false"></button>
-          ${PLEIN.api && !PLEIN.appli ? `<button role="menuitem" id="pref-plein"></button>` : ''}
-          <a role="menuitem" id="pref-changer" href="./"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5L12 4l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z" fill="currentColor"/></svg> Retour à l'accueil</a>
-          <button role="menuitem" id="pref-carnet" hidden><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1C14 1 15 3 14.5 4.5C17 4 18 6 16 7.5C19 7.5 19.5 10 17 11C19.5 11.5 19 14.5 16 14C17 16 15.5 17.5 13.2 17L12.6 19V22.5H11.4V19L10.8 17C8.5 17.5 7 16 8 14C5 14.5 4.5 11.5 7 11C4.5 10 5 7.5 8 7.5C6 6 7 4 9.5 4.5C9 3 10 1 12 1Z" fill="currentColor"/></svg> Le carnet des Ardennes</button>
-          <a role="menuitem" id="pref-parents" href="parents/">${A.icone('famille')} Espace parents</a>
-          <a role="menuitem" id="pref-infos" href="infos/"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 10.5v6M12 7.2v.1" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg> Informations</a>
-          <button role="menuitem" id="pref-reset" class="danger">${A.icone('recommencer')} Recommencer l'histoire</button>
+        <div class="prefs-menu" id="prefs-menu" role="menu" aria-label="Réglages" hidden>
+          <div class="prefs-tete"><span class="prefs-nom">Réglages</span><button role="menuitem" id="pref-fermer" class="prefs-x" aria-label="Fermer les réglages">✕</button></div>
+          <div role="group" aria-labelledby="g-lire"><p class="prefs-titre" id="g-lire">Pour lire</p>
+            <button role="menuitemcheckbox" id="pref-son" class="interrupteur" aria-checked="false"><span class="pref-lib"></span><span class="bascule" aria-hidden="true"></span></button>
+            <button role="menuitemcheckbox" id="pref-grand" class="interrupteur" aria-checked="false"><span class="pref-lib"></span><span class="bascule" aria-hidden="true"></span></button>
+            ${PLEIN.api && !PLEIN.appli ? '<button role="menuitemcheckbox" id="pref-plein" class="interrupteur" aria-checked="false"><span class="pref-lib"></span><span class="bascule" aria-hidden="true"></span></button>' : ''}
+            ${'vibrate' in navigator ? '<button role="menuitemcheckbox" id="pref-vibreur" class="interrupteur" aria-checked="false"><span class="pref-lib"></span><span class="bascule" aria-hidden="true"></span></button>' : ''}
+          </div>
+          <div role="group" aria-labelledby="g-tresors" id="groupe-tresors" hidden><p class="prefs-titre" id="g-tresors">Mes trésors</p>
+            <button role="menuitem" id="pref-carnet" hidden><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1C14 1 15 3 14.5 4.5C17 4 18 6 16 7.5C19 7.5 19.5 10 17 11C19.5 11.5 19 14.5 16 14C17 16 15.5 17.5 13.2 17L12.6 19V22.5H11.4V19L10.8 17C8.5 17.5 7 16 8 14C5 14.5 4.5 11.5 7 11C4.5 10 5 7.5 8 7.5C6 6 7 4 9.5 4.5C9 3 10 1 12 1Z" fill="currentColor"/></svg> Le carnet des Ardennes</button>
+            <button role="menuitem" id="pref-album" hidden>${A.icone('etoile')} ${esc(T(D.album.titre))}</button>
+          </div>
+          <div role="group" aria-labelledby="g-grands"><p class="prefs-titre" id="g-grands">Pour les grands</p>
+            <a role="menuitem" id="pref-parents" href="parents/">${A.icone('famille')} Espace parents</a>
+            <a role="menuitem" id="pref-infos" href="infos/"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 10.5v6M12 7.2v.1" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg> Informations</a>
+            <a role="menuitem" id="pref-changer" href="./"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5L12 4l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z" fill="currentColor"/></svg> Retour à l'accueil</a>
+          </div>
+          <div class="prefs-bas"><button role="menuitem" id="pref-reset" class="danger">${A.icone('recommencer')} Recommencer l'histoire</button></div>
         </div>
       </div>
     </div>`;
     const menu = $('#prefs-menu'), bPrefs = $('#btn-prefs');
+    // Un interrupteur : son libellé, et sa position (aria-checked)
+    const bascule = (id, ico, libelle, on) => {
+      const b = $('#' + id); if (!b) return;
+      b.querySelector('.pref-lib').innerHTML = ico + ' ' + libelle;
+      b.setAttribute('aria-checked', String(!!on));
+    };
     const majPrefs = () => {
-      $('#pref-son').innerHTML = A.icone(SON.muet ? 'muet' : 'son') + (SON.muet ? ' Son et musique : coupés' : ' Son et musique : activés');
-      if ($('#pref-plein')) $('#pref-plein').innerHTML = A.icone(PLEIN.actif() ? 'reduire' : 'plein') + (PLEIN.actif() ? ' Quitter le plein écran' : ' Plein écran');
-      $('#pref-carnet').hidden = !State.fini; // une fois l'histoire terminée
+      bascule('pref-son', A.icone(SON.muet ? 'muet' : 'son'), 'Son et musique', !SON.muet);
       const grand = document.documentElement.classList.contains('grand-texte');
-      $('#pref-grand').innerHTML = `<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><text x="1" y="19" font-size="13" font-weight="800" fill="currentColor" font-family="sans-serif">A</text><text x="10" y="20" font-size="19" font-weight="800" fill="currentColor" font-family="sans-serif">A</text></svg> Grand texte : ${grand ? 'activé' : 'désactivé'}`;
-      $('#pref-grand').setAttribute('aria-pressed', String(grand));
+      bascule('pref-grand', `<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><text x="1" y="19" font-size="13" font-weight="800" fill="currentColor" font-family="sans-serif">A</text><text x="10" y="20" font-size="19" font-weight="800" fill="currentColor" font-family="sans-serif">A</text></svg>`, 'Grand texte', grand);
+      bascule('pref-plein', A.icone(PLEIN.actif() ? 'reduire' : 'plein'), 'Plein écran', PLEIN.actif());
+      bascule('pref-vibreur', `<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="3" width="8" height="18" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M4 8v8M20 8v8M1.5 10v4M22.5 10v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`, 'Vibreur', vibreurActif());
+      // Mes trésors : le carnet dès la première carte découverte, l'album dès la première histoire rangée
+      const carnetVu = window.CARNET && window.CARNET.compte(State).n > 0, albumVu = lireAlbum().length > 0;
+      $('#pref-carnet').hidden = !carnetVu; $('#pref-album').hidden = !albumVu; $('#groupe-tresors').hidden = !carnetVu && !albumVu;
       $('#pref-reset').innerHTML = A.icone('recommencer') + " Recommencer l'histoire"; $('#pref-reset').classList.remove('confirme');
     };
     const fermerMenu = () => { menu.hidden = true; bPrefs.setAttribute('aria-expanded', 'false'); };
@@ -167,6 +188,13 @@
     document.addEventListener('click', () => { if (!menu.hidden) fermerMenu(); });
     $('#pref-son').onclick = () => { SON.unlock(); const m = SON.toggle(); majPrefs(); toast(m ? 'Son et musique coupés' : 'Son et musique activés'); };
     $('#pref-carnet').onclick = () => { fermerMenu(); ouvrirCarnet(); };
+    $('#pref-album').onclick = () => { fermerMenu(); album(); };
+    $('#pref-fermer').onclick = () => { fermerMenu(); bPrefs.focus(); };
+    if ($('#pref-vibreur')) $('#pref-vibreur').onclick = () => {
+      const on = !vibreurActif(); window.STOCKAGE.ecrire(CLE_VIBRE, on ? '1' : '0'); majPrefs();
+      if (on) vibrer(60);
+      toast(on ? 'Vibreur activé' : 'Vibreur coupé');
+    };
     $('#pref-grand').onclick = () => {
       const on = !document.documentElement.classList.contains('grand-texte');
       window.STOCKAGE.ecrire(CLE_GRAND, on ? '1' : '0'); grandTexte(on); majPrefs();
@@ -282,6 +310,14 @@
     window.STOCKAGE.ecrire(CLE_ALBUM, JSON.stringify(a.slice(-60)));
   }
   // Le carnet des Ardennes : les cartes « Le savais-tu ? » et le livre de la légende (après le diplôme)
+  // La grande carte du carnet, sous le diplôme : cuir rouge, cadre doré, éventail de cartes et progression
+  function carteCarnet() {
+    const AR = window.ARDENNES, K = window.CARNET, c = K.compte(State), DI = AR.diplome;
+    const etincelles = [[6, 22], [94, 16], [72, 84], [16, 80], [50, 6]].map(([x, y], k) => `<i class="etincelle" style="left:${x}%;top:${y}%;animation-delay:${(k * .45).toFixed(2)}s" aria-hidden="true"></i>`).join('');
+    return `<button type="button" class="carte-carnet5" id="btn-carnet5"><span class="ruban-livre" aria-hidden="true">${esc(DI.ruban)}</span>${etincelles}
+  <span class="eventail" aria-hidden="true">${K.apercu(State)}</span>
+  <span class="carnet5-txt"><strong>${esc(AR.titre)}</strong><small>${esc(DI.progression.replace('{n}', c.n).replace('{total}', c.total))}</small><em>${esc(DI.invite)}</em></span></button>`;
+  }
   function ouvrirCarnet() {
     window.CARNET.ouvrir({ T, state: State, son: n => SON.play(n) });
   }
@@ -588,7 +624,7 @@
       const vue = () => {
         sonne = true; pris++; p = Math.max(0, p - 12);
         bulle.classList.add('on'); souris.classList.add('boule'); SON.play('mmh');
-        try { navigator.vibrate && navigator.vibrate(80); } catch (e) { }
+        vibrer(80);
         if (pris === 5) NARR.dire({ txt: T(D.jeu.trop), expr: 'clin' }, { vite: true }); else dis(D.jeu.vu, 'surprise');
         setTimeout(() => { bulle.classList.remove('on'); souris.classList.remove('boule'); sonne = false; }, 1200);
       };
@@ -1103,7 +1139,7 @@ ${places.map(dent).join('')}
   <div class="diplome-wrap">${window.CERTIFICAT.html({ badges: State.badges.concat(State.badges.indexOf('jumelle') < 0 ? ['jumelle'] : []), secret: State.secret, nuitTexte: nuitTexte(), etoiles: nbEtoiles(), total: totalEtoiles })}</div>
   <div class="fin">
     <a class="btn btn-grand btn-or" id="btn-imprimer" href="certificat/?${qs}#p=${window.PROFIL.code}" target="_blank" rel="noopener">${A.icone('imprimer')} Imprimer le diplôme</a>
-    <button class="btn btn-petit" id="btn-carnet5"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1C14 1 15 3 14.5 4.5C17 4 18 6 16 7.5C19 7.5 19.5 10 17 11C19.5 11.5 19 14.5 16 14C17 16 15.5 17.5 13.2 17L12.6 19V22.5H11.4V19L10.8 17C8.5 17.5 7 16 8 14C5 14.5 4.5 11.5 7 11C4.5 10 5 7.5 8 7.5C6 6 7 4 9.5 4.5C9 3 10 1 12 1Z" fill="currentColor"/></svg> Le carnet des Ardennes</button>
+    ${carteCarnet()}
     <button class="btn btn-petit" id="btn-album5">${A.icone('etoile')} ${esc(T(D.album.titre))}</button>
     <button class="btn btn-petit" id="btn-revoir5">Revoir l'histoire</button>
   </div>
@@ -1119,7 +1155,13 @@ ${places.map(dent).join('')}
       rangerDansAlbum();
       badge('jumelle');
       if (premiere) SON.play('fanfare');
-      NARR.dire(B(D.diplome));
+      // Après le diplôme, Quenotte invite à ouvrir son carnet des Ardennes
+      const ici = this.jetonDip = (this.jetonDip || 0) + 1;
+      NARR.dire(B(D.diplome)).then(() => wait(RM ? 0 : 1400)).then(() => {
+        if (this.jetonDip !== ici || !r.isConnected) return;
+        NARR.dire({ txt: T(window.ARDENNES.diplome.quenotte), expr: 'clin' });
+        NARR.action(`<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1C14 1 15 3 14.5 4.5C17 4 18 6 16 7.5C19 7.5 19.5 10 17 11C19.5 11.5 19 14.5 16 14C17 16 15.5 17.5 13.2 17L12.6 19V22.5H11.4V19L10.8 17C8.5 17.5 7 16 8 14C5 14.5 4.5 11.5 7 11C4.5 10 5 7.5 8 7.5C6 6 7 4 9.5 4.5C9 3 10 1 12 1Z" fill="currentColor"/></svg> ${esc(window.ARDENNES.diplome.bouton)}`, () => { SON.play('papier'); ouvrirCarnet(); });
+      });
       if (!RM) { const c = $('.confettis', r); const couleurs = ['#FFC857', '#D64045', '#F2A3B5', '#3E7C8F', '#F3EFE6']; for (let i = 0; i < 40; i++) { const s = document.createElement('i'); s.style.left = (Math.random() * 100) + '%'; s.style.background = couleurs[i % couleurs.length]; s.style.animationDelay = (Math.random() * 2.5) + 's'; s.style.animationDuration = (3 + Math.random() * 3) + 's'; c.appendChild(s); } }
       window.CERTIFICAT.brancher($('.diplome-wrap', r));
       $('#btn-revoir5', r).onclick = () => show(1, { scene: 0 });
@@ -1128,7 +1170,7 @@ ${places.map(dent).join('')}
       // Après l'atelier, le diplôme se redessine avec le nouveau dessin
       $('#btn-dessin5', r).onclick = () => { SON.play('clic'); atelier(() => show(5, { diplome: true })); };
     },
-    unmount() { this.jeton = (this.jeton || 0) + 1; cancelAnimationFrame(this.raf); window.removeEventListener('deviceorientation', this.incline); window.removeEventListener('keydown', this.clavierNuages); window.removeEventListener('keydown', this.clavier); clearTimeout(this.tAide); },
+    unmount() { this.jeton = (this.jeton || 0) + 1; this.jetonDip = (this.jetonDip || 0) + 1; cancelAnimationFrame(this.raf); window.removeEventListener('deviceorientation', this.incline); window.removeEventListener('keydown', this.clavierNuages); window.removeEventListener('keydown', this.clavier); clearTimeout(this.tAide); },
   };
 
   const Chapitres = [Ch0, Ch1, Ch2, Ch3, Ch4, Ch5];

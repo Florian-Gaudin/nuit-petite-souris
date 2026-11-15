@@ -49,9 +49,10 @@ test("le terrier : les quatre trésors des Ardennes, dans la barre et au fond de
   await expect(page.locator('.surprise')).toHaveCount(4);
 });
 
-async function diplome(page: Page, secret = false) {
+// Le diplôme, avec toutes les cartes du carnet découvertes (et la scène 13, qui ouvre le livre de la légende)
+async function diplome(page: Page, tout = true) {
   await ouvrir(page, '?reset=1#exemple');
-  await page.evaluate(s => { const A = (window as any).APP; A.state.unlocked = 5; A.state.fini = true; A.state.secret = s; A.show(5, { diplome: true }); }, secret);
+  await page.evaluate(t => { const W = window as any, A = W.APP; A.state.unlocked = 5; A.state.fini = true; A.state.secret = t; A.state.ardennes = t ? W.ARDENNES.cartes.map((c: any) => c.secret).filter(Boolean) : []; A.show(5, { diplome: true }); }, tout);
 }
 
 test('le carnet des Ardennes : depuis le diplôme et le menu, cartes, poème, livre au clavier', async ({ page }) => {
@@ -73,7 +74,6 @@ test('le carnet des Ardennes : depuis le diplôme et le menu, cartes, poème, li
     await expect(page.locator('.carnet-chemin')).toContainText(`Page ${p} sur 15`);
     if (CAPTURES && [2, 4, 7, 13, 14].includes(p)) await page.locator('.livre-vignette').screenshot({ path: CAPTURES + `/livre-${p}.png` });
   }
-  await expect(page.locator('.livre-texte')).toContainText('encore cachée'); // la treizième scène, pas encore trouvée
   await page.keyboard.press('Escape');
   await expect(page.locator('.carnet')).toHaveCount(0);
   // Le menu des réglages, une fois l'histoire terminée
@@ -172,4 +172,17 @@ test("les cartes sans feuille de chêne se trouvent aussi pendant le voyage (gal
   await page.evaluate(() => { const A = (window as any).APP; A.state.unlocked = 5; A.state.fini = true; A.show(5, { diplome: true }); });
   await page.locator('#btn-carnet5').click();
   await expect(page.locator('.carte-ard.trouvee', { hasText: 'galette' })).toHaveCount(1);
+});
+
+test("le carnet : les cartes restent grisées jusqu'à leur découverte, le livre attend la scène 13", async ({ page }) => {
+  await diplome(page, false);
+  await expect(page.locator('#btn-carnet5')).toContainText('0 cartes sur 10');
+  await page.locator('#btn-carnet5').click();
+  await expect(page.locator('.carte-ard.verrouillee')).toHaveCount(10);
+  await expect(page.locator('.carte-ard', { hasText: 'galette' })).toBeDisabled();
+  await expect(page.locator('.carte-livre')).toBeDisabled();
+  await page.locator('[data-a="fermer"]').click();
+  // Le menu : pas de carnet tant que rien n'est découvert
+  await page.locator('#btn-prefs').click();
+  await expect(page.locator('#pref-carnet')).toBeHidden();
 });

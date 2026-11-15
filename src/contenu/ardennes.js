@@ -15,6 +15,17 @@ window.ARDENNES = {
   titre: "Le carnet des Ardennes",
   intro: "Pendant mon voyage, j'ai traversé les Ardennes, mon pays. Voici ce que je sais de ses trésors. Touche une carte pour la lire !",
   trouve: "Trouvé pendant le voyage !",
+  // Une carte pas encore découverte (grisée), et le compte des cartes découvertes
+  verrou: "À découvrir pendant le voyage",
+  decouvertes: "{n} cartes découvertes sur {total}",
+  // Sur la page du diplôme : la grande carte du carnet, puis Quenotte qui en parle
+  diplome: {
+    ruban: "Nouveau !",
+    progression: "{n} cartes sur {total} trouvées pendant ton voyage",
+    invite: "Ouvre-le !",
+    quenotte: "Et regarde : je t'ai laissé mon carnet des Ardennes ! Tu y retrouveras tout ce que tu as découvert pendant le voyage.",
+    bouton: "Ouvrir le carnet",
+  },
   // Quand l'enfant découvre, pendant le voyage, ce que raconte une carte (sans feuille de chêne)
   nouvelleCarte: "Nouvelle carte dans le carnet des Ardennes : {titre}",
   aVoir: "À voir",
@@ -142,6 +153,7 @@ window.ARDENNES = {
     ouvrir: "Ouvrir le livre : douze tableaux",
     // Sur la carte de la légende : le ruban, le sous-titre et l'invitation de Quenotte
     ruban: "Livre à feuilleter",
+    verrou: "Il s'ouvrira quand tu auras découvert la scène secrète du Grand Marionnettiste.",
     sousTitre: "Un livre ancien à feuilleter, en douze tableaux",
     invitation: "Viens, je vais te montrer l'histoire de Bayard ! Touche le livre pour l'ouvrir.",
     tableaux: [

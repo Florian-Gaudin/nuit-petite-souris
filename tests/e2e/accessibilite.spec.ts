@@ -19,7 +19,7 @@ test('audit WCAG 2.1 AA : tous les écrans', async ({ page }) => {
   await ouvrir(page, '#exemple'); pb.push(...await audit(page, 'chapitre 0', ECART_HISTOIRE));
   for (const n of [1, 2, 3, 4]) { await ouvrir(page, `?chapitre=${n}#exemple`); pb.push(...await audit(page, 'chapitre ' + n, ECART_HISTOIRE)); }
   // Le carnet des Ardennes et le livre de la légende
-  await page.evaluate(() => { const A = (window as any).APP; A.state.unlocked = 5; A.state.fini = true; A.show(5, { diplome: true }); });
+  await page.evaluate(() => { const A = (window as any).APP; A.state.unlocked = 5; A.state.fini = true; A.state.secret = true; A.state.ardennes = (window as any).ARDENNES.cartes.map((c: any) => c.secret).filter(Boolean); A.show(5, { diplome: true }); });
   await page.locator('#btn-carnet5').click(); pb.push(...await audit(page, 'carnet', ECART_HISTOIRE));
   await page.locator('.carte-ard').first().click(); pb.push(...await audit(page, 'carte', ECART_HISTOIRE));
   await page.locator('[data-a="grille"]').click(); await page.locator('.carte-livre').click(); await page.locator('[data-a="livre"]').click(); await page.keyboard.press('ArrowRight');
@@ -49,9 +49,9 @@ test("« Grand texte » : le texte de l'histoire grandit, défile si besoin, et 
   const taille = () => page.locator('#bandeau-texte').evaluate(e => parseFloat(getComputedStyle(e).fontSize));
   const avant = await taille();
   await page.locator('#btn-prefs').click();
-  await expect(page.locator('#pref-grand')).toContainText('désactivé');
+  await expect(page.locator('#pref-grand')).toHaveAttribute('aria-checked', 'false');
   await page.locator('#pref-grand').click();
-  await expect(page.locator('#pref-grand')).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('#pref-grand')).toHaveAttribute('aria-checked', 'true');
   expect(await taille()).toBeGreaterThan(avant * 1.6);
   // Un texte trop long ne rétrécit pas : il défile dans le bandeau
   expect(await page.locator('#bandeau-texte').evaluate(e => getComputedStyle(e).overflowY)).toBe('auto');
