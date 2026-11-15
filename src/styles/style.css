@@ -1129,3 +1129,9 @@ html.grand-texte .livre-ancien .livre-texte p{font-size:1.5rem}
 
 /* Les mots propres à l'enfant (prénom, ville, chat, doudou…) en gras dans le bandeau */
 .bandeau-texte b.perso{font-weight:800}
+
+/* Les étoiles numérotées : rien ne clignote avant la fin de la consigne (sinon on a envie de toucher tout de suite) */
+.decor-etoiles .pt-num{transition:opacity .5s}
+.decor-etoiles .tap:not(.pret) .pt-num{opacity:0}
+.decor-etoiles .tap:not(.pret) .pt.prochaine use{animation:none;opacity:.55}
+.decor-etoiles .tap:not(.pret) .pt.prochaine .pt-lueur{opacity:0}

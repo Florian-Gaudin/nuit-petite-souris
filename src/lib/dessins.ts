@@ -54,36 +54,39 @@ export function silhouetteFenetre(o: { type: TypeDoudou; fratrie: boolean }): st
 }
 
 // ---------- Le meuble où sèche le billet, filmé dans le salon ----------
-// Tous ont un dessus vers y = 108-120 sur x ≈ 90-310 : la souris et le bateau-billet y montent au même endroit.
+// Tous ont un dessus vers y = 108 : la souris et le bateau-billet y montent au même endroit.
+// Chaque meuble a son propre dessus (la tablette large n'appartient qu'à la cheminée), et le petit vase
+// n'est posé que sur un dessus plat.
 export function cachetteCam(k: Cachette): string {
-  const dessus = `<rect x="86" y="108" width="228" height="14" rx="3" fill="${FOND}" ${trait()}/>`;
+  const vase = (x: number) => `<rect x="${x}" y="78" width="16" height="30" fill="none" stroke="${VERT2}" stroke-width="1.5"/>`;
+  const dessus = (x = 86, w = 228) => `<rect x="${x}" y="108" width="${w}" height="14" rx="3" fill="${FOND}" ${trait()}/>${vase(x + 26)}`;
   const v = `stroke="${VERT2}"`;
   switch (k) {
     case 'cheminee':
       return `<rect x="100" y="120" width="200" height="130" fill="none" ${v} stroke-width="2"/><rect x="140" y="160" width="120" height="90" fill="#0b2a10" ${v} stroke-width="2"/>`
-        + `<g ${v} stroke-width="1.5" fill="none"><path d="M150 250v-30h40v30M200 250v-40h44v40"/><path d="M160 232h20M210 226h24"/></g>${dessus}`;
+        + `<g ${v} stroke-width="1.5" fill="none"><path d="M150 250v-30h40v30M200 250v-40h44v40"/><path d="M160 232h20M210 226h24"/></g>${dessus()}`;
     case 'radiateur': {
       let colonnes = '';
       for (let x = 112; x <= 288; x += 16) colonnes += `<rect x="${x}" y="126" width="12" height="104" rx="5" fill="${FOND2}" ${v} stroke-width="1.5"/>`;
       return `${colonnes}<path d="M108 236h184M120 236v12M280 236v12" ${v} stroke-width="2"/><circle cx="292" cy="236" r="4" fill="none" ${v} stroke-width="1.5"/>`
-        + `<rect x="96" y="108" width="208" height="12" rx="3" fill="${FOND}" ${trait()}/>`;
+        + `<rect x="96" y="108" width="208" height="12" rx="3" fill="${FOND}" ${trait()}/>${vase(122)}`;
     }
     case 'table-de-nuit':
       return `<rect x="104" y="122" width="192" height="104" rx="4" fill="${FOND2}" ${v} stroke-width="2"/><path d="M104 158h192M104 192h192" ${v} stroke-width="1.5"/>`
-        + `<circle cx="200" cy="140" r="3" fill="${VERT}"/><circle cx="200" cy="175" r="3" fill="${VERT}"/><circle cx="200" cy="209" r="3" fill="${VERT}"/><path d="M114 226v24M286 226v24" ${v} stroke-width="3"/>${dessus}`;
+        + `<circle cx="200" cy="140" r="3" fill="${VERT}"/><circle cx="200" cy="175" r="3" fill="${VERT}"/><circle cx="200" cy="209" r="3" fill="${VERT}"/><path d="M114 226v24M286 226v24" ${v} stroke-width="3"/>${dessus(98, 204)}`;
     case 'bureau':
       return `<path d="M98 122v128M302 122v128" ${v} stroke-width="3"/><rect x="226" y="122" width="72" height="66" fill="${FOND2}" ${v} stroke-width="1.5"/><path d="M226 155h72" ${v} stroke-width="1.5"/><circle cx="262" cy="138" r="2.5" fill="${VERT}"/><circle cx="262" cy="171" r="2.5" fill="${VERT}"/>`
-        + `<path d="M140 250v-40h40v40M140 210v-34" fill="none" ${v} stroke-width="2"/>${dessus}`;
+        + `<path d="M140 250v-40h40v40M140 210v-34" fill="none" ${v} stroke-width="2"/>${dessus(90, 220)}`;
     case 'coffre':
       // Un coffre à jouets : couvercle bombé, une peluche et un ballon qui dépassent
       return `<rect x="104" y="136" width="192" height="112" rx="6" fill="${FOND2}" ${v} stroke-width="2"/><path d="M104 170h192" ${v} stroke-width="1.5"/>`
         + `<rect x="186" y="160" width="28" height="20" rx="3" fill="${FOND}" ${v} stroke-width="1.5"/><circle cx="200" cy="170" r="3" fill="${VERT}"/>`
-        + `<path d="M104 136q96-30 192 0" fill="${FOND}" ${v} stroke-width="2"/><g ${v} stroke-width="1.5" fill="none"><path d="M130 216h30M240 216h30"/><circle cx="126" cy="196" r="6"/><circle cx="274" cy="196" r="6"/></g>${dessus}`;
+        + `<path d="M104 136q0-26 30-28h132q30 2 30 28z" fill="${FOND}" ${v} stroke-width="2"/><path d="M200 108v28" ${v} stroke-width="1.5"/><g ${v} stroke-width="1.5" fill="none"><path d="M130 216h30M240 216h30"/><circle cx="126" cy="196" r="6"/><circle cx="274" cy="196" r="6"/></g>`;
     case 'etagere': {
       let livres = '';
       [[128, 18], [148, 14], [164, 20], [186, 12], [200, 16]].forEach(([x, w], i) => { livres += `<rect x="${x}" y="${170 - 26 + (i % 2) * 4}" width="${w}" height="${26 - (i % 2) * 4}" fill="${FOND}" ${v} stroke-width="1.2"/>`; });
       [[220, 14], [236, 18], [256, 14]].forEach(([x, w]) => { livres += `<rect x="${x}" y="196" width="${w}" height="26" fill="${FOND}" ${v} stroke-width="1.2"/>`; });
-      return `<rect x="110" y="120" width="180" height="130" fill="none" ${v} stroke-width="2"/><path d="M110 170h180M110 222h180" ${v} stroke-width="2"/>${livres}<circle cx="150" cy="208" r="10" fill="none" ${v} stroke-width="1.5"/>${dessus}`;
+      return `<rect x="110" y="120" width="180" height="130" fill="none" ${v} stroke-width="2"/><path d="M110 170h180M110 222h180" ${v} stroke-width="2"/>${livres}<circle cx="150" cy="208" r="10" fill="none" ${v} stroke-width="1.5"/>${dessus(104, 192)}`;
     }
   }
 }

@@ -386,6 +386,8 @@ window.SCENES = (function () {
       const b = bulle(el.demande), deja = derniere && derniere.txt === b.txt; // déjà lue : on la remet d'un coup
       await NARR.dire(derniere = b, deja ? { vite: 'instant' } : {}); if (mien !== jeton) return;
     } else if (derniere) NARR.dire(derniere, { vite: 'instant' });
+    // La consigne est lue : l'élément s'anime pour de bon (les étoiles clignotent et montrent leurs numéros)
+    if (g) g.classList.add('pret');
   }
 
   function onTap(g, e) {

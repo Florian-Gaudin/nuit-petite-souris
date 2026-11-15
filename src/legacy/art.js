@@ -293,7 +293,6 @@ ${etoiles(40, 1000, 500, 5)}
   <line x1="0" y1="250" x2="400" y2="250" stroke="#1d4d26" stroke-width="2"/>
   ${window.DESSINS.cachetteCam(window.CONFIG.profil.cachette)}
   <circle cx="200" cy="66" r="22" fill="none" stroke="#2fbf2f" stroke-width="2"/><path d="M200 66v-14M200 66l9 7" stroke="#39FF14" stroke-width="2" stroke-linecap="round"/>
-  <rect x="112" y="78" width="16" height="30" fill="none" stroke="#2fbf2f" stroke-width="1.5"/>
   <path d="M330 250v-60h50v60M330 190q25-20 50 0" fill="none" stroke="#2fbf2f" stroke-width="2"/>
   <g id="bateau2" class="cam-bateau"><use href="#bateau-cam" width="46" height="25"/></g>
   <g id="cs2" class="cam-souris"><use href="#souris-cam" width="70" height="54"/></g>

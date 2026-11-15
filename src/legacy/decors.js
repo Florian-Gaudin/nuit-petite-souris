@@ -188,21 +188,53 @@ ${A.souris(sx, sy, sw, 'class="quenotte trotte"')}
       return `<rect x="${x}" y="${haut}" width="${w}" height="${base - haut}" fill="${teinte}"/><rect x="${x - 6}" y="${haut - 8}" width="${w + 12}" height="10" fill="#8a8395"/>${fen}<rect x="${x + w / 2 - 16}" y="${base - 52}" width="32" height="52" fill="#4a3324"/><rect x="${x + w / 2 - 22}" y="${base - 58}" width="44" height="6" fill="#8a8395"/>`;
     };
     const appart = window.CONFIG.logement === 'appartement';
+    // En ville : de hauts immeubles (ils montent plus haut que l'image, et se voient en entier quand l'écran est en hauteur)
+    const tour = (x, w, haut, teinte, ombre, cols, k) => {
+      let f = '';
+      const pas = (w - 24) / cols;
+      for (let y = haut + 26, r = 0; y < 404; y += 52, r++) for (let c = 0; c < cols; c++) {
+        const fx = x + 12 + c * pas + (pas - 24) / 2, allume = (r * 5 + c * 3 + k) % 9 === 0;
+        f += `<rect x="${fx.toFixed(0)}" y="${y}" width="24" height="32" rx="2" fill="${allume ? '#FFC857' : '#2b3470'}"/><rect x="${(fx - 2).toFixed(0)}" y="${y + 32}" width="28" height="4" fill="${ombre}"/>`;
+        if (r % 2 === 1) f += `<path d="M${(fx - 4).toFixed(0)} ${y + 30}h32M${(fx - 4).toFixed(0)} ${y + 20}h32" stroke="#4a4e5e" stroke-width="2"/><path d="M${(fx + 2).toFixed(0)} ${y + 20}v10M${(fx + 12).toFixed(0)} ${y + 20}v10M${(fx + 22).toFixed(0)} ${y + 20}v10" stroke="#4a4e5e" stroke-width="1.5"/>`;
+      }
+      return `<rect x="${x}" y="${haut}" width="${w}" height="${472 - haut}" fill="${teinte}"/><rect x="${x}" y="${haut}" width="10" height="${472 - haut}" fill="${ombre}" opacity=".6"/><rect x="${x - 6}" y="${haut - 10}" width="${w + 12}" height="12" fill="#6b6f82"/>${f}`
+        // le rez-de-chaussée : une porte vitrée et son auvent
+        + `<rect x="${x}" y="410" width="${w}" height="62" fill="${ombre}"/><rect x="${x + w / 2 - 20}" y="420" width="40" height="52" fill="#3a3f5c"/><rect x="${x + w / 2 - 16}" y="424" width="32" height="30" fill="#FFC857" opacity=".35"/><path d="M${x + w / 2 - 30} 418h60l-6-12h-48z" fill="#D64045"/>`;
+    };
+    // Au loin, d'autres tours, quelques fenêtres encore allumées
+    let loin = '';
+    [[-30, 120, -240], [80, 90, -60], [160, 130, -320], [290, 100, -120], [380, 120, -260], [500, 90, -40], [580, 140, -380], [720, 110, -160], [820, 120, -300], [930, 100, -80]].forEach(([x, w, h], k) => {
+      loin += `<rect x="${x}" y="${h}" width="${w}" height="${472 - h}" fill="${k % 2 ? '#1b2250' : '#212a5e'}"/>`;
+      for (let y = h + 18; y < 440; y += 28) for (let fx = x + 12; fx < x + w - 14; fx += 22) if ((Math.sin(fx * 12.9898 + y * 78.233 + k * 3.7) * 43758.5453) % 1 > .86) loin += `<rect x="${fx}" y="${y}" width="9" height="12" fill="#FFC857" opacity=".55"/>`;
+    });
+    // Un lampadaire de rue (décor) : son halo éclaire le trottoir
+    const reverbere = x => `<ellipse cx="${x}" cy="486" rx="70" ry="12" fill="#FFC857" opacity=".18"/><rect x="${x - 3}" y="330" width="6" height="146" fill="#4a4e5e"/><path d="M${x} 334q0-18 20-18h8" fill="none" stroke="#4a4e5e" stroke-width="5"/><path d="M${x + 18} 314h22l-4 10h-14z" fill="#3b4254"/><ellipse cx="${x + 29}" cy="326" rx="9" ry="4" fill="#FFC857"/><circle class="lueur" cx="${x + 29}" cy="330" r="46" fill="url(#halo-or)"/>`;
     const batiments = appart
-      ? `${immeuble(60, 480, 170, 300, '#D8D0C4')}${immeuble(320, 452, 190, 344, '#E3DBCF')}${immeuble(630, 400, 210, 200, '#E9E2D6')}<rect x="920" y="250" width="100" height="120" fill="#D8D0C4"/><rect x="914" y="242" width="112" height="10" fill="#8a8395"/>`
+      ? `${loin}
+${tour(10, 250, -150, '#cdbfae', '#a8998a', 4, 1)}${tour(296, 250, 92, '#d9c9b5', '#b3a28e', 4, 4)}${tour(600, 270, 156, '#e3d6c3', '#bcae99', 5, 2)}
+<!-- le trottoir, la bordure, la rue et son passage piéton -->
+<rect y="472" width="1000" height="30" fill="#6b6f82"/><path d="M0 474h1000" stroke="#8a8ea0" stroke-width="3"/><g stroke="#5d6174" stroke-width="2">${[60, 160, 260, 360, 460, 560, 660, 760, 860, 960].map(x => `<path d="M${x} 474v28"/>`).join('')}</g>
+<rect y="502" width="1000" height="8" fill="#4a4e5e"/><rect y="510" width="1000" height="200" fill="#262a38"/>
+<g fill="#e8e8ee" opacity=".55">${[0, 1, 2, 3, 4].map(i => `<rect x="${548 + i * 18}" y="516" width="10" height="84"/>`).join('')}</g>
+<path d="M0 566h1000" stroke="#e8e8ee" stroke-width="4" stroke-dasharray="40 30" opacity=".35"/>
+<!-- un arbre dans sa grille, un banc, une poubelle -->
+<g transform="translate(560,472)"><rect x="-4" y="-60" width="8" height="60" fill="#5c3a24"/><circle cx="0" cy="-74" r="26" fill="#24483E"/><circle cx="-16" cy="-62" r="18" fill="#2F5D50"/><circle cx="16" cy="-60" r="18" fill="#1E3F36"/><rect x="-16" y="-2" width="32" height="4" fill="#4a4e5e"/></g>
+<g transform="translate(470,472)"><rect x="-28" y="-20" width="56" height="6" rx="2" fill="#8B5A3C"/><rect x="-28" y="-34" width="56" height="5" rx="2" fill="#8B5A3C"/><path d="M-22-14v14M22-14v14" stroke="#3b4254" stroke-width="4"/></g>
+<g transform="translate(900,472)"><rect x="-12" y="-34" width="24" height="34" rx="3" fill="#3E7C50"/><rect x="-14" y="-38" width="28" height="6" rx="2" fill="#2F5D50"/></g>
+${reverbere(392)}${reverbere(838)}`
       : `${maison(80, 480, 150, 100, '#D64045')}
 ${maison(330, 450, 170, 110, '#3E7C8F')}
 ${maison(640, 400, 190, 130, '#D64045')}
 <rect x="920" y="300" width="100" height="70" fill="#E9E2D6"/><path d="M910 300l60-40 60 40z" fill="#3E7C8F"/>${volet(940, 318)}`;
     return `<svg class="decor decor-aiglemont" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet" role="group" aria-label="${appart ? 'Les immeubles endormis' : 'Les maisons endormies'} et la girouette">
 ${A.fond(nuit, 61, { x: 880, y: 80, r: 30 })}
-<path d="M0 600V440Q300 400 600 350T1000 290V600Z" fill="#1E3F36"/>
+${appart ? '' : `<path d="M0 600V440Q300 400 600 350T1000 290V600Z" fill="#1E3F36"/>
 <path d="M0 600V480Q300 440 600 400T1000 340V600Z" fill="#24483E"/>
-<path d="M-20 580Q300 520 600 470T1020 400" fill="none" stroke="#1A2A26" stroke-width="56" stroke-linecap="round"/>
-<circle class="lueur-maison" cx="735" cy="380" r="200" fill="url(#halo-or)"/>
+<path d="M-20 580Q300 520 600 470T1020 400" fill="none" stroke="#1A2A26" stroke-width="56" stroke-linecap="round"/>`}
+<circle class="lueur-maison" cx="735" cy="${appart ? 312 : 380}" r="200" fill="url(#halo-or)"/>
 ${batiments}
 ${tap('fenetre', 'La fenêtre de la chambre', `${halo(0, 0, 44)}<rect class="vitre" x="-18" y="-24" width="36" height="48" rx="3" fill="#FFC857"/>${window.DESSINS.silhouetteFenetre({ type: window.CONFIG.profil.doudou.type, fratrie: !!(window.CONFIG.profil.fratrie && window.CONFIG.profil.fratrie.dortACote) })}<path d="M-18 0h36M0-24v48" stroke="#F3EFE6" stroke-width="2.5"/><rect x="-18" y="-24" width="36" height="48" rx="3" fill="none" stroke="#F3EFE6" stroke-width="3"/>`, 'transform="translate(735,312)"')}
-${tap('girouette', 'La girouette', `${halo(0, -24, 52)}<rect x="-3" y="-14" width="6" height="40" fill="#6b6560"/><g class="coq"><path d="M-34-24h68" stroke="#F3EFE6" stroke-width="4" stroke-linecap="round"/><path d="M24-34l12 10-12 10z" fill="#F3EFE6"/><path d="M-6-28q-6-18 8-22 10-2 14 8 2 8-6 14z" fill="#D64045"/><path d="M-10-46l4-8 4 8 4-8 2 10z" fill="#FFC857"/><circle cx="8" cy="-40" r="1.8" fill="#2B2B33"/></g>`, 'transform="translate(415,318)"')}
+${tap('girouette', 'La girouette', `${halo(0, -24, 52)}<rect x="-3" y="-14" width="6" height="40" fill="#6b6560"/><g class="coq"><path d="M-34-24h68" stroke="#F3EFE6" stroke-width="4" stroke-linecap="round"/><path d="M24-34l12 10-12 10z" fill="#F3EFE6"/><path d="M-6-28q-6-18 8-22 10-2 14 8 2 8-6 14z" fill="#D64045"/><path d="M-10-46l4-8 4 8 4-8 2 10z" fill="#FFC857"/><circle cx="8" cy="-40" r="1.8" fill="#2B2B33"/></g>`, appart ? 'transform="translate(420,66)"' : 'transform="translate(415,318)"')}
 ${tap('lampadaire', 'Un lampadaire qui grésille', `${halo(0, -162, 52)}<rect x="-4" y="-150" width="8" height="150" fill="#6b6560"/><path d="M-20-150h40l-6-28h-28z" fill="#3b4254"/><circle class="lampe-lueur" cx="0" cy="-164" r="80" fill="url(#halo-or)"/><circle class="ampoule" cx="0" cy="-164" r="11" fill="#FFC857"/>`, 'transform="translate(230,470)"')}
 ${lueur(L.x, L.y, 100)}
 ${A.souris(sx, sy, sw, 'class="quenotte trotte"')}
@@ -322,19 +354,58 @@ ${tap('constellation', 'Les étoiles à relier', `<circle class="halo" cx="${P[0
 </svg>`;
   }
 
-  // ---------- La grande fenêtre embuée : la chambre de l'enfant, reprise du dessin de la caméra ----------
-  // Le dessin de la caméra (vision nocturne verte) est recoloré en couleurs douces de veilleuse.
-  const COULEURS_CHAMBRE = [['#06180B', '#3b3352'], ['#1d4d26', '#2a2440'], ['#39FF14', '#F3E3C3'], ['#2fbf2f', '#b3a2bf'], ['#0f4a1b', '#7d70a3'], ['#0b3a14', '#5f5385'], ['#1d7a2c', '#9a8bb0'], ['#9fff8a', '#ffffff']];
-  function chambreCouleur() {
-    // Lu comme du HTML : le dessin contient un attribut « hidden » sans valeur, refusé par une lecture XML stricte
-    const doc = new DOMParser().parseFromString('<body>' + A.camSVG() + '</body>', 'text/html');
-    const ch = doc.querySelector('#cam-chambre');
-    if (!ch) return '';
-    ch.querySelectorAll('#dent1, #mot1, #cs1, .cam-souris').forEach(e => e.remove());
-    ch.removeAttribute('hidden');
-    let html = ch.outerHTML.replace(/ id="[^"]*"/g, '');
-    for (const [a, b] of COULEURS_CHAMBRE) html = html.split(a).join(b).split(a.toLowerCase()).join(b);
-    return html;
+  // ---------- La grande fenêtre embuée : la chambre de l'enfant, en couleurs (repère 400 × 300, comme la caméra) ----------
+  // Même disposition que le plan filmé : le lit, l'enfant endormi, son doudou, la table de nuit (ou le lit du frère ou de la sœur).
+  const PELAGES = { ours: ['#c99a6b', '#a77a50'], lapin: ['#efe6dc', '#d8c9ba'], chat: ['#b8aca2', '#9a8e84'], chien: ['#d1a574', '#b08552'], bebe: ['#f2c9a5', '#f29ab0'], licorne: ['#f6eef8', '#e7b3d8'], dinosaure: ['#86c06c', '#5e9a4a'], linge: ['#e9e1f2', '#cbbfe0'], aucun: ['#000', '#000'] };
+  function chambreVraie() {
+    const P = window.CONFIG.profil, fr = P.fratrie && P.fratrie.dortACote ? P.fratrie : null;
+    const peau = '#f2c9a5', cheveux = '#6b4423', trait = '#4a2f22';
+    let s = `<defs><linearGradient id="ch-mur" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a3466"/><stop offset="1" stop-color="#51477d"/></linearGradient>
+<linearGradient id="ch-couette" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6a98e0"/><stop offset="1" stop-color="#3f6db8"/></linearGradient>
+<radialGradient id="ch-lampe" cx="87%" cy="54%" r="60%"><stop offset="0" stop-color="#ffd27a" stop-opacity=".6"/><stop offset=".5" stop-color="#ffd27a" stop-opacity=".18"/><stop offset="1" stop-color="#ffd27a" stop-opacity="0"/></radialGradient></defs>
+<rect width="400" height="238" fill="url(#ch-mur)"/>`;
+    // le papier peint à petites étoiles
+    for (let y = 18, r = 0; y < 226; y += 32, r++) for (let x = 12 + (r % 2) * 20; x < 400; x += 40) s += `<path transform="translate(${x},${y}) scale(.55)" d="M0-6l1.8 3.8 4.2.5-3.1 2.9.8 4.2L0 3.3l-3.7 2.1.8-4.2-3.1-2.9 4.2-.5z" fill="#6d62a3" opacity=".75"/>`;
+    // la plinthe, le parquet, le tapis
+    s += `<rect y="230" width="400" height="8" fill="#e8e0d0"/><rect y="238" width="400" height="62" fill="#80583e"/>${[252, 268, 286].map(y => `<path d="M0 ${y}h400" stroke="#6a4630" stroke-width="1.5"/>`).join('')}${[40, 130, 220, 310].map((x, i) => `<path d="M${x + (i % 2) * 30} 238v14M${x + 50} 252v16M${x + 10} 268v18" stroke="#6a4630" stroke-width="1.2"/>`).join('')}
+<ellipse cx="196" cy="272" rx="122" ry="18" fill="#c96b7f"/><ellipse cx="196" cy="272" rx="102" ry="13" fill="none" stroke="#f0b3c0" stroke-width="2" stroke-dasharray="6 5"/>`;
+    // au mur : un cadre avec la lune, une étagère et ses jouets
+    s += `<rect x="150" y="38" width="72" height="54" rx="3" fill="#f3e3bf" stroke="#C9A227" stroke-width="3"/><rect x="156" y="44" width="60" height="42" fill="#1E2658"/><path d="M192 54a11 11 0 1 0 9 17a9 9 0 0 1-9-17z" fill="#ffe9a8"/><g fill="#fff"><circle cx="166" cy="52" r="1.2"/><circle cx="208" cy="78" r="1.2"/><circle cx="172" cy="76" r="1"/></g>
+<rect x="244" y="74" width="84" height="6" rx="2" fill="#8B5A3C"/><rect x="250" y="54" width="10" height="20" fill="#D64045"/><rect x="262" y="58" width="8" height="16" fill="#FFC857"/><rect x="272" y="52" width="9" height="22" fill="#3E9A6B"/><circle cx="304" cy="64" r="9" fill="#5fa3d6"/><path d="M295 64h18M304 55v18" stroke="#fff" stroke-width="1.5" opacity=".7"/>`;
+    // à droite : la table de nuit et sa lampe, ou le petit lit du frère ou de la sœur
+    if (fr) {
+      const ch = fr.genre === 'f'
+        ? `<path d="M362 172q-10-12-22-2M366 168q6-12 20-6" fill="none" stroke="${cheveux}" stroke-width="4" stroke-linecap="round"/><path d="M362 175q4-12 20-7q0 7-9 7q-6 0-11 4z" fill="${cheveux}"/>`
+        : `<path d="M361 176q2-12 13-12q10 0 12 8l-3-1 1 3-4-2-1 3-3-3-2 3-2-3-3 4z" fill="${cheveux}"/>`;
+      s += `<path d="M318 236v-58q0-8 8-8h2q8 0 8 8v58" fill="#8B5A3C"/><rect x="334" y="200" width="62" height="18" rx="3" fill="#a8744a"/><path d="M340 218v18M390 218v18" stroke="#6E4630" stroke-width="3"/>
+<path d="M358 196q-2-18 14-18h14q8 0 8 10v8z" fill="#fbf7ee"/><circle cx="373" cy="184" r="11" fill="${peau}"/>${ch}<path d="M368 185q3 2 6 0" fill="none" stroke="${trait}" stroke-width="1.6" stroke-linecap="round"/><circle cx="378" cy="189" r="2.4" fill="#f29a9a" opacity=".6"/>
+<path d="M336 200v-14q14-8 30 0v14z" fill="#e2a33e"/><path d="M340 192q12-4 22 0" fill="none" stroke="#c4852a" stroke-width="1.5"/>`;
+    } else {
+      s += `<rect x="322" y="176" width="54" height="60" rx="4" fill="#a8744a"/><rect x="320" y="172" width="58" height="8" rx="3" fill="#8B5A3C"/><path d="M326 206h46" stroke="#8B5A3C" stroke-width="2"/><circle cx="349" cy="192" r="2.5" fill="#FFC857"/><circle cx="349" cy="220" r="2.5" fill="#FFC857"/>
+<path d="M349 172v-12" stroke="#7a6a5a" stroke-width="3"/><path d="M333 160l6-22h20l6 22z" fill="#ffd27a"/><ellipse cx="349" cy="160" rx="16" ry="3" fill="#e8b850"/>`;
+    }
+    // le lit : tête de lit à barreaux, pied de lit, sommier, drap
+    s += `<path d="M30 236V112q0-16 16-16h8q16 0 16 16v124" fill="#8B5A3C"/><path d="M42 112v84M50 108v88M58 112v84" stroke="#6E4630" stroke-width="2.5"/>
+<path d="M292 236v-66q0-10 10-10h4q10 0 10 10v66" fill="#8B5A3C"/>
+<rect x="70" y="196" width="222" height="22" rx="4" fill="#a8744a"/><path d="M78 218v18M284 218v18" stroke="#6E4630" stroke-width="4" stroke-linecap="round"/>
+<rect x="70" y="188" width="222" height="12" rx="3" fill="#f3efe6"/>
+<path d="M72 170q-6-28 22-28h30q14 0 14 16v10q-10 8-34 8t-32-6z" fill="#fbf7ee"/><path d="M76 168q30 10 62 0" fill="none" stroke="#e2dacb" stroke-width="3"/><path d="M84 148q16-3 40 0" fill="none" stroke="#e2dacb" stroke-width="1.5"/>`;
+    // l'enfant endormi (fille : cheveux longs étalés ; garçon : cheveux courts)
+    const visage = `<path d="M105 157q4 3 8 0" fill="none" stroke="${trait}" stroke-width="1.8" stroke-linecap="round"/><path d="M109 166q3 2 6 0" fill="none" stroke="${trait}" stroke-width="1.5" stroke-linecap="round"/><circle cx="116" cy="162" r="3" fill="#f29a9a" opacity=".6"/>`;
+    s += P.genre === 'f'
+      ? `<path d="M94 146q-22-6-28 10q-4 12 4 20M90 160q-14 4-16 16M96 144q-6-8-20-8" fill="none" stroke="${cheveux}" stroke-width="5" stroke-linecap="round"/><circle cx="104" cy="157" r="15" fill="${peau}"/><path d="M90 151q6-12 26-8q2 6-6 8q-8 0-14 6z" fill="${cheveux}"/>${visage}`
+      : `<circle cx="104" cy="157" r="15" fill="${peau}"/><path d="M89 152q2-14 16-14q12 0 14 8l-4-1 1 4-5-3-1 4-4-4-2 4-3-4-3 5z" fill="${cheveux}"/>${visage}`;
+    // la couette à pois, avec ses plis
+    s += `<path d="M112 197v-25q10-12 30-12q30-4 58 4q34 8 60 4q20-2 34 6v23z" fill="url(#ch-couette)"/><g fill="#fff" opacity=".5">${[[140, 178], [170, 186], [200, 176], [232, 188], [262, 180], [284, 190], [150, 192], [214, 192]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="2.2"/>`).join('')}</g>
+<path d="M150 178q20 9 40 3M222 182q24 7 48 0" fill="none" stroke="#335c9e" stroke-width="2"/><path d="M112 192h182" stroke="#2f5592" stroke-width="3" opacity=".5"/>`;
+    // le doudou, serré contre l'enfant (le dessin de la caméra, en couleurs de pelage)
+    const [p1, p2] = PELAGES[P.doudou.type] || PELAGES.ours;
+    s += window.DESSINS.doudouCam(P.doudou.type).replace(/ id="[^"]*"/g, '').split('#0f4a1b').join(p1).split('#0b3a14').join(p2).split('#39FF14').join('#5a4636').split('#2fbf2f').join('#5a4636').split('#1d7a2c').join('#7a6656');
+    // le bras par-dessus la couette (manche de pyjama), et une chaussette oubliée
+    s += `<path d="M124 174q22-7 46-3q10 2 16-3" fill="none" stroke="#f3d27a" stroke-width="7" stroke-linecap="round"/><path d="M176 170q6 1 10-2" fill="none" stroke="${peau}" stroke-width="6" stroke-linecap="round"/><circle cx="188" cy="166" r="4.5" fill="${peau}"/>
+<path d="M30 262q-10 10 0 16 8 4 14-4l4-22h-10z" fill="#e05a6a"/><path d="M36 256h10" stroke="#fff" stroke-width="2"/>
+<rect width="400" height="300" fill="#140f35" opacity=".28"/><rect width="400" height="300" fill="url(#ch-lampe)"/>`;
+    return s;
   }
   function fenetreDecor(nuit) {
     const appart = window.CONFIG.logement === 'appartement';
@@ -348,7 +419,7 @@ ${A.fond(nuit, 101, { x: 900, y: 70, r: 26 })}
 <rect x="120" y="20" width="760" height="600" fill="${appart ? '#D8D0C4' : '#E9E2D6'}"/>
 ${appart ? '<g fill="#cfc6b8"><rect x="120" y="20" width="760" height="10"/></g>' : '<g fill="#3E7C8F" stroke="#2b5a66" stroke-width="3"><rect x="170" y="80" width="100" height="335" rx="4"/><rect x="730" y="80" width="100" height="335" rx="4"/></g><g stroke="#2b5a66" stroke-width="2" opacity=".6">' + [110, 160, 210, 260, 310, 360].map(y => `<path d="M180 ${y}h80M740 ${y}h80"/>`).join('') + '</g>'}
 ${tap('vitre', 'La vitre embuée', `<circle class="halo" cx="500" cy="248" r="150" fill="url(#halo-or)" opacity=".5"/>
-  <g clip-path="url(#c-vitre)"><g transform="translate(290,90) scale(1.05)">${chambreCouleur()}</g><rect x="290" y="90" width="420" height="315" fill="url(#g-veilleuse)"/></g>
+  <g clip-path="url(#c-vitre)"><g transform="translate(290,90) scale(1.05)">${chambreVraie()}</g></g>
   <g class="buee" mask="url(#m-buee)"><rect class="voile" x="290" y="90" width="420" height="315" rx="6" fill="#dfe6f2"/><g fill="#fff" opacity=".8">${[[340, 140], [620, 130], [420, 300], [560, 350], [680, 250], [330, 380]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="3.5"/><path d="M${x} ${y + 4}v${10 + (x % 17)}" stroke="#fff" stroke-width="2" stroke-linecap="round"/>`).join('')}</g></g>`)}
 <g fill="none" stroke="#F3EFE6" stroke-width="12"><rect x="284" y="84" width="432" height="327" rx="8"/></g><path d="M500 84v327M284 248h432" stroke="#F3EFE6" stroke-width="8"/>
 <rect x="250" y="410" width="500" height="22" rx="4" fill="#c9bfae"/>
