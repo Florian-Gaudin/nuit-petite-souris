@@ -176,8 +176,10 @@
     passerEtape = fn;
     const b = $('#btn-passer'); if (b) b.hidden = !(State.fini && fn);
   }
+  let affichages = 0; // chaque show() compte : « Passer » ne revient pas sur un nouvel écran (le diplôme, par exemple)
   function show(n, opts) {
     opts = opts || {};
+    affichages++;
     etape(null);
     n = Math.max(0, Math.min(5, n)); if (n > State.unlocked) n = State.unlocked;
     if (courant && courant.unmount) { try { courant.unmount(); } catch (e) { } }
@@ -1089,9 +1091,9 @@ ${places.map(dent).join('')}
   document.body.insertAdjacentHTML('beforeend', `<button class="btn-passer" id="btn-passer" hidden>Passer ${A.icone('vite')}</button>`);
   $('#btn-passer').onclick = () => {
     const f = passerEtape; if (!f) return; SON.play('clic'); NARR.action(null);
-    etape(null); const n = courantN; f();
+    etape(null); const vue = affichages; f();
     // Même chapitre (les scènes du chapitre 1) : sans nouvelle étape déclarée, la même façon de passer resservira
-    setTimeout(() => { if (passerEtape === null && courantN === n) etape(f); }, 1200);
+    setTimeout(() => { if (passerEtape === null && affichages === vue) etape(f); }, 1200);
   };
   NARR.init();
   buildFil();

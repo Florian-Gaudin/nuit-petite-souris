@@ -368,3 +368,16 @@ test('le bandeau prend la hauteur de son texte, sans dépasser le maximum', asyn
   expect(long.h).toBeLessThanOrEqual(108);
   expect(long.plein).toBe(true); // tout le texte tient, sans défilement
 });
+
+test("pas de bouton « Passer » sur le diplôme, la dernière étape", async ({ page }) => {
+  await ouvrir(page, '?reset=1#exemple');
+  await page.evaluate(() => { const A = (window as any).APP; A.state.fini = true; A.state.unlocked = 5; A.show(5); });
+  // Retour en montgolfière → terrier → boîte à trésors → diplôme, en passant chaque étape
+  for (const etape of ['svg.terrier', 'svg.boite', '.diplome']) {
+    await page.locator('#btn-passer').click();
+    await expect(page.locator(etape)).toBeVisible();
+    if (etape !== '.diplome') await expect(page.locator('#btn-passer')).toBeVisible();
+  }
+  await page.waitForTimeout(1600);
+  await expect(page.locator('#btn-passer')).toBeHidden();
+});
