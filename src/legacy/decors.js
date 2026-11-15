@@ -384,6 +384,11 @@ ${A.souris(sx, sy, sw, 'class="quenotte"')}
         + '<path d="M-26 10l-30-60M26 10l30-60M0 10v-66" stroke="#7CD65A" stroke-width="10" opacity=".25" stroke-linecap="round"/>'
         + '<rect x="-24" y="-4" width="48" height="14" fill="#1a2a20"/><path d="M-26-4h52l-6-12h-40z" fill="#2F5D50"/><g fill="#7CD65A"><circle cx="-14" cy="-10" r="2.4"/><circle cx="0" cy="-10" r="2.4"/><circle cx="14" cy="-10" r="2.4"/></g>'
         + '<g class="notes" fill="#7CD65A"><path d="M-10-24v-14l10-3v14"/><circle cx="-12" cy="-24" r="3.4"/><circle cx="-2" cy="-27" r="3.4"/><path d="M16-30v-12" stroke="#7CD65A" stroke-width="2"/><circle cx="14" cy="-30" r="3.2"/></g></g>')
+      // Pendant la musique du Cabaret Vert : des rayons qui balaient le ciel, et de doux flashs
+      + '<g class="lasers" aria-hidden="true" pointer-events="none">'
+        + '<rect class="flash" x="0" y="-1100" width="1000" height="1700" fill="#c8ffd0"/>'
+        + [['#7CD65A', -38, 0], ['#5fe0ff', -18, 1], ['#ffffff', 0, 2], ['#7CD65A', 18, 3], ['#5fe0ff', 38, 4]].map(([c, a, k]) => '<g transform="translate(470,540)"><g class="rayon r' + k + '" style="--a:' + a + 'deg"><path d="M-3 0L-26-900L26-900L3 0Z" fill="' + c + '" opacity=".38"/><path d="M-1 0L-6-900L6-900L1 0Z" fill="' + c + '" opacity=".85"/></g></g>').join('')
+        + '</g>'
       // secret : une étoile qui scintille… et file quand on la touche
       + tap('etoile', 'Une étoile qui scintille', halo(480, 120, 46) + '<g class="filante"><path d="M0 0L-120 60" stroke="#FFF4D6" stroke-width="3" stroke-linecap="round" opacity=".8"/><circle r="5" fill="#FFF4D6"/></g><path class="etoile-vive" d="M480 106l3.5 8 8.5 1-6.2 6 1.6 8.6-7.4-4.2-7.4 4.2 1.6-8.6-6.2-6 8.5-1z" fill="#FFF4D6"/>')
       // secret : un vol d'oies sauvages

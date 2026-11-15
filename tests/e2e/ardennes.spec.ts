@@ -134,3 +134,11 @@ test('le livre occupe tout l\'écran, et sa page garde la même taille sur les q
   const hauteurs = await page.locator('.carte-ard').evaluateAll(l => [...new Set(l.map(e => Math.round(e.getBoundingClientRect().height)))]);
   expect(hauteurs).toHaveLength(1);
 });
+
+test('le Cabaret Vert : des lasers balaient le ciel pendant la musique', async ({ page }) => {
+  await ouvrir(page, '?reset=1#exemple');
+  await ouvrir(page, '?chapitre=1&scene=3#exemple');
+  await expect(page.locator('svg.decor-montgolfiere .lasers .rayon')).toHaveCount(5);
+  await page.locator('.tap[data-el="cabaret"]').dispatchEvent('click');
+  await expect(page.locator('svg.decor-montgolfiere.concert')).toHaveCount(1);
+});

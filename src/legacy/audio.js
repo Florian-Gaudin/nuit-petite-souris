@@ -26,6 +26,24 @@ window.SON = (function () {
     g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(vol || 0.3, t0 + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
     o.connect(g).connect(master); o.start(t0); o.stop(t0 + dur + 0.05);
   }
+  // Synthé filtré : plusieurs oscillateurs désaccordés (« supersaw ») dans un filtre passe-bas qui bouge
+  function synth(freq, dur, vol, when, o) {
+    if (!debloque) return;
+    const c = ensure(); if (!c) return;
+    o = o || {};
+    const t0 = c.currentTime + (when || 0);
+    const f = c.createBiquadFilter(); f.type = 'lowpass'; f.Q.value = o.q || 3;
+    f.frequency.setValueAtTime(o.de || 1200, t0); if (o.a) f.frequency.exponentialRampToValueAtTime(o.a, t0 + dur);
+    const g = c.createGain();
+    g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(vol, t0 + (o.attaque || 0.01)); g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+    f.connect(g).connect(master);
+    const n = o.voix || 1;
+    for (let i = 0; i < n; i++) {
+      const osc = c.createOscillator(); osc.type = o.type || 'sawtooth'; osc.frequency.value = freq;
+      osc.detune.value = (i - (n - 1) / 2) * (o.desaccord || 10);
+      osc.connect(f); osc.start(t0); osc.stop(t0 + dur + 0.05);
+    }
+  }
   function bruit(dur, vol, when, freq, q) {
     if (!debloque) return;
     const c = ensure(); if (!c) return;
@@ -49,17 +67,31 @@ window.SON = (function () {
     grogne() { bruit(0.18, 0.2, 0, 220, 2); bruit(0.14, 0.16, 0.22, 200, 2); },
     plume() { bruit(0.35, 0.06, 0, 1400, 0.6); },
     trompette() { [392, 523, 659].forEach((f, i) => tone(f, 0.35, 'triangle', 0.1, i * 0.14)); tone(784, 0.6, 'triangle', 0.1, 0.42); },
-    // Le Cabaret Vert : huit temps d'électro (grosse caisse, charleston, basse, arpège)
+    // Le Cabaret Vert : seize temps de techno mélodique (la mineur, 124 battements par minute) —
+    // grosse caisse, clap, charleston, basse roulante, accords « supersaw » qui s'ouvrent, montée finale
     concert() {
-      const temps = 0.47, arpege = [220, 262, 330, 392, 349, 262, 294, 349];
-      for (let i = 0; i < 8; i++) {
-        const t = i * temps;
-        tone(120, 0.18, 'sine', 0.42, t, 45); // grosse caisse
-        bruit(0.03, 0.07, t + temps / 2, 7000, 1); // charleston
-        tone(i < 4 ? 55 : 44, 0.2, 'sawtooth', 0.05, t + temps / 2); // basse
-        for (let k = 0; k < 2; k++) tone(arpege[(i * 2 + k) % arpege.length] * 2, 0.12, 'square', 0.025, t + k * temps / 2); // arpège
+      const temps = 60 / 124, d = temps / 4;
+      const accords = [[220, 262, 330], [175, 220, 262], [262, 330, 392], [196, 247, 294]]; // la mineur, fa, do, sol
+      const basses = [55, 43.65, 65.41, 49];
+      for (let i = 0; i < 16; i++) {
+        const t = i * temps, mesure = Math.floor(i / 4), ouverture = 500 + i * 220;
+        tone(150, 0.28, 'sine', 0.5, t, 42); // grosse caisse
+        if (i % 2) bruit(0.14, 0.18, t, 1400, 0.6); // clap
+        for (let k = 1; k < 4; k++) {
+          bruit(0.025, k === 2 ? 0.07 : 0.035, t + k * d, 8500, 1); // charleston
+          synth(basses[mesure], d * 0.9, 0.11, t + k * d, { de: 380, a: 140, q: 7 }); // basse roulante
+        }
+        // L'arpège du lead : une note par croche, le filtre s'ouvre au fil des mesures
+        const ac = accords[mesure];
+        synth(ac[(i * 2) % 3] * 2, temps * 0.45, 0.05, t, { voix: 3, desaccord: 14, de: ouverture, a: ouverture * 0.7, q: 5 });
+        synth(ac[(i * 2 + 1) % 3] * 2, temps * 0.45, 0.04, t + temps / 2, { voix: 3, desaccord: 14, de: ouverture, a: ouverture * 0.7, q: 5 });
+        // La nappe : un accord tenu à chaque mesure
+        if (i % 4 === 0) ac.forEach(f => synth(f, temps * 4, 0.025, t, { voix: 3, desaccord: 18, de: 700, a: 2400, attaque: 0.4 }));
       }
-      tone(880, 0.6, 'square', 0.02, 8 * temps - 0.3, 1320);
+      // La montée, puis le grand coup final
+      for (let k = 0; k < 8; k++) bruit(0.25, 0.04 + k * 0.012, 12 * temps + k * temps / 2, 800 + k * 900, 0.8);
+      tone(110, 1.2, 'sine', 0.45, 16 * temps, 38);
+      [220, 262, 330, 440].forEach(f => synth(f, 1.6, 0.04, 16 * temps, { voix: 5, desaccord: 16, de: 3000, a: 600 }));
     },
     coup() { tone(68, 0.4, 'sine', 0.55); bruit(0.12, 0.45, 0, 300, 0.8); tone(68, 0.3, 'sine', 0.18, 0.17); bruit(0.08, 0.14, 0.17, 300, 0.8); },
     coup1() { sons.coup(); tone(196, 0.7, 'triangle', 0.12, 0.08); },

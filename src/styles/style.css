@@ -957,3 +957,18 @@ html.grand-texte .livre-ancien .livre-texte p{font-size:1.5rem}
 .livre-haut .carnet-chemin{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .carnet-pages.livre-bas{height:50px;align-items:stretch}
 .carnet-pages.livre-bas .btn{height:50px;min-height:0;box-sizing:border-box}
+
+/* ---------- Le Cabaret Vert : lasers et flashs pendant la musique ---------- */
+.decor-montgolfiere .lasers{opacity:0;transition:opacity .6s}
+.decor-montgolfiere.concert .lasers{opacity:1}
+.decor-montgolfiere .lasers .flash{opacity:0}
+.decor-montgolfiere.concert .lasers .flash{animation:flash-concert .968s ease-out infinite}
+.decor-montgolfiere .rayon{transform:rotate(var(--a))}
+.decor-montgolfiere.concert .rayon{animation:balaie 3.9s ease-in-out infinite alternate}
+.decor-montgolfiere.concert .rayon.r1{animation-duration:2.9s;animation-delay:-.6s}
+.decor-montgolfiere.concert .rayon.r2{animation-duration:1.94s;animation-delay:-.3s}
+.decor-montgolfiere.concert .rayon.r3{animation-duration:2.9s;animation-direction:alternate-reverse}
+.decor-montgolfiere.concert .rayon.r4{animation-duration:3.9s;animation-direction:alternate-reverse;animation-delay:-1s}
+@keyframes balaie{from{transform:rotate(calc(var(--a) - 30deg))}to{transform:rotate(calc(var(--a) + 30deg))}}
+@keyframes flash-concert{0%{opacity:.12}35%{opacity:0}100%{opacity:0}}
+@media (prefers-reduced-motion:reduce){.decor-montgolfiere.concert .rayon,.decor-montgolfiere.concert .lasers .flash{animation:none}}

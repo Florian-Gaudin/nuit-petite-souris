@@ -22,6 +22,7 @@ window.SCENES = (function () {
   };
 
   let ctx = null, root = null, wrap = null, svg = null, sc = null, courant = -1, jeton = 0;
+  let cabaretT = null;
   let chaine = [], idx = 0, derniere = null, aideT1 = null, aideT2 = null, raf = null, bougeT = null, secretTaps = 0, secretT = null;
   let occupe = false, enSecret = false;
   let friseX = 0; // position de la frise, gardée d'une scène à l'autre pour la faire glisser
@@ -71,7 +72,13 @@ window.SCENES = (function () {
       oies(g) { g.classList.remove('passe'); void g.getBBox(); g.classList.add('passe'); SON.play('oies'); },
       sedan(g) { g.classList.add('allume'); SON.play('trompette'); },
       ardoises(g) { g.classList.remove('luit'); void g.getBBox(); g.classList.add('luit'); SON.play('harpe'); },
-      cabaret(g) { g.classList.remove('joue'); void g.getBBox(); g.classList.add('joue'); SON.play('concert'); },
+      cabaret(g) {
+        g.classList.remove('joue'); void g.getBBox(); g.classList.add('joue'); SON.play('concert');
+        // Les lasers balaient le ciel le temps du morceau (environ neuf secondes)
+        const s = svg; s.classList.remove('concert'); void s.getBBox(); s.classList.add('concert');
+        MUS.pause(true); // la musique de la scène se tait pendant le concert
+        clearTimeout(cabaretT); cabaretT = setTimeout(() => { if (s) s.classList.remove('concert'); MUS.pause(false); }, 9000);
+      },
     },
     etoiles: {
       // Chaque toucher allume l'étoile suivante et trace le trait qui la relie ; la main d'aide passe à la suivante
