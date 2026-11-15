@@ -190,7 +190,7 @@ test("répondre à Quenotte (dessin) et l'album des dents", async ({ page }) => 
   await expect(page.locator('#dessin-lettre .dessin-enfant img')).toBeVisible();
   await expect(page.locator('#btn-dessin')).toContainText('Modifier mon dessin');
   // Le diplôme (épilogue déjà vu) : le dessin, et l'histoire rangée dans l'album
-  await page.evaluate(() => { const A = (window as any).APP; A.state.epilogue = true; A.state.unlocked = 5; A.show(5); });
+  await page.evaluate(() => { const A = (window as any).APP; A.state.epilogue = true; A.state.unlocked = 5; A.show(5, { diplome: true }); });
   await expect(page.locator('.dessin-enfant img')).toBeVisible();
   // On peut le modifier depuis le diplôme
   await page.locator('#btn-dessin5').click();
@@ -263,7 +263,7 @@ test("l'épilogue revient à chaque fin d'histoire, même en relecture", async (
     await page.locator('#bandeau-actions button', { hasText: 'billet' }).click();
     await expect(page.locator('svg.retour'), `tour ${tour}`).toBeVisible();
     // On saute au diplôme (comme à la fin de l'épilogue) : l'histoire est terminée
-    await page.evaluate(() => { const A = (window as any).APP; A.state.fini = true; A.show(5); });
+    await page.evaluate(() => { const A = (window as any).APP; A.state.fini = true; A.show(5, { diplome: true }); });
     await expect(page.locator('.diplome')).toBeVisible();
   }
 });
@@ -288,4 +288,30 @@ test("recommencer l'histoire efface le dessin ; chaque histoire garde le sien", 
   await expect(page.locator('#dessin-lettre')).toContainText('Réponds à Quenotte');
   await page.locator('#btn-dessin').click();
   await expect(page.locator('.toile-invite')).toBeVisible();
+});
+
+test("histoire terminée : le « 5 » rejoue l'épilogue, et « Passer » franchit chaque étape", async ({ page }) => {
+  await ouvrir(page, '?reset=1#exemple');
+  // Pas encore terminée : pas de bouton « Passer »
+  await ouvrir(page, '?chapitre=1&scene=0#exemple');
+  await expect(page.locator('#btn-passer')).toBeHidden();
+  // Terminée : le bouton apparaît et passe d'une scène à la suivante
+  await page.evaluate(() => { const A = (window as any).APP; A.state.fini = true; A.state.unlocked = 5; A.show(1, { scene: 0 }); });
+  await page.locator('#btn-passer').click();
+  await expect(page.locator('svg.decor-foret')).toBeVisible();
+  // Le « 5 » du ruban : l'épilogue (et pas directement le diplôme)
+  await page.locator('.perle[data-n="5"]').click();
+  await expect(page.locator('svg.retour')).toBeVisible();
+  await page.locator('#btn-passer').click();                       // les nuages
+  await expect(page.locator('svg.terrier')).toBeVisible();
+  await expect(page.locator('.tresors .tresor')).toHaveCount(4);   // les trésors, en grisé
+  await expect(page.locator('.tresors-n')).toHaveText('0');
+  // Rien de l'étape précédente (les nuages) ne reste : pas de bouton « Suite » parasite
+  await page.waitForTimeout(2500);
+  await expect(page.locator('#bandeau-actions button', { hasText: 'Suite' })).toHaveCount(0);
+  await page.locator('#btn-passer').click();                       // le terrier
+  await expect(page.locator('svg.boite')).toBeVisible();
+  await page.locator('#btn-passer').click();                       // la boîte à trésors
+  await expect(page.locator('.diplome')).toBeVisible();
+  await expect(page.locator('#btn-passer')).toBeHidden();
 });

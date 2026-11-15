@@ -156,8 +156,15 @@
     v.classList.add('on');
     return wait(duree + 60).then(() => { fn(); return wait(80); }).then(() => { v.classList.remove('on'); });
   }
+  // ---------- Passer une étape (seulement quand l'histoire a déjà été terminée une fois) ----------
+  let passerEtape = null;
+  function etape(fn) {
+    passerEtape = fn;
+    const b = $('#btn-passer'); if (b) b.hidden = !(State.fini && fn);
+  }
   function show(n, opts) {
     opts = opts || {};
+    etape(null);
     n = Math.max(0, Math.min(5, n)); if (n > State.unlocked) n = State.unlocked;
     if (courant && courant.unmount) { try { courant.unmount(); } catch (e) { } }
     SON.ronfleStop(); NARR.action(null); NARR.cacher(false);
@@ -255,6 +262,7 @@
     },
     mount(r) {
       heure('—'); MUS.ambiance('accueil');
+      etape(() => { complete(0); fondu(() => show(1, { scene: 0 }), 500); });
       // Recadrage : sur un écran en hauteur, on resserre sur le château et la maison, puis on ajoute du ciel
       const svgC = $('.ciel-svg', r), boite = $('.ch0 .ciel', r);
       this.cadre = () => {
@@ -287,6 +295,7 @@
     // Le château dans les Ardennes, une étoile sur le département de l'enfant : un toucher sur l'étoile
     // trace le chemin de la nuit (une courbe en pointillés), puis « En route ! » ouvre le château.
     carte(r) {
+      etape(() => { complete(0); fondu(() => show(1, { scene: 0 }), 500); });
       const K = window.CARTE, ville = window.PROFIL.profil.ville;
       let et = K.etoileDepartement(ville.departement);
       const [cx, cy] = K.CHATEAU;
@@ -419,6 +428,7 @@
     mount(r, opts) {
       const n = sceneDemande != null ? sceneDemande : (opts.scene != null ? opts.scene : Math.min(State.scene, D.scenes.length - 1));
       sceneDemande = null;
+      etape(() => window.SCENES.passer());
       window.SCENES.monter($('#ch1', r), {
         state: State, config: C, T, heure, etoile, toast, save,
         sceneFaite(i) { if (State.scene < i + 1) { State.scene = Math.min(D.scenes.length - 1, i + 1); save(); } },
@@ -454,6 +464,7 @@
   const Ch2 = {
     // Dans la maison plongée dans le noir : le doigt promène la lumière jusqu'à la porte de la chambre
     lampe(r) {
+      etape(() => { complete(2); badge('passechat'); show(3); });
       const self = this; NARR.action(null); heure('02:42');
       $('.ch2', r).innerHTML = `<h2 class="decor-titre"><span class="decor-heure">La nuit dernière à 2 h 42</span>Dans le noir</h2><div class="lampe-wrap">${A.lampeSVG()}</div>`;
       const svg = $('.lampe', r), trou = $('.trou', svg), faisceau = $('.faisceau', svg), plaque = $('.plaque', svg), fente = $('.fente', svg);
@@ -496,6 +507,7 @@
       const btn = $('#btn-avancer', r), jauge = $('#jauge', r), fromages = $('#fromages', r), mini = $('#jauge-souris', r);
       const self = this; let p = 0, tient = false, etat = 'dort', pris = 0, gagne = false, sonne = false, dernier = null, pasT = 0, premierCycle = true;
       heure('02:31'); MUS.ambiance('jeu');
+      etape(() => { complete(2); badge('passechat'); show(3); });
       NARR.dire(B(D.jeu.intro));
       const dis = (arr, expr) => NARR.dire({ txt: T(hasard(arr)), expr }, { vite: true });
       const setEtat = s => {
@@ -579,6 +591,7 @@
       const self = this, cam = $('#cam', r), dets = $('#dets', r), ts = $('#cam-ts', r), nom = $('#cam-nom', r);
       const cs1 = $('#cs1', r), cs2 = $('#cs2', r), bat = $('#bateau2', r), dent = $('#dent1', r), mot = $('#mot1', r), salon = $('#cam-salon', r), chambre = $('#cam-chambre', r);
       heure('02:47'); MUS.ambiance('camera');
+      etape(() => { complete(3); badge('hibou'); show(4); });
       const mv = (el, x, y) => { el.style.transform = `translate(${x}px,${y}px)`; };
       const det = (id, label, l, t, w, h, mode) => {
         let d = $('#det-' + id, dets);
@@ -666,6 +679,7 @@
     mount(r) {
       const self = this, lignes = this.lignes(), papier = $('#papier', r);
       heure('03:02'); MUS.ambiance('lettre');
+      etape(() => { complete(4); badge('amie'); show(5); });
       NARR.dire(B(D.lettreIntro));
       let ecrit = false;
       const n = lignes.length;
@@ -679,7 +693,7 @@
         $('#btn-dessin', z).onclick = () => { SON.play('clic'); atelier(majDessin); };
       };
       majDessin();
-      const termine = () => { $('#btn-tout', r).hidden = true; $('#dessin-lettre', r).hidden = false; NARR.cacher(false); NARR.dire(B(D.lettreFin)); NARR.action(A.icone(C.cadeau === 'piece' ? 'piece' : 'billet') + ' ' + T(D.boutonLettre), () => { complete(4); badge('amie'); badge('billet'); show(5, { epilogue: true }); }); };
+      const termine = () => { $('#btn-tout', r).hidden = true; $('#dessin-lettre', r).hidden = false; NARR.cacher(false); NARR.dire(B(D.lettreFin)); NARR.action(A.icone(C.cadeau === 'piece' ? 'piece' : 'billet') + ' ' + T(D.boutonLettre), () => { complete(4); badge('amie'); badge('billet'); show(5); }); };
       const montreTout = () => { if (ecrit) return; ecrit = true; clearTimeout(self.t); els.forEach(p => { p.textContent = p.dataset.txt; p.classList.add('vue'); }); termine(); };
       // La lettre s'écrit lentement, mot par mot, en très gros caractères
       const ecrire = () => {
@@ -713,8 +727,9 @@
       return `<section class="ch ch5 epilogue"><h2 class="decor-titre"><span class="decor-heure">La nuit dernière à 3 h 20</span>Retour au château</h2><div class="epi-wrap" id="epi"></div></section>`;
     },
     retour(r) {
-      const self = this, zone = $('#epi', r);
+      const self = this, zone = $('#epi', r), mien = self.jeton = (self.jeton || 0) + 1, encore = () => self.jeton === mien;
       heure('03:20'); MUS.ambiance('montgolfiere');
+      etape(() => fondu(() => self.terrier(r), 400));
       zone.innerHTML = `<svg class="retour" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet" role="img" aria-label="La montgolfière rentre au château entre les nuages">
 ${A.fond(State.nuit, 111, { x: 880, y: 90, r: 28 })}
 <path d="M0 560Q250 520 500 545T1000 530V600H0Z" fill="#1E3F36"/><rect x="-600" y="598" width="2200" height="900" fill="#1E3F36"/>
@@ -728,10 +743,10 @@ ${[0, 1, 2].map(i => `<g class="nuage" data-n="${i}" transform="translate(-400,0
       let y = 330, cible = 330, bx = 230, k = 0, x = 1150, ny = 220, touche = false, dernier = null, doigtT = 0, base = null, fini = false, enJeu = false, atterrissage = null;
       // D'abord l'histoire (elle reste affichée), puis les consignes, puis le départ
       (async () => {
-        await NARR.dire(B(D.epilogue.intro));
+        await NARR.dire(B(D.epilogue.intro)); if (!encore()) return;
         NARR.action(T(D.epilogue.suite) + ' ' + A.icone('suite'), async () => {
           SON.play('clic'); NARR.action(null);
-          await NARR.dire(B(D.epilogue.consigne));
+          await NARR.dire(B(D.epilogue.consigne)); if (!encore()) return;
           NARR.action(A.icone('suite') + ' ' + T(D.epilogue.depart), () => { SON.play('clic'); NARR.action(null); enJeu = true; });
         });
       })();
@@ -747,10 +762,11 @@ ${[0, 1, 2].map(i => `<g class="nuage" data-n="${i}" transform="translate(-400,0
         fini = true; nuages.forEach(n => n.setAttribute('transform', 'translate(-400,0)'));
         chateau.classList.add('arrive');
         // Le château arrive, puis la montgolfière descend et se pose dans l'herbe, juste à côté
-        setTimeout(() => { atterrissage = { t: performance.now(), x0: bx, y0: y }; }, RM ? 0 : 1600);
+        setTimeout(() => { if (encore()) atterrissage = { t: performance.now(), x0: bx, y0: y }; }, RM ? 0 : 1600);
       };
       const pose = async () => {
-        SON.play('allume'); await NARR.dire(B(D.epilogue.arrivee));
+        if (!encore()) return;
+        SON.play('allume'); await NARR.dire(B(D.epilogue.arrivee)); if (!encore()) return;
         NARR.action(A.icone('suite') + ' ' + T(D.epilogue.terrierBouton), () => { SON.play('clic'); NARR.action(null); fondu(() => self.terrier(r), 600); });
       };
       const boucle = ts => {
@@ -779,9 +795,10 @@ ${[0, 1, 2].map(i => `<g class="nuage" data-n="${i}" transform="translate(-400,0
     // ---------- Le terrier : un labyrinthe sous la terre, de l'entrée (à gauche) à la porte du château (à droite) ----------
     // Fabriqué à partir du profil (toujours le même pour un enfant), plongé dans le noir : seule la lanterne éclaire.
     terrier(r) {
-      const self = this;
+      const self = this, mien = self.jeton = (self.jeton || 0) + 1, encore = () => self.jeton === mien;
       cancelAnimationFrame(this.raf); window.removeEventListener('deviceorientation', this.incline);
       heure('03:28'); MUS.ambiance('foret');
+      etape(() => fondu(() => self.boite(r), 400));
       // 20 × 7 cases ; un long couloir (2 cases) mène de la dernière case à la porte
       const COLS = 20, ROWS = 7, CELL = 90, X0 = 60, Y0 = 110, LARG = X0 + COLS * CELL + 2 * CELL + 160, HAUT = Y0 + ROWS * CELL + 50, PORTE_X = LARG - 70;
       // Hasard reproductible, à partir de l'identifiant du profil
@@ -850,7 +867,9 @@ ${[0, 1, 2].map(i => `<g class="nuage" data-n="${i}" transform="translate(-400,0
       for (let i = 0; i < 14; i++) { const x = 100 + hasard() * (LARG - 200), h = 40 + hasard() * 110; racines += `<path d="M${x.toFixed(0)} 60q${(hasard() * 30 - 15).toFixed(0)} ${(h / 2).toFixed(0)} ${(hasard() * 20 - 10).toFixed(0)} ${h.toFixed(0)}" fill="none" stroke="#2a1a10" stroke-width="${(2 + hasard() * 3).toFixed(1)}" stroke-linecap="round" opacity=".7"/>`; }
       const solution = chemin(0, 0);
       const zone = $('#epi', r);
-      zone.innerHTML = `<svg class="terrier" viewBox="0 0 600 ${HAUT}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Le terrier de Quenotte : un labyrinthe sous la terre, jusqu'à la porte du château" data-solution="${solution.map(p => p.d).join('')}">
+      // Les trésors du terrier, en grisé en haut : ils s'allument quand Quenotte passe dessus
+      const tresors = `<div class="tresors" aria-live="polite"><span class="tresors-titre">Trésors du terrier : <b class="tresors-n">0</b> / ${surprises.length}</span><span class="tresors-liste">${surprises.map(t => `<svg class="tresor" data-id="${t.id}" viewBox="-30 -24 60 48" aria-hidden="true">${DESSIN_SURPRISE[t.id]}</svg>`).join('')}</span></div>`;
+      zone.innerHTML = tresors + `<svg class="terrier" viewBox="0 0 600 ${HAUT}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Le terrier de Quenotte : un labyrinthe sous la terre, jusqu'à la porte du château" data-solution="${solution.map(p => p.d).join('')}">
 <defs>
   <linearGradient id="g-terre" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6b4a33"/><stop offset=".45" stop-color="#4f3524"/><stop offset="1" stop-color="#2e1d12"/></linearGradient>
   <radialGradient id="g-lanterne"><stop offset=".45" stop-color="#000"/><stop offset="1" stop-color="#fff"/></radialGradient>
@@ -889,7 +908,12 @@ ${surprises.map(s => { const [x, y] = centre(s.c, s.l); return `<g class="surpri
         if (fini) return;
         // Une surprise : son texte revient à chaque passage
         const s = surprises.find(s => s.c === pos[0] && s.l === pos[1]);
-        if (s) { const g = $(`.surprise[data-id="${s.id}"]`, svg); if (g) g.classList.add('vue'); if (!s.vue) SON.play('etoile'); s.vue = true; NARR.dire(B(D.epilogue.surprises[s.id]), { vite: true }); }
+        if (s) {
+          const g = $(`.surprise[data-id="${s.id}"]`, svg); if (g) g.classList.add('vue');
+          if (!s.vue) { SON.play('etoile'); const t = $(`.tresor[data-id="${s.id}"]`, zone); if (t) t.classList.add('trouve'); }
+          s.vue = true; $('.tresors-n', zone).textContent = surprises.filter(x => x.vue).length;
+          NARR.dire(B(D.epilogue.surprises[s.id]), { vite: true });
+        }
         // Devant la porte du château : elle brille, il faut la toucher pour entrer
         devantPorte = pos[0] === sortie[0] && pos[1] === sortie[1];
         svg.classList.toggle('devant-porte', devantPorte);
@@ -901,8 +925,9 @@ ${surprises.map(s => { const [x, y] = centre(s.c, s.l); return `<g class="surpri
         fini = true; svg.classList.remove('devant-porte');
         depart = { x: qx, y: qy, t: performance.now() }; but = { x: PORTE_X - 50, y: sy };
         setTimeout(async () => {
+          if (!encore()) return;
           svg.classList.add('ouverte'); SON.play('cachet');
-          await NARR.dire(B(D.epilogue.porte));
+          await NARR.dire(B(D.epilogue.porte)); if (!encore()) return;
           NARR.action(A.icone('etoile') + ' ' + T(D.epilogue.bouton), () => { SON.play('clic'); NARR.action(null); fondu(() => self.boite(r), 600); });
         }, RM ? 80 : 700);
       };
@@ -948,6 +973,8 @@ ${surprises.map(s => { const [x, y] = centre(s.c, s.l); return `<g class="surpri
       self.raf = requestAnimationFrame(boucle);
     },
     boite(r) {
+      this.jeton = (this.jeton || 0) + 1;
+      etape(() => show(5, { diplome: true }));
       cancelAnimationFrame(this.raf); window.removeEventListener('deviceorientation', this.incline);
       window.removeEventListener('keydown', this.clavier); clearTimeout(this.tAide);
       const zone = $('#epi', r), places = window.PLACES_DENTS, P = window.PROFIL.profil;
@@ -968,7 +995,7 @@ ${places.map(dent).join('')}
       const ranger = () => {
         range = true; tire = false; pose(cible.x, cible.y); d.classList.add('rangee'); place.classList.add('rangee');
         SON.play('fanfare'); NARR.dire(B(D.epilogue.rangee));
-        NARR.action(A.icone('suite') + ' ' + T(D.epilogue.diplome), () => { State.epilogue = true; save(); SON.play('clic'); fondu(() => show(5), 700); });
+        NARR.action(A.icone('suite') + ' ' + T(D.epilogue.diplome), () => { State.epilogue = true; save(); SON.play('clic'); fondu(() => show(5, { diplome: true }), 700); });
       };
       d.addEventListener('pointerdown', e => { if (range) return; e.preventDefault(); tire = true; SON.unlock(); SON.play('clic'); try { d.setPointerCapture(e.pointerId); } catch (er) { } });
       d.addEventListener('pointermove', e => { if (!tire) return; const p = point(e); pose(p.x, p.y); });
@@ -979,10 +1006,10 @@ ${places.map(dent).join('')}
       });
       d.addEventListener('keydown', e => { if (!range && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); ranger(); } });
     },
-    // L'épilogue se joue à chaque fois qu'on arrive au bout de la lettre (première lecture comme relecture) ;
-    // le ruban du haut mène, lui, directement au diplôme
+    // Le chapitre 5 commence toujours par l'épilogue (après la lettre comme depuis le « 5 » du ruban) ;
+    // le diplôme vient ensuite (opts.diplome)
     render(opts) {
-      if (opts && opts.epilogue) return this.epilogueHTML();
+      if (!(opts && opts.diplome)) return this.epilogueHTML();
       const qs = 'badges=' + encodeURIComponent(State.badges.join(',')) + '&secret=' + (State.secret ? 1 : 0) + '&nuit=' + State.nuit + '&etoiles=' + nbEtoiles();
       return `<section class="ch ch5">
   <h2 class="decor-titre"><span class="decor-heure">La nuit dernière à 3 h 40</span>Bravo ${esc(C.enfant)} !</h2>
@@ -998,7 +1025,7 @@ ${places.map(dent).join('')}
 </section>`;
     },
     mount(r, opts) {
-      if (opts && opts.epilogue) { this.retour(r); return; }
+      if (!(opts && opts.diplome)) { this.retour(r); return; }
       heure('03:40'); MUS.ambiance('diplome');
       const premiere = !State.fini;
       complete(5); if (premiere) { State.fini = true; save(); }
@@ -1011,15 +1038,17 @@ ${places.map(dent).join('')}
       $('#btn-revoir5', r).onclick = () => show(1, { scene: 0 });
       $('#btn-album5', r).onclick = album;
       // Après l'atelier, le diplôme se redessine avec le nouveau dessin
-      $('#btn-dessin5', r).onclick = () => { SON.play('clic'); atelier(() => show(5)); };
+      $('#btn-dessin5', r).onclick = () => { SON.play('clic'); atelier(() => show(5, { diplome: true })); };
     },
-    unmount() { cancelAnimationFrame(this.raf); window.removeEventListener('deviceorientation', this.incline); window.removeEventListener('keydown', this.clavier); clearTimeout(this.tAide); },
+    unmount() { this.jeton = (this.jeton || 0) + 1; cancelAnimationFrame(this.raf); window.removeEventListener('deviceorientation', this.incline); window.removeEventListener('keydown', this.clavier); clearTimeout(this.tAide); },
   };
 
   const Chapitres = [Ch0, Ch1, Ch2, Ch3, Ch4, Ch5];
 
   // ---------- Démarrage ----------
   document.body.insertAdjacentHTML('afterbegin', A.symboles());
+  document.body.insertAdjacentHTML('beforeend', `<button class="btn-passer" id="btn-passer" hidden>Passer ${A.icone('vite')}</button>`);
+  $('#btn-passer').onclick = () => { const f = passerEtape; if (!f) return; SON.play('clic'); NARR.action(null); etape(null); f(); };
   NARR.init();
   buildFil();
   // Premier toucher : on autorise les sons et on lance la musique d'ambiance

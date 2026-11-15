@@ -763,3 +763,15 @@ html{touch-action:pan-x pan-y}
 .album .supprimer{background:#fff;color:var(--rouge2);border-color:#e9b4b8}
 .album .supprimer.confirme{background:var(--rouge);color:#fff;border-color:var(--rouge)}
 .terrier .nuit-terrier{pointer-events:none}
+
+/* Passer une étape (histoire déjà terminée) */
+.btn-passer{position:fixed;right:max(12px,env(safe-area-inset-right,0px));bottom:calc(var(--bandeau-h) + 14px);z-index:30;display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:0 14px;border-radius:999px;border:1.5px solid #3d4a95;background:rgba(20,26,58,.88);color:var(--clair);font:700 .95rem var(--display);cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.35)}
+.btn-passer .ico{width:18px;height:18px}
+body.mode-choix .btn-passer{display:none}
+/* Les trésors du terrier */
+.epilogue .epi-wrap{flex-direction:column}
+.tresors{flex:none;width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 12px;background:#2a1a10;color:#e8d4b8;font:700 .9rem var(--display)}
+.tresors-liste{display:flex;gap:6px}
+.tresor{width:36px;height:30px;filter:grayscale(1) brightness(.6);opacity:.45;transition:filter .5s,opacity .5s}
+.tresor.trouve{filter:drop-shadow(0 0 5px #FFC857);opacity:1}
+.tresors-n{color:var(--lanterne)}

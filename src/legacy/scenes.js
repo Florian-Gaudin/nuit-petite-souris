@@ -452,7 +452,17 @@ window.SCENES = (function () {
     else NARR.action('Scène suivante ' + A.icone('suite'), async () => { SON.play('clic'); NARR.action(null); const n = courant + 1; await sortie(); ctx.fondu(() => ouvrir(n)); });
   }
 
+  // Passer la scène en cours (histoire déjà terminée) : la suivante, ou le chapitre suivant après la dernière
+  function passer() {
+    if (!sc) return;
+    const n = courant;
+    ctx.sceneFaite(n);
+    if (n >= D.scenes.length - 1) { fermer(); ctx.finChapitre(); }
+    else ctx.fondu(() => ouvrir(n + 1));
+  }
+
   return {
+    passer,
     monter(r, c, n) { root = r; ctx = c; ouvrir(Math.max(0, Math.min(D.scenes.length - 1, n))); },
     demonter() { fermer(); root = null; },
     get courante() { return courant; },
