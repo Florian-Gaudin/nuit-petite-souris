@@ -594,9 +594,13 @@ body.mode-choix .fil,body.mode-choix .bandeau{display:none}
 .carte-choix small{display:block;color:var(--muet);font-size:.95rem;margin-top:2px}
 .carte-choix .ic{flex:none;width:48px;height:48px;border-radius:50%;display:grid;place-items:center;background:#2b3470;color:var(--lanterne)}
 .carte-choix .ic .ico{width:28px;height:28px}
-.carte-choix.voyage{background:var(--lanterne);border-color:#fff3c4;color:#3b2a00}
-.carte-choix.voyage small{color:#5a4410}
-.carte-choix.voyage .ic{background:#fff3c4;color:var(--lanterne2)}
+/* La carte principale (l'histoire de l'enfant, ou à défaut l'espace parents) en jaune ; l'exemple en bleu, plus discret */
+.carte-choix.principale{background:var(--lanterne);border-color:#fff3c4;color:#3b2a00}
+.carte-choix.principale small{color:#5a4410}
+.carte-choix.principale .ic{background:#fff3c4;color:var(--lanterne2)}
+.carte-choix.voyage{background:rgba(36,66,120,.55);border:1.5px solid #3f6bb0;box-shadow:none;color:#dce8ff}
+.carte-choix.voyage small{color:#a9c1e8}
+.carte-choix.voyage .ic{background:rgba(63,107,176,.35);color:#9cc0ff}
 .carte-choix:hover,.carte-choix:focus-visible{transform:translateY(-2px)}
 /* L'écran de choix tient toujours sur la hauteur de l'écran, sans défiler : tout se resserre avec la hauteur */
 .scene.choix-scene{height:100vh;height:100dvh;min-height:0;overflow:hidden}
@@ -610,6 +614,10 @@ body.mode-choix .fil,body.mode-choix .bandeau{display:none}
 .carte-choix small{font-size:clamp(.8rem,1.9vh,.95rem)}
 .carte-choix .ic{width:clamp(34px,6vh,48px);height:clamp(34px,6vh,48px)}
 .carte-choix .ic .ico{width:clamp(20px,3.5vh,28px);height:clamp(20px,3.5vh,28px)}
+.carte-choix.voyage{min-height:clamp(46px,7vh,62px)}
+.carte-choix.voyage b{font-size:clamp(.92rem,2.1vh,1.02rem)}
+.carte-choix.voyage .ic{width:clamp(28px,5vh,38px);height:clamp(28px,5vh,38px)}
+.carte-choix.voyage .ic .ico{width:clamp(16px,2.8vh,22px);height:clamp(16px,2.8vh,22px)}
 .don-accueil{font-size:clamp(.78rem,1.8vh,.9rem)}
 .don-accueil a{min-height:clamp(30px,4.4vh,36px);margin-top:clamp(2px,.8vh,8px)}
 /* Très petits écrans : la phrase du don s'efface, son bouton reste ; téléphone couché : le logo aussi */

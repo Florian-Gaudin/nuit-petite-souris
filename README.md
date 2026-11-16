@@ -38,7 +38,7 @@ Quenotte reste dans les Ardennes jusqu'à la montgolfière ; le cours d'eau peut
 ## L'accueil
 
 - **Écran de lancement** : le logo sur le fond de sa couleur, au moins 1,2 s, une seule fois par visite (inscrit dans `index.html`, il s'affiche avant tout chargement).
-- **Écran de choix** : à l'ouverture sans QR code (`…/nuit-petite-souris/`), trois cartes : « Reprendre l'histoire de… » (si un profil a déjà été scanné sur l'appareil), « Débuter le voyage avec Quenotte » (l'exemple de Clémentine, adresse `#exemple`) et « Je suis un parent ». Le menu Préférences propose « Changer d'histoire » pour y revenir.
+- **Écran de choix** : à l'ouverture sans QR code (`…/nuit-petite-souris/`), en jaune « L'histoire de… » (si un profil a déjà été scanné sur l'appareil), ou à défaut « Créer l'histoire de mon enfant » (l'espace parents) ; puis l'espace parents s'il n'est pas déjà en jaune ; enfin, en bleu plus discret, « Découvrir l'aventure » (l'exemple de Clémentine, adresse `#exemple`). Le menu Préférences propose « Changer d'histoire » pour y revenir.
 - **Par le QR code ou le lien des parents** (`#p=…`) : directement l'accueil personnalisé (prénom, ville, date).
 - **La carte de France** (`src/lib/carte.ts`) : entre l'accueil et le château, hors de la frise des scènes. Quenotte explique qu'elle part toujours de son château des Ardennes ; l'enfant touche l'étoile de sa ville (chef-lieu de son département, encadré pour l'outre-mer) et un chemin courbe en pointillés se dessine jusqu'à elle.
 

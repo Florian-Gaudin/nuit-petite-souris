@@ -487,9 +487,9 @@
     <h1 class="titre">La nuit de la Petite Souris</h1>
   </div>
   <nav class="choix-cartes" aria-label="Choisir son parcours">
-    ${m ? `<a class="carte-choix reprendre" href="#p=${m.code}"><span class="ic">${A.icone('lanterne')}</span><span><b>Reprendre l'histoire de ${esc(m.prenom)}</b><small>Retrouver Quenotte là où on l'a laissée</small></span></a>` : ''}
-    <a class="carte-choix voyage" href="#exemple"><span class="ic">${A.icone('etoile')}</span><span><b>Débuter le voyage avec Quenotte</b><small>Découvre l'histoire de ${esc(exemple)}</small></span></a>
-    <a class="carte-choix parents" href="parents/"><span class="ic">${A.icone('famille')}</span><span><b>Je suis un parent</b><small>Préparer l'histoire personnalisée pour mon enfant</small></span></a>
+    ${m ? `<a class="carte-choix reprendre principale" href="#p=${m.code}"><span class="ic">${A.icone('lanterne')}</span><span><b>L'histoire de ${esc(m.prenom)}</b><small>Retrouver Quenotte là où on l'a laissée</small></span></a>` : ''}
+    <a class="carte-choix parents${m ? '' : ' principale'}" href="parents/"><span class="ic">${A.icone('famille')}</span><span><b>${m ? 'Espace parents' : "Créer l'histoire de mon enfant"}</b><small>${m ? "Préparer ou modifier l'histoire personnalisée" : "Dans l'espace parents, en quelques minutes"}</small></span></a>
+    <a class="carte-choix voyage" href="#exemple"><span class="ic">${A.icone('etoile')}</span><span><b>Découvrir l'aventure</b><small>Pour tester l'aventure avec l'histoire de ${esc(exemple)}</small></span></a>
   </nav>
   <button class="lien-album" id="lien-album">${A.icone('etoile')} ${esc(T(D.album.titre))}</button>
   ${window.DON_POSSIBLE ? `<p class="don-accueil"><span class="phrase">Gratuite pour toutes les familles, l'appli vit grâce à vos petits dons.</span> <a href="parents/#don"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z" fill="currentColor"/></svg>Faire un don</a></p>` : ''}

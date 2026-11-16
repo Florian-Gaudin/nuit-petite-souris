@@ -182,9 +182,16 @@ window.NARR = (function () {
       afficher(b).then(() => { if (inter && inter.resolve === res) el.classList.add('attente'); });
     });
   }
+  // Une phrase déjà lue en entier qui n'attendait que « Suite » n'est pas réaffichée : l'histoire passe à la suite.
+  // Elle revient seulement si elle demande une action (toucher un élément de l'image, bouton du bandeau) ou si elle s'écrivait encore.
   function restaurer() {
     const i = inter; inter = null;
     el.classList.remove('attente', 'interrompu'); actions.hidden = false;
+    if (i.attente && !i.dire && !actions.children.length) {
+      courante = i.bulle; i.attente(true);
+      if (i.resolve) i.resolve(true);
+      return;
+    }
     if (i.bulle) { courante = i.bulle; afficher(i.bulle, { vite: 'instant' }); }
     if (i.dire) i.dire();
     if (i.attente) { attente = i.attente; el.classList.add('attente'); }

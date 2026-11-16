@@ -94,6 +94,17 @@ test("l'écran de choix tient sans défiler, avec ses trois cartes et le don", a
   }
 });
 
+test("l'écran de choix : l'histoire de l'enfant en jaune en haut, sinon l'espace parents ; l'exemple en dernier", async ({ page }) => {
+  await ouvrir(page, '?reset=1');
+  const ordre = () => page.locator('.carte-choix').evaluateAll(l => l.map(e => e.className.replace('carte-choix ', '')));
+  expect(await ordre()).toEqual(['parents principale', 'voyage']);
+  await expect(page.locator('.carte-choix.voyage')).toContainText("Pour tester l'aventure avec l'histoire de Clémentine");
+  await ouvrir(page, '#p=' + code(LEO));
+  await ouvrir(page, './');
+  expect(await ordre()).toEqual(['reprendre principale', 'parents', 'voyage']);
+  await expect(page.locator('.carte-choix.principale')).toContainText('Léo');
+});
+
 test('débuter, changer d\'histoire, reprendre : sur place, sans recharger (le plein écran est gardé)', async ({ page }) => {
   await ouvrir(page, '#p=' + code(LEO));                 // Léo est mémorisé
   await ouvrir(page, '?reset=1');                        // l'écran de choix, l'exemple chargé en décor

@@ -127,6 +127,23 @@ test("le conseil des secrets ne s'affiche pas si l'enfant a déjà trouvé une �
   expect(vus.some(t => t.includes('Un conseil'))).toBe(false);
 });
 
+test("après un secret, le conseil déjà lu ne revient pas : l'histoire passe à la demande", async ({ page }) => {
+  await ouvrir(page, '?reset=1#exemple');
+  await ouvrir(page, '?chapitre=1&scene=0#exemple');
+  // On avance jusqu'au conseil, lu en entier
+  for (let i = 0; i < 40 && !((await page.locator('#bandeau-texte').textContent()) || '').includes('Un conseil'); i++) {
+    if (await page.locator('#bandeau.attente .bandeau-suite').isVisible()) await page.locator('.bandeau-suite').click();
+    await page.waitForTimeout(250);
+  }
+  await expect(page.locator('#bandeau.attente')).toBeVisible();
+  // L'enfant touche le sac, lit le secret, puis « Suite » : directement la lanterne
+  await page.locator('.tap[data-el="sac"]').click();
+  await expect(page.locator('#bandeau.interrompu.attente')).toBeVisible({ timeout: 20_000 });
+  await page.locator('.bandeau-suite').click();
+  await expect(page.locator('#bandeau-texte')).toContainText('Allume ma lanterne');
+  await expect(page.locator('#bandeau-texte')).not.toContainText('Un conseil');
+});
+
 test('les saisons suivent la date de la nuit, et restent dehors', async ({ page }) => {
   for (const [nuit, saison] of [['2026-12-24', 'hiver'], ['2026-04-10', 'printemps'], ['2026-07-14', 'ete'], ['2026-10-31', 'automne']]) {
     await ouvrir(page, '?chapitre=1&scene=0#p=' + code({ ...structuredClone(LEO), nuit }));
