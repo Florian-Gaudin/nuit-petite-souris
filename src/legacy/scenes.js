@@ -134,26 +134,28 @@ window.SCENES = (function () {
   const THEME_ETOILES = [76, 81, 83, 84, 83, 81, 79, 81, 83, 76];
   const NOTES_DENT = THEME_ETOILES.slice(0, 7);
   const CONSTELLATIONS = [
-    { cle: 'souris', pts: [[330, 200], [280, 150], [250, 70], [205, 125], [130, 105], [55, 150], [60, 230], [150, 250], [250, 240], [300, 225]], leurres: 2, notes: THEME_ETOILES },
-    { cle: 'montgolfiere', pts: [[180, 10], [255, 35], [295, 105], [275, 180], [215, 248], [218, 312], [142, 312], [145, 248], [85, 180], [65, 105], [105, 35], [140, 15]], leurres: 4, notes: THEME_ETOILES.concat([79, 81]) },
+    // place : [x, y, échelle] dans le ciel pendant le jeu (agrandies et centrées)
+    { cle: 'souris', place: [305, 50, 1.35], pts: [[330, 200], [280, 150], [250, 70], [205, 125], [130, 105], [55, 150], [60, 230], [150, 250], [250, 240], [300, 225]], leurres: 2, notes: THEME_ETOILES },
+    { cle: 'montgolfiere', place: [340, 78, 1.25], pts: [[180, 10], [255, 35], [295, 105], [275, 180], [215, 248], [218, 312], [142, 312], [145, 248], [85, 180], [65, 105], [105, 35], [140, 15]], leurres: 4, notes: THEME_ETOILES.concat([79, 81]) },
   ];
-  const ORIGINE_CIEL = [390, 105]; // les constellations se dessinent au milieu du ciel
   const HESITATION = 5000;
   function tracer(c, mien) {
     return new Promise(fini => {
-      const NS = 'http://www.w3.org/2000/svg', [ox, oy] = ORIGINE_CIEL;
+      const NS = 'http://www.w3.org/2000/svg', [ox, oy, ech] = c.place;
       const g = document.createElementNS(NS, 'g');
-      g.setAttribute('class', 'cst cst-' + c.cle); g.setAttribute('transform', `translate(${ox},${oy})`);
-      // Les leurres : à l'écart des vraies étoiles
+      g.setAttribute('class', 'cst cst-' + c.cle); g.setAttribute('transform', `translate(${ox},${oy}) scale(${ech})`);
+      // Les leurres : autour de la constellation, à l'écart des vraies étoiles
+      const xs = c.pts.map(p => p[0]), ys = c.pts.map(p => p[1]);
+      const [x0, x1, y0, y1] = [Math.min(...xs) - 40, Math.max(...xs) + 40, Math.min(...ys) - 30, Math.max(...ys) + 30];
       const leurres = []; let essai = 0;
       while (leurres.length < c.leurres && essai++ < 200) {
-        const p = [-20 + Math.random() * 380, -10 + Math.random() * 340];
+        const p = [x0 + Math.random() * (x1 - x0), y0 + Math.random() * (y1 - y0)];
         if (c.pts.concat(leurres).every(q => Math.hypot(q[0] - p[0], q[1] - p[1]) > 70)) leurres.push(p);
       }
       const etoileG = (p, cls, i) => `<g class="${cls}"${i != null ? ` data-ordre="${i}"` : ''} transform="translate(${p[0]},${p[1]})"><circle r="30" fill="transparent"/><circle class="cst-lueur" r="20" fill="url(#halo-or)"/><use href="#etoile5" x="-12" y="-12" width="24" height="24"/></g>`;
       g.innerHTML = `<path class="cst-forme" d="M${c.pts.map(p => p.join(' ')).join('L')}Z"/><g class="cst-traits"></g><line class="cst-fil" x1="0" y1="0" x2="0" y2="0"/>`
         + leurres.map(p => etoileG(p, 'cst-leurre')).join('') + c.pts.map((p, i) => etoileG(p, 'cst-pt' + (i === 0 ? ' prochaine' : ''), i)).join('')
-        + `<text class="cst-nom" x="180" y="372" text-anchor="middle">${T(sc.ciel[c.cle].nom)}</text>`;
+        + `<text class="cst-nom" x="${((Math.min(...xs) + Math.max(...xs)) / 2).toFixed(0)}" y="${Math.max(...ys) + 60}" text-anchor="middle" style="font-size:${(32 / ech).toFixed(1)}px;stroke-width:${(7 / ech).toFixed(1)}px">${T(sc.ciel[c.cle].nom)}</text>`;
       svg.appendChild(g);
       const traits = $('.cst-traits', g), fil = $('.cst-fil', g), pts = $$('.cst-pt', g);
       let n = 0, trace = false, hesiteT = null;
