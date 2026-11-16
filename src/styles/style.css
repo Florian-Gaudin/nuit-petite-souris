@@ -1474,11 +1474,12 @@ body.mode-choix .prefs-accueil{visibility:hidden}
 .decor-etoiles .cst-filante:focus-visible .cst-filante-in circle:first-child{stroke:var(--lanterne);stroke-width:3}
 .decor-etoiles .cst-filante.exauce .cst-filante-in{animation-play-state:paused;transition:opacity 1.4s,filter 1.4s;opacity:0;filter:drop-shadow(0 0 30px #FFE7A0)}
 @media (prefers-reduced-motion:reduce){.decor-etoiles .cst-filante-in{animation:none;transform:translate(600px,180px)}}
-/* Le ciel entier, après le vœu : la Dent au centre, la Souris et la Montgolfière vont se ranger dans les coins du ciel */
+/* Le ciel entier, après le vœu : la Montgolfière au centre, la Souris en haut à gauche, la Dent en haut à droite */
 .decor-etoiles .cst{transition:opacity 1s,transform 1.8s cubic-bezier(.4,0,.2,1)}
-.decor-etoiles.ciel-entier .cst-souris{transform:translate(60px,60px) scale(.5)}
+.decor-etoiles.ciel-entier .cst-souris{transform:translate(40px,18px) scale(.5)}
 .decor-etoiles.ciel-entier .cst-leurre{opacity:0;transition:opacity 1s}
-.decor-etoiles.ciel-entier .cst-montgolfiere{transform:translate(770px,15px) scale(.5)}
+.decor-etoiles .tap[data-el="constellation"]{transition:opacity 1s,transform 1.8s cubic-bezier(.4,0,.2,1)}
+.decor-etoiles.ciel-entier .tap[data-el="constellation"]{transform:translate(585px,-5px) scale(.5)}
 
 /* Après les trois constellations : les étoiles se touchent pour jouer la mélodie */
 .decor-etoiles.etoiles-musicales .cst-pt,.decor-etoiles.etoiles-musicales .tap[data-el="constellation"],.decor-etoiles.etoiles-musicales .tap[data-el="constellation"] .pt{pointer-events:auto;cursor:pointer}
