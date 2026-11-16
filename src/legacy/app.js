@@ -140,27 +140,28 @@
     $('#fil').innerHTML = `<div class="fil-in">
       <div class="ruban" aria-label="Progression de l'histoire">${perles}<div class="fil-souris"><svg viewBox="0 0 130 100"><use href="#souris-side"/></svg></div></div>
       <div class="prefs">
-        <button class="btn-ico" id="btn-prefs" aria-label="Préférences" aria-haspopup="true" aria-expanded="false">${A.icone('reglages')}</button>
-        <div class="prefs-menu" id="prefs-menu" role="menu" aria-label="Réglages" hidden>
-          <div class="prefs-tete"><span class="prefs-nom">Réglages</span><button role="menuitem" id="pref-fermer" class="prefs-x" aria-label="Fermer les réglages">✕</button></div>
-          <div role="group" aria-labelledby="g-lire"><p class="prefs-titre" id="g-lire">Pour lire</p>
-            <button role="menuitemcheckbox" id="pref-son" class="interrupteur" aria-checked="false"><span class="pref-lib"></span><span class="bascule" aria-hidden="true"></span></button>
-            <button role="menuitemcheckbox" id="pref-grand" class="interrupteur" aria-checked="false"><span class="pref-lib"></span><span class="bascule" aria-hidden="true"></span></button>
-            ${PLEIN.api && !PLEIN.appli ? '<button role="menuitemcheckbox" id="pref-plein" class="interrupteur" aria-checked="false"><span class="pref-lib"></span><span class="bascule" aria-hidden="true"></span></button>' : ''}
-            ${'vibrate' in navigator ? '<button role="menuitemcheckbox" id="pref-vibreur" class="interrupteur" aria-checked="false"><span class="pref-lib"></span><span class="bascule" aria-hidden="true"></span></button>' : ''}
-          </div>
+        <button class="btn-ico" id="btn-prefs" aria-label="Menu" aria-haspopup="true" aria-expanded="false">${A.icone('reglages')}</button>
+        <div class="prefs-menu" id="prefs-menu" role="menu" aria-label="Menu" hidden>
+          <div class="prefs-tete"><a role="menuitem" id="pref-changer" class="prefs-accueil" href="./"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5L12 4l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z" fill="currentColor"/></svg> Accueil</a><button role="menuitem" id="pref-fermer" class="prefs-x" aria-label="Fermer le menu">✕</button></div>
           <div role="group" aria-labelledby="g-tresors" id="groupe-tresors" hidden><p class="prefs-titre" id="g-tresors">Mes trésors</p>
             <button role="menuitem" id="pref-diplome" hidden><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3.5" width="18" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M7 8h10M7 11.5h7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="16" cy="17" r="3.2" fill="currentColor"/><path d="M14.4 19.5l-.9 3.5 2.5-1.3 2.5 1.3-.9-3.5" fill="currentColor"/></svg> ${esc(T(D.fin.menuDiplome))}</button>
             <button role="menuitem" id="pref-tresors" hidden><svg class="ico" viewBox="-32 -50 64 86" aria-hidden="true"><path d="M-13-45h10l8 22h-10zM13-45h-10l-8 22h10z" fill="currentColor" opacity=".7"/><circle cy="6" r="25" fill="none" stroke="currentColor" stroke-width="7"/><path d="M0-8l4 9 9 1-7 6 2 9-8-5-8 5 2-9-7-6 9-1z" fill="currentColor"/></svg> ${esc(T(D.tresors.menu))}</button>
             <button role="menuitem" id="pref-carnet" hidden><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1C14 1 15 3 14.5 4.5C17 4 18 6 16 7.5C19 7.5 19.5 10 17 11C19.5 11.5 19 14.5 16 14C17 16 15.5 17.5 13.2 17L12.6 19V22.5H11.4V19L10.8 17C8.5 17.5 7 16 8 14C5 14.5 4.5 11.5 7 11C4.5 10 5 7.5 8 7.5C6 6 7 4 9.5 4.5C9 3 10 1 12 1Z" fill="currentColor"/></svg> Le carnet des Ardennes</button>
             <button role="menuitem" id="pref-album" hidden>${A.icone('etoile')} ${esc(T(D.album.titre))}</button>
           </div>
+          <div role="group" aria-labelledby="g-lire" class="groupe-reglages"><button role="menuitem" class="prefs-titre prefs-plier" id="g-lire" aria-expanded="false" aria-controls="reglages-liens">Réglages <svg class="chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+            <div id="reglages-liens" hidden>
+            <button role="menuitemcheckbox" id="pref-son" class="interrupteur" aria-checked="false"><span class="pref-lib"></span><span class="bascule" aria-hidden="true"></span></button>
+            <button role="menuitemcheckbox" id="pref-grand" class="interrupteur" aria-checked="false"><span class="pref-lib"></span><span class="bascule" aria-hidden="true"></span></button>
+            ${PLEIN.api && !PLEIN.appli ? '<button role="menuitemcheckbox" id="pref-plein" class="interrupteur" aria-checked="false"><span class="pref-lib"></span><span class="bascule" aria-hidden="true"></span></button>' : ''}
+            ${'vibrate' in navigator ? '<button role="menuitemcheckbox" id="pref-vibreur" class="interrupteur" aria-checked="false"><span class="pref-lib"></span><span class="bascule" aria-hidden="true"></span></button>' : ''}
+            </div>
+          </div>
           <div role="group" aria-labelledby="g-grands" class="groupe-grands"><button role="menuitem" class="prefs-titre prefs-plier" id="g-grands" aria-expanded="false" aria-controls="grands-liens">Pour les grands <svg class="chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
             <div id="grands-liens" hidden>
             <a role="menuitem" id="pref-parents" href="parents/">${A.icone('famille')} Espace parents</a>
             <a role="menuitem" id="pref-video" href="decouvrir/"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M10 9.2v5.6l4.8-2.8z" fill="currentColor"/></svg> La vidéo de présentation</a>
             <a role="menuitem" id="pref-infos" href="infos/"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 10.5v6M12 7.2v.1" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg> Informations</a>
-            <a role="menuitem" id="pref-changer" href="./"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5L12 4l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z" fill="currentColor"/></svg> Retour à l'accueil</a>
             <div class="prefs-bas"><button role="menuitem" id="pref-reset" class="danger">${A.icone('recommencer')} Recommencer l'histoire</button></div>
             </div>
           </div>
@@ -186,10 +187,13 @@
       $('#pref-diplome').hidden = !tresorsVu; $('#pref-tresors').hidden = !tresorsVu; $('#pref-carnet').hidden = !carnetVu; $('#pref-album').hidden = !albumVu; $('#groupe-tresors').hidden = !carnetVu && !albumVu && !tresorsVu;
       $('#pref-reset').innerHTML = A.icone('recommencer') + " Recommencer l'histoire"; $('#pref-reset').classList.remove('confirme');
       plierGrands(true);
+      plier('g-lire', 'reglages-liens', !$('#groupe-tresors').hidden && !document.body.classList.contains('mode-choix'));
     };
     // « Pour les grands » (espace parents, informations, accueil, recommencer) : replié pendant l'histoire
-    const plierGrands = plie => { $('#grands-liens').hidden = plie; $('#g-grands').setAttribute('aria-expanded', String(!plie)); };
+    const plier = (bouton, zone, plie) => { $('#' + zone).hidden = plie; $('#' + bouton).setAttribute('aria-expanded', String(!plie)); };
+    const plierGrands = plie => plier('g-grands', 'grands-liens', plie);
     $('#g-grands').onclick = () => { SON.play('clic'); plierGrands(!$('#grands-liens').hidden); if (!$('#grands-liens').hidden) $('#pref-parents').scrollIntoView({ block: 'nearest' }); };
+    $('#g-lire').onclick = () => { SON.play('clic'); plier('g-lire', 'reglages-liens', !$('#reglages-liens').hidden); };
     const fermerMenu = () => { menu.hidden = true; bPrefs.setAttribute('aria-expanded', 'false'); document.getElementById('fil').classList.remove('menu-ouvert'); };
     boutonPlein.maj = majPrefs;
     bPrefs.onclick = e => { e.stopPropagation(); if (menu.hidden) { majPrefs(); menu.hidden = false; bPrefs.setAttribute('aria-expanded', 'true'); document.getElementById('fil').classList.add('menu-ouvert'); } else fermerMenu(); };

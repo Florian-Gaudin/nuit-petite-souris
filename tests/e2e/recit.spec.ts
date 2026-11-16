@@ -241,8 +241,8 @@ test("répondre à Quenotte (dessin) et l'album des dents", async ({ page }) => 
   // L'album vide : plus de bouton sur l'accueil (il revient avec la prochaine histoire terminée)
   await page.locator('.album [data-a="fermer"]').click();
   await ouvrir(page, '?reset=1#exemple');
-  await page.locator('#btn-prefs').click(); await page.locator('#g-grands').click();
-  await expect(page.locator('#pref-changer')).toContainText("Retour à l'accueil");
+  await page.locator('#btn-prefs').click();
+  await expect(page.locator('#pref-changer')).toContainText('Accueil');
   await page.locator('#pref-changer').click();
   await expect(page.locator('.ecran-choix')).toBeVisible();
   await expect(page.locator('#lien-album')).toHaveCount(0);

@@ -1409,3 +1409,8 @@ html.grand-texte .livre-ancien .livre-texte p{font-size:1.5rem}
 .dip-fermer:focus-visible{outline:3px solid var(--lanterne);outline-offset:4px}
 /* Dans la fenêtre « Mes trésors » (une colonne flexible qui défile), rien ne doit être écrasé : le cadre garde sa hauteur */
 .fen-tresors .atelier-in>*{flex:none}
+
+/* En tête du menu : la maison et « Accueil » (sur l'accueil lui-même, rien) */
+.prefs-tete .prefs-accueil{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 12px;border-radius:999px;background:var(--lanterne);color:#3b2a00;font:800 1.05rem var(--display);text-decoration:none}
+.prefs-tete .prefs-accueil:hover,.prefs-tete .prefs-accueil:focus-visible{background:#ffd47a}
+body.mode-choix .prefs-accueil{visibility:hidden}

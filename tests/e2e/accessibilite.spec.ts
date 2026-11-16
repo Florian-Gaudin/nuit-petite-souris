@@ -58,6 +58,7 @@ test("« Grand texte » : le texte de l'histoire grandit, défile si besoin, et 
   const taille = () => page.locator('#bandeau-texte').evaluate(e => parseFloat(getComputedStyle(e).fontSize));
   const avant = await taille();
   await page.locator('#btn-prefs').click();
+  if (await page.locator('#g-lire').getAttribute('aria-expanded') === 'false') await page.locator('#g-lire').click();
   await expect(page.locator('#pref-grand')).toHaveAttribute('aria-checked', 'false');
   await page.locator('#pref-grand').click();
   await expect(page.locator('#pref-grand')).toHaveAttribute('aria-checked', 'true');
