@@ -95,7 +95,7 @@ window.SCENES = (function () {
         const pt = $(`.pt-${etape}`, g); if (pt) pt.classList.add('allume');
         if (etape > 1) { const t = $(`.trait-${etape - 1}`, g); if (t) t.classList.add('on'); }
         SON.note(NOTES_DENT[(etape - 1) % NOTES_DENT.length]); // chaque étoile chante une note du thème
-        if (etape >= P.length) { const t = $(`.trait-${P.length}`, g); if (t) t.classList.add('on'); g.classList.add('dessine'); SON.play('fanfare'); return; }
+        if (etape >= P.length) { const t = $(`.trait-${P.length}`, g); if (t) t.classList.add('on'); g.classList.add('dessine'); return; } // pas de fanfare : la mélodie des étoiles suffit
         const suivant = P[etape], h = $('.halo', g);
         if (h) { h.setAttribute('cx', suivant[0]); h.setAttribute('cy', suivant[1]); }
         $$('.pt', g).forEach(p => p.classList.toggle('prochaine', p.classList.contains(`pt-${etape + 1}`)));
@@ -221,7 +221,7 @@ window.SCENES = (function () {
     for (const c of CONSTELLATIONS) {
       await NARR.dire(bulle(ciel[c.cle].demande), { vite: true }); if (mien !== jeton) return;
       const g = await tracer(c, mien); if (mien !== jeton) return;
-      faites.push(g); SON.play('harpe');
+      faites.push(g); // pas de son de succès : la mélodie des étoiles suffit, l'immersion reste
       await wait(RM ? 100 : 900); if (mien !== jeton) return;
       await NARR.dire(bulle(ciel[c.cle].legende)); if (mien !== jeton) return;
       await NARR.attendre(); if (mien !== jeton) return;
