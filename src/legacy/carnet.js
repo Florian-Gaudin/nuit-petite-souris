@@ -165,7 +165,6 @@ ${o.pierre ? '<rect x="-14" y="-40" width="28" height="18" rx="2" fill="#cbbfa8"
       + '<g fill="none" stroke="#f3efe6" stroke-width="3" stroke-linecap="round" opacity=".8"><path d="M48 30q-6-7 0-14t0-12"/><path d="M60 28q6-7 0-14t0-12"/><path d="M72 30q-6-7 0-14t0-12"/></g>'
       + '<ellipse cx="60" cy="40" rx="34" ry="8" fill="#2b2b33"/><ellipse cx="60" cy="40" rx="29" ry="5.5" fill="#c9a466"/>'
       + '<g fill="#E8B84A" stroke="#b9801a" stroke-width="1"><ellipse cx="48" cy="39" rx="6" ry="3.5"/><ellipse cx="62" cy="38" rx="7" ry="3.8"/><ellipse cx="73" cy="40" rx="5.5" ry="3.2"/></g>'
-      + '<g fill="#D64045"><rect x="54" y="40" width="5" height="3" rx="1"/><rect x="67" y="41" width="5" height="3" rx="1"/></g>'
       + '<path d="M26 40h68v14a16 16 0 0 1-16 16H42a16 16 0 0 1-16-16z" fill="#1F2235"/><path d="M20 46h7M93 46h7" stroke="#1F2235" stroke-width="5" stroke-linecap="round"/>'
       + '<path d="M32 46h56" stroke="#3a3d55" stroke-width="2"/>',
     // La galette au sucre, sur une nappe à carreaux

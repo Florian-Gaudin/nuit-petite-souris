@@ -139,6 +139,16 @@ window.ARDENNES = {
         "La galette au sucre est un gâteau des Ardennes : une pâte toute moelleuse, avec du sucre et du beurre dessus.",
         "On la partage au goûter, ou le dimanche matin. Miam !",
       ],
+      // La recette simplifiée, présentée comme le poème de Rimbaud
+      recette: {
+        titre: "La recette, avec un grand",
+        etapes: [
+          "Mélange de la farine, deux œufs, un verre de lait tiède, un peu de levure et une pincée de sucre.",
+          "Couvre la pâte d'un torchon et laisse-la gonfler au chaud, une bonne heure.",
+          "Étale-la dans un moule, puis creuse des petits trous du bout des doigts.",
+          "Glisse du beurre dans les trous, couvre de sucre, et au four jusqu'à ce que ce soit doré !",
+        ],
+      },
       aGouter: "Chez les boulangers des Ardennes.",
       photo: null,
     },
@@ -146,19 +156,9 @@ window.ARDENNES = {
       id: "cacasse", titre: "La cacasse à cul nu", secret: "chateau.cuisine",
       texte: [
         "C'est un plat des Ardennes, avec un nom qui fait bien rire !",
-        "Une « cacasse », c'est une cocotte en fonte. Dedans mijotent des pommes de terre, des oignons et des lardons.",
-        "Et « à cul nu » ? Autrefois, on la cuisinait souvent sans viande : la cocotte était toute « nue » !",
+        "Une « cacasse », c'est une cocotte en fonte. Dedans mijotent des pommes de terre et des oignons, tout doucement.",
+        "Et « à cul nu » ? Autrefois, on la cuisinait souvent toute simple, sans rien d'autre : la cocotte était toute « nue » !",
       ],
-      // La recette simplifiée, présentée comme le poème de Rimbaud
-      recette: {
-        titre: "La recette, avec un grand",
-        etapes: [
-          "Dans la cocotte, fais dorer des lardons et deux oignons coupés.",
-          "Ajoute des pommes de terre en rondelles, du sel et du poivre.",
-          "Un verre d'eau, le couvercle, et laisse mijoter une heure, tout doucement.",
-          "Sers bien chaud, directement dans la cocotte !",
-        ],
-      },
       aGouter: "Dans les auberges des Ardennes, l'hiver.",
       photo: null,
     },
