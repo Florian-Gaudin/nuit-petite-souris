@@ -1479,3 +1479,10 @@ body.mode-choix .prefs-accueil{visibility:hidden}
 .decor-etoiles.ciel-entier .cst-souris{transform:translate(60px,60px) scale(.5)}
 .decor-etoiles.ciel-entier .cst-leurre{opacity:0;transition:opacity 1s}
 .decor-etoiles.ciel-entier .cst-montgolfiere{transform:translate(770px,15px) scale(.5)}
+
+/* Après les trois constellations : les étoiles se touchent pour jouer la mélodie */
+.decor-etoiles.etoiles-musicales .cst-pt,.decor-etoiles.etoiles-musicales .tap[data-el="constellation"],.decor-etoiles.etoiles-musicales .tap[data-el="constellation"] .pt{pointer-events:auto;cursor:pointer}
+.decor-etoiles .chante use{animation:etoile-chante .6s ease-out;transform-box:fill-box;transform-origin:center}
+.decor-etoiles .chante .cst-lueur,.decor-etoiles .chante .pt-lueur{animation:etoile-chante-lueur .6s ease-out}
+@keyframes etoile-chante{0%{transform:scale(1.9)}100%{transform:scale(1.25)}}
+@keyframes etoile-chante-lueur{0%{opacity:1;transform:scale(2)}100%{transform:none}}

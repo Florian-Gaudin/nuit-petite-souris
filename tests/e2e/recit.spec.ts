@@ -203,6 +203,12 @@ test("la constellation : l'étoile suivante clignote, le compte s'affiche, la de
   await expect(page.locator('.cst-souris .cst-nom')).toHaveText('La Petite Souris');
   for (let i = 0; i < 80 && !(await page.locator('svg.decor-etoiles.envol').count()); i++) { await pasDuCiel(page); await page.waitForTimeout(150); }
   await expect(page.locator('.cst-montgolfiere .cst-pt')).toHaveCount(12);
+  // Après les trois constellations, n'importe quelle étoile chante encore la mélodie
+  await expect(page.locator('svg.decor-etoiles.etoiles-musicales')).toHaveCount(1);
+  await page.locator('.cst-souris .cst-pt[data-ordre="3"]').dispatchEvent('pointerdown');
+  await expect(page.locator('.cst-souris .cst-pt[data-ordre="3"]')).toHaveClass(/chante/);
+  await page.locator('.tap[data-el="constellation"] .pt-2').dispatchEvent('pointerdown');
+  await expect(page.locator('.tap[data-el="constellation"] .pt-2')).toHaveClass(/chante/);
   // Pas de particules de saison dans le ciel étoilé ; la montgolfière traverse l'écran
   await expect(page.locator('svg.decor-etoiles .saison')).toHaveCount(0);
   await expect(page.locator('svg.decor-etoiles.envol')).toHaveCount(1);

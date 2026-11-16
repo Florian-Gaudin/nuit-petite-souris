@@ -193,6 +193,22 @@ window.SCENES = (function () {
       indice();
     });
   }
+  // Après les trois constellations : chaque étoile touchée (n'importe laquelle) joue la note suivante de la mélodie,
+  // tant qu'on reste dans la scène
+  const MELODIE_LIBRE = THEME_ETOILES.concat([79, 81]);
+  function etoilesMusicales(mien) {
+    let k = 0;
+    const cible = e => e.target && e.target.closest ? e.target.closest('.cst-pt, .tap[data-el="constellation"] .pt') : null;
+    svg.addEventListener('pointerdown', e => {
+      const et = cible(e); if (!et || mien !== jeton) return;
+      e.stopPropagation(); e.preventDefault();
+      SON.unlock(); SON.note(MELODIE_LIBRE[k++ % MELODIE_LIBRE.length]);
+      et.classList.remove('chante'); void et.getBBox(); et.classList.add('chante');
+    }, true);
+    // Le toucher ne compte pas comme un toucher de la scène (la Dent déjà faite ne rejoue rien)
+    svg.addEventListener('click', e => { if (cible(e) && mien === jeton) e.stopPropagation(); }, true);
+    svg.classList.add('etoiles-musicales');
+  }
   // Le vœu : une étoile filante passe et repasse ; on la touche, et elle emporte le vœu
   function voeu(mien) {
     return new Promise(fini => {
@@ -233,6 +249,7 @@ window.SCENES = (function () {
     await voeu(mien); if (mien !== jeton) return;
     faites.concat(dent ? [dent] : []).forEach(x => x.classList.remove('pale'));
     svg.classList.add('ciel-entier');
+    etoilesMusicales(mien);
     await NARR.dire(bulle(ciel.voeuFait)); if (mien !== jeton) return;
     await wait(RM ? 300 : 6000); if (mien !== jeton) return;
     svg.classList.remove('jeu-ciel');

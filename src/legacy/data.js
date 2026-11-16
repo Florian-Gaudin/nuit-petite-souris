@@ -133,7 +133,7 @@ window.DATA = {
           legende: { txt: "Ma montgolfière ! Les bergers des Ardennes disent qu'elle guide les voyageurs perdus : quand on la voit, on retrouve toujours le chemin de la maison.", expr: "joie" },
         },
         voeu: { txt: "Oh, une étoile filante ! Touche-la et fais un vœu… mais chut, on ne le dit à personne.", expr: "chuchote" },
-        voeuFait: { txt: "Ton vœu est parti avec elle. Écoute… le ciel chante pour toi.", expr: "sourire" },
+        voeuFait: { txt: "Ton vœu est parti avec elle. Écoute… le ciel chante pour toi. Touche les étoiles : elles continuent la mélodie !", expr: "sourire" },
       },
     },
     {
