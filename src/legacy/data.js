@@ -367,7 +367,7 @@ window.DATA = {
     merci: "Quenotte a bien reçu ton dessin !",
   },
   // ---------- L'album des dents ----------
-  album: { titre: "L'album des dents", explication: "Chaque histoire terminée s'ajoute ici, au fil des dents : retrouve tes nuits avec Quenotte, et revis-les quand tu veux.", vide: "L'album se remplit à la fin de chaque histoire : chaque dent y garde sa nuit." },
+  album: { titre: "L'album des dents", explication: "Chaque histoire créée s'ajoute ici, au fil des dents : retrouve tes nuits avec Quenotte, et revis-les quand tu veux.", vide: "L'album se remplit à chaque nouvelle histoire : chaque dent y garde sa nuit." },
 
   // ---------- Chapitre 5 : le diplôme ----------
   diplome: { txt: "Bravo {enfant} ! Voici ton diplôme officiel, signé de ma patte. Tu peux l'imprimer avec un grand.", expr: "joie" },

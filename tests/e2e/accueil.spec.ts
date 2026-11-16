@@ -172,3 +172,30 @@ test("l'accueil : le bouton des réglages avec l'essentiel, et le thème de Quen
   await page.locator('#btn-prefs').click();
   await expect(page.locator('#pref-reset')).toBeVisible();
 });
+
+test("l'album des dents : une histoire créée y entre dès son ouverture, « en cours », et peut être supprimée", async ({ page }) => {
+  await ouvrir(page, '?reset=1#p=' + code(LEO));
+  await ouvrir(page, './');
+  await page.locator('#lien-album').click();
+  await expect(page.locator('.album-page h3')).toHaveText('Léo');
+  await expect(page.locator('.album-encours')).toHaveText('en cours');
+  await expect(page.locator('.album-page a')).toHaveText('Reprendre');
+  await page.locator('.album .supprimer').click();
+  await page.locator('.album .supprimer').click();
+  await expect(page.locator('.album-page')).toHaveCount(0);
+  await page.locator('.album [data-a="fermer"]').click();
+  // L'accueil ne propose plus de reprendre Léo, et l'album vide n'a plus de bouton
+  await expect(page.locator('.carte-choix.reprendre')).toHaveCount(0);
+  await expect(page.locator('.carte-choix.parents.principale')).toBeVisible();
+  await expect(page.locator('#lien-album')).toHaveCount(0);
+  await ouvrir(page, './');
+  await expect(page.locator('.carte-choix.reprendre')).toHaveCount(0);
+});
+
+test("la page Informations : un bouton « Accueil » toujours visible, qui ramène à l'écran d'accueil", async ({ page }) => {
+  await page.goto('infos/');
+  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+  await expect(page.locator('.accueil-flottant')).toBeInViewport();
+  await page.locator('.accueil-flottant').click();
+  await expect(page.locator('.ecran-choix')).toBeVisible();
+});

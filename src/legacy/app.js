@@ -302,12 +302,13 @@
     };
   }
 
-  // ---------- L'album des dents : chaque histoire terminée y est rangée ----------
+  // ---------- L'album des dents : chaque histoire créée y est rangée dès son ouverture (« en cours »), puis marquée
+  // terminée au diplôme ; l'exemple de Clémentine seulement une fois terminé ----------
   const CLE_ALBUM = 'souris.album';
   const lireAlbum = () => { try { const a = JSON.parse(window.STOCKAGE.lire(CLE_ALBUM) || '[]'); return Array.isArray(a) ? a : []; } catch (e) { return []; } };
-  function rangerDansAlbum() {
-    const P = window.PROFIL.profil, a = lireAlbum().filter(x => x.id !== window.PROFIL.id);
-    a.push({ id: window.PROFIL.id, code: window.PROFIL.code, prenom: P.prenom, nuit: State.nuit, dent: P.dents.nuit, deja: P.dents.deja });
+  function rangerDansAlbum(fini) {
+    const P = window.PROFIL.profil, avant = lireAlbum(), ancien = avant.find(x => x.id === window.PROFIL.id), a = avant.filter(x => x.id !== window.PROFIL.id);
+    a.push({ id: window.PROFIL.id, code: window.PROFIL.code, prenom: P.prenom, nuit: State.nuit, dent: P.dents.nuit, deja: P.dents.deja, fini: !!(fini || (ancien && ancien.fini !== false)) });
     window.STOCKAGE.ecrire(CLE_ALBUM, JSON.stringify(a.slice(-60)));
   }
   // Le carnet des Ardennes : les cartes « Le savais-tu ? » et le livre de la légende (après le diplôme)
@@ -331,7 +332,7 @@
       const toutes = new Set(); nuits.forEach(x => { toutes.add(x.dent); (x.deja || []).forEach(d => toutes.add(d)); });
       toutes.delete(derniere.dent);
       return `<section class="album-page"><h3>${esc(prenom)}</h3>${window.MACHOIRE({ dents: { nuit: derniere.dent, deja: [...toutes] } }).replace("cette nuit", "la plus récente")}
-  <ul>${nuits.map(x => `<li><span>Nuit du ${esc(date(x.nuit))} : ${esc(window.NOM_DENT(x.dent))}</span><span class="album-boutons"><a class="btn btn-petit" href="#p=${x.code}">Revoir</a><button class="btn btn-petit supprimer" data-id="${esc(x.id)}">Supprimer</button></span></li>`).join('')}</ul></section>`;
+  <ul>${nuits.map(x => `<li><span>Nuit du ${esc(date(x.nuit))} : ${esc(window.NOM_DENT(x.dent))}${x.fini === false ? ' <em class="album-encours">en cours</em>' : ''}</span><span class="album-boutons"><a class="btn btn-petit" href="#p=${x.code}">${x.fini === false ? 'Reprendre' : 'Revoir'}</a><button class="btn btn-petit supprimer" data-id="${esc(x.id)}">Supprimer</button></span></li>`).join('')}</ul></section>`;
     }).join('');
     document.body.insertAdjacentHTML('beforeend', `<div class="atelier album" role="dialog" aria-label="${esc(T(D.album.titre))}"><div class="atelier-in">
   <h2>${A.icone('etoile')} ${esc(T(D.album.titre))}</h2><p class="album-explication">${esc(T(D.album.explication))}</p>${pages || `<p>${esc(T(D.album.vide))}</p>`}
@@ -343,7 +344,14 @@
     // Supprimer : un second toucher confirme ; l'histoire quitte l'album (sa progression n'est pas touchée)
     $$('.supprimer', fen).forEach(b => b.onclick = () => {
       if (!b.classList.contains('confirme')) { b.classList.add('confirme'); b.textContent = 'Sûr ? Touche encore'; clearTimeout(b.t); b.t = setTimeout(() => { b.classList.remove('confirme'); b.textContent = 'Supprimer'; }, 3000); return; }
+      const parti = lireAlbum().find(x => x.id === b.dataset.id);
       window.STOCKAGE.ecrire(CLE_ALBUM, JSON.stringify(lireAlbum().filter(x => x.id !== b.dataset.id)));
+      // L'histoire mémorisée sur l'appareil est oubliée aussi : l'accueil ne propose plus de la reprendre
+      if (parti && window.STOCKAGE.lire('souris.profil') === parti.code) {
+        window.STOCKAGE.effacer('souris.profil');
+        if (window.PROFIL.memoire && window.PROFIL.memoire.code === parti.code) window.PROFIL.memoire = null;
+        if (document.body.classList.contains('mode-choix')) { SON.play('papier'); fen.remove(); afficherChoix(); album(); return; }
+      }
       SON.play('papier'); fen.remove(); album();
     });
   }
@@ -1164,7 +1172,7 @@ ${places.map(dent).join('')}
       heure('03:40'); MUS.ambiance('diplome');
       const premiere = !State.fini;
       complete(5); if (premiere) { State.fini = true; save(); updateFil(5); }
-      rangerDansAlbum();
+      rangerDansAlbum(true);
       badge('jumelle');
       if (premiere) SON.play('fanfare');
       // Après le diplôme, Quenotte invite à ouvrir son carnet des Ardennes
@@ -1217,6 +1225,7 @@ ${places.map(dent).join('')}
 
   // Le « # » de l'adresse porte le profil de l'enfant ; on démarre toujours par l'accueil (ou ?chapitre=n pour tester)
   // Ouverture sans QR code ni #exemple : l'écran de choix du parcours
+  if (window.PROFIL.origine === 'adresse' || window.PROFIL.origine === 'memoire') rangerDansAlbum(false); // une histoire créée : dans l'album dès le début
   if (demande != null) show(demande); else if (window.PROFIL.origine === 'choix') afficherChoix(); else show(0);
 
   // Exposé pour les tests

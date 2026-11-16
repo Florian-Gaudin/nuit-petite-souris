@@ -767,6 +767,7 @@ html{touch-action:pan-x pan-y}
 .album-page h3{font-size:1.2rem}
 .album-page ul{list-style:none;margin:6px 0 0;padding:0;display:flex;flex-direction:column;gap:6px}
 .album-page li{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.album-encours{display:inline-block;margin-left:4px;padding:1px 8px;border-radius:999px;background:#fff3c4;color:#6b4e00;font-style:normal;font-size:.8rem;font-weight:700}
 .album .machoire{max-width:260px;display:block;margin:0 auto}
 .lien-album{position:relative;z-index:1;display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 14px;border-radius:999px;border:1.5px solid #3d4a95;background:none;color:var(--lanterne);font:700 .9rem var(--display);cursor:pointer}
 .lien-album .ico{width:16px;height:16px}
@@ -1231,3 +1232,5 @@ html.grand-texte .livre-ancien .livre-texte p{font-size:1.5rem}
 .carte-carnet5 .ruban-livre{top:18px;right:-36px;padding:3px 36px}
 /* Menu des réglages ouvert : il passe devant tout, bandeau compris */
 .fil.menu-ouvert{z-index:40}
+@media (max-height:700px){.ecran-choix:has(.autres-options[open]) .choix-logo{display:none}}
+@media (max-height:440px){.autres-cartes{display:grid;grid-template-columns:1fr 1fr;align-items:stretch}.autres-cartes .lien-video{grid-column:1/-1;justify-self:center}.ecran-choix:has(.autres-options[open]) .choix-haut{display:none}}
