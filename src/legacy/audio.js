@@ -9,6 +9,7 @@ window.SON = (function () {
   const VOLUME = 0.6, VOLUME_BRUITAGES = 0.9;
   let index = null, chargementIndex = null, planche = null, chargementPlanche = null;
   const derniere = {}; // la dernière variante jouée de chaque son (on évite de rejouer la même deux fois de suite)
+  const enCours = {};  // pour chaque son limité, ceux qui jouent encore ({ debut, fin }, en temps du contexte audio)
 
   function ensure() {
     try {
@@ -42,8 +43,8 @@ window.SON = (function () {
   }
   // Un bruitage tiré de la planche : une variante au hasard, avec un tout petit fondu à chaque bout
   function jouerSon(nom) {
-    if (!planche || !index) { chargerPlanche(); return; }
-    const variantes = index.bruitages.sons[nom]; if (!variantes || !variantes.length) return;
+    if (!planche || !index) { chargerPlanche(); return 0; }
+    const variantes = index.bruitages.sons[nom]; if (!variantes || !variantes.length) return 0;
     let k = Math.floor(Math.random() * variantes.length);
     if (variantes.length > 1 && k === derniere[nom]) k = (k + 1) % variantes.length;
     derniere[nom] = k;
@@ -54,6 +55,7 @@ window.SON = (function () {
     g.gain.setValueAtTime(VOLUME_BRUITAGES, t + duree - 0.02); g.gain.linearRampToValueAtTime(0, t + duree);
     src.connect(g).connect(master);
     src.start(t, debut, duree + 0.01);
+    return duree;
   }
 
   // ---------------- Le Cabaret Vert : seize temps de techno mélodique, en code (inchangé) ----------------
@@ -97,12 +99,14 @@ window.SON = (function () {
     s.connect(f).connect(g).connect(master); s.start(t0);
   }
   // Grosse caisse, clap, charleston, basse roulante, accords « supersaw » qui s'ouvrent, montée finale
-  function concert() {
-    const temps = 60 / 124, d = temps / 4;
+  const TEMPS_CONCERT = 60 / 124, DUREE_CONCERT = 16 * TEMPS_CONCERT + 1.7;
+  function concert(dec) {
+    dec = dec || 0;
+    const temps = TEMPS_CONCERT, d = temps / 4;
     const accords = [[220, 262, 330], [175, 220, 262], [262, 330, 392], [196, 247, 294]]; // la mineur, fa, do, sol
     const basses = [55, 43.65, 65.41, 49];
     for (let i = 0; i < 16; i++) {
-      const t = i * temps, mesure = Math.floor(i / 4), ouverture = 500 + i * 220;
+      const t = dec + i * temps, mesure = Math.floor(i / 4), ouverture = 500 + i * 220;
       tone(150, 0.28, 'sine', 0.5, t, 42); // grosse caisse
       if (i % 2) bruit(0.14, 0.18, t, 1400, 0.6); // clap
       for (let k = 1; k < 4; k++) {
@@ -114,9 +118,9 @@ window.SON = (function () {
       synth(ac[(i * 2 + 1) % 3] * 2, temps * 0.45, 0.04, t + temps / 2, { voix: 3, desaccord: 14, de: ouverture, a: ouverture * 0.7, q: 5 });
       if (i % 4 === 0) ac.forEach(f => synth(f, temps * 4, 0.025, t, { voix: 3, desaccord: 18, de: 700, a: 2400, attaque: 0.4 }));
     }
-    for (let k = 0; k < 8; k++) bruit(0.25, 0.04 + k * 0.012, 12 * temps + k * temps / 2, 800 + k * 900, 0.8);
-    tone(110, 1.2, 'sine', 0.45, 16 * temps, 38);
-    [220, 262, 330, 440].forEach(f => synth(f, 1.6, 0.04, 16 * temps, { voix: 5, desaccord: 16, de: 3000, a: 600 }));
+    for (let k = 0; k < 8; k++) bruit(0.25, 0.04 + k * 0.012, dec + 12 * temps + k * temps / 2, 800 + k * 900, 0.8);
+    tone(110, 1.2, 'sine', 0.45, dec + 16 * temps, 38);
+    [220, 262, 330, 440].forEach(f => synth(f, 1.6, 0.04, dec + 16 * temps, { voix: 5, desaccord: 16, de: 3000, a: 600 }));
   }
 
   // Le ronflement du chat, tant qu'il dort (le mini-jeu)
@@ -147,12 +151,28 @@ window.SON = (function () {
     // La carte des sons, pour la musique
     index: chargerIndex,
     decoder(octets) { ensure(); return decoder(octets); },
-    play(n) {
+    // play(nom, { max }) : « max » fois au plus en même temps (un toucher de plus ne fait rien et rend false).
+    // Rend le temps restant avant la fin du son, en secondes. Plusieurs concerts du Cabaret Vert se calent sur la
+    // mesure du premier : ils restent en rythme et dans les mêmes accords, au lieu de se chevaucher en désordre.
+    play(n, opts) {
       try {
-        if (muet || !debloque || !ensure()) return;
-        if (n === 'concert') concert(); else jouerSon(n);
+        if (muet || !debloque || !ensure()) return 0;
+        const max = opts && opts.max, t = ctx.currentTime;
+        const actifs = (enCours[n] || []).filter(x => x.fin > t); enCours[n] = actifs;
+        if (max && actifs.length >= max) return false;
+        let duree;
+        if (n === 'concert') {
+          const mesure = 4 * TEMPS_CONCERT, premier = actifs.reduce((a, x) => (!a || x.debut < a.debut ? x : a), null);
+          const dec = premier ? Math.max(0, premier.debut + Math.ceil((t - premier.debut) / mesure - 1e-6) * mesure - t) : 0;
+          concert(dec); duree = dec + DUREE_CONCERT;
+          actifs.push({ debut: t + dec, fin: t + duree });
+        } else {
+          duree = jouerSon(n) || 0;
+          if (duree) actifs.push({ debut: t, fin: t + duree });
+        }
         if (window.MUSIQUE) window.MUSIQUE.baisser();
-      } catch (e) { }
+        return duree;
+      } catch (e) { return 0; }
     },
     ronfleStart, ronfleStop,
     get muet() { return muet; },

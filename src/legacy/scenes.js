@@ -75,14 +75,17 @@ window.SCENES = (function () {
       bruleur(g, sub, etape) { SON.play('bruleur'); const f = $('.flamme', svg); f.classList.remove('feu'); void f.getBBox(); f.classList.add('feu'); },
       etoile(g) { g.classList.remove('file'); void g.getBBox(); g.classList.add('file'); SON.play('filante'); },
       oies(g) { g.classList.remove('passe'); void g.getBBox(); g.classList.add('passe'); SON.play('oies'); },
-      sedan(g) { g.classList.add('allume'); SON.play('trompette'); },
+      sedan(g) { g.classList.add('allume'); SON.play('trompette', { max: 1 }); }, // une seule trompette à la fois
       ardoises(g) { g.classList.remove('luit'); void g.getBBox(); g.classList.add('luit'); SON.play('harpe'); },
+      // Trois concerts au plus en même temps, calés l'un sur l'autre ; la musique de la scène se tait jusqu'à la fin du dernier
       cabaret(g) {
-        g.classList.remove('joue'); void g.getBBox(); g.classList.add('joue'); SON.play('concert');
-        // Les lasers balaient le ciel le temps du morceau (environ neuf secondes)
-        const s = svg; s.classList.remove('concert'); void s.getBBox(); s.classList.add('concert');
-        MUS.pause(true); // la musique de la scène se tait pendant le concert
-        clearTimeout(cabaretT); cabaretT = setTimeout(() => { if (s) s.classList.remove('concert'); MUS.pause(false); }, 9000);
+        const duree = SON.play('concert', { max: 3 });
+        if (duree === false) return;
+        g.classList.remove('joue'); void g.getBBox(); g.classList.add('joue');
+        // Les lasers balaient le ciel le temps du morceau
+        const s = svg; s.classList.add('concert');
+        MUS.pause(true);
+        clearTimeout(cabaretT); cabaretT = setTimeout(() => { if (s) s.classList.remove('concert'); MUS.pause(false); }, Math.max(9, duree || 0) * 1000);
       },
     },
     etoiles: {
