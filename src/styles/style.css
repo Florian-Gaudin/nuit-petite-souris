@@ -1538,3 +1538,7 @@ body.mode-choix .prefs-accueil{visibility:hidden}
 .carte-recette ol{margin:0;padding-left:1.4em;display:flex;flex-direction:column;gap:4px}
 .carte-recette li{line-height:1.45}
 .carte-recette li::marker{font-family:var(--display);font-weight:800;font-style:normal;color:#b9801a}
+.decor-chateau .cuisine .flammes path{transform-box:fill-box;transform-origin:50% 100%;animation:flamme-feu .5s ease-in-out infinite alternate}
+.decor-chateau .cuisine .flammes path:nth-child(2){animation-duration:.7s}.decor-chateau .cuisine .flammes path:nth-child(3){animation-duration:.42s}
+@keyframes flamme-feu{to{transform:scaleY(1.18) scaleX(.9)}}
+@media (prefers-reduced-motion:reduce){.decor-chateau .cuisine .flammes path{animation:none}}

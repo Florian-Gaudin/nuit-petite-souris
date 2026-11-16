@@ -51,7 +51,7 @@ window.DATA = {
           bulle2: { txt: "Et hop, elle s'envole chasser dans la forêt. À bientôt, hulotte !", expr: "joie" },
         },
         sac: { bulle: { txt: "Regarde dans mon sac : j'ai un cadeau pour toi ! C'est {unCadeau}, pour te remercier de ta dent.", expr: "clin" } },
-        cuisine: { bulle: { txt: "Mmm, ça sent bon ! Le cuisinier du château a laissé mijoter une cacasse à cul nu… Oui, oui, c'est son vrai nom ! Une spécialité des Ardennes.", expr: "clin" } },
+        cuisine: { bulle: { txt: "Mmm, ça sent bon ! Le cuisinier du château a laissé mijoter une cacasse à cul nu sur le feu… Oui, oui, c'est son vrai nom ! Une spécialité des Ardennes.", expr: "clin" } },
       },
       pont: { txt: "C'est parti, direction la forêt !", expr: "joie" },
     },

@@ -43,11 +43,14 @@ ${A.fond(nuit, 21, { x: 830, y: 95, r: 34 })}
   <g class="tresor"><circle cx="465" cy="355" r="40" fill="url(#halo-or)" opacity=".7"/><rect x="445" y="332" width="40" height="48" rx="6" fill="#FFC857"/><path d="M445 356h40M465 332v48" stroke="#B9801A" stroke-width="2"/><use href="#dent" x="455" y="346" width="20" height="20"/></g>
 </g>
 <rect x="790" y="300" width="26" height="185" fill="#4a3324"/><path d="M780 485q23-20 46 0z" fill="#4a3324"/>
-${tap('cuisine', 'La fenêtre des cuisines du château', `${halo(292, 444, 42)}
-  <g class="cuisine"><path d="M275 464V441a17 17 0 0 1 34 0V464Z" fill="#3a2f22"/><path d="M279 462V442a13 13 0 0 1 26 0V462Z" fill="#FFB547"/><path d="M279 448a13 13 0 0 1 26 0" fill="#FFD27A"/>
-  <path d="M292 429v33M279 446h26" stroke="#6E4630" stroke-width="2.5"/><rect x="270" y="461" width="44" height="6" rx="2" fill="#8B5A3C"/>
-  <g transform="translate(292,454) scale(.72)"><path d="M-15-6h30v6a10 10 0 0 1-10 10h-10a10 10 0 0 1-10-10z" fill="#1F2235"/><rect x="-17" y="-9" width="34" height="4" rx="2" fill="#2b2b33"/><path d="M-19-4h-4M19-4h4" stroke="#1F2235" stroke-width="3" stroke-linecap="round"/></g>
-  <g class="vapeur" fill="none" stroke="#f3efe6" stroke-width="2.6" stroke-linecap="round" opacity=".8"><path d="M287 446q-4-6 0-12t0-11"/><path d="M297 446q4-6 0-12t0-11"/></g></g>`)}
+${tap('cuisine', 'Une cocotte sur un feu de camp, devant le château', `${halo(600, 528, 60)}
+  <g class="cuisine" transform="translate(600,540) scale(1.15) translate(-300,-520)"><circle cx="300" cy="540" r="46" fill="url(#halo-or)" opacity=".8"/>
+  <path d="M300 462L268 548M300 462L332 548M300 462L300 550" stroke="#4a3324" stroke-width="5" stroke-linecap="round"/>
+  <path d="M300 462v26" stroke="#2b2b33" stroke-width="2.5"/>
+  <g transform="translate(300,505)"><path d="M-21-8h42v8a14 14 0 0 1-14 14h-14a14 14 0 0 1-14-14z" fill="#1F2235"/><rect x="-23" y="-12" width="46" height="5" rx="2.5" fill="#2b2b33"/><path d="M-18-12q18-12 36 0" fill="none" stroke="#2b2b33" stroke-width="2.5"/></g>
+  <g class="flammes"><path d="M286 546c-2-10 6-14 6-22 6 8 10 12 8 22z" fill="#D64045"/><path d="M296 546c-3-12 6-18 6-28 8 10 12 16 9 28z" fill="#FFC857"/><path d="M308 546c-1-8 5-11 5-17 5 6 7 10 5 17z" fill="#ff9a3c"/></g>
+  <path d="M276 548l48-6M276 542l48 6" stroke="#6E4630" stroke-width="6" stroke-linecap="round"/>
+  <g class="vapeur" fill="none" stroke="#f3efe6" stroke-width="3" stroke-linecap="round" opacity=".8"><path d="M293 492q-5-7 0-14t0-13"/><path d="M307 492q5-7 0-14t0-13"/></g></g>`)}
 ${tap('feuillage', 'Le feuillage de l’arbre', `${halo(803, 255, 105)}
   <g class="feuillage"><circle cx="755" cy="285" r="56" fill="#1E3F36"/><circle cx="850" cy="280" r="58" fill="#1E3F36"/><circle cx="800" cy="228" r="66" fill="#24483E"/><circle cx="765" cy="238" r="42" fill="#2F5D50"/><circle cx="836" cy="236" r="38" fill="#2F5D50"/></g>
   <g transform="translate(800,250)"><g class="hulotte"><path class="aile ag" d="M-16 6q-26 6-22 34q14-6 22-24z" fill="#8B5A3C"/><path class="aile ad" d="M16 6q26 6 22 34q-14-6-22-24z" fill="#8B5A3C"/><ellipse cx="0" cy="20" rx="19" ry="24" fill="#8B5A3C"/><ellipse cx="0" cy="24" rx="10" ry="16" fill="#C9A98A"/><circle cx="0" cy="-4" r="18" fill="#A0724A"/><path d="M-16-14l-6-14 14 6zM16-14l6-14-14 6z" fill="#A0724A"/><circle cx="-7" cy="-6" r="7.5" fill="#FFF4D6"/><circle cx="7" cy="-6" r="7.5" fill="#FFF4D6"/><circle cx="-7" cy="-6" r="3.5" fill="#2B2B33"/><circle cx="7" cy="-6" r="3.5" fill="#2B2B33"/><path d="M-3 1l3 6 3-6z" fill="#FFC857"/></g></g>`)}
