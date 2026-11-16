@@ -245,7 +245,7 @@ ${(() => { const li = AR.cartes.map((c, i) => {
       vue = 'carte'; page = i; fen.classList.remove('mode-livre');
       const c = AR.cartes[i], ouvertes = AR.cartes.map((x, k) => decouverte(x, state) ? k : -1).filter(k => k >= 0);
       const rang = ouvertes.indexOf(i), avant = rang > 0 ? ouvertes[rang - 1] : -1, apres = rang >= 0 && rang < ouvertes.length - 1 ? ouvertes[rang + 1] : -1;
-      const photo = c.livre ? `<div class="livre-scene"><button type="button" class="livre-ferme" data-a="livre" aria-label="${esc(AR.livre.ouvrir)}"><span class="livre-couv">${livreFerme()}</span><span class="livre-reflet" aria-hidden="true"></span>${[[4, 18], [94, 30], [10, 82], [90, 76], [50, 2]].map(([x, y], k) => `<i class="etincelle" style="left:${x}%;top:${y}%;animation-delay:${(k * .5).toFixed(1)}s" aria-hidden="true"></i>`).join('')}<svg class="main-livre" viewBox="0 0 48 48" aria-hidden="true"><path d="M20 44c-5-3-9-9-10-14-.5-2.5 2-4 4-2l3 3V10a3 3 0 0 1 6 0v12a3 3 0 0 1 6 0v2a3 3 0 0 1 6 0v2a3 3 0 0 1 6 0v8c0 5-3 9-7 10z" fill="#fff" stroke="#3b2a00" stroke-width="2.2" stroke-linejoin="round"/></svg></button>
+      const photo = c.livre ? `<div class="livre-scene"><button type="button" class="livre-ferme" data-a="livre" aria-label="${esc(AR.livre.ouvrir)}"><span class="livre-pages" aria-hidden="true"></span><span class="livre-couv">${livreFerme()}<span class="livre-dos" aria-hidden="true"></span></span><span class="livre-reflet" aria-hidden="true"></span>${[[4, 18], [94, 30], [10, 82], [90, 76], [50, 2]].map(([x, y], k) => `<i class="etincelle" style="left:${x}%;top:${y}%;animation-delay:${(k * .5).toFixed(1)}s" aria-hidden="true"></i>`).join('')}<svg class="main-livre" viewBox="0 0 48 48" aria-hidden="true"><path d="M20 44c-5-3-9-9-10-14-.5-2.5 2-4 4-2l3 3V10a3 3 0 0 1 6 0v12a3 3 0 0 1 6 0v2a3 3 0 0 1 6 0v2a3 3 0 0 1 6 0v8c0 5-3 9-7 10z" fill="#fff" stroke="#3b2a00" stroke-width="2.2" stroke-linejoin="round"/></svg></button>
 <div class="bulle-quenotte"><span class="bulle-portrait" aria-hidden="true">${window.ART && window.ART.portrait ? window.ART.portrait() : ''}</span><p>${esc(T(AR.livre.invitation))}</p></div></div>` : c.photo && c.photo.fichier ? `<figure class="carte-photo"><img src="cartes/${esc(c.photo.fichier)}" alt="${esc(c.photo.description || c.titre)}">${c.photo.credit ? `<figcaption>${esc(c.photo.credit)}</figcaption>` : ''}</figure>` : `<div class="carte-dessin">${icone(c.id)}</div>`;
       const poeme = c.poeme ? `<blockquote class="carte-poeme"><p class="carte-poeme-titre">${esc(c.poeme.titre)}</p>${c.poeme.vers.map(v => `<span>${esc(v)}</span>`).join('')}</blockquote>` : '';
       const recette = c.recette ? `<div class="carte-poeme carte-recette"><p class="carte-poeme-titre">${esc(c.recette.titre)}</p><ol>${c.recette.etapes.map(v => `<li>${esc(v)}</li>`).join('')}</ol></div>` : '';
@@ -267,7 +267,7 @@ ${(() => { const li = AR.cartes.map((c, i) => {
         son('page'); b.classList.add('ouvre'); clearTimeout(mainT);
         // Pendant que la couverture s'ouvre, les flèches et les glissements ne changent pas de carte
         vue = 'ouverture';
-        if (RM) livre(0); else setTimeout(() => { if (fen.isConnected && vue === 'ouverture') livre(0); }, 650);
+        if (RM) livre(0); else setTimeout(() => { if (fen.isConnected && vue === 'ouverture') livre(0); }, 850);
       });
       clearTimeout(mainT);
       if (c.livre) mainT = setTimeout(() => { const b = corps.querySelector('.livre-ferme'); if (b && vue === 'carte') b.classList.add('montre-main'); }, 3000);
