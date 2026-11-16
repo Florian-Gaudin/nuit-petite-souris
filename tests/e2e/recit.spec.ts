@@ -1,7 +1,7 @@
 // Le récit adaptatif : Clémentine retrouve mot pour mot les textes d'origine ; Léo et Inès ont leur version
 import { test, expect } from '@playwright/test';
 import { readFileSync } from 'node:fs';
-import { LEO, INES, code, ouvrir, rendu } from './aide';
+import { LEO, INES, code, ouvrir, rendu, pasDuCiel } from './aide';
 
 const ORIGINE: { textes: { chemin: (string | number)[]; texte: string }[] } = JSON.parse(readFileSync(new URL('../fixtures/textes-origine.json', import.meta.url), 'utf8'));
 
@@ -186,6 +186,23 @@ test("la constellation : l'étoile suivante clignote, le compte s'affiche, la de
   await expect(page.locator('#bandeau-texte')).toContainText('Une…');
   for (let n = 2; n <= 7; n++) { await page.waitForFunction(() => !(window as any).NARR.lit); await page.locator(`.pt-${n} use`).click(); }
   await expect(page.locator('.tap[data-el="constellation"]')).toHaveClass(/dessine/);
+  // Puis la Petite Souris (10 étoiles) et la Montgolfière (12), à tracer sans numéros, avec des leurres
+  await expect(page.locator('.cst-souris .cst-pt')).toHaveCount(10, { timeout: 20_000 });
+  await expect(page.locator('.cst-souris .cst-leurre')).toHaveCount(2);
+  await expect(page.locator('.cst-souris .cst-pt.prochaine')).toHaveCount(1); // seule la première brille
+  // Un leurre : refusé, et l'étoile à toucher se montre
+  await page.locator('.cst-souris .cst-pt[data-ordre="0"] use').click();
+  await page.locator('.cst-souris .cst-leurre').first().dispatchEvent('pointerdown');
+  await expect(page.locator('.cst-souris .cst-pt[data-ordre="1"]')).toHaveClass(/prochaine/);
+  // On trace la suite d'un seul geste, sans lever le doigt
+  const centre = async (i: number) => { const b = (await page.locator(`.cst-souris .cst-pt[data-ordre="${i}"] use`).boundingBox())!; return [b.x + b.width / 2, b.y + b.height / 2]; };
+  const [x1, y1] = await centre(1); await page.mouse.move(x1, y1); await page.mouse.down();
+  for (let i = 2; i < 10; i++) { const [x, y] = await centre(i); await page.mouse.move(x, y, { steps: 8 }); }
+  await page.mouse.up();
+  await expect(page.locator('.cst-souris')).toHaveClass(/dessine/);
+  await expect(page.locator('.cst-souris .cst-nom')).toHaveText('La Petite Souris');
+  for (let i = 0; i < 80 && !(await page.locator('svg.decor-etoiles.envol').count()); i++) { await pasDuCiel(page); await page.waitForTimeout(150); }
+  await expect(page.locator('.cst-montgolfiere .cst-pt')).toHaveCount(12);
   // Pas de particules de saison dans le ciel étoilé ; la montgolfière traverse l'écran
   await expect(page.locator('svg.decor-etoiles .saison')).toHaveCount(0);
   await expect(page.locator('svg.decor-etoiles.envol')).toHaveCount(1);

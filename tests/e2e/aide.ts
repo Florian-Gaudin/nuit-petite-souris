@@ -49,3 +49,14 @@ export async function tenirVerrou(page: Page) {
   await page.mouse.up();
   await page.locator('.tenir').waitFor({ state: 'detached' });
 }
+
+// Au milieu des étoiles, après la Dent : un pas du ciel des constellations (une étoile à relier, la suite du
+// bandeau, ou l'étoile filante du vœu). Rend false s'il n'y avait rien à faire.
+export async function pasDuCiel(page: Page): Promise<boolean> {
+  const suivante = page.locator('.cst:not(.dessine) .cst-pt:not(.allume)').first();
+  if (await suivante.count()) { await suivante.locator('use').click(); return true; }
+  const filante = page.locator('.cst-filante:not(.exauce)');
+  if (await filante.count()) { await filante.dispatchEvent('click'); return true; }
+  if (await page.locator('#bandeau.attente .bandeau-suite').isVisible()) { await page.locator('.bandeau-suite').click(); return true; }
+  return false;
+}

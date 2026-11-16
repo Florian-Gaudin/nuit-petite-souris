@@ -1,6 +1,6 @@
 // L'histoire de bout en bout, comme un enfant : les dix scènes, le mini-jeu, la caméra, la lettre, le diplôme
 import { test, expect, type Page } from '@playwright/test';
-import { ouvrir, toucher } from './aide';
+import { ouvrir, toucher, pasDuCiel } from './aide';
 
 // Où toucher chaque élément obligatoire (au cœur du dessin)
 const CIBLES: Record<string, string> = {
@@ -17,10 +17,11 @@ const CIBLES: Record<string, string> = {
 
 // Joue la scène ouverte jusqu'au bouton de fin (Suite, éléments à toucher, plis du billet…)
 async function jouerScene(page: Page): Promise<string> {
-  for (let tour = 0; tour < 60; tour++) {
+  for (let tour = 0; tour < 120; tour++) {
     const bouton = page.locator('#bandeau-actions:not([hidden]) button');
     if (await bouton.count()) return (await bouton.textContent()) || '';
     if (await page.locator('#bandeau.attente .bandeau-suite').isVisible()) { await page.locator('.bandeau-suite').click(); continue; }
+    if (await page.locator('.cst, .cst-filante').count() && await pasDuCiel(page)) { await page.waitForTimeout(150); continue; }
     const cible = await page.evaluate(() => { const g = document.querySelector('.tap.cible') as HTMLElement | null; return g && !(window as any).NARR.lit ? g.dataset.el : null; });
     if (cible === 'vitre') {
       // La buée : on frotte toute la vitre

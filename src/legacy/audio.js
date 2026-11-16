@@ -123,6 +123,20 @@ window.SON = (function () {
     [220, 262, 330, 440].forEach(f => synth(f, 1.6, 0.04, dec + 16 * temps, { voix: 5, desaccord: 16, de: 3000, a: 600 }));
   }
 
+  // Une note de célesta (les étoiles qui chantent le thème de Quenotte) : un son de cloche doux, en code,
+  // accordé sur la musique de la scène ; il ne fait pas baisser la musique, il joue avec elle
+  function note(midi) {
+    if (!debloque || muet) return;
+    const c = ensure(); if (!c) return;
+    const f = 440 * Math.pow(2, (midi - 69) / 12), t0 = c.currentTime;
+    [[1, 0.13, 1.8], [2, 0.035, 0.9], [3, 0.014, 0.5], [4.2, 0.006, 0.25]].forEach(([k, vol, dur]) => {
+      const o = c.createOscillator(), g = c.createGain();
+      o.type = 'sine'; o.frequency.value = f * k;
+      g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(vol, t0 + 0.006); g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+      o.connect(g).connect(master); o.start(t0); o.stop(t0 + dur + 0.05);
+    });
+  }
+
   // Le ronflement du chat, tant qu'il dort (le mini-jeu)
   function ronfleStart() {
     if (ronfleTimer || muet) return;
@@ -174,7 +188,7 @@ window.SON = (function () {
         return duree;
       } catch (e) { return 0; }
     },
-    ronfleStart, ronfleStop,
+    note, ronfleStart, ronfleStop,
     get muet() { return muet; },
     toggle() {
       muet = !muet;

@@ -94,7 +94,7 @@ window.SCENES = (function () {
         const P = DEC.POINTS_DENT;
         const pt = $(`.pt-${etape}`, g); if (pt) pt.classList.add('allume');
         if (etape > 1) { const t = $(`.trait-${etape - 1}`, g); if (t) t.classList.add('on'); }
-        SON.play('etoile');
+        SON.note(NOTES_DENT[(etape - 1) % NOTES_DENT.length]); // chaque étoile chante une note du thème
         if (etape >= P.length) { const t = $(`.trait-${P.length}`, g); if (t) t.classList.add('on'); g.classList.add('dessine'); SON.play('fanfare'); return; }
         const suivant = P[etape], h = $('.halo', g);
         if (h) { h.setAttribute('cx', suivant[0]); h.setAttribute('cy', suivant[1]); }
@@ -126,6 +126,116 @@ window.SCENES = (function () {
       fenetre() { SON.play('allume'); },
     },
   };
+  // ---------- Au milieu des étoiles : après la Dent, deux constellations à tracer du doigt, puis un vœu ----------
+  // Chaque étoile reliée chante une note du thème de Quenotte (transposé en la, comme la musique de la scène) :
+  // finir une constellation, c'est jouer la mélodie. Pas de numéros : seule la première étoile brille ; l'aide
+  // (l'étoile suivante qui palpite) n'arrive qu'après quelques secondes d'hésitation. Des étoiles leurres scintillent.
+  // On trace sans lever le doigt, ou on touche les étoiles l'une après l'autre (au clavier : Entrée).
+  const THEME_ETOILES = [76, 81, 83, 84, 83, 81, 79, 81, 83, 76];
+  const NOTES_DENT = THEME_ETOILES.slice(0, 7);
+  const CONSTELLATIONS = [
+    { cle: 'souris', pts: [[330, 200], [280, 150], [250, 70], [205, 125], [130, 105], [55, 150], [60, 230], [150, 250], [250, 240], [300, 225]], leurres: 2, notes: THEME_ETOILES },
+    { cle: 'montgolfiere', pts: [[180, 10], [255, 35], [295, 105], [275, 180], [215, 248], [218, 312], [142, 312], [145, 248], [85, 180], [65, 105], [105, 35], [140, 15]], leurres: 4, notes: THEME_ETOILES.concat([79, 81]) },
+  ];
+  const ORIGINE_CIEL = [390, 105]; // les constellations se dessinent au milieu du ciel
+  const HESITATION = 5000;
+  function tracer(c, mien) {
+    return new Promise(fini => {
+      const NS = 'http://www.w3.org/2000/svg', [ox, oy] = ORIGINE_CIEL;
+      const g = document.createElementNS(NS, 'g');
+      g.setAttribute('class', 'cst cst-' + c.cle); g.setAttribute('transform', `translate(${ox},${oy})`);
+      // Les leurres : à l'écart des vraies étoiles
+      const leurres = []; let essai = 0;
+      while (leurres.length < c.leurres && essai++ < 200) {
+        const p = [-20 + Math.random() * 380, -10 + Math.random() * 340];
+        if (c.pts.concat(leurres).every(q => Math.hypot(q[0] - p[0], q[1] - p[1]) > 70)) leurres.push(p);
+      }
+      const etoileG = (p, cls, i) => `<g class="${cls}"${i != null ? ` data-ordre="${i}"` : ''} transform="translate(${p[0]},${p[1]})"><circle r="30" fill="transparent"/><circle class="cst-lueur" r="20" fill="url(#halo-or)"/><use href="#etoile5" x="-12" y="-12" width="24" height="24"/></g>`;
+      g.innerHTML = `<path class="cst-forme" d="M${c.pts.map(p => p.join(' ')).join('L')}Z"/><g class="cst-traits"></g><line class="cst-fil" x1="0" y1="0" x2="0" y2="0"/>`
+        + leurres.map(p => etoileG(p, 'cst-leurre')).join('') + c.pts.map((p, i) => etoileG(p, 'cst-pt' + (i === 0 ? ' prochaine' : ''), i)).join('')
+        + `<text class="cst-nom" x="180" y="372" text-anchor="middle">${T(sc.ciel[c.cle].nom)}</text>`;
+      svg.appendChild(g);
+      const traits = $('.cst-traits', g), fil = $('.cst-fil', g), pts = $$('.cst-pt', g);
+      let n = 0, trace = false, hesiteT = null;
+      const local = e => { const pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY; return pt.matrixTransform(g.getScreenCTM().inverse()); };
+      const indice = () => { clearTimeout(hesiteT); hesiteT = setTimeout(() => { if (pts[n]) pts[n].classList.add('prochaine'); }, HESITATION); };
+      const ligne = (a, b) => { const l = document.createElementNS(NS, 'line'); l.setAttribute('class', 'cst-trait'); l.setAttribute('x1', a[0]); l.setAttribute('y1', a[1]); l.setAttribute('x2', b[0]); l.setAttribute('y2', b[1]); traits.appendChild(l); };
+      const fin = () => { arret.abort(); clearTimeout(hesiteT); fil.style.display = 'none'; ligne(c.pts[c.pts.length - 1], c.pts[0]); g.classList.add('dessine'); fini(g); };
+      const relier = () => {
+        if (mien !== jeton || n >= pts.length) return;
+        pts[n].classList.remove('prochaine'); pts[n].classList.add('allume');
+        if (n > 0) ligne(c.pts[n - 1], c.pts[n]);
+        SON.note(c.notes[n % c.notes.length]);
+        n++;
+        if (n >= pts.length) { fin(); return; }
+        indice();
+      };
+      const refus = el => { SON.play('toc'); el.classList.remove('refus'); void el.getBBox(); el.classList.add('refus'); if (pts[n]) pts[n].classList.add('prochaine'); };
+      const pres = p => n < pts.length && Math.hypot(p.x - c.pts[n][0], p.y - c.pts[n][1]) < 40;
+      const arret = new AbortController(), opt = { signal: arret.signal };
+      svg.addEventListener('pointerdown', e => {
+        if (mien !== jeton) return;
+        const p = local(e);
+        if (pres(p)) { e.preventDefault(); trace = true; relier(); return; }
+        const autre = e.target.closest && e.target.closest('.cst-leurre, .cst-pt:not(.allume)');
+        if (autre && g.contains(autre)) refus(autre);
+      }, opt);
+      svg.addEventListener('pointermove', e => {
+        if (!trace || mien !== jeton) return;
+        const p = local(e);
+        if (n > 0 && n < pts.length) { fil.style.display = ''; fil.setAttribute('x1', c.pts[n - 1][0]); fil.setAttribute('y1', c.pts[n - 1][1]); fil.setAttribute('x2', p.x.toFixed(1)); fil.setAttribute('y2', p.y.toFixed(1)); }
+        if (pres(p)) relier();
+      }, opt);
+      ['pointerup', 'pointercancel'].forEach(t => svg.addEventListener(t, () => { trace = false; fil.style.display = 'none'; }, opt));
+      window.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); relier(); } }, opt);
+      fil.style.display = 'none';
+      indice();
+    });
+  }
+  // Le vœu : une étoile filante passe et repasse ; on la touche, et elle emporte le vœu
+  function voeu(mien) {
+    return new Promise(fini => {
+      const NS = 'http://www.w3.org/2000/svg';
+      const g = document.createElementNS(NS, 'g');
+      g.setAttribute('class', 'cst-filante'); g.setAttribute('role', 'button'); g.setAttribute('tabindex', '0'); g.setAttribute('aria-label', 'Une étoile filante : touche-la et fais un vœu');
+      g.innerHTML = '<g class="cst-filante-in"><circle r="56" fill="transparent"/><path d="M-10 6L-150 70" stroke="url(#halo-or)" stroke-width="10" stroke-linecap="round"/><path d="M-6 4L-110 50" stroke="#FFF4D6" stroke-width="3" stroke-linecap="round" opacity=".8"/><circle r="22" fill="url(#halo-or)"/><use href="#etoile5" x="-14" y="-14" width="28" height="28"/></g>';
+      svg.appendChild(g);
+      const ok = e => {
+        if (e && e.type === 'keydown' && e.key !== 'Enter' && e.key !== ' ') return;
+        if (e) e.preventDefault();
+        if (mien !== jeton || g.classList.contains('exauce')) return;
+        g.classList.add('exauce'); SON.play('filante'); SON.play('etoile');
+        setTimeout(() => g.remove(), RM ? 0 : 1600);
+        fini();
+      };
+      g.addEventListener('click', ok); g.addEventListener('keydown', ok);
+    });
+  }
+  async function cielDesConstellations() {
+    const mien = jeton, ciel = sc.ciel;
+    svg.classList.add('jeu-ciel'); aideStop();
+    const dent = $('.tap[data-el="constellation"]', svg);
+    await NARR.dire(bulle(ciel.suite)); if (mien !== jeton) return;
+    if (dent) dent.classList.add('pale');
+    const faites = [];
+    for (const c of CONSTELLATIONS) {
+      await NARR.dire(bulle(ciel[c.cle].demande), { vite: true }); if (mien !== jeton) return;
+      const g = await tracer(c, mien); if (mien !== jeton) return;
+      faites.push(g); SON.play('harpe');
+      await wait(RM ? 100 : 900); if (mien !== jeton) return;
+      await NARR.dire(bulle(ciel[c.cle].legende)); if (mien !== jeton) return;
+      await NARR.attendre(); if (mien !== jeton) return;
+      g.classList.add('pale');
+    }
+    // Le vœu, puis le ciel entier qui brille, un moment, avec la musique seule
+    await NARR.dire(bulle(ciel.voeu)); if (mien !== jeton) return;
+    await voeu(mien); if (mien !== jeton) return;
+    faites.concat(dent ? [dent] : []).forEach(x => x.classList.remove('pale'));
+    svg.classList.add('ciel-entier');
+    await NARR.dire(bulle(ciel.voeuFait)); if (mien !== jeton) return;
+    await wait(RM ? 300 : 6000); if (mien !== jeton) return;
+    svg.classList.remove('jeu-ciel');
+  }
   // Petites animations qui suivent l'élément obligatoire, avant la réponse de Quenotte
   const APRES = {
     chateau: { lanterne: () => wait(RM ? 100 : 700) },
@@ -133,7 +243,8 @@ window.SCENES = (function () {
     place: { marionnettiste: () => wait(RM ? 100 : 900) },
     montgolfiere: { bruleur: async () => { svg.classList.add('vole'); SON.play('bruleur'); await wait(RM ? 100 : 3800); } },
     // La dent dessinée, puis la montgolfière traverse l'écran et s'en va par la droite
-    etoiles: { constellation: async () => { await wait(RM ? 100 : 1400); svg.classList.add('envol'); SON.play('bruleur'); await wait(RM ? 100 : 2600); } },
+    // La dent dessinée, puis deux autres constellations et un vœu ; enfin la montgolfière s'en va par la droite
+    etoiles: { constellation: async () => { const mien = jeton; await wait(RM ? 100 : 1400); if (mien !== jeton) return; await cielDesConstellations(); if (mien !== jeton) return; svg.classList.add('envol'); SON.play('bruleur'); await wait(RM ? 100 : 2600); } },
     lievre: { lievre: async () => {
       // Quenotte grimpe sur son dos, et ils filent en bondissant jusqu'au panneau de la ville
       svg.classList.add('galop');

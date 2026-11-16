@@ -111,8 +111,11 @@ test('les étoiles trouvées sortent de la sacoche en constellation et s\'allume
   await expect(page.locator('.ciel-cases .ciel-etoile')).toHaveCount(20);
   await expect(page.locator('.ciel-compte')).toHaveText('0 / 20');
   await page.locator('.sacoche').click(); // Détective de nuit
-  await page.locator('#bandeau-actions button', { hasText: 'Le badge suivant' }).click(); // Dent jumelle
+  // « Passer » accroche la médaille qui reste… et arrive aux étoiles, sans les sauter
+  await page.locator('#btn-passer').click();
+  await expect(page.locator('.case-med.attend')).toHaveCount(0);
   await expect(page.locator('#bandeau-texte')).toContainText('les 5 étoiles que tu as trouvées');
+  await expect(page.locator('.ciel-compte')).toHaveText('0 / 20');
   await page.locator('#bandeau-actions button', { hasText: 'Les étoiles' }).click();
   await expect(page.locator('#bandeau-texte')).toContainText('la Dent de Clémentine');
   await expect(page.locator('.ciel-compte')).toHaveText('5 / 20');

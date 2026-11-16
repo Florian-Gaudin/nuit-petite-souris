@@ -113,12 +113,28 @@ window.DATA = {
         constellation: {
           demande: { txt: "Relie-les du doigt, en commençant par celle qui clignote. On dirait qu'elles veulent dessiner quelque chose !", expr: "clin" },
           etapes: ["Une…", "Deux…", "Trois…", "Quatre…", "Cinq…", "Six…", "Sept… Oh ! Regarde ce qu'elles dessinent !"],
-          reponse: { txt: "Une dent ! Les étoiles dessinent une dent dans le ciel : c'est le signe que je suis sur la bonne route. Merci, {enfant} !", expr: "joie" },
+          reponse: { txt: "Merci, {enfant} ! Avec tes constellations, je suis sûre d'être sur la bonne route.", expr: "joie" },
         },
         lune: { bulle: { txt: "La lune me fait un clin d'œil ! Elle veille sur tous les enfants qui dorment, et sur toi aussi.", expr: "clin" } },
         mouton: { bulle: { txt: "Un nuage en forme de mouton ! Les enfants qui comptent les moutons pour s'endormir, c'est lui qu'ils voient.", expr: "sourire" } },
       },
       pont: { txt: "La montgolfière redescend tout doucement… J'aperçois {riviere} qui brille sous la lune !", expr: "sourire" },
+      // Après la Dent : deux constellations à tracer, leurs légendes, puis un vœu
+      ciel: {
+        suite: { txt: "Une dent ! Les étoiles dessinent une dent dans le ciel : c'est le signe que je suis sur la bonne route. Et écoute : elles chantent ! Regarde, d'autres s'allument…", expr: "joie" },
+        souris: {
+          nom: "La Petite Souris",
+          demande: { txt: "Commence par l'étoile qui brille, et suis les autres du doigt, sans le lever. Attention aux étoiles qui font semblant !", expr: "clin" },
+          legende: { txt: "C'est moi ! Dans les Ardennes, on raconte que la toute première Petite Souris est montée au ciel sur un rayon de lune, pour y garder les dents des enfants. Elle brille encore là-haut.", expr: "joie" },
+        },
+        montgolfiere: {
+          nom: "La Montgolfière",
+          demande: { txt: "Encore une, plus grande ! Trouve la première étoile, puis relie-les toutes.", expr: "surprise" },
+          legende: { txt: "Ma montgolfière ! Les bergers des Ardennes disent qu'elle guide les voyageurs perdus : quand on la voit, on retrouve toujours le chemin de la maison.", expr: "joie" },
+        },
+        voeu: { txt: "Oh, une étoile filante ! Touche-la et fais un vœu… mais chut, on ne le dit à personne.", expr: "chuchote" },
+        voeuFait: { txt: "Ton vœu est parti avec elle. Écoute… le ciel chante pour toi.", expr: "sourire" },
+      },
     },
     {
       // Le cours d'eau près de chez l'enfant (« la rivière » si les parents n'en ont pas indiqué)

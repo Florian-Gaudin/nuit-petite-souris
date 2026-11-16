@@ -1626,7 +1626,7 @@ ${places.map(dent).join('')}
       State.remis = (State.remis || []).filter(id => ids.indexOf(id) >= 0);
       const file = ids.filter(id => State.remis.indexOf(id) < 0);
       let etoilesAttendent = nbE > 0 && !State.etoilesRemises;
-      let occupe = false, finie = false;
+      let occupe = false, finie = false, enVol = null;
       const majCompte = () => { compte.textContent = $$('.case-med:not(.a-gagner):not(.attend)', r).length + ' / ' + D.badges.length; };
       const accrocher = (id, anime) => {
         const c = $(`.case-med[data-badge="${id}"]`, r); if (!c) return;
@@ -1666,12 +1666,12 @@ ${places.map(dent).join('')}
         if (occupe || finie || !encore()) return;
         if (!file.length) { if (etoilesAttendent) sortirEtoiles(); return; }
         occupe = true; NARR.action(null); invite.hidden = true;
-        const id = file.shift(), nom = window.CERTIFICAT.nomBadge(id, true);
+        const id = enVol = file.shift(), nom = window.CERTIFICAT.nomBadge(id, true);
         sac.classList.remove('secoue'); void sac.getBoundingClientRect(); sac.classList.add('secoue', 'ouvre');
         SON.play('badge');
         NARR.dire({ txt: nom + ' ! ' + window.CERTIFICAT.texteBadge(id, true), expr: 'joie' });
         volMedaille(id, nom, sac, $(`.case-med[data-badge="${id}"]`, r)).then(() => {
-          sac.classList.remove('ouvre');
+          sac.classList.remove('ouvre'); enVol = null;
           if (!encore()) return;
           accrocher(id, true); SON.play('toc');
           if (!file.length && !etoilesAttendent) zone.classList.remove('pleine');
@@ -1680,7 +1680,7 @@ ${places.map(dent).join('')}
       };
       function sortirEtoiles() {
         if (occupe || finie || !etoilesAttendent || !encore()) return;
-        occupe = true; etoilesAttendent = false; NARR.action(null); invite.hidden = true;
+        occupe = true; etoilesAttendent = false; NARR.action(null); invite.hidden = true; etape(toutAllumer);
         sac.classList.remove('secoue'); void sac.getBoundingClientRect(); sac.classList.add('secoue', 'ouvre');
         SON.play('etoile');
         NARR.dire({ txt: remplir(T(nbE >= 3 ? D.ceremonie.constellation.txt : D.ceremonie.constellationPeu.txt)), expr: 'joie' });
@@ -1691,12 +1691,19 @@ ${places.map(dent).join('')}
           apres();
         });
       }
-      const toutAccrocher = () => {
-        file.splice(0).forEach(id => accrocher(id, !RM));
+      // « Passer » pendant les étoiles : elles s'allument toutes d'un coup, et la cérémonie se termine
+      const toutAllumer = () => {
         for (let i = 0; i < nbE; i++) allumer(i, !RM);
         etoilesAttendent = false; State.etoilesRemises = true; save();
         annulerVols(); occupe = false; sac.classList.remove('ouvre');
         finir();
+      };
+      // « Passer » pendant les médailles : elles s'accrochent toutes, puis on arrive aux étoiles (à ne pas manquer)
+      const toutAccrocher = () => {
+        annulerVols(); if (enVol) { accrocher(enVol, !RM); enVol = null; }
+        file.splice(0).forEach(id => accrocher(id, !RM));
+        occupe = false; sac.classList.remove('ouvre');
+        if (etoilesAttendent) { etape(toutAllumer); annoncerEtoiles(); } else finir();
       };
       sac.addEventListener('click', sortir);
       sac.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); sortir(); } });
