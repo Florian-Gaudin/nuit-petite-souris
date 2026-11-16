@@ -32,8 +32,10 @@ Quenotte reste dans les Ardennes jusqu'à la montgolfière ; le cours d'eau peut
 - **Les saisons** : flocons, pétales, lucioles ou feuilles selon la date de la nuit (pas à l'intérieur).
 - **La lampe de poche** : après le chat, la maison est dans le noir ; le doigt promène la lumière jusqu'à « Chambre de {prénom} ».
 - **L'épilogue** (une fois, avant le diplôme) : le retour en montgolfière entre les nuages, **le terrier** (labyrinthe propre à chaque enfant, dans le noir, avec des surprises dans les impasses), la porte à serrure en forme de dent, puis la dent rangée dans la boîte à trésors.
-- **Répondre à Quenotte** : un dessin après la lettre, gardé sur l'appareil, affiché et imprimé avec le diplôme.
-- **L'album des dents** : chaque histoire terminée y est rangée (écran de choix et diplôme).
+- **La fin, en trois temps** (la première fois) : le diplôme seul, épuré (le prénom, la nuit, la dent, une ligne de bilan : étoiles et badges) ; puis **la remise des badges** : Quenotte sort chaque médaille de sa sacoche, la montre en grand et l'accroche sur l'étagère de l'enfant (les médailles à gagner sont des crochets « ? » qui disent comment les obtenir) ; puis **l'écran de fin** : le diplôme (il s'agrandit au toucher) et son impression, et quatre tuiles : Mes trésors (l'étagère complète et le ciel des étoiles trouvées), le carnet des Ardennes, le dessin pour Quenotte, l'album des dents. Ensuite, le ruban mène directement à l'écran de fin ; un badge gagné plus tard s'accroche à l'ouverture de « Mes trésors ».
+- **Le diplôme imprimé** (A4) : les médailles gagnées seulement, sous la mâchoire, jamais celles qui manquent.
+- **Répondre à Quenotte** : un dessin après la lettre, gardé sur l'appareil, en miniature sur l'écran de fin et imprimé avec le diplôme.
+- **L'album des dents** : chaque histoire créée y est rangée, « en cours » puis terminée au diplôme.
 
 ## L'accueil
 

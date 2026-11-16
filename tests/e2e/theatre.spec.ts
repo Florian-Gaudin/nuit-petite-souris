@@ -93,14 +93,16 @@ test('les trois coups ouvrent le théâtre ; le spectacle complet donne le badge
   await expect.poll(() => page.evaluate(() => (window as any).APP.state.badges)).toContain('scene13');
 });
 
-test('quitter le spectacle en cours : pas de badge ; le diplôme montre le badge secret en grisé avec son indice', async ({ page }) => {
+test("quitter le spectacle en cours : pas de badge ; l'étagère montre le badge secret à gagner, avec son indice", async ({ page }) => {
   await troisCoups(page);
   await page.keyboard.press('Escape');
   await expect(page.locator('.theatre')).toHaveCount(0);
   expect(await page.evaluate(() => (window as any).APP.state.badges)).not.toContain('scene13');
-  await page.evaluate(() => { const A = (window as any).APP; A.state.unlocked = 5; A.state.fini = true; A.show(5, { diplome: true }); });
-  const b = page.locator('.badge-dip', { hasText: 'Scène secrète' });
-  await expect(b).toHaveClass(/off/);
-  await expect(b).toHaveAttribute('data-info', /trois coups/);
-  await expect(page.locator('.dip-compte')).toContainText('/13');
+  await page.evaluate(() => { const A = (window as any).APP; A.state.unlocked = 5; A.state.fini = true; A.show(5, { diplome: true, temps: 'tableau' }); });
+  await page.locator('#btn-tresors').click();
+  const b = page.locator('.fen-tresors .case-med', { hasText: 'Scène secrète' });
+  await expect(b).toHaveClass(/a-gagner/);
+  await b.click();
+  await expect(page.locator('.tresors-info')).toContainText('trois coups');
+  await expect(page.locator('.fen-tresors .etagere-compte')).toContainText('/ 13');
 });

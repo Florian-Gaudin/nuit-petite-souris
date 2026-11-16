@@ -14,25 +14,32 @@ window.CERTIFICAT = (function () {
 </svg>`;
   }
 
-  // opts : { badges: [ids], secret: bool, nuitTexte: "nuit du …", dents, etoiles: n, total: n }
+  const Tc = s0 => { const C = window.CONFIG, s = window.RECIT.resoudre(s0); return s == null ? '' : String(s).replace(/\{(\w+)\}/g, (m, k) => (C[k] != null ? C[k] : m)); };
+  // Le nom d'un badge (le badge secret garde son nom caché tant qu'il n'est pas gagné), et ce qu'il raconte
+  function nomBadge(id, gagne) { const b = window.DATA.badges.find(x => x.id === id); return b ? Tc(b.secret && !gagne ? b.nomCache : b.nom) : ''; }
+  function texteBadge(id, gagne) { const b = window.DATA.badges.find(x => x.id === id); return b ? Tc(gagne ? b.obtenu : b.aGagner) : ''; }
+
+  // Le diplôme : l'essentiel seulement (le prénom, la nuit, la dent, la signature).
+  // À l'écran, les étoiles et les badges tiennent en une ligne (ils ont leur étagère, « Mes trésors ») ;
+  // à l'impression (opts.impression), les médailles gagnées s'alignent sous la mâchoire, jamais celles qui manquent.
+  // opts : { badges: [ids], secret: bool, nuitTexte: "nuit du …", etoiles: n, total: n, impression: bool }
   function html(opts) {
     const C = window.CONFIG, D = window.DATA;
-    const T = s0 => { const s = window.RECIT.resoudre(s0); return s == null ? '' : String(s).replace(/\{(\w+)\}/g, (m, k) => (C[k] != null ? C[k] : m)); };
-    const gagnes = opts.badges || [];
-    const visibles = D.badges; // le badge secret aussi : en grisé, avec son indice, tant qu'il n'est pas trouvé
-    const nbGagnes = visibles.filter(b => gagnes.indexOf(b.id) >= 0).length;
-    const badges = visibles.map(b => {
-      const ok = gagnes.indexOf(b.id) >= 0, msg = T(ok ? b.obtenu : b.aGagner);
-      const cache = b.secret && !ok, nom = T(cache ? b.nomCache : b.nom);
-      return `<button type="button" class="badge-dip ${ok ? '' : 'off'}" data-nom="${esc(nom)}" data-ok="${ok ? 1 : 0}" data-info="${esc(msg)}" title="${esc(msg)}">${window.ART.badgeIcone(cache ? 'mystere' : b.id, 46)}<span>${esc(nom)}</span></button>`;
-    }).join('');
+    const gagnes = D.badges.filter(b => (opts.badges || []).indexOf(b.id) >= 0);
     // Témoin : le doudou, sinon le frère ou la sœur de la chambre, sinon la lune
     const temoin = C.aDoudou ? C.poupee + ' (dormait)' : C.fratrieACote ? C.frere + ' (dormait)' : 'la lune (veillait)';
     const total = opts.total || D.scenes.reduce((n, s) => n + s.bonus.length, 0);
     const etoiles = Math.max(0, Math.min(total, opts.etoiles || 0));
-    let etoilesSVG = '';
-    for (let i = 0; i < total; i++) etoilesSVG += `<svg class="dip-etoile ${i < etoiles ? '' : 'off'}" viewBox="0 0 24 24" aria-hidden="true"><use href="#etoile5"/></svg>`;
-    return `<div class="diplome">
+    const pl = (n, mot) => n + ' ' + mot + (n > 1 ? 's' : '');
+    const bilan = `<p class="dip-bilan">
+      <span><svg class="dip-ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#etoile5"/></svg>${pl(etoiles, 'étoile')} ${etoiles > 1 ? 'trouvées' : 'trouvée'} sur ${total}</span>
+      <span><svg class="dip-ico med" viewBox="-32 -50 64 86" aria-hidden="true"><circle cy="4" r="25" fill="#E8B83A" stroke="#8a6a12" stroke-width="3"/><path d="M-13-45h10l8 22h-10zM13-45h-10l-8 22h10z" fill="#D64045"/></svg>${pl(gagnes.length, 'badge')} ${gagnes.length > 1 ? 'gagnés' : 'gagné'}</span>
+    </p>`;
+    const medailles = opts.impression && gagnes.length ? `<div class="dip-medailles">
+      <div class="dip-medailles-titre">Ses badges de la nuit</div>
+      <div class="dip-medailles-liste">${gagnes.map(b => `<figure class="dip-medaille">${window.ART.medaille(b.id, true)}<figcaption>${esc(nomBadge(b.id, true))}</figcaption></figure>`).join('')}</div>
+    </div>` : '';
+    return `<div class="diplome${opts.impression ? ' imprime' : ''}">
   <div class="dip-bord">
     <div class="dip-coin c1"></div><div class="dip-coin c2"></div><div class="dip-coin c3"></div><div class="dip-coin c4"></div>
     <div class="dip-entete">Certificat officiel</div>
@@ -40,15 +47,9 @@ window.CERTIFICAT = (function () {
     <div class="dip-decerne">décerné à</div>
     <div class="dip-nom">${esc(C.enfant)}</div>
     <p class="dip-texte">qui a perdu sa <b>${C.ordinalHtml} dent de lait</b>, ${esc(C.dentNom)}, qui a guidé ${esc(C.souris)} jusqu'à ${C.logement === 'appartement' ? 'son appartement' : 'sa maison'} et l'a aidée à passer devant le chat ${esc(C.chat)}.<br>${{ piece: 'Sa pièce de ' + C.euros + ' €', billet: 'Son billet de ' + C.euros + ' €', paquet: 'Son petit paquet surprise', chocolat: 'Sa boîte de chocolats' }[C.cadeau] || 'Son cadeau'} a traversé ${esc(C.riviere)} en bateau.</p>
-    <div class="dip-etoiles" aria-label="${etoiles} étoiles découvertes sur ${total}">${etoilesSVG}<span>${etoiles} étoile${etoiles > 1 ? 's' : ''} découverte${etoiles > 1 ? 's' : ''} sur ${total}</span></div>
-    <div class="dip-milieu">
-      <div class="dip-machoire">${window.MACHOIRE(C.profil)}</div>
-      <div class="dip-badges-bloc">
-        <div class="dip-badges-titre">Mes badges <span class="dip-compte">${nbGagnes}/${visibles.length}</span></div>
-        <div class="dip-badges">${badges}</div>
-        <p class="dip-badge-info" aria-live="polite">Touche un badge pour savoir comment il se gagne.</p>
-      </div>
-    </div>
+    <div class="dip-machoire">${window.MACHOIRE(C.profil)}</div>
+    ${bilan}
+    ${medailles}
     <div class="dip-pied">
       <div class="dip-date">Fait au château fort de Sedan,<br>dans les Ardennes,<br>${esc(opts.nuitTexte || '')}</div>
       <div class="dip-tampon">${tamponSVG()}</div>
@@ -57,20 +58,9 @@ window.CERTIFICAT = (function () {
   </div>
 </div>`;
   }
-  // Survol ou toucher d'un badge : la ligne sous les badges explique comment il a été gagné, ou comment le gagner
-  function brancher(racine) {
-    const info = racine.querySelector('.dip-badge-info'); if (!info) return;
-    const montre = b => {
-      racine.querySelectorAll('.badge-dip.choisi').forEach(x => x.classList.remove('choisi')); b.classList.add('choisi');
-      info.innerHTML = '<b>' + esc(b.dataset.nom) + (b.dataset.ok === '1' ? ' ✓' : ' (à gagner)') + '</b> : ' + esc(b.dataset.info);
-    };
-    racine.querySelectorAll('.badge-dip').forEach(b => {
-      b.addEventListener('click', () => montre(b));
-      b.addEventListener('mouseenter', () => montre(b));
-      b.addEventListener('focus', () => montre(b));
-    });
-  }
-  return { html, tamponSVG, brancher };
+  // (Plus rien à brancher : le diplôme ne porte plus les badges. Gardé pour les pages qui l'appellent encore.)
+  function brancher() { }
+  return { html, tamponSVG, brancher, nomBadge, texteBadge };
 })();
 
 // Module ES (chargé par src/main.ts) : le contenu reste un script qui expose ses objets sur window.

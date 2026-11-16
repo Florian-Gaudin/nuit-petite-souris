@@ -538,9 +538,147 @@ input,textarea,[contenteditable]{-webkit-user-select:text;user-select:text;-webk
 .ligne.ps{font-size:.8em;color:#5c4a1e;margin-top:.5em}
 .lire-avec{display:flex;align-items:center;gap:8px;margin:14px 0 0;font-size:clamp(1.1rem,3.6vw,1.4rem);font-weight:700;color:var(--lanterne)}
 
-/* ---------- Chapitre 5 : le diplôme ---------- */
+/* ---------- Chapitre 5 : la fin (le diplôme seul, la remise des badges, l'écran de fin) ---------- */
 .diplome-wrap{display:flex;justify-content:center}
-.diplome-wrap .diplome{width:min(100%,680px)}
+.diplome-wrap .diplome{width:min(100%,560px)}
+.fin5 .decor-titre{margin-bottom:12px}
+
+/* La remise des badges : Quenotte et sa sacoche, à côté de l'étagère */
+.ceremonie{display:grid;grid-template-columns:1fr;gap:6px;align-items:center;max-width:900px;margin:0 auto}
+@media (min-width:700px){.ceremonie{grid-template-columns:minmax(200px,260px) minmax(0,1fr);gap:20px}}
+@media (orientation:landscape) and (max-height:520px){.ceremonie{grid-template-columns:minmax(140px,190px) minmax(0,1fr);gap:12px}}
+/* Sur téléphone, Quenotte se tient debout sur le haut de l'étagère */
+.ceremonie-q{position:relative;z-index:1;width:min(36vw,160px);margin:0 auto -16px}
+@media (min-width:700px){.ceremonie-q{width:min(100%,240px);margin:0 auto}}
+@media (orientation:landscape) and (max-height:520px){.ceremonie-q{width:min(100%,170px);margin:0 auto}}
+.scene.ch-5:has(.temps-ceremonie){padding-bottom:calc(var(--bandeau-h) + 72px)}
+.q-sacoche{display:block;width:100%;height:auto;overflow:visible}
+.q-sacoche .sacoche{cursor:pointer;outline:none;transform-box:fill-box;transform-origin:50% 0}
+.q-sacoche .sacoche:focus-visible rect{stroke:var(--lanterne);stroke-width:4}
+.q-sacoche .sac-lueur,.q-sacoche .sac-eclats{opacity:0;transition:opacity .4s}
+.ceremonie.pleine .sac-lueur{opacity:.9;animation:sac-pouls 1.8s ease-in-out infinite}
+.ceremonie.pleine .sac-eclats{opacity:1;animation:sac-eclats 1.8s ease-in-out infinite}
+@keyframes sac-pouls{50%{opacity:.35}}
+@keyframes sac-eclats{0%{transform:translateY(4px);opacity:0}40%{opacity:1}100%{transform:translateY(-10px);opacity:0}}
+.q-sacoche .rabat{transform-box:fill-box;transform-origin:50% 0;transition:transform .28s cubic-bezier(.3,1.4,.5,1)}
+.q-sacoche .sacoche.ouvre .rabat{transform:scaleY(-.55)}
+.q-sacoche .sacoche.secoue{animation:sac-secoue .5s ease}
+@keyframes sac-secoue{25%{transform:rotate(-7deg)}60%{transform:rotate(5deg)}85%{transform:rotate(-2deg)}}
+.q-sacoche .q-yeux{transform-box:fill-box;transform-origin:center;animation:q-cligne 5.5s infinite}
+@keyframes q-cligne{0%,93%,100%{transform:none}95.5%{transform:scaleY(.1)}}
+.sac-invite{position:absolute;left:-24px;bottom:12px;padding:4px 12px;border-radius:999px;background:var(--lanterne);color:#3b2a00;font:800 .9rem var(--display);white-space:nowrap;box-shadow:0 6px 14px rgba(0,0,0,.4);pointer-events:none;animation:sac-invite 1.6s ease-in-out infinite}
+.sac-invite::before{content:'';position:absolute;left:30px;top:-7px;border:8px solid transparent;border-top:0;border-bottom:8px solid var(--lanterne)}
+@keyframes sac-invite{50%{transform:translateY(-4px)}}
+
+/* L'étagère des médailles : un cadre de bois, des tringles dorées, des planches */
+.etagere{position:relative;min-width:0;width:100%;max-width:640px;margin:0 auto;border-radius:18px;padding:10px 12px 4px;background:radial-gradient(120% 90% at 50% 0%,#4b3053 0%,#2c1b33 72%);border:7px solid #6E4630;box-shadow:inset 0 0 0 2px #3d2416,inset 0 12px 30px rgba(0,0,0,.45),0 14px 30px rgba(0,0,0,.45)}
+.etagere-titre{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin:0 2px 2px;font:800 1.02rem var(--display);color:var(--lanterne)}
+.etagere-compte{flex:none;padding:0 10px;border-radius:999px;background:rgba(0,0,0,.3);color:#f0e4cc;font-size:.85rem;font-variant-numeric:tabular-nums}
+.rayon{position:relative;padding-top:8px}
+.rayon::before{content:'';position:absolute;left:3%;right:3%;top:7px;height:4px;border-radius:3px;background:linear-gradient(#f6dc8c,#a77d1c);box-shadow:0 1px 2px rgba(0,0,0,.55)}
+.rayon::after{content:'';display:block;height:11px;margin:0 -12px 8px;border-radius:2px;background:linear-gradient(#ad7a4e,#7a4c2c);box-shadow:0 4px 0 #4a2e1e,0 9px 12px rgba(0,0,0,.45)}
+.rayon-cases{display:flex;justify-content:center;gap:0}
+.case-med{flex:0 0 20%;min-width:0;display:flex;flex-direction:column;align-items:center;gap:1px;padding:0 2px 5px;border:0;background:none;color:inherit;cursor:pointer;border-radius:10px;-webkit-tap-highlight-color:transparent}
+.case-med .medaille{width:100%;max-width:clamp(56px,7vw,76px);height:auto;display:block;overflow:visible;transform-origin:50% 1%;transition:filter .2s}
+.case-med .med-nom{min-height:2.3em;font:700 clamp(.66rem,2.5vw,.76rem)/1.15 var(--display);color:#f3ead8;text-align:center;-webkit-hyphens:auto;hyphens:auto;transition:opacity .3s}
+.case-med.a-gagner .med-nom{color:#b4b0d6}
+.case-med:hover .medaille,.case-med:focus-visible .medaille{filter:brightness(1.12) drop-shadow(0 0 8px rgba(255,200,87,.55))}
+.case-med:focus-visible{outline:3px solid var(--lanterne);outline-offset:-2px}
+.case-med.choisie{background:rgba(255,200,87,.14)}
+/* Une médaille encore dans la sacoche : seul son crochet est là */
+.case-med.attend{cursor:default}
+.case-med.attend .med-nom{opacity:0}
+.case-med.attend .scintille{animation:med-scintille 1.6s ease-in-out infinite}
+@keyframes med-scintille{50%{opacity:.25}}
+.case-med.attend .medaille{filter:none}
+.case-med.posee .medaille{animation:med-balance 1.3s ease-out}
+@keyframes med-balance{0%{transform:rotate(16deg)}22%{transform:rotate(-11deg)}45%{transform:rotate(6deg)}68%{transform:rotate(-3deg)}100%{transform:none}}
+
+/* L'envol d'une médaille, au-dessus de l'écran */
+.med-voile{position:fixed;inset:0;z-index:22;pointer-events:none;background:radial-gradient(circle at 50% 44%,rgba(255,200,87,.24),rgba(8,10,28,.62) 62%);opacity:0;transition:opacity .35s}
+.med-voile.on{opacity:1}
+.med-vol{position:fixed;left:0;top:0;z-index:28;transform-origin:0 0;pointer-events:none;will-change:transform}
+.med-vol .medaille{position:relative;display:block;width:100%;height:auto;overflow:visible;filter:drop-shadow(0 12px 18px rgba(0,0,0,.5))}
+.med-gloire{position:absolute;left:50%;top:62%;width:250%;aspect-ratio:1;margin:-125% 0 0 -125%;border-radius:50%;background:repeating-conic-gradient(rgba(255,214,120,.42) 0 9deg,transparent 9deg 22deg);-webkit-mask-image:radial-gradient(circle,#000 22%,transparent 68%);mask-image:radial-gradient(circle,#000 22%,transparent 68%);opacity:0;transition:opacity .45s;animation:med-gloire 9s linear infinite}
+.med-vol.montre .med-gloire{opacity:1}
+@keyframes med-gloire{to{transform:rotate(360deg)}}
+.med-vol-nom{position:absolute;left:50%;top:calc(100% + 10px);transform:translateX(-50%);white-space:nowrap;padding:5px 16px;border-radius:999px;background:var(--papier);color:var(--encre);font:800 1.1rem var(--display);box-shadow:0 8px 20px rgba(0,0,0,.45);opacity:0;transition:opacity .3s}
+.med-vol.montre .med-vol-nom{opacity:1}
+
+/* L'écran de fin : le diplôme et son impression ; à côté, les tuiles */
+.fin5-grille{display:grid;grid-template-columns:minmax(0,1fr);gap:18px;align-items:start;max-width:1000px;margin:0 auto}
+@media (min-width:860px){.fin5-grille{grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:26px}}
+.fin5-dip{display:flex;flex-direction:column;align-items:center;gap:12px;min-width:0}
+.fin5-dip .btn-grand{max-width:560px}
+.dip-mini{display:block;width:100%;max-width:560px;padding:0;border:0;background:none;color:inherit;font:inherit;text-align:inherit;cursor:zoom-in;border-radius:8px;-webkit-tap-highlight-color:transparent;transition:transform .2s}
+.dip-mini:hover{transform:translateY(-2px)}
+.dip-mini:focus-visible{outline:3px solid var(--lanterne);outline-offset:4px}
+.dip-loupe{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:8px;color:var(--muet);font:600 .85rem var(--display)}
+.dip-loupe svg{width:18px;height:18px}
+.fin5-cote{display:flex;flex-direction:column;gap:6px;min-width:0}
+.fin5-tuiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.tuile{position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:flex-start;gap:10px;min-height:150px;padding:14px;border-radius:18px;border:2px solid #3d4a95;background:rgba(27,34,80,.9);color:var(--clair);font:inherit;text-align:left;cursor:pointer;box-shadow:0 8px 20px rgba(0,0,0,.32);transition:transform .15s,border-color .15s;-webkit-tap-highlight-color:transparent}
+.tuile:hover,.tuile:focus-visible{transform:translateY(-2px);border-color:var(--lanterne)}
+.tuile:focus-visible{outline:3px solid var(--lanterne);outline-offset:2px}
+.tuile-txt{display:flex;flex-direction:column;gap:3px;margin-top:auto;min-width:0}
+.tuile b{font-size:1.06rem;line-height:1.15}
+.tuile small{font-size:.84rem;font-weight:600;line-height:1.3;color:var(--muet)}
+.tuile-nouveau{position:absolute;top:10px;right:10px;padding:1px 10px;border-radius:999px;background:#b8323a;color:#fff;font:800 .74rem/1.6 var(--display);font-style:normal;box-shadow:0 2px 6px rgba(0,0,0,.35);animation:tuile-nouveau 1.8s ease-in-out infinite}
+@keyframes tuile-nouveau{50%{transform:scale(1.08)}}
+.tuile-ill svg{display:block;width:54px;height:54px}
+/* L'album : une tuile basse, sur toute la largeur */
+.tuile-album{grid-column:1/-1;flex-direction:row;align-items:center;min-height:0;gap:14px;padding:10px 14px}
+.tuile-album .tuile-txt{margin-top:0}
+.tuile-album .tuile-ill svg{width:46px;height:46px}
+/* Mes trésors : un bout d'étagère avec les médailles gagnées */
+.tuile-tresors{grid-column:1/-1;min-height:0;padding-bottom:0;background:radial-gradient(130% 120% at 50% 0%,#4b3053,#2c1b33 75%);border-color:#8B5A3C}
+.tuile-tresors .tuile-txt{margin-top:0;padding-right:84px}
+.tuile-tresors b{color:var(--lanterne);font-size:1.15rem}
+.tuile-tresors small{color:#e6dccb}
+.mini-etagere{position:relative;align-self:stretch;margin:0 -14px;padding:8px 14px 0}
+.mini-etagere::before{content:'';position:absolute;left:12px;right:12px;top:7px;height:3px;border-radius:2px;background:linear-gradient(#f6dc8c,#a77d1c)}
+.mini-etagere::after{content:'';display:block;height:10px;margin:0 -14px;background:linear-gradient(#ad7a4e,#7a4c2c);box-shadow:inset 0 -3px 0 #4a2e1e}
+.mini-meds{display:flex;align-items:flex-start;gap:4px;padding:0 4px}
+.mini-med{flex:0 1 46px;min-width:0}
+.mini-med .medaille{display:block;width:100%;height:auto}
+.mini-plus{align-self:center;padding-left:4px;color:var(--lanterne);font:800 1rem var(--display)}
+/* Le carnet des Ardennes : cuir rouge, cadre doré, éventail de cartes */
+.tuile-carnet{background:linear-gradient(150deg,#8a2a30,#4f1418);border-color:#C9A227}
+.tuile-carnet b{font-family:var(--serif);font-size:1rem;color:#f6e08a}
+.tuile-carnet small{color:#F3E3BF}
+.mini-eventail{position:relative;display:block;width:76px;height:60px}
+.eventail-zoom{position:absolute;left:-4px;top:0;width:118px;height:96px;transform:scale(.62);transform-origin:0 0}
+/* Le dessin pour Quenotte */
+.tuile-dessin{background:linear-gradient(150deg,#2f6a7a,#1d3f4f);border-color:#3E7C8F}
+.tuile-dessin small{color:#d4ecf2}
+.mini-dessin{display:block;width:84px;padding:4px;border-radius:4px;background:#fff;box-shadow:0 4px 10px rgba(0,0,0,.35);transform:rotate(-4deg)}
+.mini-dessin img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:2px}
+.fin5-revoir{margin:4px 0 0;text-align:center}
+.lien-revoir{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 10px;border:0;background:none;color:var(--muet);font:600 .95rem var(--display);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.lien-revoir .ico{width:18px;height:18px}
+
+/* Les fenêtres de la fin : le diplôme agrandi, « Mes trésors » */
+.fen-diplome .atelier-in{background:none;padding:0;gap:14px;width:min(100%,640px)}
+.fen-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:10px}
+.fen-actions .btn{min-height:52px}
+.fen-tresors .atelier-in{background:linear-gradient(#1f2756,#141A3A);color:var(--clair);border:2px solid #3d4a95;width:min(100%,640px);gap:12px}
+.tresors-tete{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.tresors-tete h2{margin:0;font-size:1.35rem;color:var(--lanterne)}
+.fermer-x{flex:none;width:44px;height:44px;border-radius:50%;border:2px solid #3d4a95;background:rgba(27,34,80,.85);color:var(--clair);font:800 1.1rem var(--display);cursor:pointer}
+.tresors-info{min-height:92px;display:flex;align-items:center;padding:10px 12px;border-radius:14px;background:var(--papier);color:var(--encre)}
+.tresors-aide{margin:0;width:100%;text-align:center;color:#5c4a1e;font-weight:600}
+.info-med{display:flex;align-items:center;gap:12px}
+.info-med .medaille{flex:none;width:54px;height:auto}
+.info-med b{display:block;font-size:1.08rem;line-height:1.2}
+.info-med p{margin:2px 0 0;font-family:var(--serif);font-size:.9rem;line-height:1.45}
+.info-etat{display:inline-block;margin-bottom:3px;padding:0 9px;border-radius:999px;background:#e6f2d4;color:#2f5a17;font:800 .74rem/1.7 var(--display)}
+.info-etat.non{background:#ebe7f6;color:#4e3f72}
+.ciel-etoiles{padding:10px 12px 12px;border-radius:14px;background:radial-gradient(120% 140% at 50% 0%,#26306b,#0e1330);border:1.5px solid #3d4a95}
+.ciel-etoiles p{margin:0 0 8px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:2px 12px;font-size:.92rem}
+.ciel-etoiles p span{color:var(--muet);font-weight:600;font-size:.84rem}
+.ciel-liste{display:flex;flex-wrap:wrap;justify-content:center;gap:5px}
+.ciel-etoile{width:22px;height:22px}
+.ciel-etoile.eteinte{opacity:.2;filter:grayscale(1)}
 .confettis{position:fixed;inset:0;pointer-events:none;z-index:15;overflow:hidden}
 .confettis i{position:absolute;top:-20px;width:10px;height:16px;border-radius:2px;animation:tombe 4s linear infinite}
 @keyframes tombe{0%{transform:translateY(0) rotate(0);opacity:1}100%{transform:translateY(105vh) rotate(720deg);opacity:.2}}
@@ -1234,3 +1372,9 @@ html.grand-texte .livre-ancien .livre-texte p{font-size:1.5rem}
 .fil.menu-ouvert{z-index:40}
 @media (max-height:700px){.ecran-choix:has(.autres-options[open]) .choix-logo{display:none}}
 @media (max-height:440px){.autres-cartes{display:grid;grid-template-columns:1fr 1fr;align-items:stretch}.autres-cartes .lien-video{grid-column:1/-1;justify-self:center}.ecran-choix:has(.autres-options[open]) .choix-haut{display:none}}
+/* Sur téléphone, l'invitation se place à gauche de Quenotte, sa flèche vers la sacoche */
+@media (max-width:699px){
+  .sac-invite{left:auto;right:calc(100% - 40px);bottom:15%;padding:3px 10px;font-size:.82rem}
+  .sac-invite::before{left:auto;right:-7px;top:50%;margin-top:-8px;border:8px solid transparent;border-right:0;border-left:8px solid var(--lanterne)}
+  @keyframes sac-invite{50%{transform:translateX(-4px)}}
+}

@@ -54,6 +54,9 @@ window.ART = (function () {
 <radialGradient id="glow" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#FFC857" stop-opacity=".6"/><stop offset="1" stop-color="#FFC857" stop-opacity="0"/></radialGradient>
 <radialGradient id="halo-or" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#FFF4D6" stop-opacity=".75"/><stop offset=".6" stop-color="#FFC857" stop-opacity=".35"/><stop offset="1" stop-color="#FFC857" stop-opacity="0"/></radialGradient>
 <radialGradient id="gcire" cx="35%" cy="35%" r="70%"><stop offset="0" stop-color="#ee6b74"/><stop offset="1" stop-color="#b4232f"/></radialGradient>
+<radialGradient id="med-or" cx="38%" cy="32%" r="75%"><stop offset="0" stop-color="#FFF1B8"/><stop offset=".45" stop-color="#F0C64A"/><stop offset="1" stop-color="#B98A18"/></radialGradient>
+<linearGradient id="med-ruban" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#b8323a"/><stop offset=".5" stop-color="#e2545a"/><stop offset="1" stop-color="#b8323a"/></linearGradient>
+<linearGradient id="sac-cuir" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a06a42"/><stop offset="1" stop-color="#7a4c2c"/></linearGradient>
 
 <symbol id="souris-face" viewBox="0 0 220 240">
   <circle cx="44" cy="178" r="52" fill="url(#glow)"/>
@@ -188,9 +191,7 @@ ${({
   function icone(n, cls) { return `<svg class="ico ${cls || ''}" viewBox="0 0 24 24" aria-hidden="true">${ICONES[n] || ''}</svg>`; }
 
   // Icônes des badges (fond coloré rond)
-  function badgeIcone(id, taille) {
-    const t = taille || 44;
-    const dessins = {
+  const DESSINS_BADGES = {
       detective: '<circle cx="24" cy="24" r="22" fill="#273066"/><path d="M19 12h10l1.5 4H17.5z M17.5 16h13v12a6.5 6.5 0 0 1-13 0z" fill="#FFC857"/><circle cx="24" cy="23" r="3" fill="#fff"/>',
       exploratrice: '<circle cx="24" cy="24" r="22" fill="#2F5D50"/><use href="#etoile5" x="8" y="8" width="20" height="20"/><use href="#etoile5" x="22" y="18" width="16" height="16"/><use href="#etoile5" x="12" y="26" width="12" height="12"/>',
       lynx: '<circle cx="24" cy="24" r="22" fill="#141A3A"/><use href="#etoile5" x="10" y="10" width="28" height="28"/><circle cx="24" cy="24" r="4" fill="#fff"/>',
@@ -206,8 +207,74 @@ ${({
       ardennais: '<circle cx="24" cy="24" r="22" fill="#2F5D50"/><path transform="translate(9 4) scale(1.25)" d="M12 1C14 1 15 3 14.5 4.5C17 4 18 6 16 7.5C19 7.5 19.5 10 17 11C19.5 11.5 19 14.5 16 14C17 16 15.5 17.5 13.2 17L12.6 19V22.5H11.4V19L10.8 17C8.5 17.5 7 16 8 14C5 14.5 4.5 11.5 7 11C4.5 10 5 7.5 8 7.5C6 6 7 4 9.5 4.5C9 3 10 1 12 1Z" fill="#9BC53D" stroke="#3E6B1F"/><g transform="translate(24 36)"><ellipse cx="-2" cy="0" rx="10" ry="5.5" fill="#8a6044"/><path d="M6-4q6 0 8 5l2 1q0 2-2 2l-7 .5q-3-1-3-5z" fill="#8a6044"/><path d="M7-4l1.5-3 2 3z" fill="#5c3c28"/><path d="M-8 4v3M-3 5v3M2 5v3M6 4v3" stroke="#5c3c28" stroke-width="2" stroke-linecap="round"/></g>',
       mystere: '<circle cx="24" cy="24" r="22" fill="#5a5470"/><text x="24" y="32" font-family="Baloo 2, sans-serif" font-weight="800" font-size="24" fill="#cfd3ee" text-anchor="middle">?</text>',
       scene13: '<circle cx="24" cy="24" r="22" fill="#D64045"/><rect x="10" y="12" width="28" height="24" rx="2" fill="#141A3A"/><path d="M10 12q7 10 0 24zM38 12q-7 10 0 24z" fill="#9a2a32"/><text x="24" y="30" font-family="Baloo 2" font-weight="800" font-size="12" fill="#FFC857" text-anchor="middle">13</text>',
-    };
-    return `<svg class="badge-ico" width="${t}" height="${t}" viewBox="0 0 48 48" aria-hidden="true">${dessins[id] || ''}</svg>`;
+  };
+  function badgeIcone(id, taille) {
+    const t = taille || 44;
+    return `<svg class="badge-ico" width="${t}" height="${t}" viewBox="0 0 48 48" aria-hidden="true">${DESSINS_BADGES[id] || ''}</svg>`;
+  }
+
+  // ---------- Les médailles de l'étagère : un ruban, un disque doré crénelé, l'emblème du badge au centre ----------
+  // Une médaille pas encore gagnée : son crochet, et un rond en pointillés avec un point d'interrogation.
+  // Le haut du dessin (y = -50) est le point d'accroche, sur la tringle de l'étagère.
+  // gagnee === 'attend' : une médaille gagnée encore dans la sacoche, son crochet entouré d'une lueur dorée
+  function medaille(id, gagnee) {
+    const crochet = '<path d="M0-49v6" stroke="#d9b54a" stroke-width="2.4" stroke-linecap="round"/><circle cy="-48" r="2.6" fill="#d9b54a"/>';
+    if (gagnee === 'attend') return `<svg class="medaille attend" viewBox="-32 -50 64 86" aria-hidden="true">${crochet}
+<circle cy="4" r="24" fill="rgba(255,200,87,.07)" stroke="#d9b54a" stroke-width="1.8" stroke-dasharray="3 5" opacity=".75"/>
+<g class="scintille" fill="#FFE7A0"><path d="M-9-3l1.6 4 4 1.6-4 1.6-1.6 4-1.6-4-4-1.6 4-1.6z"/><path d="M9 8l1.2 3 3 1.2-3 1.2-1.2 3-1.2-3-3-1.2 3-1.2z"/></g></svg>`;
+    if (!gagnee) return `<svg class="medaille vide" viewBox="-32 -50 64 86" aria-hidden="true">${crochet}
+<path d="M0-42l-6 16M0-42l6 16" stroke="#7d79a8" stroke-width="1.6" stroke-dasharray="2 3" stroke-linecap="round"/>
+<circle cy="4" r="24" fill="rgba(255,255,255,.05)" stroke="#7d79a8" stroke-width="2" stroke-dasharray="4 4"/>
+<text y="14" text-anchor="middle" font-family="Baloo 2, sans-serif" font-weight="800" font-size="27" fill="#9a96c4">?</text></svg>`;
+    return `<svg class="medaille" viewBox="-32 -50 64 86" aria-hidden="true">${crochet}
+<path d="M-2-43h-11l9 24h11z" fill="url(#med-ruban)" stroke="#8f222a" stroke-width=".8"/><path d="M2-43h11l-9 24h-11z" fill="url(#med-ruban)" stroke="#8f222a" stroke-width=".8"/>
+<path d="M-7.5-43l8.5 22M7.5-43l-8.5 22" stroke="#FFC857" stroke-width="1.5"/>
+<circle cy="4" r="26.5" fill="#7d5e0e"/><circle cy="4" r="25.5" fill="url(#med-or)"/>
+<circle cy="4" r="23.4" fill="none" stroke="#a37a14" stroke-width="1.4" stroke-dasharray="1.4 2.2"/>
+<circle cy="4" r="20" fill="#7d5e0e" opacity=".6"/>
+<g transform="translate(-19 -15) scale(.79)">${DESSINS_BADGES[id] || ''}</g>
+<circle cy="4" r="19.2" fill="none" stroke="#FFF1B8" stroke-width="1" opacity=".75"/>
+<path d="M-18-8a22 22 0 0 1 13-10" stroke="#fff" stroke-opacity=".75" stroke-width="2.4" fill="none" stroke-linecap="round"/></svg>`;
+  }
+
+  // ---------- Quenotte de face, sa sacoche de cuir en bandoulière (la remise des badges) ----------
+  // La sacoche (.sacoche) se touche ; son rabat (.rabat) se soulève quand une médaille en sort.
+  function quenotteSacoche() {
+    const nom = window.CONFIG.souris;
+    return `<svg class="q-sacoche" viewBox="0 0 240 250" role="group" aria-label="${nom} et sa sacoche">
+<ellipse cx="124" cy="240" rx="88" ry="8" fill="#000" opacity=".3"/>
+<path d="M166 214 C 222 226, 226 170, 190 166" fill="none" stroke="#A79E95" stroke-width="7" stroke-linecap="round"/>
+<ellipse cx="124" cy="172" rx="52" ry="56" fill="#A79E95"/>
+<ellipse cx="124" cy="184" rx="31" ry="37" fill="#EFE8DD"/>
+<ellipse cx="102" cy="229" rx="16" ry="8" fill="#E7B4B4"/><ellipse cx="146" cy="229" rx="16" ry="8" fill="#E7B4B4"/>
+<ellipse cx="172" cy="164" rx="13" ry="10" fill="#A79E95" transform="rotate(30 172 164)"/>
+<circle cx="80" cy="60" r="25" fill="#A79E95"/><circle cx="80" cy="60" r="15" fill="#F2A3B5"/>
+<circle cx="168" cy="60" r="25" fill="#A79E95"/><circle cx="168" cy="60" r="15" fill="#F2A3B5"/>
+<circle cx="124" cy="96" r="46" fill="#A79E95"/>
+<ellipse cx="124" cy="114" rx="19" ry="12.5" fill="#EFE8DD"/>
+<ellipse cx="124" cy="108" rx="6.5" ry="4.8" fill="#E98BA0"/>
+<path d="M116 118 q8 7 16 0" fill="none" stroke="#2B2B33" stroke-width="2" stroke-linecap="round"/>
+<g class="q-yeux"><circle cx="108" cy="93" r="5.8" fill="#2B2B33"/><circle cx="140" cy="93" r="5.8" fill="#2B2B33"/><circle cx="110" cy="91" r="2.1" fill="#fff"/><circle cx="142" cy="91" r="2.1" fill="#fff"/></g>
+<ellipse cx="97" cy="109" rx="7" ry="4" fill="#F2A3B5" opacity=".55"/><ellipse cx="151" cy="109" rx="7" ry="4" fill="#F2A3B5" opacity=".55"/>
+<g stroke="#6B6560" stroke-width="1.4" stroke-linecap="round"><path d="M104 111 L 76 105"/><path d="M104 115 L 76 117"/><path d="M144 111 L 172 105"/><path d="M144 115 L 172 117"/></g>
+<path d="M82 136 q42 21 84 0 v15 q-42 21 -84 0z" fill="#D64045"/>
+<path d="M88 145 q36 17 72 0" fill="none" stroke="#B5323B" stroke-width="2"/>
+<path d="M142 148 q8 20 4 38 h15 q4 -18 -4 -38z" fill="#D64045"/>
+<g stroke="#FFF4D6" stroke-width="2" stroke-linecap="round"><path d="M148 184 v6"/><path d="M154 185 v6"/></g>
+<path d="M158 140 C 132 170, 98 182, 76 194" fill="none" stroke="#4a2e1e" stroke-width="8" stroke-linecap="round"/>
+<path d="M158 140 C 132 170, 98 182, 76 194" fill="none" stroke="#8B5A3C" stroke-width="4.5" stroke-linecap="round"/>
+<g class="sacoche" tabindex="0" role="button" aria-label="Ouvrir la sacoche de ${nom}">
+  <circle class="sac-lueur" cx="62" cy="204" r="60" fill="url(#halo-or)"/>
+  <rect x="20" y="178" width="86" height="58" rx="13" fill="url(#sac-cuir)" stroke="#4a2e1e" stroke-width="3"/>
+  <rect x="27" y="186" width="72" height="43" rx="9" fill="none" stroke="#d4a676" stroke-width="1.3" stroke-dasharray="3 3" opacity=".75"/>
+  <g class="sac-eclats" fill="#FFE7A0"><circle cx="42" cy="176" r="2.6"/><circle cx="63" cy="170" r="3.2"/><circle cx="84" cy="176" r="2.4"/></g>
+  <g class="rabat"><path d="M20 190 q0-14 14-14 h58 q14 0 14 14 v12 q-43 19 -86 0z" fill="#8B5A3C" stroke="#4a2e1e" stroke-width="3"/>
+  <path d="M28 196 q35 13 70 0" fill="none" stroke="#d4a676" stroke-width="1.3" stroke-dasharray="3 3" opacity=".75"/>
+  <use href="#dent" x="54" y="179" width="18" height="18"/></g>
+  <rect x="56" y="203" width="14" height="13" rx="3" fill="#FFC857" stroke="#9a7212" stroke-width="1.6"/><rect x="61" y="208" width="4" height="4" rx="1" fill="#9a7212"/>
+</g>
+<ellipse cx="80" cy="170" rx="14" ry="10" fill="#A79E95" transform="rotate(-36 80 170)"/>
+</svg>`;
   }
 
   // ---------- Portrait de Quenotte pour le bandeau de narration ----------
@@ -412,7 +479,7 @@ ${porte(720, plaque)}
     return `<g class="saison saison-${s}" aria-hidden="true">${p}</g>`;
   }
 
-  return { lampeSVG, saison, saisonSVG, symboles, icone, badgeIcone, portrait, cielSVG, jeuSVG, camSVG, enveloppeSVG, lune, luneSVG, etoiles, fond, souris, pointSouris, CIEL };
+  return { lampeSVG, saison, saisonSVG, symboles, icone, badgeIcone, medaille, quenotteSacoche, portrait, cielSVG, jeuSVG, camSVG, enveloppeSVG, lune, luneSVG, etoiles, fond, souris, pointSouris, CIEL };
 })();
 
 // Module ES (chargé par src/main.ts) : le contenu reste un script qui expose ses objets sur window.

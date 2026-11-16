@@ -32,10 +32,12 @@ test('les six secrets des Ardennes : compteur, bulle, puis le badge', async ({ p
 
 test('le diplôme : sanglier dans le tampon, fait au château de Quenotte, badge accordé', async ({ page }) => {
   await ouvrir(page, '?reset=1#exemple');
-  await page.evaluate(() => { const A = (window as any).APP; A.state.unlocked = 5; A.state.fini = true; A.show(5, { diplome: true }); });
+  await page.evaluate(() => { const A = (window as any).APP; A.state.unlocked = 5; A.state.fini = true; A.show(5, { diplome: true, temps: 'tableau' }); });
   await expect(page.locator('.dip-date')).toContainText('Fait au château fort de Sedan');
-  await expect(page.locator('.badge-dip', { hasText: "Ardennaise d'honneur" })).toHaveCount(1); // Clémentine
-  await expect(page.locator('.dip-compte')).toContainText('/13');
+  await page.locator('#btn-tresors').click();
+  await expect(page.locator('.fen-tresors .case-med', { hasText: "Ardennaise d'honneur" })).toHaveCount(1); // Clémentine
+  await expect(page.locator('.fen-tresors .etagere-compte')).toContainText('/ 13');
+  await page.keyboard.press('Escape');
   if (CAPTURES) await page.locator('.dip-pied').screenshot({ path: CAPTURES + '/ard-diplome.png' });
 });
 
@@ -52,7 +54,7 @@ test("le terrier : les quatre trésors des Ardennes, dans la barre et au fond de
 // Le diplôme, avec toutes les cartes du carnet découvertes (et la scène 13, qui ouvre le livre de la légende)
 async function diplome(page: Page, tout = true) {
   await ouvrir(page, '?reset=1#exemple');
-  await page.evaluate(t => { const W = window as any, A = W.APP; A.state.unlocked = 5; A.state.fini = true; A.state.secret = t; A.state.ardennes = t ? W.ARDENNES.cartes.map((c: any) => c.secret).filter(Boolean) : []; A.show(5, { diplome: true }); }, tout);
+  await page.evaluate(t => { const W = window as any, A = W.APP; A.state.unlocked = 5; A.state.fini = true; A.state.secret = t; A.state.ardennes = t ? W.ARDENNES.cartes.map((c: any) => c.secret).filter(Boolean) : []; A.show(5, { diplome: true, temps: 'tableau' }); }, tout);
 }
 
 test('le carnet des Ardennes : depuis le diplôme et le menu, cartes, poème, livre au clavier', async ({ page }) => {
@@ -169,7 +171,7 @@ test("les cartes sans feuille de chêne se trouvent aussi pendant le voyage (gal
   const etat = await page.evaluate(() => (window as any).APP.state.ardennes);
   expect(etat).toContain('place.galette');
   // Dans le carnet, la carte porte le tampon « Trouvé pendant le voyage »
-  await page.evaluate(() => { const A = (window as any).APP; A.state.unlocked = 5; A.state.fini = true; A.show(5, { diplome: true }); });
+  await page.evaluate(() => { const A = (window as any).APP; A.state.unlocked = 5; A.state.fini = true; A.show(5, { diplome: true, temps: 'tableau' }); });
   await page.locator('#btn-carnet5').click();
   await expect(page.locator('.carte-ard.trouvee', { hasText: 'galette' })).toHaveCount(1);
 });

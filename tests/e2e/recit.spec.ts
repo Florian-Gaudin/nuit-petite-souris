@@ -209,13 +209,14 @@ test("répondre à Quenotte (dessin) et l'album des dents", async ({ page }) => 
   await expect(page.locator('#dessin-lettre .dessin-enfant img')).toBeVisible();
   await expect(page.locator('#btn-dessin')).toContainText('Modifier mon dessin');
   // Le diplôme (épilogue déjà vu) : le dessin, et l'histoire rangée dans l'album
-  await page.evaluate(() => { const A = (window as any).APP; A.state.epilogue = true; A.state.unlocked = 5; A.show(5, { diplome: true }); });
-  await expect(page.locator('.dessin-enfant img')).toBeVisible();
-  // On peut le modifier depuis le diplôme
+  await page.evaluate(() => { const A = (window as any).APP; A.state.epilogue = true; A.state.unlocked = 5; A.show(5, { diplome: true, temps: 'tableau' }); });
+  await expect(page.locator('#btn-dessin5 .mini-dessin img')).toBeVisible();
+  await expect(page.locator('#btn-dessin5')).toContainText('Ton dessin pour Quenotte');
+  // On peut le modifier depuis l'écran de fin
   await page.locator('#btn-dessin5').click();
   await expect(page.locator('.atelier .toile')).toBeVisible();
   await page.locator('.atelier [data-a="envoyer"]').click();
-  await expect(page.locator('.dessin-enfant img')).toBeVisible();
+  await expect(page.locator('#btn-dessin5 .mini-dessin img')).toBeVisible();
   await page.locator('#btn-album5').click();
   await expect(page.locator('.album-page h3')).toHaveText('Clémentine');
   await expect(page.locator('.album-explication')).toContainText("s'ajoute ici");

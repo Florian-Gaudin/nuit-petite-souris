@@ -54,7 +54,7 @@ const nuitTexte = m1 === m2
   : `nuit du ${d1.getDate()} ${m1} au ${d2.getDate()} ${m2} ${d2.getFullYear()}`;
 
 const zone = document.getElementById('diplome') as HTMLElement;
-zone.innerHTML = CERTIFICAT.html({ badges: badges.concat(badges.indexOf('jumelle') < 0 ? ['jumelle'] : []), secret, nuitTexte, etoiles, total });
+zone.innerHTML = CERTIFICAT.html({ badges: badges.concat(badges.indexOf('jumelle') < 0 ? ['jumelle'] : []), secret, nuitTexte, etoiles, total, impression: true });
 CERTIFICAT.brancher(zone);
 if (dessinValide) zone.insertAdjacentHTML('afterend', `<figure class="dessin-imprime"><figcaption>Mon dessin pour ${CONFIG.souris}</figcaption><img src="${dessinValide}" alt="Le dessin pour ${CONFIG.souris}"></figure>`);
 (document.getElementById('btn-print') as HTMLElement).onclick = () => window.print();

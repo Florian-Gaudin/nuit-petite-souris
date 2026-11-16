@@ -18,8 +18,17 @@ test('audit WCAG 2.1 AA : tous les écrans', async ({ page }) => {
   await ouvrir(page, '?reset=1'); pb.push(...await audit(page, 'accueil', ECART_HISTOIRE));
   await ouvrir(page, '#exemple'); pb.push(...await audit(page, 'chapitre 0', ECART_HISTOIRE));
   for (const n of [1, 2, 3, 4]) { await ouvrir(page, `?chapitre=${n}#exemple`); pb.push(...await audit(page, 'chapitre ' + n, ECART_HISTOIRE)); }
+  // La fin : le diplôme seul, la remise des badges, l'écran de fin et « Mes trésors »
+  await page.evaluate(() => { const A = (window as any).APP; A.state.unlocked = 5; A.state.fini = true; A.state.secret = true; A.state.badges = ['detective', 'passechat', 'amie']; A.state.ardennes = (window as any).ARDENNES.cartes.map((c: any) => c.secret).filter(Boolean); A.show(5, { diplome: true }); });
+  pb.push(...await audit(page, 'diplôme', ECART_HISTOIRE));
+  await page.locator('#bandeau-actions button', { hasText: 'Voir la surprise' }).click();
+  await expect(page.locator('.ceremonie')).toBeVisible(); pb.push(...await audit(page, 'remise des badges', ECART_HISTOIRE));
+  await page.locator('#btn-passer').click();
+  await page.locator('#bandeau-actions button', { hasText: 'Continuer' }).click();
+  await expect(page.locator('#btn-tresors')).toBeVisible(); pb.push(...await audit(page, 'écran de fin', ECART_HISTOIRE));
+  await page.locator('#btn-tresors').click(); pb.push(...await audit(page, 'mes trésors', ECART_HISTOIRE));
+  await page.keyboard.press('Escape');
   // Le carnet des Ardennes et le livre de la légende
-  await page.evaluate(() => { const A = (window as any).APP; A.state.unlocked = 5; A.state.fini = true; A.state.secret = true; A.state.ardennes = (window as any).ARDENNES.cartes.map((c: any) => c.secret).filter(Boolean); A.show(5, { diplome: true }); });
   await page.locator('#btn-carnet5').click(); pb.push(...await audit(page, 'carnet', ECART_HISTOIRE));
   await page.locator('.carte-ard').first().click(); pb.push(...await audit(page, 'carte', ECART_HISTOIRE));
   await page.locator('[data-a="grille"]').click(); await page.locator('.carte-livre').click(); await page.locator('[data-a="livre"]').click(); await page.keyboard.press('ArrowRight');

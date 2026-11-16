@@ -309,7 +309,7 @@ ${(() => { const li = AR.cartes.map((c, i) => {
     fen.addEventListener('touchend', e => { const t = e.changedTouches[0]; geste(t.clientX, t.clientY); });
     fen.addEventListener('pointerdown', e => { if (e.pointerType === 'mouse' && !e.target.closest('button')) { x0 = e.clientX; y0 = e.clientY; } });
     fen.addEventListener('pointerup', e => { if (e.pointerType === 'mouse') geste(e.clientX, e.clientY); });
-    const fermer = () => { document.removeEventListener('keydown', clavier); fen.remove(); if (precedent && precedent.focus) try { precedent.focus({ preventScroll: true }); } catch (e) { } };
+    const fermer = () => { document.removeEventListener('keydown', clavier); fen.remove(); if (precedent && precedent.focus) try { precedent.focus({ preventScroll: true }); } catch (e) { } if (o.apres) o.apres(); };
     const clavier = e => {
       if (e.key === 'Escape') { e.preventDefault(); fermer(); return; }
       if (vue === 'livre' && (e.key === 'ArrowRight' || e.key === 'ArrowLeft') && !(e.target && /INPUT|TEXTAREA/.test(e.target.tagName))) { e.preventDefault(); tourner(e.key === 'ArrowRight' ? 1 : -1); }

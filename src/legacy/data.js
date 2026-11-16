@@ -377,6 +377,44 @@ window.DATA = {
   diplome: { txt: "Bravo {enfant} ! Voici ton diplôme officiel, signé de ma patte. Tu peux l'imprimer avec un grand.", expr: "joie" },
   billetTrouve: { txt: "Tu l'as {trouvee} ? {Il} est {sec} maintenant. {Il} est à toi !", expr: "joie" },
 
+  // ---------- La fin : le diplôme seul, puis la remise des badges (une seule fois), puis l'écran de fin ----------
+  // {nbBadges}, {totalBadges}, {totalEtoiles}, {lesBadges} (« 3 badges », « 1 badge »), {lesEtoiles} et {trouvees}
+  // (« 4 étoiles trouvées », « 1 étoile trouvée ») sont remplacés par l'application
+  ceremonie: {
+    annonce: { txt: "Bravo {enfant} ! Voici ton diplôme officiel, signé de ma patte. Et ce n'est pas tout : j'ai gardé une surprise dans ma sacoche…", expr: "clin" },
+    bouton: "Voir la surprise",
+    titre: "La remise des badges",
+    intro: { txt: "Cette nuit, tu as gagné {nbBadges} badges ! Ils sont tous dans ma sacoche. Touche-la : je les accroche un par un sur ton étagère.", expr: "joie" },
+    intro1: { txt: "Cette nuit, tu as gagné un badge ! Il est dans ma sacoche. Touche-la : je l'accroche sur ton étagère.", expr: "joie" },
+    touche: "Touche ma sacoche !",
+    suivant: "Le badge suivant",
+    fin: { txt: "Ton étagère brille ! Les crochets avec un point d'interrogation attendent encore leur médaille : touche-les pour savoir comment la gagner.", expr: "joie" },
+    continuer: "Continuer",
+    etagere: "L'étagère de {enfant}",
+  },
+  tresors: {
+    titre: "Mes trésors",
+    resume: "{lesBadges} sur {totalBadges} · {lesEtoiles} sur {totalEtoiles}",
+    nouveau: "Nouveau",
+    aide: "Touche une médaille pour savoir comment elle se gagne.",
+    gagne: "Gagné",
+    aGagner: "À gagner",
+    ciel: "{lesEtoiles} {trouvees} sur {totalEtoiles}",
+    cielAide: "Elles se cachent dans les images du voyage.",
+  },
+  fin: {
+    imprimer: "Imprimer le diplôme",
+    agrandir: "Touche le diplôme pour l'agrandir",
+    dessin: "Un dessin pour {souris}",
+    dessinAide: "Elle l'accrochera au château",
+    dessinFait: "Ton dessin pour {souris}",
+    dessinModifier: "Touche pour le modifier",
+    album: "L'album des dents",
+    albumAide: "Toutes tes dents et tes histoires",
+    revoir: "Revoir l'histoire",
+    fermer: "Fermer",
+  },
+
   // ---------- Chapitre secret : la 13e scène, le théâtre du Grand Marionnettiste ----------
   theatre: {
     marionnettiste: "Le Grand Marionnettiste",

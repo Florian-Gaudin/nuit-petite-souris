@@ -22,6 +22,7 @@ window.ARDENNES = {
   diplome: {
     ruban: "Nouveau !",
     progression: "{n} cartes sur {total} trouvées pendant ton voyage",
+    tuile: "{n} cartes sur {total} trouvées",
     invite: "Ouvre-le !",
     quenotte: "Et regarde : je t'ai laissé mon carnet des Ardennes ! Tu y retrouveras tout ce que tu as découvert pendant le voyage.",
     bouton: "Ouvrir le carnet",

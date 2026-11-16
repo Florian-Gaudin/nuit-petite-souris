@@ -1,64 +1,60 @@
-/* Le diplôme : à l'écran (chapitre 5) et à l'impression (certificat.html, A4) */
-.diplome{background:#FFF6E0;color:#1F2235;font-family:'Libre Baskerville',Georgia,serif;padding:12px;border-radius:6px;box-shadow:0 12px 32px rgba(0,0,0,.35)}
-.dip-bord{position:relative;border:4px double #C9A227;padding:22px 18px 18px;text-align:center}
-.dip-coin{position:absolute;width:26px;height:26px;border:3px solid #C9A227}
+/* Le diplôme : à l'écran (fin de l'histoire, épuré) et à l'impression (certificat/, A4, avec les médailles gagnées) */
+.diplome{background:#FFF6E0;color:#1F2235;font-family:'Libre Baskerville',Georgia,serif;padding:10px;border-radius:6px;box-shadow:0 12px 32px rgba(0,0,0,.35)}
+.dip-bord{position:relative;border:4px double #C9A227;padding:20px 16px 14px;text-align:center}
+.dip-coin{position:absolute;width:22px;height:22px;border:3px solid #C9A227}
 .dip-coin.c1{left:6px;top:6px;border-right:0;border-bottom:0}.dip-coin.c2{right:6px;top:6px;border-left:0;border-bottom:0}
 .dip-coin.c3{left:6px;bottom:6px;border-right:0;border-top:0}.dip-coin.c4{right:6px;bottom:6px;border-left:0;border-top:0}
-.dip-entete{font-size:clamp(1.2rem,4.4vw,1.9rem);letter-spacing:.14em;text-transform:uppercase;color:#7a6220;font-weight:700}
-.dip-sous{font-style:italic;color:#7a6220;font-size:clamp(.95rem,3vw,1.15rem)}
-.dip-decerne{margin-top:14px;font-size:.95rem;color:#5c4a1e}
-.dip-nom{font-family:'Baloo 2','Trebuchet MS',sans-serif;font-weight:800;font-size:clamp(2.2rem,9vw,3.6rem);color:#D64045;line-height:1.1}
-.dip-texte{font-size:clamp(.95rem,3vw,1.1rem);line-height:1.5;margin:10px auto 0;max-width:34em}
-.dip-etoiles{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:3px;margin-top:10px}
-.dip-etoile{width:22px;height:22px}
-.dip-etoile.off{opacity:.22;filter:grayscale(1)}
-.dip-etoiles span{width:100%;font-size:.78rem;color:#7a6220;font-style:italic;margin-top:2px}
-.dip-milieu{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;align-items:center;margin-top:14px}
-.dip-machoire{flex:0 1 260px;max-width:100%}
+.dip-entete{font-size:clamp(1.05rem,3.9vw,1.6rem);letter-spacing:.14em;text-transform:uppercase;color:#7a6220;font-weight:700;line-height:1.25}
+.dip-sous{font-style:italic;color:#7a6220;font-size:clamp(.88rem,2.7vw,1.05rem)}
+.dip-decerne{margin-top:10px;font-size:.88rem;color:#5c4a1e}
+.dip-nom{font-family:'Baloo 2','Trebuchet MS',sans-serif;font-weight:800;font-size:clamp(2.1rem,8.5vw,3.2rem);color:#D64045;line-height:1.05;overflow-wrap:anywhere}
+.dip-texte{font-size:clamp(.9rem,2.6vw,1.02rem);line-height:1.5;margin:8px auto 0;max-width:32em;text-wrap:pretty}
+.dip-machoire{width:min(50%,200px);margin:10px auto 0}
 .machoire{width:100%;height:auto;display:block}
-.dip-machoire{flex:0 1 220px}
 .pastille-dent{display:inline-block;width:10px;height:12px;border-radius:3px;vertical-align:-1px;border:1px solid #9a2a32}
 .pastille-dent.rouge{background:#D64045}
 .pastille-dent.rose{background:#F2A3B5;border-color:#c46a7e}
-.machoire-legende{font-size:.72rem;color:#7a6220;font-style:italic;text-align:center;margin-top:2px}
-.dip-badges-bloc{flex:1 1 260px;display:flex;flex-direction:column;align-items:center;gap:6px}
-.dip-badges-titre{font-family:'Baloo 2',sans-serif;font-weight:800;font-size:1.05rem;color:#7a6220;letter-spacing:.04em}
-.dip-compte{display:inline-block;margin-left:6px;background:#C9A227;color:#fff;border-radius:999px;padding:0 9px;font-size:.9rem}
-/* Trois badges par ligne : la colonne reste compacte */
-.dip-badges{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 10px;max-width:278px;margin:0 auto} /* trois par ligne ; la dernière ligne est centrée */
-.dip-badge-info{min-height:2.8em;margin:2px 0 0;font-family:'Baloo 2',sans-serif;font-size:.85rem;line-height:1.35;color:#5c4a1e;text-align:center;max-width:30em}
-button.badge-dip{background:none;border:0;padding:4px 2px;border-radius:10px;cursor:pointer;color:inherit;-webkit-tap-highlight-color:transparent}
-button.badge-dip.choisi,button.badge-dip:hover{background:rgba(201,162,39,.16)}
-.badge-dip{display:flex;flex-direction:column;align-items:center;gap:2px;width:86px;font-family:'Baloo 2',sans-serif;font-weight:700;font-size:.72rem;line-height:1.1;color:#1F2235}
-.badge-dip.off{filter:grayscale(1)}.badge-dip.off svg{opacity:.35}.badge-dip.off span{color:#5a5470} /* nom lisible (contraste AA), dessin estompé */
-.badge-ico{display:block}
-.dip-pied{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:12px;margin-top:18px;text-align:left}
-.dip-date{font-size:.9rem;line-height:1.4;color:#5c4a1e;flex:1 1 150px}
+.machoire-legende{font-size:.7rem;color:#7a6220;font-style:italic;text-align:center;margin-top:2px}
+/* Le bilan, en une ligne : les étoiles et les badges ont leur étagère, « Mes trésors » */
+.dip-bilan{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 18px;margin:10px 0 0;font:700 .9rem/1.3 'Baloo 2','Trebuchet MS',sans-serif;color:#6b5418}
+.dip-bilan span{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.dip-ico{width:18px;height:18px;flex:none}
+.dip-ico.med{width:15px;height:20px}
+.dip-pied{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:10px;margin-top:14px;text-align:left}
+.dip-date{font-size:.82rem;line-height:1.4;color:#5c4a1e;flex:1 1 140px}
 .dip-tampon{flex:0 0 auto}
-.tampon{width:108px;height:108px;display:block;transform:rotate(-8deg)}
-.dip-sign{flex:1 1 170px;text-align:right;display:flex;flex-direction:column;align-items:flex-end}
-.dip-sign .sign{font-family:'Patrick Hand',cursive;font-size:2.2rem;color:#1F2235;line-height:1;transform:rotate(-4deg);display:inline-block;border-bottom:2px solid #C9A227;padding:0 6px 2px}
-.dip-sign small{font-size:.78rem;color:#5c4a1e;line-height:1.3}
-.dip-sourire{margin-top:16px;border:2px dashed #C9A227;border-radius:10px;height:74px;display:grid;place-items:center;color:#a08a4a;font-style:italic;font-size:.95rem}
+.tampon{width:86px;height:86px;display:block;transform:rotate(-8deg)}
+.dip-sign{flex:1 1 150px;text-align:right;display:flex;flex-direction:column;align-items:flex-end}
+.dip-sign .sign{font-family:'Patrick Hand',cursive;font-size:1.9rem;color:#1F2235;line-height:1;transform:rotate(-4deg);display:inline-block;border-bottom:2px solid #C9A227;padding:0 6px 2px}
+.dip-sign small{font-size:.74rem;color:#5c4a1e;line-height:1.3}
+
+/* Les médailles gagnées (diplôme imprimé seulement) */
+.dip-medailles{margin-top:12px}
+.dip-medailles-titre{font:800 1rem 'Baloo 2','Trebuchet MS',sans-serif;color:#7a6220;letter-spacing:.04em}
+.dip-medailles-liste{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 4px;margin-top:6px}
+.dip-medaille{margin:0;width:84px;display:flex;flex-direction:column;align-items:center;gap:2px}
+.dip-medaille .medaille{width:50px;height:auto;display:block}
+.dip-medaille figcaption{font:700 .74rem/1.15 'Baloo 2','Trebuchet MS',sans-serif;text-align:center;color:#1F2235}
 
 @media print{
   @page{size:A4 portrait;margin:12mm}
   html,body{background:#fff!important;color:#000}
-  /* Tout le diplôme sur une seule page A4 : la mâchoire à gauche, les badges sur cinq colonnes à droite */
+  /* Tout le diplôme sur une seule page A4 */
   .diplome{box-shadow:none;border-radius:0;padding:0;width:100%;height:calc(297mm - 25mm);box-sizing:border-box;break-inside:avoid;page-break-inside:avoid;overflow:hidden}
-  .dip-bord{height:100%;box-sizing:border-box;display:flex;flex-direction:column;justify-content:space-between;padding:12mm 10mm 9mm}
-  .dip-nom{font-size:3rem}
-  .dip-entete{font-size:1.7rem}
-  .dip-texte{font-size:1.02rem;line-height:1.45}
-  .dip-decerne{margin-top:8px}
-  .dip-milieu{flex-wrap:nowrap;align-items:center;gap:8mm;margin-top:6px}
-  .dip-machoire{flex:0 0 52mm}
-  .dip-badges-bloc{flex:1 1 auto}
-  .dip-badges{max-width:none;gap:6px 4px;width:100%}
-  .badge-dip{width:18%;font-size:.72rem}
-  .dip-pied{margin-top:8px;flex-wrap:nowrap}
-  .tampon{width:100px;height:100px}
-  .dip-badge-info{display:none}
+  .dip-bord{height:100%;box-sizing:border-box;display:flex;flex-direction:column;justify-content:space-between;padding:14mm 12mm 10mm}
+  .dip-coin{width:30px;height:30px}
+  .dip-entete{font-size:1.9rem}
+  .dip-sous{font-size:1.15rem}
+  .dip-nom{font-size:3.4rem}
+  .dip-texte{font-size:1.08rem;line-height:1.5}
+  .dip-machoire{width:62mm}
+  .dip-bilan{font-size:1rem}
+  .dip-medailles-liste{gap:4mm 2mm}
+  .dip-medaille{width:24mm}
+  .dip-medaille .medaille{width:15mm}
+  .tampon{width:104px;height:104px}
+  .dip-sign .sign{font-size:2.3rem}
+  .dip-date{font-size:.92rem}
   *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
 

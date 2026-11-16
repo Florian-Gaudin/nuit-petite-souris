@@ -76,11 +76,11 @@
     el.innerHTML = `<div class="toast-in">${icone || ''}<span>${esc(txt)}</span></div>`;
     el.classList.add('on'); clearTimeout(toast.t); toast.t = setTimeout(() => el.classList.remove('on'), 3200);
   }
-  function badge(id) {
+  function badge(id, discret) {
     const b = D.badges.find(x => x.id === id);
     if (!b || State.badges.indexOf(id) >= 0) return;
     State.badges.push(id); save();
-    toast('Badge gagné : ' + T(b.nom), A.badgeIcone(id, 36)); SON.play('badge');
+    if (!discret) { toast('Badge gagné : ' + T(b.nom), A.badgeIcone(id, 36)); SON.play('badge'); }
   }
   function etoile(sceneId, el) {
     const liste = State.etoiles[sceneId] || (State.etoiles[sceneId] = []);
@@ -253,8 +253,13 @@
     SON.ronfleStop(); NARR.action(null); NARR.cacher(false);
     courantN = n; courant = Chapitres[n];
     // Le bandeau garde la même hauteur pendant toute l'étape (celle de son plus long texte)
-    const TEXTES = { 0: ['accueil', 'surprise', 'origine', 'origineVille'], 2: ['jeu'], 3: ['camera'], 4: ['lettreIntro', 'lettreFin'], 5: opts.diplome ? ['diplome', 'billetTrouve'] : ['epilogue'] };
-    NARR.fixer(TEXTES[n] ? TEXTES[n].map(k => D[k]) : null, T);
+    const TEXTES = { 0: ['accueil', 'surprise', 'origine', 'origineVille'], 2: ['jeu'], 3: ['camera'], 4: ['lettreIntro', 'lettreFin'], 5: opts.diplome ? ['diplome', 'billetTrouve', 'ceremonie'] : ['epilogue'] };
+    let noeuds = TEXTES[n] ? TEXTES[n].map(k => D[k]) : null;
+    if (n === 5 && opts.diplome) {
+      const W = window.CERTIFICAT;
+      noeuds = noeuds.concat(D.badges.map(b => W.nomBadge(b.id, true) + ' ! ' + W.texteBadge(b.id, true)), D.badges.map(b => W.nomBadge(b.id, false) + ' : ' + W.texteBadge(b.id, false)), [window.ARDENNES.diplome.quenotte, remplir(T(D.ceremonie.intro))]);
+    }
+    NARR.fixer(noeuds, T);
     root.innerHTML = courant.render(opts); root.className = 'scene ch-' + n;
     surDiplome = n === 5 && !!opts.diplome;
     window.scrollTo(0, 0); updateFil(n); courant.mount(root, opts);
@@ -308,16 +313,174 @@
   const lireAlbum = () => window.ALBUM.lire(); // voir src/lib/album.ts (l'espace parents y range aussi chaque histoire créée)
   function rangerDansAlbum(fini) { window.ALBUM.ranger(window.PROFIL.profil, { nuit: State.nuit, fini }); }
   // Le carnet des Ardennes : les cartes « Le savais-tu ? » et le livre de la légende (après le diplôme)
-  // La grande carte du carnet, sous le diplôme : cuir rouge, cadre doré, éventail de cartes et progression
-  function carteCarnet() {
-    const AR = window.ARDENNES, K = window.CARNET, c = K.compte(State), DI = AR.diplome;
-    const etincelles = [[6, 22], [94, 16], [72, 84], [16, 80], [50, 6]].map(([x, y], k) => `<i class="etincelle" style="left:${x}%;top:${y}%;animation-delay:${(k * .45).toFixed(2)}s" aria-hidden="true"></i>`).join('');
-    return `<button type="button" class="carte-carnet5" id="btn-carnet5"><span class="ruban-livre" aria-hidden="true">${esc(DI.ruban)}</span>${etincelles}
-  <span class="eventail" aria-hidden="true">${K.apercu(State)}</span>
-  <span class="carnet5-txt"><strong>${esc(AR.titre)}</strong><small>${esc(DI.progression.replace('{n}', c.n).replace('{total}', c.total))}</small><em>${esc(DI.invite)}</em></span></button>`;
+  // ---------- La fin : le diplôme, l'étagère des médailles, « Mes trésors », l'écran de fin ----------
+  const ICONE_CHENE = '<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1C14 1 15 3 14.5 4.5C17 4 18 6 16 7.5C19 7.5 19.5 10 17 11C19.5 11.5 19 14.5 16 14C17 16 15.5 17.5 13.2 17L12.6 19V22.5H11.4V19L10.8 17C8.5 17.5 7 16 8 14C5 14.5 4.5 11.5 7 11C4.5 10 5 7.5 8 7.5C6 6 7 4 9.5 4.5C9 3 10 1 12 1Z" fill="currentColor"/></svg>';
+  // Les badges gagnés, dans l'ordre de l'étagère
+  const badgesGagnes = () => D.badges.filter(b => State.badges.indexOf(b.id) >= 0).map(b => b.id);
+  // Les nombres des textes de la fin
+  const remplir = s => {
+    const b = badgesGagnes().length, e = nbEtoiles(), pl = (n, mot) => n + ' ' + mot + (n > 1 ? 's' : '');
+    const v = { nbBadges: b, totalBadges: D.badges.length, totalEtoiles, lesBadges: pl(b, 'badge'), lesEtoiles: pl(e, 'étoile'), trouvees: e > 1 ? 'trouvées' : 'trouvée' };
+    return String(s).replace(/\{(nbBadges|totalBadges|totalEtoiles|lesBadges|lesEtoiles|trouvees)\}/g, (m, k) => v[k]);
+  };
+  function diplomeHTML() {
+    return window.CERTIFICAT.html({ badges: State.badges.concat(State.badges.indexOf('jumelle') < 0 ? ['jumelle'] : []), secret: State.secret, nuitTexte: nuitTexte(), etoiles: nbEtoiles(), total: totalEtoiles });
   }
-  function ouvrirCarnet() {
-    window.CARNET.ouvrir({ T, state: State, son: n => SON.play(n) });
+  const lienImpression = () => 'certificat/?badges=' + encodeURIComponent(State.badges.join(',')) + '&secret=' + (State.secret ? 1 : 0) + '&nuit=' + State.nuit + '&etoiles=' + nbEtoiles() + '#p=' + window.PROFIL.code;
+  // Des confettis qui tombent une fois
+  function pluie(zone, n) {
+    if (RM || !zone) return;
+    const couleurs = ['#FFC857', '#D64045', '#F2A3B5', '#3E7C8F', '#F3EFE6'];
+    for (let i = 0; i < n; i++) {
+      const s = document.createElement('i'); s.style.left = (Math.random() * 100) + '%'; s.style.background = couleurs[i % couleurs.length];
+      s.style.animationDelay = (Math.random() * 1.6) + 's'; s.style.animationDuration = (2.6 + Math.random() * 2.6) + 's'; s.style.animationIterationCount = '1';
+      zone.appendChild(s); setTimeout(() => s.remove(), 7000);
+    }
+  }
+  // L'étagère : trois rangées (5, 4, 4), une tringle dorée, des crochets ; une médaille gagnée pend à son crochet,
+  // une médaille à gagner n'est qu'un rond en pointillés. « montrees » : les médailles déjà accrochées (les autres
+  // médailles gagnées attendent, crochet vide, d'être sorties de la sacoche).
+  function etagereHTML(montrees) {
+    const L = D.badges, rangs = Math.ceil(L.length / 5), base = Math.floor(L.length / rangs), plus = L.length % rangs;
+    const caseHTML = b => {
+      const g = State.badges.indexOf(b.id) >= 0, vue = montrees.indexOf(b.id) >= 0, nom = window.CERTIFICAT.nomBadge(b.id, g);
+      return `<button type="button" class="case-med${g ? '' : ' a-gagner'}${g && !vue ? ' attend' : ''}" data-badge="${b.id}" aria-label="${esc(nom)} : ${g ? 'gagné' : 'à gagner'}">${A.medaille(b.id, g && !vue ? 'attend' : g)}<span class="med-nom">${esc(nom)}</span></button>`;
+    };
+    let h = '', k = 0;
+    for (let i = 0; i < rangs; i++) { const n = base + (i < plus ? 1 : 0); h += `<div class="rayon"><div class="rayon-cases">${L.slice(k, k + n).map(caseHTML).join('')}</div></div>`; k += n; }
+    return h;
+  }
+  // Le crochet qui attendait reçoit sa médaille
+  function decrocherAttente(c, id) {
+    if (!c.classList.contains('attend')) return;
+    c.classList.remove('attend');
+    const m = $('.medaille', c); if (m) m.outerHTML = A.medaille(id, true);
+  }
+  // L'envol d'une médaille : de la sacoche au milieu de l'écran (avec son nom et une gloire dorée), puis à son crochet
+  let vols = [];
+  function annulerVols() { vols.forEach(v => { try { v.remove(); } catch (e) { } }); vols = []; }
+  function volMedaille(id, nom, sac, cible) {
+    return new Promise(fini => {
+      const W = Math.round(Math.min(150, window.innerWidth * 0.34)), H = W * 86 / 64;
+      const voile = document.createElement('div'); voile.className = 'med-voile';
+      const v = document.createElement('div'); v.className = 'med-vol'; v.style.width = W + 'px';
+      v.innerHTML = `<div class="med-gloire" aria-hidden="true"></div>${A.medaille(id, true)}<span class="med-vol-nom">${esc(nom)}</span>`;
+      document.body.append(voile, v); vols.push(voile, v);
+      const fil = $('#fil'), band = $('#bandeau');
+      const haut = fil ? fil.getBoundingClientRect().bottom : 0, bas = band ? band.getBoundingClientRect().top : window.innerHeight;
+      const rs = sac.getBoundingClientRect();
+      const place = (cx, cy, s) => `translate(${(cx - W * s / 2).toFixed(1)}px, ${(cy - H * s / 2).toFixed(1)}px) scale(${s.toFixed(3)})`;
+      const cx = window.innerWidth / 2, cy = haut + (bas - haut) * 0.46;
+      const sx = rs.left + rs.width / 2, sy = rs.top + rs.height * 0.3;
+      const fin = () => { const i = vols.indexOf(v); if (i < 0) return; v.remove(); setTimeout(() => voile.remove(), 400); vols = vols.filter(x => x !== v && x !== voile); fini(); };
+      if (!v.animate) { fin(); return; }
+      requestAnimationFrame(() => voile.classList.add('on'));
+      const a1 = v.animate([
+        { transform: place(sx, sy, 0.18), opacity: 0 },
+        { transform: place((sx + cx) / 2, Math.min(sy, cy) - 60, 0.8), opacity: 1, offset: 0.55 },
+        { transform: place(cx, cy, 1), opacity: 1 },
+      ], { duration: RM ? 1 : 850, easing: 'cubic-bezier(.2,.8,.25,1)', fill: 'forwards' });
+      a1.finished.then(() => { v.classList.add('montre'); return wait(RM ? 700 : 1700); }).then(() => {
+        if (vols.indexOf(v) < 0) return;
+        v.classList.remove('montre'); voile.classList.remove('on');
+        try { cible.scrollIntoView({ block: 'nearest', behavior: RM ? 'auto' : 'smooth' }); } catch (e) { }
+        return wait(RM ? 0 : 300).then(() => {
+          const rc = $('.medaille', cible).getBoundingClientRect(), s = rc.width / W;
+          return v.animate([{ transform: place(cx, cy, 1) }, { transform: place(rc.left + rc.width / 2, rc.top + rc.height / 2, s) }],
+            { duration: RM ? 1 : 720, easing: 'cubic-bezier(.55,0,.25,1)', fill: 'forwards' }).finished;
+        });
+      }).then(fin, fin);
+    });
+  }
+  // Une fenêtre par-dessus l'écran de fin (diplôme agrandi, trésors) : Échap ou « Fermer », le focus revient au bouton
+  function fenetre(cls, label, contenu, apres) {
+    const precedent = document.activeElement;
+    const fen = document.createElement('div');
+    fen.className = 'atelier ' + cls; fen.setAttribute('role', 'dialog'); fen.setAttribute('aria-modal', 'true'); fen.setAttribute('aria-label', label);
+    fen.innerHTML = `<div class="atelier-in">${contenu}</div>`;
+    document.body.appendChild(fen);
+    const clavier = e => { if (e.key === 'Escape') { e.preventDefault(); fermer(); } };
+    const fermer = () => { document.removeEventListener('keydown', clavier); fen.remove(); if (precedent && precedent.focus) try { precedent.focus({ preventScroll: true }); } catch (e) { } if (apres) apres(); };
+    document.addEventListener('keydown', clavier);
+    fen.addEventListener('click', e => { if (e.target === fen) fermer(); });
+    $$('[data-a="fermer"]', fen).forEach(b => b.onclick = () => { SON.play('clic'); fermer(); });
+    const f = $('[data-a="fermer"]', fen); if (f) f.focus({ preventScroll: true });
+    return fen;
+  }
+  function fenetreDiplome() {
+    fenetre('fen-diplome', 'Le diplôme', `${diplomeHTML()}
+  <div class="fen-actions"><a class="btn btn-or" href="${lienImpression()}" target="_blank" rel="noopener">${A.icone('imprimer')} ${esc(T(D.fin.imprimer))}</a><button type="button" class="btn btn-petit" data-a="fermer">${esc(T(D.fin.fermer))}</button></div>`);
+  }
+  // « Mes trésors » : l'étagère complète, le détail de chaque médaille, et le ciel des étoiles trouvées.
+  // Une médaille gagnée après la cérémonie (un dessin, le carnet…) s'accroche en arrivant, avec son explication.
+  function fenetreTresors(apres) {
+    const ids = badgesGagnes(); State.remis = (State.remis || []).filter(id => ids.indexOf(id) >= 0);
+    const nouveaux = ids.filter(id => State.remis.indexOf(id) < 0);
+    let ciel = ''; for (let i = 0; i < totalEtoiles; i++) ciel += `<svg class="ciel-etoile${i < nbEtoiles() ? '' : ' eteinte'}" viewBox="0 0 24 24" aria-hidden="true"><use href="#etoile5"/></svg>`;
+    const fen = fenetre('fen-tresors', T(D.tresors.titre), `<div class="tresors-tete"><h2>${esc(T(D.tresors.titre))}</h2><button type="button" class="fermer-x" data-a="fermer" aria-label="${esc(T(D.fin.fermer))}">✕</button></div>
+  <section class="etagere" aria-labelledby="t-etagere-f"><h3 class="etagere-titre"><span id="t-etagere-f">${esc(T(D.ceremonie.etagere))}</span><span class="etagere-compte">${ids.length} / ${D.badges.length}</span></h3>${etagereHTML(State.remis)}</section>
+  <div class="tresors-info" aria-live="polite"><p class="tresors-aide">${esc(T(D.tresors.aide))}</p></div>
+  <section class="ciel-etoiles" aria-label="${esc(remplir(T(D.tresors.ciel)))}"><p><b>${esc(remplir(T(D.tresors.ciel)))}</b><span>${esc(T(D.tresors.cielAide))}</span></p><div class="ciel-liste">${ciel}</div></section>
+  <div class="fen-actions"><button type="button" class="btn btn-or" data-a="fermer">${esc(T(D.fin.fermer))}</button></div>`, apres);
+    const info = $('.tresors-info', fen);
+    const montrer = (id, g, neuf) => {
+      $$('.case-med.choisie', fen).forEach(x => x.classList.remove('choisie'));
+      const c = $(`.case-med[data-badge="${id}"]`, fen); if (c) c.classList.add('choisie');
+      info.innerHTML = `<div class="info-med">${A.medaille(id, g)}<div><span class="info-etat${g ? '' : ' non'}">${esc(neuf ? T(D.tresors.nouveau) : T(g ? D.tresors.gagne : D.tresors.aGagner))}</span><b>${esc(window.CERTIFICAT.nomBadge(id, g))}</b><p>${esc(window.CERTIFICAT.texteBadge(id, g))}</p></div></div>`;
+    };
+    $$('.case-med', fen).forEach(c => c.addEventListener('click', () => {
+      if (c.classList.contains('attend')) return;
+      SON.play('clic'); montrer(c.dataset.badge, !c.classList.contains('a-gagner'), false);
+    }));
+    // Les nouvelles médailles s'accrochent l'une après l'autre
+    nouveaux.forEach((id, k) => setTimeout(() => {
+      if (!fen.isConnected) return;
+      const c = $(`.case-med[data-badge="${id}"]`, fen); if (!c) return;
+      decrocherAttente(c, id); if (!RM) c.classList.add('posee');
+      SON.play(k ? 'toc' : 'badge'); montrer(id, true, true);
+      if (State.remis.indexOf(id) < 0) { State.remis.push(id); save(); }
+    }, (RM ? 100 : 650) + k * (RM ? 100 : 1300)));
+  }
+  // L'écran de fin : le diplôme (il s'agrandit au toucher) et son impression ; à côté, quatre tuiles
+  function tableauHTML(titre) {
+    const ids = badgesGagnes(), nouveaux = ids.filter(id => (State.remis || []).indexOf(id) < 0);
+    const AR = window.ARDENNES, K = window.CARNET, c = K.compte(State), dessin = lireDessin();
+    const meds = ids.slice(0, 7).map(id => `<span class="mini-med">${A.medaille(id, true)}</span>`).join('') + (ids.length > 7 ? `<span class="mini-plus">+${ids.length - 7}</span>` : '');
+    return `<section class="ch ch5 fin5 temps-tableau">${titre}
+<div class="fin5-grille">
+  <div class="fin5-dip">
+    <button type="button" class="dip-mini" id="btn-dip-grand" aria-label="Agrandir le diplôme">${diplomeHTML()}<span class="dip-loupe" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M15.5 15.5L21 21M10.5 7.5v6M7.5 10.5h6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>${esc(T(D.fin.agrandir))}</span></button>
+    <a class="btn btn-grand btn-or" id="btn-imprimer" href="${lienImpression()}" target="_blank" rel="noopener">${A.icone('imprimer')} ${esc(T(D.fin.imprimer))}</a>
+  </div>
+  <div class="fin5-cote">
+    <div class="fin5-tuiles">
+      <button type="button" class="tuile tuile-tresors" id="btn-tresors">
+        <span class="tuile-txt"><b>${esc(T(D.tresors.titre))}</b><small>${esc(remplir(T(D.tresors.resume)))}</small></span>
+        ${nouveaux.length ? `<em class="tuile-nouveau">${esc(T(D.tresors.nouveau))}</em>` : ''}
+        <span class="mini-etagere" aria-hidden="true"><span class="mini-meds">${meds}</span></span>
+      </button>
+      <button type="button" class="tuile tuile-carnet" id="btn-carnet5">
+        <span class="mini-eventail" aria-hidden="true"><span class="eventail-zoom">${K.apercu(State)}</span></span>
+        <span class="tuile-txt"><b>${esc(AR.titre)}</b><small>${esc(AR.diplome.tuile.replace('{n}', c.n).replace('{total}', c.total))}</small></span>
+        ${State.carnetVu ? '' : `<em class="tuile-nouveau">${esc(AR.diplome.ruban)}</em>`}
+      </button>
+      <button type="button" class="tuile tuile-dessin" id="btn-dessin5">
+        ${dessin ? `<span class="mini-dessin"><img src="${dessin}" alt="Le dessin de ${esc(C.enfant)} pour ${esc(C.souris)}"></span>` : `<span class="tuile-ill" aria-hidden="true"><svg viewBox="0 0 56 56"><rect x="6" y="9" width="40" height="32" rx="4" fill="#fff"/><path d="M12 34c4-9 9-13 13-6s9 2 14-9" fill="none" stroke="#D64045" stroke-width="3.2" stroke-linecap="round"/><circle cx="37" cy="17" r="4.5" fill="#FFC857"/><path d="M33 52l15-17 5 4-15 17z" fill="#FFC857" stroke="#8a5a1a" stroke-width="1.2"/><path d="M33 52l1.5-5 3.5 3z" fill="#2B2B33"/></svg></span>`}
+        <span class="tuile-txt"><b>${esc(T(dessin ? D.fin.dessinFait : D.fin.dessin))}</b><small>${esc(T(dessin ? D.fin.dessinModifier : D.fin.dessinAide))}</small></span>
+      </button>
+      <button type="button" class="tuile tuile-album" id="btn-album5">
+        <span class="tuile-ill" aria-hidden="true"><svg viewBox="0 0 56 56"><rect x="8" y="6" width="38" height="46" rx="4" fill="#C9A227"/><rect x="11" y="6" width="35" height="46" rx="3" fill="#FFF6E0"/><rect x="8" y="6" width="7" height="46" rx="2" fill="#D64045"/><use href="#dent" x="20" y="15" width="22" height="22"/><path d="M20 43h20" stroke="#C9A227" stroke-width="2" stroke-linecap="round"/></svg></span>
+        <span class="tuile-txt"><b>${esc(T(D.fin.album))}</b><small>${esc(T(D.fin.albumAide))}</small></span>
+      </button>
+    </div>
+    <p class="fin5-revoir"><button type="button" class="lien-revoir" id="btn-revoir5">${A.icone('recommencer')} ${esc(T(D.fin.revoir))}</button></p>
+  </div>
+</div>
+</section>`;
+  }
+  function ouvrirCarnet(apres) {
+    if (!State.carnetVu) { State.carnetVu = true; save(); }
+    window.CARNET.ouvrir({ T, state: State, son: n => SON.play(n), apres });
   }
   function album() {
     const a = lireAlbum(), parEnfant = {};
@@ -1145,24 +1308,22 @@ ${places.map(dent).join('')}
       });
       d.addEventListener('keydown', e => { if (!range && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); ranger(); } });
     },
-    // Le chapitre 5 commence toujours par l'épilogue (après la lettre comme depuis le « 5 » du ruban) ;
-    // le diplôme vient ensuite (opts.diplome)
+    // Le chapitre 5 commence toujours par l'épilogue (après la lettre comme depuis le « 5 » du ruban).
+    // La fin vient ensuite (opts.diplome). La première fois, en trois temps : le diplôme seul, la remise des badges
+    // (Quenotte les sort de sa sacoche et les accroche sur l'étagère), puis l'écran de fin ; ensuite, directement
+    // l'écran de fin. opts.temps force un temps ('diplome', 'ceremonie', 'tableau').
     render(opts) {
       if (!(opts && opts.diplome)) return this.epilogueHTML();
-      const qs = 'badges=' + encodeURIComponent(State.badges.join(',')) + '&secret=' + (State.secret ? 1 : 0) + '&nuit=' + State.nuit + '&etoiles=' + nbEtoiles();
-      return `<section class="ch ch5">
-  <h2 class="decor-titre"><span class="decor-heure">La nuit dernière à 3 h 40</span>Bravo ${esc(C.enfant)} !</h2>
-  <div class="confettis" aria-hidden="true"></div>
-  <div class="diplome-wrap">${window.CERTIFICAT.html({ badges: State.badges.concat(State.badges.indexOf('jumelle') < 0 ? ['jumelle'] : []), secret: State.secret, nuitTexte: nuitTexte(), etoiles: nbEtoiles(), total: totalEtoiles })}</div>
-  <div class="fin">
-    <a class="btn btn-grand btn-or" id="btn-imprimer" href="certificat/?${qs}#p=${window.PROFIL.code}" target="_blank" rel="noopener">${A.icone('imprimer')} Imprimer le diplôme</a>
-    ${carteCarnet()}
-    <button class="btn btn-petit" id="btn-album5">${A.icone('etoile')} ${esc(T(D.album.titre))}</button>
-    <button class="btn btn-petit" id="btn-revoir5">Revoir l'histoire</button>
+      const temps = this.temps = opts.temps || (State.ceremonie ? 'tableau' : 'diplome');
+      const titre = `<h2 class="decor-titre"><span class="decor-heure">La nuit dernière à 3 h 40</span>${temps === 'ceremonie' ? esc(T(D.ceremonie.titre)) : 'Bravo ' + esc(C.enfant) + ' !'}</h2>`;
+      if (temps === 'diplome') return `<section class="ch ch5 fin5 temps-diplome">${titre}<div class="confettis" aria-hidden="true"></div><div class="diplome-wrap">${diplomeHTML()}</div></section>`;
+      if (temps === 'ceremonie') return `<section class="ch ch5 fin5 temps-ceremonie">${titre}<div class="confettis" aria-hidden="true"></div>
+  <div class="ceremonie">
+    <div class="ceremonie-q">${A.quenotteSacoche()}<span class="sac-invite" aria-hidden="true">${esc(T(D.ceremonie.touche))}</span></div>
+    <section class="etagere" aria-labelledby="t-etagere"><h3 class="etagere-titre"><span id="t-etagere">${esc(T(D.ceremonie.etagere))}</span><span class="etagere-compte"></span></h3>${etagereHTML(State.remis || [])}</section>
   </div>
-  ${lireDessin() ? `<figure class="dessin-enfant"><figcaption>Ton dessin pour ${esc(C.souris)}</figcaption><img src="${lireDessin()}" alt="Le dessin de ${esc(C.enfant)} pour ${esc(C.souris)}"></figure>` : ''}
-  <div class="fin"><button class="btn btn-petit" id="btn-dessin5">${A.icone('crayon')} ${esc(T(lireDessin() ? D.dessin.modifier : D.dessin.faire))}</button></div>
 </section>`;
+      return tableauHTML(titre);
     },
     mount(r, opts) {
       if (!(opts && opts.diplome)) { this.retour(r); return; }
@@ -1170,24 +1331,97 @@ ${places.map(dent).join('')}
       const premiere = !State.fini;
       complete(5); if (premiere) { State.fini = true; save(); updateFil(5); }
       rangerDansAlbum(true);
-      badge('jumelle');
-      if (premiere) SON.play('fanfare');
-      // Après le diplôme, Quenotte invite à ouvrir son carnet des Ardennes
+      badge('jumelle', true); // sans annonce : Quenotte la remet elle-même pendant la cérémonie
       const ici = this.jetonDip = (this.jetonDip || 0) + 1;
-      NARR.dire(B(D.diplome)).then(() => wait(RM ? 0 : 1400)).then(() => {
-        if (this.jetonDip !== ici || !r.isConnected) return;
-        NARR.dire({ txt: T(window.ARDENNES.diplome.quenotte), expr: 'clin' });
-        NARR.action(`<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1C14 1 15 3 14.5 4.5C17 4 18 6 16 7.5C19 7.5 19.5 10 17 11C19.5 11.5 19 14.5 16 14C17 16 15.5 17.5 13.2 17L12.6 19V22.5H11.4V19L10.8 17C8.5 17.5 7 16 8 14C5 14.5 4.5 11.5 7 11C4.5 10 5 7.5 8 7.5C6 6 7 4 9.5 4.5C9 3 10 1 12 1Z" fill="currentColor"/></svg> ${esc(window.ARDENNES.diplome.bouton)}`, () => { SON.play('papier'); ouvrirCarnet(); });
-      });
-      if (!RM) { const c = $('.confettis', r); const couleurs = ['#FFC857', '#D64045', '#F2A3B5', '#3E7C8F', '#F3EFE6']; for (let i = 0; i < 40; i++) { const s = document.createElement('i'); s.style.left = (Math.random() * 100) + '%'; s.style.background = couleurs[i % couleurs.length]; s.style.animationDelay = (Math.random() * 2.5) + 's'; s.style.animationDuration = (3 + Math.random() * 3) + 's'; c.appendChild(s); } }
-      window.CERTIFICAT.brancher($('.diplome-wrap', r));
+      const encore = () => this.jetonDip === ici && r.isConnected;
+      if (this.temps === 'diplome') {
+        if (premiere) SON.play('fanfare');
+        pluie($('.confettis', r), 40);
+        etape(null);
+        NARR.dire(B(D.ceremonie.annonce)).then(() => {
+          if (!encore()) return;
+          NARR.action(A.icone('suite') + ' ' + esc(T(D.ceremonie.bouton)), () => { SON.play('clic'); fondu(() => show(5, { diplome: true, temps: 'ceremonie' }), 600); });
+        });
+        return;
+      }
+      if (this.temps === 'ceremonie') { this.ceremonie(r, encore); return; }
+      // L'écran de fin ; après le bravo, Quenotte invite à ouvrir son carnet des Ardennes
+      const dip = () => fenetreDiplome();
+      $('#btn-dip-grand', r).onclick = () => { SON.play('papier'); dip(); };
+      $('#btn-tresors', r).onclick = () => { SON.play('clic'); fenetreTresors(() => { if (encore()) show(5, { diplome: true, temps: 'tableau' }); }); };
+      $('#btn-carnet5', r).onclick = () => { SON.play('papier'); ouvrirCarnet(() => { if (encore()) show(5, { diplome: true, temps: 'tableau' }); }); };
+      // Après l'atelier, l'écran de fin se redessine (le dessin en miniature, un éventuel nouveau badge)
+      $('#btn-dessin5', r).onclick = () => { SON.play('clic'); atelier(() => show(5, { diplome: true, temps: 'tableau' })); };
+      $('#btn-album5', r).onclick = () => { SON.play('clic'); album(); };
       $('#btn-revoir5', r).onclick = () => show(1, { scene: 0 });
-      $('#btn-album5', r).onclick = album;
-      $('#btn-carnet5', r).onclick = ouvrirCarnet;
-      // Après l'atelier, le diplôme se redessine avec le nouveau dessin
-      $('#btn-dessin5', r).onclick = () => { SON.play('clic'); atelier(() => show(5, { diplome: true })); };
+      NARR.dire(B(D.diplome)).then(() => wait(RM ? 0 : 1400)).then(() => {
+        if (!encore()) return;
+        NARR.dire({ txt: T(window.ARDENNES.diplome.quenotte), expr: 'clin' });
+        NARR.action(`${ICONE_CHENE} ${esc(window.ARDENNES.diplome.bouton)}`, () => { SON.play('papier'); ouvrirCarnet(() => { if (encore()) show(5, { diplome: true, temps: 'tableau' }); }); });
+      });
     },
-    unmount() { this.jeton = (this.jeton || 0) + 1; this.jetonDip = (this.jetonDip || 0) + 1; cancelAnimationFrame(this.raf); window.removeEventListener('deviceorientation', this.incline); window.removeEventListener('keydown', this.clavierNuages); window.removeEventListener('keydown', this.clavier); clearTimeout(this.tAide); },
+    // La remise des badges : chaque toucher de la sacoche en sort une médaille, qui s'envole au milieu de l'écran
+    // (Quenotte dit ce qu'elle récompense), puis va s'accrocher à son crochet. « Passer » les accroche toutes.
+    ceremonie(r, encore) {
+      const sac = $('.sacoche', r), zone = $('.ceremonie', r), invite = $('.sac-invite', r), compte = $('.etagere-compte', r);
+      const ids = badgesGagnes();
+      State.remis = (State.remis || []).filter(id => ids.indexOf(id) >= 0);
+      const file = ids.filter(id => State.remis.indexOf(id) < 0);
+      let occupe = false, finie = false;
+      const majCompte = () => { compte.textContent = $$('.case-med:not(.a-gagner):not(.attend)', r).length + ' / ' + D.badges.length; };
+      const accrocher = (id, anime) => {
+        const c = $(`.case-med[data-badge="${id}"]`, r); if (!c) return;
+        decrocherAttente(c, id); if (anime) { c.classList.remove('posee'); void c.offsetWidth; c.classList.add('posee'); }
+        if (State.remis.indexOf(id) < 0) { State.remis.push(id); save(); }
+        majCompte();
+      };
+      const continuer = () => { State.ceremonie = true; save(); SON.play('clic'); fondu(() => show(5, { diplome: true, temps: 'tableau' }), 600); };
+      const finir = () => {
+        if (finie || !encore()) return; finie = true;
+        zone.classList.remove('pleine'); invite.hidden = true;
+        etape(continuer);
+        pluie($('.confettis', r), 36); SON.play('harpe');
+        NARR.dire(B(D.ceremonie.fin)).then(() => { if (encore()) NARR.action(A.icone('suite') + ' ' + esc(T(D.ceremonie.continuer)), continuer); });
+      };
+      const sortir = () => {
+        if (occupe || finie || !file.length || !encore()) return;
+        occupe = true; NARR.action(null); invite.hidden = true;
+        const id = file.shift(), nom = window.CERTIFICAT.nomBadge(id, true);
+        sac.classList.remove('secoue'); void sac.getBoundingClientRect(); sac.classList.add('secoue', 'ouvre');
+        SON.play('badge');
+        NARR.dire({ txt: nom + ' ! ' + window.CERTIFICAT.texteBadge(id, true), expr: 'joie' });
+        const cible = $(`.case-med[data-badge="${id}"]`, r);
+        volMedaille(id, nom, sac, cible).then(() => {
+          sac.classList.remove('ouvre');
+          if (!encore()) return;
+          accrocher(id, true); SON.play('toc');
+          occupe = false;
+          if (!file.length) { setTimeout(finir, RM ? 0 : 700); return; }
+          NARR.action(A.icone('suite') + ' ' + esc(T(D.ceremonie.suivant)), sortir);
+        });
+      };
+      const toutAccrocher = () => {
+        file.splice(0).forEach(id => accrocher(id, !RM));
+        annulerVols(); occupe = false; sac.classList.remove('ouvre');
+        finir();
+      };
+      sac.addEventListener('click', sortir);
+      sac.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); sortir(); } });
+      // Toucher une médaille (ou un crochet vide) : Quenotte dit ce qu'elle récompense, ou comment la gagner
+      $$('.case-med', r).forEach(c => c.addEventListener('click', () => {
+        if (occupe || c.classList.contains('attend')) return;
+        const g = !c.classList.contains('a-gagner');
+        SON.play('clic');
+        NARR.dire({ txt: window.CERTIFICAT.nomBadge(c.dataset.badge, g) + (g ? ' ! ' : ' : ') + window.CERTIFICAT.texteBadge(c.dataset.badge, g), expr: g ? 'joie' : 'clin' });
+      }));
+      majCompte();
+      if (!file.length) { finir(); return; }
+      zone.classList.add('pleine');
+      etape(toutAccrocher);
+      const n = file.length;
+      NARR.dire(n > 1 ? { txt: remplir(T(D.ceremonie.intro)), expr: D.ceremonie.intro.expr } : B(D.ceremonie.intro1));
+    },
+    unmount() { this.jeton = (this.jeton || 0) + 1; this.jetonDip = (this.jetonDip || 0) + 1; annulerVols(); cancelAnimationFrame(this.raf); window.removeEventListener('deviceorientation', this.incline); window.removeEventListener('keydown', this.clavierNuages); window.removeEventListener('keydown', this.clavier); clearTimeout(this.tAide); },
   };
 
   const Chapitres = [Ch0, Ch1, Ch2, Ch3, Ch4, Ch5];
