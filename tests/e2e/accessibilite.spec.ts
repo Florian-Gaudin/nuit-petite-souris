@@ -25,7 +25,7 @@ test('audit WCAG 2.1 AA : tous les écrans', async ({ page }) => {
   await page.locator('[data-a="grille"]').click(); await page.locator('.carte-livre').click(); await page.locator('[data-a="livre"]').click(); await page.keyboard.press('ArrowRight');
   pb.push(...await audit(page, 'livre', ECART_HISTOIRE));
   await page.keyboard.press('Escape');
-  for (const p of ['parents/', 'mot/#exemple', 'certificat/#exemple', 'infos/']) {
+  for (const p of ['parents/', 'mot/#exemple', 'certificat/#exemple', 'infos/', 'decouvrir/']) {
     await page.goto(p); await page.waitForTimeout(800); pb.push(...await audit(page, p));
   }
   expect(pb, pb.join('\n')).toEqual([]);

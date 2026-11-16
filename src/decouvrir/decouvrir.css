@@ -1,0 +1,33 @@
+/* La page « Découvrir » : la vidéo en grand sur le fond de nuit, des cartes claires, de grands boutons */
+html { touch-action: manipulation; }
+html, body { -webkit-user-select: text; user-select: text; -webkit-touch-callout: default; }
+body { background: radial-gradient(circle at 20% 0%, #2b356f 0, transparent 45%), radial-gradient(circle at 90% 30%, #22305f 0, transparent 40%), var(--nuit); min-height: 100vh; color: var(--clair); }
+.decouvrir { max-width: 760px; margin: 0 auto; padding: 20px max(16px, env(safe-area-inset-left, 0px)) 48px; display: flex; flex-direction: column; gap: 18px; }
+.dc-tete { text-align: center; }
+.dc-sur { margin: 0; color: var(--lanterne); font-weight: 800; letter-spacing: .04em; }
+.dc-tete h1 { margin: 4px 0 10px; font-family: var(--serif); font-size: clamp(1.8rem, 6vw, 2.6rem); color: #f6e08a; }
+.dc-chapeau { margin: 0 auto; max-width: 36em; font-size: 1.1rem; line-height: 1.5; }
+.dc-video video { display: block; width: 100%; background: #000; border-radius: 18px; border: 3px solid #C9A227; box-shadow: 0 14px 34px rgba(0, 0, 0, .5); }
+.dc-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
+.dc-actions .btn { min-height: 54px; font-size: 1.1rem; text-decoration: none; }
+.dc-grand { min-width: 240px; justify-content: center; }
+.dc-second { background: transparent; color: var(--clair); border: 2px solid #3d4a95; }
+.decouvrir .carte { background: var(--papier); color: var(--encre); border-radius: 20px; padding: 18px 18px 20px; box-shadow: 0 12px 32px rgba(0, 0, 0, .35); line-height: 1.5; }
+.decouvrir h2 { margin: 0 0 8px; font-size: 1.35rem; }
+.dc-points ul { margin: 0; padding-left: 1.2em; }
+.dc-points li { margin-bottom: 6px; }
+.dc-partage { text-align: center; }
+.dc-partage .btn { min-height: 52px; }
+.dc-copie { min-height: 1.5em; margin: 8px 0 0; font-weight: 700; color: var(--foret); word-break: break-all; }
+.dc-liens { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 6px 0 14px; }
+.dc-liens a, .dc-liens button { display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px; border-radius: 999px; border: 2px solid #d9c79d; background: #fff; color: var(--encre); font: 700 1rem var(--display); text-decoration: none; cursor: pointer; }
+.dc-liens a:hover, .dc-liens button:hover { border-color: var(--lanterne2); }
+.dc-qr { margin: 0 auto; max-width: 220px; }
+.dc-qr #qr svg { display: block; width: 100%; height: auto; border-radius: 10px; }
+.dc-qr figcaption { margin-top: 6px; font-size: .9rem; color: #5a5470; }
+.dc-don { text-align: center; }
+.dc-btn-don { display: inline-flex; align-items: center; gap: 8px; min-height: 52px; padding: 0 22px; border-radius: 999px; background: #b8323a; color: #fff; border: 2px solid #fff; box-shadow: 0 4px 0 #7f1f26; font: 800 1.1rem var(--display); text-decoration: none; }
+.dc-btn-don:hover, .dc-btn-don:focus-visible { background: #a22b33; }
+.dc-pied { text-align: center; }
+.dc-pied a { color: var(--lanterne); font-weight: 700; }
+.decouvrir a:focus-visible, .decouvrir button:focus-visible { outline: 3px solid var(--lanterne); outline-offset: 2px; }

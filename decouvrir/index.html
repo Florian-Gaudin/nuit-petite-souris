@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#141A3A">
+<title>Découvrir La nuit de la Petite Souris, en vidéo</title>
+<meta name="description" content="Quand une dent de lait tombe, Quenotte, la Petite Souris des Ardennes, vient la chercher. Une histoire interactive et personnalisée pour votre enfant, gratuite et sans publicité.">
+<!-- Aperçu du lien partagé (WhatsApp, Messenger, Facebook, SMS…) : titre, texte, image, et la vidéo pour les sites qui la lisent.
+     La vidéo est indiquée à deux endroits de cette page : og:video ci-dessous et la balise <video> plus bas. -->
+<meta property="og:type" content="video.other">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:site_name" content="La nuit de la Petite Souris">
+<meta property="og:title" content="La nuit de la Petite Souris, en vidéo">
+<meta property="og:description" content="Quand une dent de lait tombe, Quenotte vient la chercher… Une histoire personnalisée pour votre enfant, gratuite et sans publicité.">
+<meta property="og:url" content="https://florian-gaudin.github.io/nuit-petite-souris/decouvrir/">
+<meta property="og:image" content="https://florian-gaudin.github.io/nuit-petite-souris/partage.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Quenotte, la Petite Souris, s'envole en montgolfière dans la nuit étoilée">
+<meta property="og:video" content="https://florian-gaudin.github.io/nuit-petite-souris/video/La_nuit_de_la_Petite_Souris_presentation_v3.mp4">
+<meta property="og:video:secure_url" content="https://florian-gaudin.github.io/nuit-petite-souris/video/La_nuit_de_la_Petite_Souris_presentation_v3.mp4">
+<meta property="og:video:type" content="video/mp4">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://florian-gaudin.github.io/nuit-petite-souris/decouvrir/">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" href="../icones/icone.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../icones/icone-180.png">
+</head>
+<body>
+<main class="decouvrir">
+  <header class="dc-tete">
+    <p class="dc-sur">Une histoire pour la nuit de la petite dent</p>
+    <h1>La nuit de la Petite Souris</h1>
+    <p class="dc-chapeau">Quand une dent de lait tombe, <strong>Quenotte</strong>, la Petite Souris des Ardennes, part la chercher. Votre enfant suit son voyage jusqu'à sa chambre… et découvre au réveil la lettre qu'elle lui a laissée.</p>
+  </header>
+
+  <section class="dc-video" aria-label="La vidéo de présentation">
+    <video controls playsinline preload="metadata" poster="../partage.png">
+      <source src="../video/La_nuit_de_la_Petite_Souris_presentation_v3.mp4" type="video/mp4">
+      Votre navigateur ne peut pas lire cette vidéo.
+    </video>
+  </section>
+
+  <section class="dc-actions" aria-label="Commencer">
+    <a class="btn btn-or dc-grand" href="../#exemple">Découvrir l'histoire</a>
+    <a class="btn dc-second" href="../parents/">Préparer l'histoire de mon enfant</a>
+  </section>
+
+  <section class="carte dc-points" aria-labelledby="t-points">
+    <h2 id="t-points">En quelques mots</h2>
+    <ul>
+      <li><strong>Personnalisée :</strong> le prénom, la ville, le doudou, le chat de la maison, la dent tombée… Quenotte connaît votre enfant.</li>
+      <li><strong>Interactive :</strong> dix scènes à toucher du doigt, des secrets à trouver, une caméra de surveillance, une lettre et un diplôme à imprimer.</li>
+      <li><strong>Gratuite, sans publicité ni compte :</strong> rien n'est collecté, tout reste sur votre téléphone.</li>
+      <li><strong>Le matin venu :</strong> un QR code ou un lien suffit pour que votre enfant ouvre son histoire, même sans réseau.</li>
+    </ul>
+  </section>
+
+  <section class="carte dc-partage" aria-labelledby="t-partage">
+    <h2 id="t-partage">Faire connaître Quenotte</h2>
+    <p>Envoyez cette page à d'autres parents : la vidéo et l'appli sont au même endroit.</p>
+    <button type="button" class="btn btn-or" id="partager">Partager cette page</button>
+    <p class="dc-copie" id="copie" role="status" aria-live="polite"></p>
+    <div class="dc-liens" id="liens">
+      <a id="wa" target="_blank" rel="noopener">WhatsApp</a>
+      <a id="mail">E-mail</a>
+      <a id="fb" target="_blank" rel="noopener">Facebook</a>
+      <button type="button" id="copier">Copier le lien</button>
+    </div>
+    <figure class="dc-qr">
+      <div id="qr"></div>
+      <figcaption>À imprimer sur une affiche ou un flyer : ce QR code ouvre cette page.</figcaption>
+    </figure>
+  </section>
+
+  <section class="carte dc-don" id="don" hidden aria-labelledby="t-don">
+    <h2 id="t-don">Un petit coup de pouce ?</h2>
+    <p>L'appli est gratuite pour toutes les familles et le restera. Si elle vous plaît, vous pouvez soutenir son créateur.</p>
+    <a class="dc-btn-don" id="lien-don" target="_blank" rel="noopener"><span aria-hidden="true">🧀</span> Offrir un goûter à Quenotte</a>
+  </section>
+
+  <footer class="dc-pied"><a href="../infos/">Informations, confidentialité et contact</a></footer>
+</main>
+<script type="module" src="/src/decouvrir/main.ts"></script>
+</body>
+</html>
