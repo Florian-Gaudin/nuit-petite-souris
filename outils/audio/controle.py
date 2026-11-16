@@ -8,7 +8,7 @@ import glob, json, os, subprocess, sys
 import numpy as np
 from scipy.io import wavfile
 from scipy.ndimage import median_filter
-from commun import SR, FFMPEG, SORTIE, CIBLE_MUSIQUE, CIBLE_BRUITAGE, CRETE_MAX, passe_haut, lufs, crete_vraie
+from commun import SR, FFMPEG, SORTIE, CIBLE_MUSIQUE, CIBLE_BRUITAGE, CRETE_MAX, cible_bruitage, passe_haut, lufs, crete_vraie
 
 
 def lire_wav(chemin):
@@ -55,6 +55,7 @@ def controler(dossiers):
         cible = CIBLE_MUSIQUE if musique else CIBLE_BRUITAGE
         for wav in sorted(glob.glob(os.path.join(dossier, '*.wav'))):
             nom = os.path.splitext(os.path.basename(wav))[0]
+            if not musique: cible = cible_bruitage(nom)
             mp3 = wav[:-4] + '.mp3'
             x = lire_wav(wav)
             y = lire_mp3(mp3) if os.path.exists(mp3) else x

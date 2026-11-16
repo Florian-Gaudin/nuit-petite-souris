@@ -4,7 +4,7 @@ mis au niveau par un seul gain. Les sons fréquents ont plusieurs variantes (nom
 import os, json
 import numpy as np
 from commun import (SR, SORTIE, Partition, rendre, passe_bas, passe_haut, passe_bande, enveloppe, cosinus, fondus,
-                    finition, niveau, ecrire, CIBLE_BRUITAGE)
+                    finition, niveau, ecrire, CIBLE_BRUITAGE, cible_bruitage)
 
 DOSSIER = os.path.join(SORTIE, 'bruitages')
 
@@ -35,27 +35,26 @@ def clic(rng, k):
     return passe_bas(y + frappe * 0.25, 9000)
 
 
-# ---------------- Le parchemin : la feuille glisse, puis retombe ----------------
+# ---------------- La page du livre : un souffle de papier doux, qui ondule, puis se pose ----------------
 def page(rng, k):
-    d = 1.0 + 0.1 * k; n = int(d * SR); t = np.arange(n) / SR
+    d = 0.62 + 0.06 * k; n = int(d * SR); t = np.arange(n) / SR; x = t / d
     z = rng.standard_normal(n)
-    # Le « filtre qui glisse » sans traitement par blocs : trois bandes fixes dont les volumes se relaient en douceur
-    bandes = [passe_bande(z, 500, 1200), passe_bande(z, 1200, 2800), passe_bande(z, 2800, 6000)]
-    x = t / d
-    g = [np.exp(-((x - c) / 0.22) ** 2) for c in (0.15, 0.45, 0.7)]
-    souffle = sum(b * gi for b, gi in zip(bandes, g))
-    souffle *= np.sin(np.pi * x) ** 1.5
-    # Le froissé : de petites crêtes de papier
-    froisse = np.zeros(n)
-    for _ in range(14):
-        m = int(rng.uniform(0.004, 0.012) * SR); i = int(rng.uniform(0.1, 0.75) * n)
-        s = rng.standard_normal(m) * enveloppe(m, 0.0005, 0.003)
-        froisse = place(froisse, s * rng.uniform(0.2, 0.6), i / SR)
-    froisse = passe_bande(froisse, 2000, 7000)
-    pose = passe_bas(rng.standard_normal(int(0.2 * SR)), 300) * enveloppe(int(0.2 * SR), 0.01, 0.05)
-    y = souffle * 1.0 + froisse * 0.35
-    y = place(np.concatenate([y, silence(0.15)]), pose * 0.6, d - 0.08)
-    return y
+    # Le souffle : du bruit feutré (médiums seulement, rien de sifflant), qui monte puis retombe
+    souffle = passe_bande(z, 350, 2200) * 0.9 + passe_bande(z, 2200, 3800) * 0.18
+    corps = np.sin(np.pi * np.clip(x / 0.85, 0, 1)) ** 2
+    # La feuille ondule en passant : une légère palpitation qui ralentit
+    ondule = 0.75 + 0.25 * np.sin(2 * np.pi * (14 - 6 * x) * t + rng.uniform(0, 6.28))
+    y = souffle * corps * ondule
+    # Deux ou trois frôlements de papier, arrondis (pas de crépitement)
+    for _ in range(3):
+        m = int(rng.uniform(0.03, 0.05) * SR); c = rng.uniform(0.2, 0.6)
+        f = passe_bande(rng.standard_normal(m), 900, 3000) * np.sin(np.pi * np.arange(m) / m) ** 2
+        y = place(y, f * rng.uniform(0.25, 0.4), c * d)
+    # La feuille se pose : un petit « flap » sourd
+    m = int(0.12 * SR)
+    pose = passe_bas(rng.standard_normal(m), 450) * enveloppe(m, 0.004, 0.035)
+    y = place(np.concatenate([y, silence(0.12)]), pose * 0.7, d * 0.82)
+    return passe_bas(y, 5000)
 
 
 # ---------------- L'eau : une goutte dans la rivière ----------------
@@ -189,7 +188,9 @@ def cachet(rng, k):
 
 
 def produire(noms=None, dossier=DOSSIER):
-    infos = {}
+    carte = os.path.join(dossier, 'bruitages.json')
+    infos = json.load(open(carte, encoding='utf-8')) if noms and os.path.exists(carte) else {}
+    for nom in noms or []: infos.pop(nom, None)
     for nom, (f, nb) in BRUITAGES.items():
         if noms and nom not in noms: continue
         for k in range(nb):
@@ -198,11 +199,12 @@ def produire(noms=None, dossier=DOSSIER):
             x = np.concatenate([silence(0.015), x, silence(0.06)])
             x = finition(x)
             x = fondus(x, 3, 30)
-            x = niveau(x, CIBLE_BRUITAGE)
+            x = niveau(x, cible_bruitage(nom))
             fichier = nom + (f'-{k + 1}' if nb > 1 else '')
             ecrire(fichier, x, dossier, debit='64k', mono=True)
             infos.setdefault(nom, []).append(fichier + '.mp3')
-    with open(os.path.join(dossier, 'bruitages.json'), 'w', encoding='utf-8') as fp:
+    infos = {nom: infos[nom] for nom in BRUITAGES if nom in infos}
+    with open(carte, 'w', encoding='utf-8') as fp:
         json.dump(infos, fp, ensure_ascii=False, indent=2)
     return infos
 

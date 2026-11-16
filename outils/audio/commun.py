@@ -29,6 +29,12 @@ TPB = 480
 
 # Cibles de niveau (LUFS intégrés) et crête maximale (dBTP)
 CIBLE_MUSIQUE, CIBLE_BRUITAGE, CRETE_MAX = -23.0, -18.0, -2.0
+# Les bruitages qui doivent rester en retrait (écart en dB par rapport à CIBLE_BRUITAGE)
+ECARTS_BRUITAGE = {'page': -8.0}
+
+
+def cible_bruitage(nom):
+    return CIBLE_BRUITAGE + ECARTS_BRUITAGE.get(nom.rsplit('-', 1)[0] if nom.rsplit('-', 1)[-1].isdigit() else nom, 0.0)
 
 NN = {'C': 0, 'D': 2, 'E': 4, 'F': 5, 'G': 7, 'A': 9, 'B': 11}
 
