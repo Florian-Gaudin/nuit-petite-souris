@@ -208,3 +208,19 @@ test("le carnet : une barre ‹ grille › en bas, la croix en haut ; le livre s
   await page.locator('.carnet-x').click();
   await expect(page.locator('.carnet')).toHaveCount(0);
 });
+
+test("le livre, avec les animations : on entre dedans, puis chaque page tourne sur la reliure", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await diplome(page, true);
+  await page.locator('#btn-carnet5').click({ force: true });
+  await page.locator('.carte-ard', { hasText: 'légende' }).click({ force: true });
+  await page.locator('.livre-ferme').click({ force: true });
+  await expect(page.locator('.carnet.entre-livre')).toHaveCount(1);
+  await expect(page.locator('.livre-ancien.entree')).toBeVisible({ timeout: 5000 });
+  await page.locator('[data-a="suiv"]').click({ force: true });
+  await expect(page.locator('.feuille-tourne.tourne-g')).toHaveCount(1);   // l'ancienne feuille pivote…
+  await expect(page.locator('.feuille-tourne')).toHaveCount(0, { timeout: 3000 }); // …puis disparaît
+  await expect(page.locator('.carnet-chemin')).toContainText('Page 2');
+  await page.locator('[data-a="prec"]').click({ force: true });
+  await expect(page.locator('.feuille-tourne.tourne-d')).toHaveCount(1);
+});

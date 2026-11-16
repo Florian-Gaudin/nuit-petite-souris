@@ -267,7 +267,20 @@ ${(() => { const li = AR.cartes.map((c, i) => {
         son('page'); b.classList.add('ouvre'); clearTimeout(mainT);
         // Pendant que la couverture s'ouvre, les flèches et les glissements ne changent pas de carte
         vue = 'ouverture';
-        if (RM) livre(0); else setTimeout(() => { if (fen.isConnected && vue === 'ouverture') livre(0); }, 850);
+        if (RM) { livre(0); return; }
+        // La couverture s'ouvre, puis le livre grandit jusqu'à remplir l'écran : on entre dedans
+        setTimeout(() => {
+          if (!fen.isConnected || vue !== 'ouverture') return;
+          const r = b.getBoundingClientRect(), W = window.innerWidth, H = window.innerHeight;
+          const k = Math.max(W / Math.max(1, r.width), H / Math.max(1, r.height)) * 1.15;
+          const dx = W / 2 - (r.left + r.width / 2), dy = H / 2 - (r.top + r.height / 2);
+          fen.classList.add('entre-livre');
+          if (b.animate) b.animate([{ transform: 'none' }, { transform: `translate(${dx.toFixed(0)}px, ${dy.toFixed(0)}px) scale(${k.toFixed(2)})` }], { duration: 650, easing: 'cubic-bezier(.5,0,.75,0)', fill: 'forwards' });
+        }, 650);
+        setTimeout(() => {
+          if (!fen.isConnected || vue !== 'ouverture') return;
+          sens = 'entree'; livre(0); fen.classList.remove('entre-livre');
+        }, 1300);
       });
       clearTimeout(mainT);
       if (c.livre) mainT = setTimeout(() => { const b = corps.querySelector('.livre-ferme'); if (b && vue === 'carte') b.classList.add('montre-main'); }, 3000);
@@ -317,11 +330,25 @@ ${(() => { const li = AR.cartes.map((c, i) => {
     };
     // La page tourne (animation de feuille qui pivote, sauf si les animations sont réduites)
     let sens = '';
+    // La page tourne pour de vrai : la nouvelle page est déjà là, dessous ; l'ancienne feuille se soulève et
+    // pivote sur la reliure (vers la gauche pour avancer, vers la droite pour revenir), en découvrant la nouvelle
+    let feuilleT = null;
     const tourner = d => {
       const p = page + d;
       if (p < 0 || p > NB - 1) return;
+      const ancien = corps.querySelector('.livre-ancien');
+      const copie = ancien && !RM ? ancien.cloneNode(true) : null;
       son('page'); sens = d > 0 ? 'vers-suivante' : 'vers-precedente';
       livre(p);
+      const neuf = corps.querySelector('.livre-ancien');
+      if (!copie || !neuf) return;
+      corps.querySelectorAll('.feuille-tourne').forEach(x => x.remove()); clearTimeout(feuilleT);
+      copie.className = 'livre-ancien feuille-tourne ' + (d > 0 ? 'tourne-g' : 'tourne-d');
+      copie.setAttribute('aria-hidden', 'true');
+      copie.querySelectorAll('[aria-live]').forEach(x => x.removeAttribute('aria-live'));
+      copie.querySelectorAll('[id]').forEach(x => x.removeAttribute('id'));
+      neuf.appendChild(copie);
+      feuilleT = setTimeout(() => copie.remove(), 1000);
     };
 
     // Tourner la page en glissant du doigt (ou de la souris), depuis n'importe quel endroit de l'écran du livre
