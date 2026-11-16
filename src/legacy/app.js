@@ -123,7 +123,6 @@
     appli: !!window.APPLI_INSTALLEE, // voir src/lib/installation.ts
     actif() { return !!(document.fullscreenElement || document.webkitFullscreenElement); },
     entrer() {
-      try { sessionStorage.setItem('souris.plein', '1'); } catch (e) { }
       const el = document.documentElement;
       try {
         const p = el.requestFullscreen ? el.requestFullscreen({ navigationUI: 'hide' }) : (el.webkitRequestFullscreen && el.webkitRequestFullscreen());
@@ -202,7 +201,8 @@
       toast(on ? 'Grand texte activé' : 'Texte de taille normale');
     };
     if ($('#pref-plein')) $('#pref-plein').onclick = () => {
-      if (PLEIN.actif()) { PLEIN.sortir(); try { sessionStorage.removeItem('souris.plein'); } catch (e) { } } else PLEIN.entrer();
+      // Décoché à la main : plus de plein écran automatique sur aucune page, jusqu'à ce qu'on le recoche
+      if (PLEIN.actif()) { PLEIN.sortir(); window.PLEIN_ECRAN.refuser(true); } else { window.PLEIN_ECRAN.refuser(false); PLEIN.entrer(); }
       fermerMenu();
     };
     // Changer d'histoire : sur place, sans recharger la page (le plein écran est gardé)
@@ -1212,12 +1212,13 @@ ${places.map(dent).join('')}
   const GESTES = ['pointerdown', 'touchend', 'click', 'keydown'];
   const premierGeste = () => { SON.unlock(); MUS.demarrer(); GESTES.forEach(g => document.removeEventListener(g, premierGeste)); };
   GESTES.forEach(g => document.addEventListener(g, premierGeste));
-  // Plein écran automatique au premier toucher (une seule tentative : si on en sort, le bouton du ruban permet d'y revenir)
+  // Plein écran automatique au premier toucher (une seule tentative : si on en sort, les réglages permettent d'y revenir),
+  // sauf s'il a été décoché à la main dans les réglages (voir src/lib/pleinEcran.ts, commun à toutes les pages)
   if (PLEIN.api && !PLEIN.appli) {
     const autoPlein = e => {
       if (e.target && e.target.closest && e.target.closest('.prefs')) return;
       document.removeEventListener('click', autoPlein, true);
-      if (!PLEIN.actif()) PLEIN.entrer();
+      if (!PLEIN.actif() && !window.PLEIN_ECRAN.refuse()) PLEIN.entrer();
     };
     document.addEventListener('click', autoPlein, true);
   }

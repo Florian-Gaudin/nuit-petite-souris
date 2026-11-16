@@ -7,6 +7,8 @@ activerTypographie(); // une espace insécable devant ! et ?
 import { initStockage, stockage } from '../lib/stockage';
 import { installerProfil } from '../lib/profilCourant';
 import { activerHorsLigne } from '../lib/horsLigne';
+import { pleinEcranAuPremierToucher } from '../lib/pleinEcran';
+pleinEcranAuPremierToucher(); // au premier toucher, sauf si décoché dans les réglages
 
 activerHorsLigne();
 

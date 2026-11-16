@@ -16,11 +16,11 @@
 {/if}
 
 <style>
-  /* Le bouton de don : rouge de l'écharpe de Quenotte, texte blanc, police arrondie */
+  /* Le bouton de don : discret, comme sur l'accueil (fine pastille, texte rouge de l'écharpe de Quenotte) */
   .btn-don {
-    display: inline-flex; align-items: center; gap: 8px; min-height: 52px; padding: 0 22px; border-radius: 999px;
-    background: #b8323a !important; color: #fff !important; border: 2px solid #fff !important; box-shadow: 0 4px 0 #7f1f26 !important;
-    font: 800 1.1rem 'Baloo 2', 'Comic Sans MS', sans-serif; text-decoration: none;
+    display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 16px; border-radius: 999px;
+    background: transparent !important; color: #b8323a !important; border: 1.5px solid #d9a3a6 !important; box-shadow: none !important;
+    font: 700 .95rem 'Baloo 2', 'Comic Sans MS', sans-serif; text-decoration: none;
   }
-  .btn-don:hover, .btn-don:focus-visible { background: #a22b33 !important; outline: 3px solid #FFC857; outline-offset: 2px; }
+  .btn-don:hover, .btn-don:focus-visible { background: #fbe9e9 !important; outline: 3px solid #FFC857; outline-offset: 2px; }
 </style>

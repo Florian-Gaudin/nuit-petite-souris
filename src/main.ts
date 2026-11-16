@@ -4,6 +4,7 @@
 import './styles/style.css';
 import './styles/diplome.css';
 import './lib/plateforme';
+import './lib/pleinEcran'; // window.PLEIN_ECRAN : le refus du plein écran automatique, commun à toutes les pages
 import { activerTypographie } from './lib/typographie';
 activerTypographie(); // une espace insécable devant ! et ?
 import { initStockage } from './lib/stockage';

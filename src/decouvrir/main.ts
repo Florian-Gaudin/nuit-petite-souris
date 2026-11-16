@@ -3,6 +3,8 @@
 import '../styles/style.css';
 import './decouvrir.css';
 import { activerTypographie } from '../lib/typographie';
+import { pleinEcranAuPremierToucher } from '../lib/pleinEcran';
+pleinEcranAuPremierToucher(); // au premier toucher, sauf si décoché dans les réglages
 import { svgQr } from '../lib/qr';
 import { LIEN_DON, donPossible } from '../lib/don';
 activerTypographie();

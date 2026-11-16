@@ -80,6 +80,8 @@ test('la carte : l\'outre-mer dans son encadré, un département inconnu sans é
 });
 
 test("l'écran de choix tient sans défiler : pour un parent qui découvre, puis avec une histoire (options ouvertes ou non)", async ({ page }) => {
+  // Le toucher sur « Autres options » passerait en plein écran, et une fenêtre en plein écran ne se redimensionne pas
+  await page.addInitScript(() => { try { localStorage.setItem('souris.plein.refuse', '1'); } catch { /* */ } });
   const tient = async (etat: string) => {
     const { haut, fenetre, bas } = await page.evaluate(() => ({
       haut: document.documentElement.scrollHeight, fenetre: innerHeight,
