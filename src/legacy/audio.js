@@ -42,7 +42,8 @@ window.SON = (function () {
     return chargementPlanche;
   }
   // Un bruitage tiré de la planche : une variante au hasard, avec un tout petit fondu à chaque bout
-  function jouerSon(nom) {
+  function jouerSon(nom, volume) {
+    const V = VOLUME_BRUITAGES * (volume == null ? 1 : volume); // « volume » : de 0 à 1, pour un son plus discret
     if (!planche || !index) { chargerPlanche(); return 0; }
     const variantes = index.bruitages.sons[nom]; if (!variantes || !variantes.length) return 0;
     let k = Math.floor(Math.random() * variantes.length);
@@ -51,8 +52,8 @@ window.SON = (function () {
     const [debut, duree] = variantes[k], t = ctx.currentTime;
     const src = ctx.createBufferSource(), g = ctx.createGain();
     src.buffer = planche;
-    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(VOLUME_BRUITAGES, t + 0.004);
-    g.gain.setValueAtTime(VOLUME_BRUITAGES, t + duree - 0.02); g.gain.linearRampToValueAtTime(0, t + duree);
+    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(V, t + 0.004);
+    g.gain.setValueAtTime(V, t + duree - 0.02); g.gain.linearRampToValueAtTime(0, t + duree);
     src.connect(g).connect(master);
     src.start(t, debut, duree + 0.01);
     return duree;
@@ -181,7 +182,7 @@ window.SON = (function () {
           concert(dec); duree = dec + DUREE_CONCERT;
           actifs.push({ debut: t + dec, fin: t + duree });
         } else {
-          duree = jouerSon(n) || 0;
+          duree = jouerSon(n, opts && opts.volume) || 0;
           if (duree) actifs.push({ debut: t, fin: t + duree });
         }
         if (window.MUSIQUE) window.MUSIQUE.baisser();

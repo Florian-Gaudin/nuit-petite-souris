@@ -170,7 +170,8 @@ window.SCENES = (function () {
         if (n >= pts.length) { fin(); return; }
         indice();
       };
-      const refus = el => { SON.play('toc'); el.classList.remove('refus'); void el.getBBox(); el.classList.add('refus'); if (pts[n]) pts[n].classList.add('prochaine'); };
+      // Un leurre touché : un refus tout doux (un quart du volume), pour ne pas casser l'ambiance
+      const refus = el => { SON.play('toc', { volume: 0.25 }); el.classList.remove('refus'); void el.getBBox(); el.classList.add('refus'); if (pts[n]) pts[n].classList.add('prochaine'); };
       const pres = p => n < pts.length && Math.hypot(p.x - c.pts[n][0], p.y - c.pts[n][1]) < 40;
       const arret = new AbortController(), opt = { signal: arret.signal };
       svg.addEventListener('pointerdown', e => {
