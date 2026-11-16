@@ -183,8 +183,13 @@
       bascule('pref-vibreur', `<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="3" width="8" height="18" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M4 8v8M20 8v8M1.5 10v4M22.5 10v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`, 'Vibreur', vibreurActif());
       // Mes trésors : le carnet dès la première carte découverte, l'album dès la première histoire rangée
       const carnetVu = window.CARNET && window.CARNET.compte(State).n > 0, albumVu = lireAlbum().length > 0 && !document.body.classList.contains('mode-choix'); // sur l'accueil, l'album a son bouton
-      const tresorsVu = !!State.fini && !document.body.classList.contains('mode-choix');
-      $('#pref-diplome').hidden = !tresorsVu; $('#pref-tresors').hidden = !tresorsVu; $('#pref-carnet').hidden = !carnetVu; $('#pref-album').hidden = !albumVu; $('#groupe-tresors').hidden = !carnetVu && !albumVu && !tresorsVu;
+      // Mes trésors : chaque entrée apparaît dès que l'un de ses éléments est découvert
+      //   le diplôme : l'histoire terminée ; les badges et les étoiles : le premier badge ou la première étoile ;
+      //   le carnet : la première carte ; l'album : la première histoire rangée
+      const surAccueil = document.body.classList.contains('mode-choix');
+      const diplomeVu = !!State.fini && !surAccueil;
+      const tresorsVu = (State.badges.length > 0 || nbEtoiles() > 0) && !surAccueil;
+      $('#pref-diplome').hidden = !diplomeVu; $('#pref-tresors').hidden = !tresorsVu; $('#pref-carnet').hidden = !carnetVu; $('#pref-album').hidden = !albumVu; $('#groupe-tresors').hidden = !carnetVu && !albumVu && !tresorsVu && !diplomeVu;
       $('#pref-reset').innerHTML = A.icone('recommencer') + " Recommencer l'histoire"; $('#pref-reset').classList.remove('confirme');
       plierGrands(true);
       plier('g-lire', 'reglages-liens', !$('#groupe-tresors').hidden && !document.body.classList.contains('mode-choix'));
@@ -487,10 +492,13 @@
       fondu(() => show(5, { diplome: true, temps: 'ceremonie' }), 600);
     };
     const ids = badgesGagnes(); State.remis = (State.remis || []).filter(id => ids.indexOf(id) >= 0);
-    const nouveaux = ids.filter(id => State.remis.indexOf(id) < 0);
+    // Avant la cérémonie (pendant le voyage), tout ce qui est gagné est déjà accroché, sans « Nouveau » :
+    // Quenotte gardera la remise des médailles pour la fin
+    const avantCeremonie = !State.ceremonie;
+    const nouveaux = avantCeremonie ? [] : ids.filter(id => State.remis.indexOf(id) < 0);
     let ciel = ''; for (let i = 0; i < totalEtoiles; i++) ciel += `<svg class="ciel-etoile${i < nbEtoiles() ? '' : ' eteinte'}" viewBox="0 0 24 24" aria-hidden="true"><use href="#etoile5"/></svg>`;
     const fen = fenetre('fen-tresors', T(D.tresors.titre), `<div class="tresors-tete"><h2>${esc(T(D.tresors.titre))}</h2><button type="button" class="fermer-x" data-a="fermer" aria-label="${esc(T(D.fin.fermer))}">✕</button></div>
-  <section class="etagere" aria-labelledby="t-etagere-f"><h3 class="etagere-titre"><span id="t-etagere-f">${esc(T(D.ceremonie.etagere))}</span><span class="etagere-compte">${ids.length} / ${D.badges.length}</span></h3>${etagereHTML(State.remis)}</section>
+  <section class="etagere" aria-labelledby="t-etagere-f"><h3 class="etagere-titre"><span id="t-etagere-f">${esc(T(D.ceremonie.etagere))}</span><span class="etagere-compte">${ids.length} / ${D.badges.length}</span></h3>${etagereHTML(avantCeremonie ? ids : State.remis)}</section>
   <div class="tresors-info" aria-live="polite"><p class="tresors-aide">${esc(T(D.tresors.aide))}</p></div>
   <section class="ciel-etoiles" aria-label="${esc(remplir(T(D.tresors.ciel)))}"><p><b>${esc(remplir(T(D.tresors.ciel)))}</b><span>${esc(T(D.tresors.cielAide))}</span></p><div class="ciel-liste">${ciel}</div></section>
   <div class="fen-actions">${ids.length ? `<button type="button" class="btn btn-petit" data-a="rejouer">${A.icone('recommencer')} ${esc(T(D.tresors.rejouer))}</button>` : ''}<button type="button" class="btn btn-or" data-a="fermer">${esc(T(D.fin.fermer))}</button></div>`, ensuite);

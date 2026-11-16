@@ -157,3 +157,28 @@ test('le menu des réglages : « Mon diplôme » (un toucher le referme), « Mes
   await page.locator('#g-grands').click();
   await expect(page.locator('#pref-parents')).toBeVisible();
 });
+
+test('le menu, Mes trésors : chaque entrée n\'apparaît qu\'une fois l\'un de ses éléments découvert', async ({ page }) => {
+  await ouvrir(page, '?reset=1#exemple');
+  await ouvrir(page, '?chapitre=1&scene=0#exemple');
+  // Rien de découvert : pas de « Mes trésors » du tout
+  await page.locator('#btn-prefs').click();
+  await expect(page.locator('#groupe-tresors')).toBeHidden();
+  await page.locator('#pref-fermer').click();
+  // Un premier badge pendant le voyage : « Mes badges et mes étoiles » apparaît, pas encore le diplôme ni le carnet
+  await page.evaluate(() => { const A = (window as any).APP; A.state.badges = ['detective']; });
+  await page.locator('#btn-prefs').click();
+  await expect(page.locator('#pref-tresors')).toBeVisible();
+  for (const id of ['#pref-diplome', '#pref-carnet', '#pref-album']) await expect(page.locator(id)).toBeHidden();
+  // L'étagère montre la médaille, sans voler la remise des badges de la fin
+  await page.locator('#pref-tresors').click();
+  await expect(page.locator('.fen-tresors .case-med[data-badge="detective"]:not(.attend):not(.a-gagner)')).toHaveCount(1);
+  await expect(page.locator('.tresors-info .info-etat')).toHaveCount(0);
+  expect((await etat(page)).remis || []).toEqual([]);
+  await page.keyboard.press('Escape');
+  // Une carte du carnet trouvée : le carnet apparaît
+  await page.evaluate(() => { const A = (window as any).APP; A.state.ardennes = ['chateau.cuisine']; });
+  await page.locator('#btn-prefs').click();
+  await expect(page.locator('#pref-carnet')).toBeVisible();
+  await expect(page.locator('#pref-diplome')).toBeHidden();
+});
