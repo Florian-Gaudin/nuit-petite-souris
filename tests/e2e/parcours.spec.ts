@@ -92,7 +92,8 @@ test('de l\'accueil au diplôme', async ({ page }) => {
   // Le retour en montgolfière : l'histoire, les consignes, puis le départ ; elle se pose près du château
   await page.locator('#bandeau-actions button', { hasText: 'Suite' }).click({ timeout: 30_000 });
   await page.locator('#bandeau-actions button', { hasText: "C'est parti" }).click({ timeout: 30_000 });
-  await page.locator('#bandeau-actions button', { hasText: 'Entrer dans le terrier' }).click({ timeout: 60_000 });
+  await page.locator('svg.retour').evaluate(s => { (s as SVGElement).dataset.auto = '1'; }); // le pilote automatique
+  await page.locator('#bandeau-actions button', { hasText: 'Entrer dans le terrier' }).click({ timeout: 120_000 });
   // Le terrier : on suit le chemin jusqu'à la porte du château (flèches du clavier)
   await expect(page.locator('#voile-noir.on')).toHaveCount(0);
   const solution = (await page.locator('svg.terrier').getAttribute('data-solution'))!;

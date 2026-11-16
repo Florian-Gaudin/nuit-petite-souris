@@ -411,16 +411,31 @@ test("le badge Fouille-terrier : les 4 trésors du terrier trouvés", async ({ p
   expect(await page.evaluate(() => (window as any).APP.state.badges)).toContain('terrier');
 });
 
-test("le badge Pilote des nuages : seulement sans toucher un seul nuage", async ({ page }) => {
-  test.setTimeout(120000);
+test("le retour en montgolfière : trois étapes, trois vies ; plus de vie, l'étape reprend ; le badge sans perdre une vie", async ({ page }) => {
+  test.setTimeout(180000);
   for (const evite of [false, true]) {
     await ouvrir(page, '?reset=1#exemple');
-    // Les nuages arrivent toujours en haut du ciel : en descendant tout en bas, on les évite tous
-    await page.evaluate(() => { Math.random = () => 0; const A = (window as any).APP; A.state.unlocked = 5; A.show(5); });
+    await page.evaluate(() => { const A = (window as any).APP; A.state.unlocked = 5; A.show(5); });
     await page.locator('#bandeau-actions button', { hasText: 'Suite' }).click({ timeout: 30_000 });
+    await expect(page.locator('svg.retour .vie')).toHaveCount(3);
     await page.locator('#bandeau-actions button', { hasText: "C'est parti" }).click({ timeout: 30_000 });
-    if (evite) for (let i = 0; i < 12; i++) await page.keyboard.press('ArrowDown');
-    await page.locator('#bandeau-actions button', { hasText: 'Entrer dans le terrier' }).waitFor({ timeout: 60_000 });
+    await expect(page.locator('.ret-etape')).toHaveText('Au-dessus de la forêt');
+    if (!evite) {
+      // Droit dans les nuages : les trois flammes s'éteignent, et l'étape reprend à son début
+      await page.locator('svg.retour').evaluate(s => { (s as SVGElement).dataset.auto = 'touche'; });
+      await expect(page.locator('svg.retour .vie.eteinte')).toHaveCount(1, { timeout: 30_000 });
+      await expect(page.locator('#bandeau-texte')).toContainText('Il me reste 2 flammes');
+      await page.locator('#bandeau-actions button', { hasText: 'On réessaie' }).waitFor({ timeout: 60_000 });
+      await expect(page.locator('#bandeau-texte')).toContainText('on reprend cette étape');
+      await page.locator('#bandeau-actions button', { hasText: 'On réessaie' }).click();
+      await expect(page.locator('svg.retour .vie.eteinte')).toHaveCount(0);
+      await expect(page.locator('.ret-etape')).toHaveText('Au-dessus de la forêt');
+    }
+    // Le pilote automatique passe entre tous les nuages, étape après étape
+    await page.locator('svg.retour').evaluate(s => { (s as SVGElement).dataset.auto = '1'; });
+    await expect(page.locator('.ret-etape')).toHaveText('Au-dessus de la Meuse', { timeout: 60_000 });
+    await expect(page.locator('.ret-etape')).toHaveText('Vers Sedan', { timeout: 60_000 });
+    await page.locator('#bandeau-actions button', { hasText: 'Entrer dans le terrier' }).waitFor({ timeout: 90_000 });
     const badges = await page.evaluate(() => (window as any).APP.state.badges);
     if (evite) expect(badges).toContain('pilote'); else expect(badges).not.toContain('pilote');
   }

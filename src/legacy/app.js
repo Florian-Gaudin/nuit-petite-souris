@@ -1098,28 +1098,76 @@
     epilogueHTML() {
       return `<section class="ch ch5 epilogue"><h2 class="decor-titre"><span class="decor-heure">La nuit dernière à 3 h 20</span>Retour au château</h2><div class="epi-wrap" id="epi"></div></section>`;
     },
+    // ---------- Le retour en montgolfière : trois étapes de nuages, trois vies (les flammes du brûleur) ----------
+    // Étape 1 : des nuages un par un ; étape 2 : par deux (on passe entre eux) ; étape 3 : des nuages qui bougent, et un
+    // orage. Un nuage touché éteint une flamme ; plus de flamme : l'étape reprend à son début (un peu moins vite).
+    // Une étoile filante attrapée rallume une flamme. Le paysage défile sur trois plans ; la carte montre le trajet.
+    // Pour les tests : data-auto="1" sur le dessin pilote la montgolfière entre les nuages, data-auto="touche" droit dessus.
     retour(r) {
       const self = this, zone = $('#epi', r), mien = self.jeton = (self.jeton || 0) + 1, encore = () => self.jeton === mien;
+      const E = D.epilogue;
       heure('03:20'); MUS.ambiance('montgolfiere');
       etape(() => fondu(() => self.terrier(r), 400));
+      // Le paysage : chaque plan est une bande de 1000 de large, dessinée trois fois (elle boucle sans couture)
+      const tuile = (contenu, n) => [-1000, 0, 1000].map(x => `<g transform="translate(${x},0)">${contenu}</g>`).join('');
+      const maison = (x, y, s, toit) => `<g transform="translate(${x},${y}) scale(${s})"><rect x="-16" y="-22" width="32" height="22" fill="#2a3256"/><path d="M-20-22l20-16 20 16z" fill="${toit}"/><rect x="-9" y="-15" width="6" height="7" fill="#FFC857"/><rect x="4" y="-15" width="6" height="7" fill="#FFC857" opacity=".7"/></g>`;
+      const sapin = (x, y, s, c) => `<path transform="translate(${x},${y}) scale(${s})" d="M0-60L22-12H10L28 14H-28L-10-12H-22Z" fill="${c}"/>`;
+      const loin = '<path d="M0 470Q120 430 240 455T480 445T720 452T1000 470V600H0Z" fill="#1b2a52"/>'
+        + [60, 150, 330, 520, 610, 790, 900].map((x, i) => sapin(x, 462 - (i % 3) * 6, 0.55, '#182648')).join('');
+      const milieu = '<path d="M0 512Q200 490 400 506T800 500T1000 512V600H0Z" fill="#1d3a3a"/>'
+        + '<path class="ret-meuse" d="M0 548C140 528 260 566 420 546S700 522 860 544S960 552 1000 548" fill="none" stroke="#3E7C8F" stroke-width="12" stroke-linecap="round"/>'
+        + '<g fill="#cfe8ef" opacity=".55"><ellipse cx="300" cy="551" rx="16" ry="2"/><ellipse cx="660" cy="531" rx="12" ry="2"/></g>'
+        + maison(170, 512, 1, '#5b6182') + maison(205, 516, 0.8, '#6b4a5a') + maison(610, 506, 0.9, '#5b6182')
+        + '<g transform="translate(640,500)"><rect x="-9" y="-46" width="18" height="46" fill="#2a3256"/><path d="M-12-46L0-74 12-46z" fill="#5b6182"/><rect x="-3" y="-36" width="6" height="8" fill="#FFC857"/></g>'
+        + '<g class="ret-hibou" transform="translate(860,470)"><path d="M0 40V-6" stroke="#2a1a10" stroke-width="5"/>' + sapin(0, 0, 0.9, '#183b31') + '<g transform="translate(-2,-36)"><ellipse rx="7" ry="9" fill="#8B5A3C"/><g class="yeux"><circle cx="-3" cy="-3" r="2.4" fill="#FFF4D6"/><circle cx="3" cy="-3" r="2.4" fill="#FFF4D6"/></g></g></g>';
+      const pres = '<path d="M0 562Q250 540 500 556T1000 560V600H0Z" fill="#14302a"/><rect x="0" y="598" width="1000" height="900" fill="#14302a"/>'
+        + [40, 300, 470, 740, 950].map((x, i) => sapin(x, 572, 1.1 + (i % 2) * 0.25, '#0f2620')).join('')
+        + [120, 380, 690].map((x, i) => `<circle class="ret-luciole" style="animation-delay:${i * 0.7}s" cx="${x}" cy="${530 - i * 8}" r="3" fill="#ffe9a0"/>`).join('');
+      const flamme = i => `<g class="vie" data-i="${i}" transform="translate(${i * 34},0)"><path d="M0-15C-11 0-8 13 0 17C8 13 11 0 0-15Z" fill="#FFC857" stroke="#b9801a" stroke-width="1.5"/><path d="M0-4C-4 3-3 9 0 11C3 9 4 3 0-4Z" fill="#fff4d6"/></g>`;
       zone.innerHTML = `<svg class="retour" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet" role="img" aria-label="La montgolfière rentre au château entre les nuages">
 ${A.fond(State.nuit, 111, { x: 880, y: 90, r: 28 })}
-<path d="M0 560Q250 520 500 545T1000 530V600H0Z" fill="#1E3F36"/><rect x="-600" y="598" width="2200" height="900" fill="#1E3F36"/>
+<g class="ret-filante-deco" aria-hidden="true"><path d="M0 0L-90 34" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></g>
+<g class="ret-ballon2" transform="translate(760,170) scale(.16)" opacity=".75">${window.DECORS.ballonSVG()}</g>
+<g class="ret-oies" transform="translate(-400,80)">${[[0, 0], [22, 12], [44, 24], [22, -12], [44, -24]].map(([x, y]) => `<path d="M${x} ${y}q-8-6-16 0q8-2 16 0q8-2 16 0q-8-6-16 0" fill="#cfd3ee"/>`).join('')}</g>
+<g class="ret-chauves" transform="translate(-400,140)">${[[0, 0], [40, 18]].map(([x, y]) => `<g transform="translate(${x},${y})"><path class="aile" d="M0 0q-10-8-20-2q6 2 8 8q4-4 12-6zM0 0q10-8 20-2q-6 2-8 8q-4-4-12-6z" fill="#1d2140"/></g>`).join('')}</g>
+<g class="ret-plan ret-loin">${tuile(loin)}</g>
+<g class="ret-plan ret-milieu">${tuile(milieu)}</g>
 <g class="ret-chateau" transform="translate(1250,560)"><path d="M-110 0l20-26h180l20 26z" fill="#2F5D50"/><rect x="-80" y="-120" width="150" height="40" fill="#c9a466"/><path d="M-90-118l18-24h132l18 24z" fill="#5b6182"/><rect x="-86" y="-84" width="170" height="84" fill="#c9a466"/><rect x="-104" y="-104" width="36" height="104" rx="18" fill="#b8925a"/><path d="M-110-100l24-44 24 44z" fill="#5b6182"/><rect x="66" y="-112" width="40" height="112" rx="20" fill="#b8925a"/><path d="M60-108l26-48 26 48z" fill="#5b6182"/><rect x="20" y="-140" width="30" height="24" fill="#b8925a"/><path d="M16-140l19-24 19 24z" fill="#5fa3a3"/><rect x="-10" y="-60" width="20" height="30" rx="10" fill="#FFC857"/><rect x="-60" y="-112" width="8" height="10" fill="#FFC857"/><rect x="30" y="-110" width="8" height="10" fill="#FFC857"/></g>
-${[0, 1, 2, 3, 4, 5].map(i => `<g class="nuage" data-n="${i}" transform="translate(-400,0)"><g fill="#cfd3ee" opacity=".92" transform="scale(1.15)"><circle cx="-40" cy="0" r="36"/><circle cx="0" cy="-18" r="44"/><circle cx="44" cy="0" r="36"/><ellipse cx="0" cy="16" rx="80" ry="24"/></g></g>`).join('')}
-<g class="ret-ballon" transform="translate(230,330) scale(.75)">${window.DECORS.ballonSVG()}</g>
+<g class="ret-plan ret-pres">${tuile(pres)}</g>
+<g class="ret-nuages"></g>
+<g class="ret-bonus" transform="translate(-400,0)"><circle r="26" fill="url(#halo-or)"/><path d="M0-15l4.4 9 10 1.4-7.2 7 1.7 9.9L0 27.6l-8.9 4.7 1.7-9.9-7.2-7 10-1.4z" transform="translate(0,-6) scale(.9)" fill="#FFE7A0" stroke="#FFC857"/><path d="M-14 4L-70 26" stroke="#FFE7A0" stroke-width="3" stroke-linecap="round" opacity=".7"/></g>
+<g class="ret-ballon" transform="translate(230,330) scale(.75)"><g class="ret-ballon-in">${window.DECORS.ballonSVG()}</g></g>
+<g class="ret-hud" aria-hidden="true">
+  <g class="vies" transform="translate(40,40)"><rect x="-22" y="-24" width="112" height="48" rx="24" fill="rgba(20,26,58,.75)" stroke="#3d4a95" stroke-width="2"/>${[0, 1, 2].map(flamme).join('')}</g>
+  <g class="ret-carte" transform="translate(600,34)"><rect x="-24" y="-22" width="370" height="44" rx="22" fill="rgba(20,26,58,.75)" stroke="#3d4a95" stroke-width="2"/>
+    <path d="M0 0H300" stroke="#5a6299" stroke-width="3" stroke-dasharray="2 8" stroke-linecap="round"/>
+    <path class="ret-carte-fait" d="M0 0H300" stroke="#FFC857" stroke-width="3" stroke-linecap="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/>
+    ${[0, 100, 200].map((x, i) => `<circle class="ret-carte-etape" data-i="${i}" cx="${x}" r="6" fill="#141A3A" stroke="#FFC857" stroke-width="2"/>`).join('')}
+    <g transform="translate(316,4)"><path d="M-12 0v-14h6v6h4v-10l6-6 6 6v10h4v-6h6v14z" fill="#c9a466"/></g>
+    <g class="ret-carte-ballon"><circle cy="-8" r="8" fill="#D64045" stroke="#9a2a32" stroke-width="1.5"/><rect x="-3" y="1" width="6" height="5" rx="1" fill="#8B5A3C"/></g></g>
+</g>
+<text class="ret-etape" x="500" y="250" text-anchor="middle"></text>
 </svg>`;
-      const svg = $('svg.retour', zone), ballon = $('.ret-ballon', svg), chateau = $('.ret-chateau', svg), nuages = $$('.nuage', svg);
+      const svg = $('svg.retour', zone), ballon = $('.ret-ballon', svg), ballonIn = $('.ret-ballon-in', svg), chateau = $('.ret-chateau', svg);
+      const couche = $('.ret-nuages', svg), bonusEl = $('.ret-bonus', svg), titre = $('.ret-etape', svg);
+      const plans = [[$('.ret-loin', svg), 0.03], [$('.ret-milieu', svg), 0.07], [$('.ret-pres', svg), 0.14]];
+      const oies = $('.ret-oies', svg), chauves = $('.ret-chauves', svg), ballon2 = $('.ret-ballon2', svg);
       const borne = v => Math.max(140, Math.min(460, v));
-      // enJeu : les nuages ne partent qu'après « C'est parti ! » ; atterrissage : la montgolfière se pose près du château
-      let y = 330, cible = 330, bx = 230, k = 0, x = 1150, ny = 220, touche = false, heurts = 0, dernier = null, doigtT = 0, base = null, fini = false, enJeu = false, atterrissage = null;
+      const ETAPES = [
+        { motifs: ['s', 's', 's', 's', 's'], v0: 0.36, v1: 0.44, ecart: 520 },
+        { motifs: ['p', 's', 'p', 's', 'p'], v0: 0.40, v1: 0.48, ecart: 520 },
+        { motifs: ['m', 'p', 'm', 'm', 'o'], v0: 0.44, v1: 0.52, ecart: 540 },
+      ];
+      const TOTAL = ETAPES.reduce((n, e) => n + e.motifs.length, 0);
+      let y = 330, cible = 330, bx = 230, dernier = null, doigtT = 0, base = null, temps = 0, off = 0;
+      let n = 0, i = 0, vies = 3, perdues = 0, echecs = 0, evites = 0, actifs = [], etat = 'attente', atterrissage = null, bonus = null, oiesX = null, chauvesX = null, b2 = 760;
       // D'abord l'histoire (elle reste affichée), puis les consignes, puis le départ
       (async () => {
-        await NARR.dire(B(D.epilogue.intro)); if (!encore()) return;
-        NARR.action(T(D.epilogue.suite) + ' ' + A.icone('suite'), async () => {
+        await NARR.dire(B(E.intro)); if (!encore()) return;
+        NARR.action(T(E.suite) + ' ' + A.icone('suite'), async () => {
           SON.play('clic'); NARR.action(null);
-          await NARR.dire(B(D.epilogue.consigne)); if (!encore()) return;
-          NARR.action(A.icone('suite') + ' ' + T(D.epilogue.depart), () => { SON.play('clic'); NARR.action(null); enJeu = true; });
+          await NARR.dire(B(E.consigne)); if (!encore()) return;
+          NARR.action(A.icone('suite') + ' ' + T(E.depart), () => { SON.play('clic'); NARR.action(null); debutEtape(); });
         });
       })();
       const point = e => { const pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); };
@@ -1134,37 +1182,153 @@ ${[0, 1, 2, 3, 4, 5].map(i => `<g class="nuage" data-n="${i}" transform="transla
         const d = { ArrowUp: -60, ArrowDown: 60 }[e.key]; if (!d) return;
         e.preventDefault(); cible = borne((cible == null ? 330 : cible) + d); doigtT = performance.now();
       });
-      const nouveauNuage = () => { x = 1150; touche = false; ny = 160 + Math.random() * 280; nuages[k].classList.remove('pouf'); };
-      nouveauNuage();
+
+      // ----- Les vies -----
+      const majVies = () => $$('.vie', svg).forEach((f, k) => f.classList.toggle('eteinte', k >= vies));
+      const viesTexte = () => vies + ' flamme' + (vies > 1 ? 's' : '');
+      // ----- Les nuages -----
+      const NUAGE = '<g transform="scale(1.15)"><circle cx="-40" cy="0" r="36"/><circle cx="0" cy="-18" r="44"/><circle cx="44" cy="0" r="36"/><ellipse cx="0" cy="16" rx="80" ry="24"/></g>';
+      const creer = (orage) => {
+        const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        g.setAttribute('class', 'nuage' + (orage ? ' orage' : ''));
+        g.innerHTML = orage
+          ? `<g transform="scale(1.35)"><g fill="#7a7f9e">${NUAGE}</g><path class="eclair" d="M-6 24l-14 30h12l-8 26 26-36h-12l10-20z" fill="#FFE066"/></g>`
+          : `<g fill="#cfd3ee" opacity=".92">${NUAGE}</g>`;
+        couche.appendChild(g); return g;
+      };
+      const R = () => Math.random();
+      const nouvelObstacle = type => {
+        const o = { type, x: 1150, touche: false, passe: false, nuages: [] };
+        if (type === 's') { o.c = 40 + R() * 290; o.nuages.push({ dy: 0 }); }
+        else if (type === 'p') { o.c = 100 + R() * 160; o.nuages.push({ dy: -150 }, { dy: 150 }); }
+        else if (type === 'm') { o.c = 110 + R() * 140; o.amp = 70; o.phase = R() * 6.28; o.nuages.push({ dy: 0 }); }
+        else { o.c = R() < 0.5 ? 90 : 270; o.nuages.push({ dy: 0, s: 1.35 }); NARR.dire(B(E.orage), { vite: true }); SON.play('grogne'); }
+        o.nuages.forEach(nu => { nu.el = creer(type === 'o'); nu.s = nu.s || 1; });
+        actifs.push(o);
+      };
+      const centreDe = (o, nu) => o.c + nu.dy + (o.type === 'm' ? o.amp * Math.sin(temps * 0.0025 + o.phase) : 0);
+      // Le pilote automatique des tests : la hauteur sûre devant le prochain obstacle (ou droit dessus)
+      const sur = o => {
+        if (o.type === 'p') return o.c;
+        if (o.type === 'o') return o.c < 180 ? 300 : 60;
+        if (o.type === 'm') return o.c < 180 ? o.c + 175 : o.c - 175;
+        return o.c < 180 ? o.c + 190 : o.c - 190;
+      };
+      const vitesse = () => {
+        const et = ETAPES[n], k = et.motifs.length > 1 ? Math.min(1, i / (et.motifs.length - 1)) : 0;
+        return (et.v0 + (et.v1 - et.v0) * k) * Math.max(0.75, 1 - 0.08 * echecs); // après un échec, un peu moins vite
+      };
+      const vider = () => { actifs.forEach(o => o.nuages.forEach(nu => nu.el.remove())); actifs = []; bonus = null; bonusEl.setAttribute('transform', 'translate(-400,0)'); };
+      const majCarte = () => {
+        const fait = ETAPES.slice(0, n).reduce((s, e) => s + e.motifs.length, 0) + Math.max(0, i - actifs.length);
+        const p = etat === 'fini' ? 1 : Math.min(1, fait / TOTAL);
+        $('.ret-carte-fait', svg).setAttribute('stroke-dashoffset', (1 - p).toFixed(3));
+        $('.ret-carte-ballon', svg).setAttribute('transform', `translate(${(p * 300).toFixed(1)},0)`);
+        $$('.ret-carte-etape', svg).forEach((c, k) => c.setAttribute('fill', k < n || etat === 'fini' ? '#FFC857' : '#141A3A'));
+      };
+      // ----- Les étapes -----
+      function debutEtape() {
+        if (!encore()) return;
+        vider(); i = 0; vies = 3; majVies(); etat = 'titre'; majCarte();
+        titre.textContent = T(E.etapes[n].titre); titre.classList.remove('montre'); void titre.getBBox(); titre.classList.add('montre');
+        NARR.dire(B(E.etapes[n].txt), { vite: true });
+        // La vie du ciel : les oies passent à chaque étape, les chauves-souris vers Sedan
+        oiesX = 1150; if (n === 2) chauvesX = 1100;
+        setTimeout(() => { if (encore() && etat === 'titre') etat = 'jeu'; }, RM ? 300 : 2200);
+      }
+      const finEtape = () => {
+        if (n < ETAPES.length - 1) { n++; echecs = 0; SON.play('accord'); debutEtape(); }
+        else arrivee();
+      };
+      const perdu = () => {
+        etat = 'perdu'; echecs++;
+        actifs.forEach(o => o.nuages.forEach(nu => nu.el.classList.add('pouf')));
+        setTimeout(vider, 500);
+        SON.play('oh');
+        NARR.dire(B(E.perdu)).then(() => {
+          if (!encore() || etat !== 'perdu') return;
+          NARR.action(A.icone('recommencer') + ' ' + esc(T(E.reessayer)), () => { SON.play('clic'); NARR.action(null); debutEtape(); });
+        });
+      };
+      const touche = o => {
+        o.touche = true; vies--; perdues++; majVies();
+        o.nuages.forEach(nu => nu.el.classList.add('pouf'));
+        ballonIn.classList.remove('secoue'); void ballonIn.getBBox(); ballonIn.classList.add('secoue');
+        SON.play('plouf'); vibrer(120);
+        if (vies <= 0) { perdu(); return; }
+        NARR.dire({ txt: T(E.touche.txt).replace('{vies}', viesTexte()), expr: E.touche.expr }, { vite: true });
+      };
       const arrivee = () => {
-        fini = true; nuages.forEach(n => n.setAttribute('transform', 'translate(-400,0)'));
+        etat = 'fini'; vider(); majCarte();
         chateau.classList.add('arrive');
-        if (heurts === 0) badge('pilote'); // pas un seul nuage touché
+        if (perdues === 0) badge('pilote'); // pas une seule vie perdue
         // Le château arrive, puis la montgolfière descend et se pose dans l'herbe, juste à côté
         setTimeout(() => { if (encore()) atterrissage = { t: performance.now(), x0: bx, y0: y }; }, RM ? 0 : 1600);
       };
       const pose = async () => {
         if (!encore()) return;
-        SON.play('allume'); await NARR.dire(B(D.epilogue.arrivee)); if (!encore()) return;
-        NARR.action(A.icone('suite') + ' ' + T(D.epilogue.terrierBouton), () => { SON.play('clic'); NARR.action(null); fondu(() => self.terrier(r), 600); });
+        SON.play('allume'); await NARR.dire(B(E.arrivee)); if (!encore()) return;
+        NARR.action(A.icone('suite') + ' ' + T(E.terrierBouton), () => { SON.play('clic'); NARR.action(null); fondu(() => self.terrier(r), 600); });
       };
+      majVies(); majCarte();
+
       const boucle = ts => {
-        if (dernier == null) dernier = ts; const dt = Math.min(60, ts - dernier); dernier = ts;
+        if (dernier == null) dernier = ts; const dt = Math.min(60, ts - dernier); dernier = ts; temps += dt;
+        // Le paysage défile (il s'arrête à l'arrivée), le ciel vit
+        if (etat !== 'fini') {
+          off += dt;
+          plans.forEach(([g, v]) => g.setAttribute('transform', `translate(${(-((off * v) % 1000)).toFixed(1)},0)`));
+        }
+        b2 -= dt * 0.012; if (b2 < -120) b2 = 1120; ballon2.setAttribute('transform', `translate(${b2.toFixed(1)},${(170 + Math.sin(temps * 0.0008) * 10).toFixed(1)}) scale(.16)`);
+        if (oiesX != null) { oiesX -= dt * 0.09; oies.setAttribute('transform', `translate(${oiesX.toFixed(1)},${(80 + Math.sin(temps * 0.002) * 6).toFixed(1)})`); if (oiesX < -200) oiesX = null; }
+        if (chauvesX != null) { chauvesX -= dt * 0.13; chauves.setAttribute('transform', `translate(${chauvesX.toFixed(1)},${(150 + Math.sin(temps * 0.006) * 18).toFixed(1)})`); if (chauvesX < -200) chauvesX = null; }
         if (atterrissage) {
           const kA = Math.min(1, (ts - atterrissage.t) / (RM ? 50 : 2600)), e = kA * kA * (3 - 2 * kA);
           bx = atterrissage.x0 + (600 - atterrissage.x0) * e; y = atterrissage.y0 + (548 - atterrissage.y0) * e;
           if (kA >= 1) { atterrissage = null; pose(); }
-        } else if (!fini) y += (cible - y) * Math.min(1, dt / 160);
+        } else if (etat !== 'fini') {
+          // Pilote automatique (tests) : vers la hauteur sûre du prochain obstacle, ou droit dessus
+          const auto = svg.dataset.auto;
+          if (auto && etat === 'jeu') {
+            const o = actifs.filter(a => !a.touche && a.x > 120).sort((a, b) => a.x - b.x)[0];
+            if (o) cible = borne((auto === 'touche' ? centreDe(o, o.nuages[0]) : sur(o)) + 120);
+          }
+          y += (cible - y) * Math.min(1, dt / 160);
+        }
         ballon.setAttribute('transform', `translate(${bx.toFixed(1)},${y.toFixed(1)}) scale(.75)`);
-        if (!fini && enJeu) {
-          x -= dt * (0.36 + k * 0.045); // chaque nuage arrive un peu plus vite que le précédent
-          nuages[k].setAttribute('transform', `translate(${x.toFixed(0)},${ny.toFixed(0)})`);
-          // Un nuage touché : « pouf », il s'efface (on ne perd jamais)
-          if (!touche && Math.abs(x - 230) < 105 && Math.abs(ny - (y - 120)) < 88) { touche = true; heurts++; nuages[k].classList.add('pouf'); SON.play('plouf'); NARR.dire(B(D.epilogue.pouf), { vite: true }); }
-          if (x < -160) {
-            if (!touche) NARR.dire({ txt: T(k === nuages.length - 2 ? D.epilogue.dernier : D.epilogue.evite[k % D.epilogue.evite.length]), expr: 'joie' }, { vite: true });
-            k++;
-            if (k >= nuages.length) arrivee(); else nouveauNuage();
+        if (etat === 'jeu') {
+          const et = ETAPES[n], v = vitesse(), Ey = y - 120;
+          const derniereX = actifs.length ? actifs[actifs.length - 1].x : -Infinity;
+          if (i < et.motifs.length && (!actifs.length || derniereX < 1150 - et.ecart)) {
+            nouvelObstacle(et.motifs[i]); i++;
+            // Une étoile filante, au milieu des étapes 2 et 3
+            if (n > 0 && i === 3) bonus = { x: 1200, y: 60 + R() * 240 };
+          }
+          actifs.forEach(o => {
+            o.x -= dt * v;
+            o.nuages.forEach(nu => {
+              const c = centreDe(o, nu);
+              nu.el.setAttribute('transform', `translate(${o.x.toFixed(0)},${c.toFixed(0)})`);
+              if (!o.touche && etat === 'jeu' && Math.abs(o.x - 230) < 105 * nu.s && Math.abs(c - Ey) < 88 * nu.s) touche(o);
+            });
+            if (!o.passe && o.x < 120) {
+              o.passe = true;
+              if (!o.touche && etat === 'jeu') { evites++; if (evites % 3 === 0) NARR.dire({ txt: T(E.evite[(evites / 3) % E.evite.length]), expr: 'joie' }, { vite: true }); }
+            }
+          });
+          if (etat === 'jeu') {
+            actifs = actifs.filter(o => { if (o.x < -200) { o.nuages.forEach(nu => nu.el.remove()); return false; } return true; });
+            if (bonus) {
+              bonus.x -= dt * v * 1.25;
+              bonusEl.setAttribute('transform', `translate(${bonus.x.toFixed(0)},${bonus.y.toFixed(0)})`);
+              if (Math.abs(bonus.x - 230) < 70 && Math.abs(bonus.y - Ey) < 80) {
+                SON.play('filante');
+                if (vies < 3) { vies++; majVies(); $$('.vie', svg)[vies - 1].classList.add('rallume'); NARR.dire(B(E.bonus), { vite: true }); } else NARR.dire(B(E.bonusPlein), { vite: true });
+                bonus = null; bonusEl.setAttribute('transform', 'translate(-400,0)');
+              } else if (bonus.x < -100) { bonus = null; bonusEl.setAttribute('transform', 'translate(-400,0)'); }
+            }
+            majCarte();
+            if (i >= et.motifs.length && !actifs.length) finEtape();
           }
         }
         self.raf = requestAnimationFrame(boucle);

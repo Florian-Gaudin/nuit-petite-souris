@@ -1414,3 +1414,30 @@ html.grand-texte .livre-ancien .livre-texte p{font-size:1.5rem}
 .prefs-tete .prefs-accueil{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 12px;border-radius:999px;background:var(--lanterne);color:#3b2a00;font:800 1.05rem var(--display);text-decoration:none}
 .prefs-tete .prefs-accueil:hover,.prefs-tete .prefs-accueil:focus-visible{background:#ffd47a}
 body.mode-choix .prefs-accueil{visibility:hidden}
+
+/* ---------- Le retour en montgolfière : le jeu ---------- */
+.retour .vie{transition:opacity .35s,filter .35s}
+.retour .vie.eteinte{opacity:.22;filter:grayscale(1)}
+.retour .vie.rallume{animation:vie-rallume .8s ease-out}
+@keyframes vie-rallume{0%{transform:scale(1.8)}100%{transform:none}}
+.retour .vie path:first-child{transform-box:fill-box;transform-origin:50% 100%;animation:vie-danse 1.1s ease-in-out infinite}
+.retour .vie:nth-child(3) path:first-child{animation-delay:.3s}.retour .vie:nth-child(4) path:first-child{animation-delay:.6s}
+@keyframes vie-danse{50%{transform:scaleY(1.12) scaleX(.94)}}
+.retour .ret-ballon-in.secoue{animation:ret-secoue .55s ease}
+.retour .ret-ballon-in{transform-box:fill-box;transform-origin:50% 0}
+@keyframes ret-secoue{20%{transform:rotate(-9deg)}45%{transform:rotate(7deg)}70%{transform:rotate(-4deg)}}
+.retour .nuage.orage .eclair{animation:eclair 1.6s steps(1) infinite}
+@keyframes eclair{0%,62%,78%,100%{opacity:0}66%,74%{opacity:1}}
+.retour .ret-etape{font:800 46px var(--display);fill:#FFF6E0;stroke:#141A3A;stroke-width:9px;paint-order:stroke;stroke-linejoin:round;opacity:0}
+.retour .ret-etape.montre{animation:ret-etape 2.4s ease forwards}
+@keyframes ret-etape{0%{opacity:0;transform:translateY(14px)}15%,75%{opacity:1;transform:none}100%{opacity:0}}
+.retour .ret-luciole{animation:luciole-ret 2.2s ease-in-out infinite}
+@keyframes luciole-ret{50%{opacity:.15}}
+.retour .ret-hibou .yeux{transform-box:fill-box;transform-origin:center;animation:hibou-cligne 4.5s infinite}
+@keyframes hibou-cligne{0%,92%,100%{transform:none}95%{transform:scaleY(.1)}}
+.retour .ret-chauves .aile{transform-box:fill-box;transform-origin:50% 50%;animation:chauve-bat .25s ease-in-out infinite alternate}
+@keyframes chauve-bat{to{transform:scaleY(-.6)}}
+.retour .ret-bonus{filter:drop-shadow(0 0 8px rgba(255,214,120,.9))}
+.retour .ret-filante-deco{opacity:0;animation:ret-filante 9s linear infinite}
+@keyframes ret-filante{0%{opacity:0;transform:translate(700px,40px)}3%{opacity:1}9%{opacity:0;transform:translate(420px,150px)}100%{opacity:0;transform:translate(420px,150px)}}
+@media (prefers-reduced-motion:reduce){.retour .ret-filante-deco,.retour .vie path:first-child{animation:none}}

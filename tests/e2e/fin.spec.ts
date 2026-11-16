@@ -36,7 +36,7 @@ test('la première fois : le diplôme seul, puis Quenotte accroche les badges un
   await expect(page.locator('#bandeau-actions button', { hasText: 'Le badge suivant' })).toBeVisible();
   // Une médaille à gagner : Quenotte dit comment l'obtenir
   await page.locator('.case-med[data-badge="pilote"]').click();
-  await expect(page.locator('#bandeau-texte')).toContainText('sans toucher un seul nuage');
+  await expect(page.locator('#bandeau-texte')).toContainText('sans perdre une seule vie');
   // « Passer » accroche toutes les autres
   await page.locator('#btn-passer').click();
   await expect(page.locator('.case-med.attend')).toHaveCount(0);
