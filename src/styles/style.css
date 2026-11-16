@@ -1526,3 +1526,11 @@ body.mode-choix .prefs-accueil{visibility:hidden}
 .bulle-portrait svg{width:100%;height:100%}
 .bulle-quenotte p{margin:0;font-weight:700;color:#7a1f1f;line-height:1.35}
 @media (prefers-reduced-motion:reduce){.livre-ferme .livre-couv,.livre-reflet::after,.livre-ferme .etincelle,.livre-ferme.montre-main .main-livre{animation:none}.livre-ferme.montre-main .main-livre{opacity:1}}
+
+/* Le château : la fenêtre des cuisines, la vapeur de la cacasse */
+.decor-chateau .cuisine .vapeur path{animation:vapeur 2.6s ease-in-out infinite}
+.decor-chateau .cuisine .vapeur path:nth-child(2){animation-delay:1.3s}
+@keyframes vapeur{0%{opacity:0;transform:translateY(6px)}40%{opacity:.8}100%{opacity:0;transform:translateY(-10px)}}
+.decor-chateau .cuisine.fume .vapeur path{animation:vapeur-nuage 1.6s ease-out}
+@keyframes vapeur-nuage{0%{opacity:.9;transform:none}100%{opacity:0;transform:translateY(-34px) scale(2.2)}}
+@media (prefers-reduced-motion:reduce){.decor-chateau .cuisine .vapeur path{animation:none}}

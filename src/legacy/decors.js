@@ -43,6 +43,11 @@ ${A.fond(nuit, 21, { x: 830, y: 95, r: 34 })}
   <g class="tresor"><circle cx="465" cy="355" r="40" fill="url(#halo-or)" opacity=".7"/><rect x="445" y="332" width="40" height="48" rx="6" fill="#FFC857"/><path d="M445 356h40M465 332v48" stroke="#B9801A" stroke-width="2"/><use href="#dent" x="455" y="346" width="20" height="20"/></g>
 </g>
 <rect x="790" y="300" width="26" height="185" fill="#4a3324"/><path d="M780 485q23-20 46 0z" fill="#4a3324"/>
+${tap('cuisine', 'La fenêtre des cuisines du château', `${halo(318, 438, 50)}
+  <g class="cuisine"><rect x="292" y="420" width="52" height="40" rx="6" fill="#3a2f22"/><path d="M296 424h44v32h-44z" fill="#FFB547"/><path d="M296 424h44v10h-44z" fill="#FFD27A"/>
+  <path d="M318 424v32M296 440h44" stroke="#6E4630" stroke-width="3"/><rect x="288" y="456" width="60" height="7" rx="2" fill="#8B5A3C"/>
+  <g transform="translate(318,450)"><path d="M-15-6h30v6a10 10 0 0 1-10 10h-10a10 10 0 0 1-10-10z" fill="#1F2235"/><rect x="-17" y="-9" width="34" height="4" rx="2" fill="#2b2b33"/><path d="M-19-4h-4M19-4h4" stroke="#1F2235" stroke-width="3" stroke-linecap="round"/></g>
+  <g class="vapeur" fill="none" stroke="#f3efe6" stroke-width="3" stroke-linecap="round" opacity=".75"><path d="M312 436q-5-7 0-14t0-14"/><path d="M324 436q5-7 0-14t0-14"/></g></g>`)}
 ${tap('feuillage', 'Le feuillage de l’arbre', `${halo(803, 255, 105)}
   <g class="feuillage"><circle cx="755" cy="285" r="56" fill="#1E3F36"/><circle cx="850" cy="280" r="58" fill="#1E3F36"/><circle cx="800" cy="228" r="66" fill="#24483E"/><circle cx="765" cy="238" r="42" fill="#2F5D50"/><circle cx="836" cy="236" r="38" fill="#2F5D50"/></g>
   <g transform="translate(800,250)"><g class="hulotte"><path class="aile ag" d="M-16 6q-26 6-22 34q14-6 22-24z" fill="#8B5A3C"/><path class="aile ad" d="M16 6q26 6 22 34q-14-6-22-24z" fill="#8B5A3C"/><ellipse cx="0" cy="20" rx="19" ry="24" fill="#8B5A3C"/><ellipse cx="0" cy="24" rx="10" ry="16" fill="#C9A98A"/><circle cx="0" cy="-4" r="18" fill="#A0724A"/><path d="M-16-14l-6-14 14 6zM16-14l6-14-14 6z" fill="#A0724A"/><circle cx="-7" cy="-6" r="7.5" fill="#FFF4D6"/><circle cx="7" cy="-6" r="7.5" fill="#FFF4D6"/><circle cx="-7" cy="-6" r="3.5" fill="#2B2B33"/><circle cx="7" cy="-6" r="3.5" fill="#2B2B33"/><path d="M-3 1l3 6 3-6z" fill="#FFC857"/></g></g>`)}

@@ -160,6 +160,14 @@ ${o.pierre ? '<rect x="-14" y="-40" width="28" height="18" rx="2" fill="#cbbfa8"
       + '<circle cx="60" cy="40" r="7" fill="#FFC857"/><circle cx="57.5" cy="39" r="1.2" fill="#2B2B33"/><circle cx="62.5" cy="39" r="1.2" fill="#2B2B33"/><path d="M57 43q3 2 6 0" fill="none" stroke="#2B2B33" stroke-width="1"/>'
       + '<rect x="54" y="47" width="12" height="16" rx="3" fill="#D64045"/><path d="M54 50L48 52M66 50L72 52M57 63L52 72M63 63L68 72" stroke="#FFC857" stroke-width="3" stroke-linecap="round"/>'
       + '<rect x="10" y="78" width="100" height="6" fill="#6b4a33"/>',
+    // La cacasse à cul nu : la cocotte en fonte qui fume, sur la table de l'auberge
+    cacasse: '<rect width="120" height="90" fill="#6b4a33"/><rect y="62" width="120" height="28" fill="#8B5A3C"/><path d="M0 62h120" stroke="#5a3b26" stroke-width="2"/>'
+      + '<g fill="none" stroke="#f3efe6" stroke-width="3" stroke-linecap="round" opacity=".8"><path d="M48 30q-6-7 0-14t0-12"/><path d="M60 28q6-7 0-14t0-12"/><path d="M72 30q-6-7 0-14t0-12"/></g>'
+      + '<ellipse cx="60" cy="40" rx="34" ry="8" fill="#2b2b33"/><ellipse cx="60" cy="40" rx="29" ry="5.5" fill="#c9a466"/>'
+      + '<g fill="#E8B84A" stroke="#b9801a" stroke-width="1"><ellipse cx="48" cy="39" rx="6" ry="3.5"/><ellipse cx="62" cy="38" rx="7" ry="3.8"/><ellipse cx="73" cy="40" rx="5.5" ry="3.2"/></g>'
+      + '<g fill="#D64045"><rect x="54" y="40" width="5" height="3" rx="1"/><rect x="67" y="41" width="5" height="3" rx="1"/></g>'
+      + '<path d="M26 40h68v14a16 16 0 0 1-16 16H42a16 16 0 0 1-16-16z" fill="#1F2235"/><path d="M20 46h7M93 46h7" stroke="#1F2235" stroke-width="5" stroke-linecap="round"/>'
+      + '<path d="M32 46h56" stroke="#3a3d55" stroke-width="2"/>',
     // La galette au sucre, sur une nappe à carreaux
     galette: '<rect width="120" height="90" fill="#FFF6E0"/><g fill="#D64045" opacity=".35">' + [...Array(36)].map((_, k) => (k + Math.floor(k / 6)) % 2 ? `<rect x="${(k % 6) * 20}" y="${Math.floor(k / 6) * 15}" width="20" height="15"/>` : '').join('') + '</g>'
       + '<ellipse cx="60" cy="54" rx="46" ry="20" fill="#fff" stroke="#cfd3ee" stroke-width="2"/>'
@@ -243,7 +251,7 @@ ${(() => { const li = AR.cartes.map((c, i) => {
       const poeme = c.poeme ? `<blockquote class="carte-poeme"><p class="carte-poeme-titre">${esc(c.poeme.titre)}</p>${c.poeme.vers.map(v => `<span>${esc(v)}</span>`).join('')}</blockquote>` : '';
       const trouvee = c.secret && trouves.indexOf(c.secret) >= 0;
       corps.innerHTML = `<p class="carnet-chemin">Le savais-tu ? · ${rang + 1} / ${ouvertes.length}</p><h2>${esc(c.titre)}</h2>${photo}
-<div class="carte-texte" aria-live="polite">${c.texte.map(t => `<p>${esc(T(t))}</p>`).join('')}${poeme}${c.aVoir ? `<p class="carte-avoir"><strong>${esc(AR.aVoir)} :</strong> ${esc(c.aVoir)}</p>` : ''}${trouvee ? `<p class="carte-trouvee">${feuille(18)} ${esc(AR.trouve)}</p>` : ''}</div>
+<div class="carte-texte" aria-live="polite">${c.texte.map(t => `<p>${esc(T(t))}</p>`).join('')}${poeme}${c.aVoir ? `<p class="carte-avoir"><strong>${esc(AR.aVoir)} :</strong> ${esc(c.aVoir)}</p>` : ''}${c.aGouter ? `<p class="carte-avoir"><strong>${esc(AR.aGouter)} :</strong> ${esc(c.aGouter)}</p>` : ''}${trouvee ? `<p class="carte-trouvee">${feuille(18)} ${esc(AR.trouve)}</p>` : ''}</div>
 <nav class="carnet-barre" aria-label="Les cartes du carnet">
   <button type="button" class="barre-fleche" data-a="prec" aria-label="Carte précédente"${avant >= 0 ? '' : ' disabled'}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
   <button type="button" class="barre-grille" data-a="grille" aria-label="Toutes les cartes"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7.5" height="7.5" rx="2" fill="currentColor"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="2" fill="currentColor"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="2" fill="currentColor"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="2" fill="currentColor"/></svg><span>${rang + 1} / ${ouvertes.length}</span></button>

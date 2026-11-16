@@ -47,6 +47,7 @@ window.SCENES = (function () {
         if (!g.classList.contains('envol')) g.classList.add('encore');
       },
       sac() { SON.play('papier'); },
+      cuisine(g) { g.classList.remove('fume'); void g.getBBox(); g.classList.add('fume'); SON.play('gresille'); },
     },
     foret: {
       // Le sanglier se réveille en sursaut, grogne… et s'enfuit dans la forêt

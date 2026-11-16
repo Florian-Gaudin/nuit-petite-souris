@@ -3,7 +3,7 @@ import { test, expect, type Page } from '@playwright/test';
 import { ouvrir } from './aide';
 
 const CAPTURES = process.env.CAPTURES;
-const SECRETS: [number, string][] = [[1, 'sanglier'], [2, 'plaque'], [2, 'plume'], [3, 'sedan'], [3, 'ardoises'], [3, 'cabaret']];
+const SECRETS: [number, string][] = [[0, 'cuisine'], [1, 'sanglier'], [2, 'plaque'], [2, 'plume'], [3, 'sedan'], [3, 'ardoises'], [3, 'cabaret']];
 
 async function toucherSecret(page: Page, scene: number, id: string) {
   await ouvrir(page, `?chapitre=1&scene=${scene}#exemple`);
@@ -14,7 +14,7 @@ async function toucherSecret(page: Page, scene: number, id: string) {
   await expect(page.locator('#bandeau-texte')).not.toBeEmpty();
 }
 
-test('les six secrets des Ardennes : compteur, bulle, puis le badge', async ({ page }) => {
+test('les sept secrets des Ardennes (dont la cacasse à cul nu) : compteur, bulle, puis le badge', async ({ page }) => {
   test.setTimeout(120000);
   await ouvrir(page, '?reset=1#exemple');
   for (const [n, id] of SECRETS) {
@@ -22,7 +22,7 @@ test('les six secrets des Ardennes : compteur, bulle, puis le badge', async ({ p
     if (CAPTURES) await page.screenshot({ path: CAPTURES + '/ard-' + id + '.png' });
   }
   const st = await page.evaluate(() => (window as any).APP.state);
-  expect(st.ardennes.length).toBe(6);
+  expect(st.ardennes.length).toBe(7);
   await expect.poll(() => page.evaluate(() => (window as any).APP.state.badges)).toContain('ardennais');
   // Les étoiles ne changent pas : toujours deux secrets étoilés par image
   await ouvrir(page, '?chapitre=1&scene=3#exemple');
@@ -62,7 +62,7 @@ test('le carnet des Ardennes : depuis le diplôme et le menu, cartes, poème, li
   await diplome(page);
   await page.locator('#btn-carnet5').click();
   await expect(page.locator('.carnet h2')).toContainText('Le carnet des Ardennes');
-  await expect(page.locator('.carte-ard')).toHaveCount(10);
+  await expect(page.locator('.carte-ard')).toHaveCount(11);
   if (CAPTURES) await page.screenshot({ path: CAPTURES + '/carnet-grille.png' });
   await page.locator('.carte-ard', { hasText: 'Rimbaud' }).click();
   await expect(page.locator('.carte-poeme')).toContainText('Par les soirs bleus');
@@ -178,9 +178,9 @@ test("les cartes sans feuille de chêne se trouvent aussi pendant le voyage (gal
 
 test("le carnet : les cartes restent grisées jusqu'à leur découverte, le livre attend la scène 13", async ({ page }) => {
   await diplome(page, false);
-  await expect(page.locator('#btn-carnet5')).toContainText('0 cartes sur 10');
+  await expect(page.locator('#btn-carnet5')).toContainText('0 cartes sur 11');
   await page.locator('#btn-carnet5').click();
-  await expect(page.locator('.carte-ard.verrouillee')).toHaveCount(10);
+  await expect(page.locator('.carte-ard.verrouillee')).toHaveCount(11);
   await expect(page.locator('.carte-ard', { hasText: 'galette' })).toBeDisabled();
   await expect(page.locator('.carte-livre')).toBeDisabled();
   await page.locator('[data-a="fermer"]').click();
@@ -197,10 +197,10 @@ test("le carnet : une barre ‹ grille › en bas, la croix en haut ; le livre s
   await expect(page.locator('.btn-livre')).toHaveCount(0);
   await expect(page.locator('.bulle-quenotte')).toContainText('Touche le livre');
   await expect(page.locator('.carnet-barre [data-a="prec"]')).toBeDisabled();
-  await expect(page.locator('.carnet-barre [data-a="grille"]')).toContainText('1 / 10');
+  await expect(page.locator('.carnet-barre [data-a="grille"]')).toContainText('1 / 11');
   // Les flèches du clavier changent de carte, comme le glissement du doigt
   await page.keyboard.press('ArrowRight');
-  await expect(page.locator('.carnet-barre [data-a="grille"]')).toContainText('2 / 10');
+  await expect(page.locator('.carnet-barre [data-a="grille"]')).toContainText('2 / 11');
   await page.locator('.carnet-barre [data-a="prec"]').click();
   await page.locator('.livre-ferme').click();
   await expect(page.locator('.livre-ancien')).toBeVisible();

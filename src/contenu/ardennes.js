@@ -30,6 +30,7 @@ window.ARDENNES = {
   // Quand l'enfant découvre, pendant le voyage, ce que raconte une carte (sans feuille de chêne)
   nouvelleCarte: "Nouvelle carte dans le carnet des Ardennes : {titre}",
   aVoir: "À voir",
+  aGouter: "À goûter",
 
   // ---------- Les cartes « Le savais-tu ? » ----------
   // secret : le secret à la feuille de chêne qui lui correspond pendant le voyage (scène.élément), ou null
@@ -138,7 +139,17 @@ window.ARDENNES = {
         "La galette au sucre est un gâteau des Ardennes : une pâte toute moelleuse, avec du sucre et du beurre dessus.",
         "On la partage au goûter, ou le dimanche matin. Miam !",
       ],
-      aVoir: "Chez les boulangers des Ardennes.",
+      aGouter: "Chez les boulangers des Ardennes.",
+      photo: null,
+    },
+    {
+      id: "cacasse", titre: "La cacasse à cul nu", secret: "chateau.cuisine",
+      texte: [
+        "C'est un plat des Ardennes, avec un nom qui fait bien rire !",
+        "Une « cacasse », c'est une cocotte en fonte. Dedans mijotent des pommes de terre, des oignons et des lardons.",
+        "Et « à cul nu » ? Autrefois, on la cuisinait souvent sans viande : la cocotte était toute « nue » !",
+      ],
+      aGouter: "Dans les auberges des Ardennes, l'hiver.",
       photo: null,
     },
   ],

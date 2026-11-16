@@ -104,7 +104,7 @@
     if (n === SECRETS_ARDENNES.length) setTimeout(() => badge('ardennais'), 1500);
   }
   // Les cartes du carnet sans feuille de chêne : trouvées en vivant le moment qu'elles racontent (elles ne
-  // comptent pas pour le badge, réservé aux six secrets à la feuille de chêne)
+  // comptent pas pour le badge, réservé aux secrets à la feuille de chêne)
   function carteArd(sceneId, el) {
     const cle = sceneId + '.' + el, AR = window.ARDENNES;
     if (SECRETS_ARDENNES.indexOf(cle) >= 0 || !AR) return;
