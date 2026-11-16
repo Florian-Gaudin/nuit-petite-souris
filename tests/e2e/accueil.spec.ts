@@ -194,8 +194,8 @@ test("l'album des dents : une histoire créée y entre dès son ouverture, « en
   await expect(page.locator('.carte-choix.reprendre')).toHaveCount(0);
 });
 
-test("la page Informations : un bouton « Accueil » toujours visible, qui ramène à l'écran d'accueil", async ({ page }) => {
-  await page.goto('infos/');
+for (const [nom, url] of [['Informations', 'infos/'], ['de présentation', 'decouvrir/']]) test(`la page ${nom} : un bouton « Accueil » toujours visible, qui ramène à l'écran d'accueil`, async ({ page }) => {
+  await page.goto(url);
   await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
   await expect(page.locator('.accueil-flottant')).toBeInViewport();
   await page.locator('.accueil-flottant').click();
