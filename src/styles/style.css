@@ -1374,7 +1374,7 @@ html.grand-texte .livre-ancien .livre-texte p{font-size:1.5rem}
 @media (max-height:440px){.autres-cartes{display:grid;grid-template-columns:1fr 1fr;align-items:stretch}.autres-cartes .lien-video{grid-column:1/-1;justify-self:center}.ecran-choix:has(.autres-options[open]) .choix-haut{display:none}}
 /* Sur téléphone, l'invitation se place à gauche de Quenotte, sa flèche vers la sacoche */
 @media (max-width:699px){
-  .sac-invite{left:auto;right:calc(100% - 40px);bottom:15%;padding:3px 10px;font-size:.82rem}
+  .sac-invite{left:auto;right:calc(100% - 40px);bottom:15%;padding:3px 10px;font-size:.82rem;animation-name:sac-invite-cote}
   .sac-invite::before{left:auto;right:-7px;top:50%;margin-top:-8px;border:8px solid transparent;border-right:0;border-left:8px solid var(--lanterne)}
-  @keyframes sac-invite{50%{transform:translateX(-4px)}}
+  @keyframes sac-invite-cote{50%{transform:translateX(-4px)}}
 }
