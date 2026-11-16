@@ -46,8 +46,18 @@ window.CERTIFICAT = (function () {
     <div class="dip-sous">de dent de lait perdue</div>
     <div class="dip-decerne">décerné à</div>
     <div class="dip-nom">${esc(C.enfant)}</div>
-    <p class="dip-texte">qui a perdu sa <b>${C.ordinalHtml} dent de lait</b>, ${esc(C.dentNom)}, qui a guidé ${esc(C.souris)} jusqu'à ${C.logement === 'appartement' ? 'son appartement' : 'sa maison'} et l'a aidée à passer devant le chat ${esc(C.chat)}.<br>${{ piece: 'Sa pièce de ' + C.euros + ' €', billet: 'Son billet de ' + C.euros + ' €', paquet: 'Son petit paquet surprise', chocolat: 'Sa boîte de chocolats' }[C.cadeau] || 'Son cadeau'} a traversé ${esc(C.riviere)} en bateau.</p>
-    <div class="dip-machoire">${window.MACHOIRE(C.profil)}</div>
+    <div class="dip-texte">
+      <div class="dip-dent">
+        <div class="dip-machoire">${window.MACHOIRE(C.profil)}</div>
+        <p class="dip-pour"><span class="dip-pour-lib">pour sa</span> <span class="dip-rang">${C.ordinalHtml} dent de lait</span> <span class="dip-dent-nom">${esc(C.dentNom)}</span></p>
+      </div>
+      <div class="dip-orne" aria-hidden="true"><svg viewBox="0 0 200 12"><path d="M4 6h80M116 6h80" stroke="#C9A227" stroke-width="1.4"/><path d="M100 1l5 5-5 5-5-5z" fill="#C9A227"/><circle cx="88" cy="6" r="1.6" fill="#C9A227"/><circle cx="112" cy="6" r="1.6" fill="#C9A227"/></svg></div>
+      <ul class="dip-exploits">
+        <li>${window.ART.badgeIcone('detective', 36)}<span>A guidé ${esc(C.souris)} jusqu'à ${C.logement === 'appartement' ? "l'appartement" : 'la maison'}</span></li>
+        <li>${window.ART.badgeIcone('passechat', 36)}<span>A déjoué le chat ${esc(C.chat)}</span></li>
+        <li>${window.ART.badgeIcone('billet', 36)}<span>${{ piece: 'Sa pièce de ' + C.euros + ' €', billet: 'Son billet de ' + C.euros + ' €', paquet: 'Son petit paquet surprise', chocolat: 'Sa boîte de chocolats' }[C.cadeau] || 'Son cadeau'} a traversé ${esc(C.riviere)}</span></li>
+      </ul>
+    </div>
     ${bilan}
     ${medailles}
     <div class="dip-pied">

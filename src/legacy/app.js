@@ -150,16 +150,20 @@
             ${'vibrate' in navigator ? '<button role="menuitemcheckbox" id="pref-vibreur" class="interrupteur" aria-checked="false"><span class="pref-lib"></span><span class="bascule" aria-hidden="true"></span></button>' : ''}
           </div>
           <div role="group" aria-labelledby="g-tresors" id="groupe-tresors" hidden><p class="prefs-titre" id="g-tresors">Mes trésors</p>
+            <button role="menuitem" id="pref-diplome" hidden><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3.5" width="18" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M7 8h10M7 11.5h7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="16" cy="17" r="3.2" fill="currentColor"/><path d="M14.4 19.5l-.9 3.5 2.5-1.3 2.5 1.3-.9-3.5" fill="currentColor"/></svg> ${esc(T(D.fin.menuDiplome))}</button>
+            <button role="menuitem" id="pref-tresors" hidden><svg class="ico" viewBox="-32 -50 64 86" aria-hidden="true"><path d="M-13-45h10l8 22h-10zM13-45h-10l-8 22h10z" fill="currentColor" opacity=".7"/><circle cy="6" r="25" fill="none" stroke="currentColor" stroke-width="7"/><path d="M0-8l4 9 9 1-7 6 2 9-8-5-8 5 2-9-7-6 9-1z" fill="currentColor"/></svg> ${esc(T(D.tresors.menu))}</button>
             <button role="menuitem" id="pref-carnet" hidden><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1C14 1 15 3 14.5 4.5C17 4 18 6 16 7.5C19 7.5 19.5 10 17 11C19.5 11.5 19 14.5 16 14C17 16 15.5 17.5 13.2 17L12.6 19V22.5H11.4V19L10.8 17C8.5 17.5 7 16 8 14C5 14.5 4.5 11.5 7 11C4.5 10 5 7.5 8 7.5C6 6 7 4 9.5 4.5C9 3 10 1 12 1Z" fill="currentColor"/></svg> Le carnet des Ardennes</button>
             <button role="menuitem" id="pref-album" hidden>${A.icone('etoile')} ${esc(T(D.album.titre))}</button>
           </div>
-          <div role="group" aria-labelledby="g-grands"><p class="prefs-titre" id="g-grands">Pour les grands</p>
+          <div role="group" aria-labelledby="g-grands" class="groupe-grands"><button role="menuitem" class="prefs-titre prefs-plier" id="g-grands" aria-expanded="false" aria-controls="grands-liens">Pour les grands <svg class="chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+            <div id="grands-liens" hidden>
             <a role="menuitem" id="pref-parents" href="parents/">${A.icone('famille')} Espace parents</a>
             <a role="menuitem" id="pref-video" href="decouvrir/"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M10 9.2v5.6l4.8-2.8z" fill="currentColor"/></svg> La vidéo de présentation</a>
             <a role="menuitem" id="pref-infos" href="infos/"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 10.5v6M12 7.2v.1" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg> Informations</a>
             <a role="menuitem" id="pref-changer" href="./"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5L12 4l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z" fill="currentColor"/></svg> Retour à l'accueil</a>
+            <div class="prefs-bas"><button role="menuitem" id="pref-reset" class="danger">${A.icone('recommencer')} Recommencer l'histoire</button></div>
+            </div>
           </div>
-          <div class="prefs-bas"><button role="menuitem" id="pref-reset" class="danger">${A.icone('recommencer')} Recommencer l'histoire</button></div>
         </div>
       </div>
     </div>`;
@@ -178,9 +182,14 @@
       bascule('pref-vibreur', `<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="3" width="8" height="18" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M4 8v8M20 8v8M1.5 10v4M22.5 10v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`, 'Vibreur', vibreurActif());
       // Mes trésors : le carnet dès la première carte découverte, l'album dès la première histoire rangée
       const carnetVu = window.CARNET && window.CARNET.compte(State).n > 0, albumVu = lireAlbum().length > 0 && !document.body.classList.contains('mode-choix'); // sur l'accueil, l'album a son bouton
-      $('#pref-carnet').hidden = !carnetVu; $('#pref-album').hidden = !albumVu; $('#groupe-tresors').hidden = !carnetVu && !albumVu;
+      const tresorsVu = !!State.fini && !document.body.classList.contains('mode-choix');
+      $('#pref-diplome').hidden = !tresorsVu; $('#pref-tresors').hidden = !tresorsVu; $('#pref-carnet').hidden = !carnetVu; $('#pref-album').hidden = !albumVu; $('#groupe-tresors').hidden = !carnetVu && !albumVu && !tresorsVu;
       $('#pref-reset').innerHTML = A.icone('recommencer') + " Recommencer l'histoire"; $('#pref-reset').classList.remove('confirme');
+      plierGrands(true);
     };
+    // « Pour les grands » (espace parents, informations, accueil, recommencer) : replié pendant l'histoire
+    const plierGrands = plie => { $('#grands-liens').hidden = plie; $('#g-grands').setAttribute('aria-expanded', String(!plie)); };
+    $('#g-grands').onclick = () => { SON.play('clic'); plierGrands(!$('#grands-liens').hidden); if (!$('#grands-liens').hidden) $('#pref-parents').scrollIntoView({ block: 'nearest' }); };
     const fermerMenu = () => { menu.hidden = true; bPrefs.setAttribute('aria-expanded', 'false'); document.getElementById('fil').classList.remove('menu-ouvert'); };
     boutonPlein.maj = majPrefs;
     bPrefs.onclick = e => { e.stopPropagation(); if (menu.hidden) { majPrefs(); menu.hidden = false; bPrefs.setAttribute('aria-expanded', 'true'); document.getElementById('fil').classList.add('menu-ouvert'); } else fermerMenu(); };
@@ -188,6 +197,9 @@
     document.addEventListener('click', () => { if (!menu.hidden) fermerMenu(); });
     $('#pref-son').onclick = () => { SON.unlock(); const m = SON.toggle(); majPrefs(); toast(m ? 'Son et musique coupés' : 'Son et musique activés'); };
     $('#pref-carnet').onclick = () => { fermerMenu(); ouvrirCarnet(); };
+    $('#pref-diplome').onclick = () => { fermerMenu(); SON.play('papier'); fenetreDiplome(); };
+    // Sur l'écran de fin, il se redessine en refermant (un badge « Nouveau » est alors rangé)
+    $('#pref-tresors').onclick = () => { fermerMenu(); SON.play('clic'); fenetreTresors(() => { if (courantN === 5 && Ch5.temps === 'tableau' && surDiplome) show(5, { diplome: true, temps: 'tableau' }); }); };
     $('#pref-album').onclick = () => { fermerMenu(); album(); };
     $('#pref-fermer').onclick = () => { fermerMenu(); bPrefs.focus(); };
     if ($('#pref-vibreur')) $('#pref-vibreur').onclick = () => {
@@ -257,7 +269,8 @@
     let noeuds = TEXTES[n] ? TEXTES[n].map(k => D[k]) : null;
     if (n === 5 && opts.diplome) {
       const W = window.CERTIFICAT;
-      noeuds = noeuds.concat(D.badges.map(b => W.nomBadge(b.id, true) + ' ! ' + W.texteBadge(b.id, true)), D.badges.map(b => W.nomBadge(b.id, false) + ' : ' + W.texteBadge(b.id, false)), [window.ARDENNES.diplome.quenotte, remplir(T(D.ceremonie.intro))]);
+      noeuds = noeuds.concat(D.badges.map(b => W.nomBadge(b.id, true) + ' ! ' + W.texteBadge(b.id, true)), D.badges.map(b => W.nomBadge(b.id, false) + ' : ' + W.texteBadge(b.id, false)),
+        [window.ARDENNES.diplome.quenotte].concat(['intro', 'etoiles', 'constellation', 'constellationPeu'].map(k => remplir(T(D.ceremonie[k].txt)))));
     }
     NARR.fixer(noeuds, T);
     root.innerHTML = courant.render(opts); root.className = 'scene ch-' + n;
@@ -392,6 +405,52 @@
       }).then(fin, fin);
     });
   }
+  // Le ciel d'étoiles de l'étagère : une case par étoile cachée dans le voyage, allumée quand elle est trouvée
+  function cielHTML(allumees) {
+    let c = ''; for (let i = 0; i < totalEtoiles; i++) c += `<svg class="ciel-etoile${i < allumees ? '' : ' eteinte'}" viewBox="0 0 24 24" aria-hidden="true"><use href="#etoile5"/></svg>`;
+    return `<div class="etagere-ciel"><p class="ciel-titre"><span>${esc(T(D.ceremonie.ciel))}</span><span class="ciel-compte">${allumees} / ${totalEtoiles}</span></p><div class="ciel-cases">${c}</div></div>`;
+  }
+  // La constellation : les étoiles trouvées sortent ensemble de la sacoche, se placent sur le contour d'une dent,
+  // se relient d'un trait de lumière, puis vont chacune s'allumer dans le ciel de l'étagère (rappel « allumer(i) »)
+  const CONTOUR_DENT = [[38, 45], [60, 24], [84, 26], [100, 42], [116, 26], [140, 24], [162, 45], [170, 78], [160, 112], [148, 145], [142, 180], [128, 208], [110, 182], [100, 160], [90, 182], [72, 208], [58, 180], [52, 145], [40, 112], [30, 78]];
+  function volConstellation(n, sac, cibles, allumer) {
+    return new Promise(fini => {
+      if (!n || !document.body.animate) { cibles.forEach((c, i) => allumer(i)); fini(); return; }
+      const fil = $('#fil'), band = $('#bandeau');
+      const haut = fil ? fil.getBoundingClientRect().bottom : 0, bas = band ? band.getBoundingClientRect().top : window.innerHeight;
+      const taille = Math.min(window.innerWidth * 0.7, (bas - haut) * 0.62, 300), k = taille / 220;
+      const ox = window.innerWidth / 2 - 100 * k, oy = haut + (bas - haut) * 0.44 - 116 * k;
+      const pts = Array.from({ length: n }, (_, i) => CONTOUR_DENT[Math.floor(i * CONTOUR_DENT.length / n)]).map(([x, y]) => [ox + x * k, oy + y * k]);
+      const rs = sac.getBoundingClientRect(), sx = rs.left + rs.width / 2, sy = rs.top + rs.height * 0.3, E = 30;
+      const voile = document.createElement('div'); voile.className = 'med-voile';
+      const ciel = document.createElement('div'); ciel.className = 'const-vol';
+      const trace = n >= 3 ? `<svg class="const-lignes" width="${window.innerWidth}" height="${window.innerHeight}" aria-hidden="true"><polygon points="${pts.map(p => p.map(v => v.toFixed(1)).join(',')).join(' ')}" pathLength="1"/></svg>` : '';
+      ciel.innerHTML = trace + pts.map(() => `<svg class="const-etoile" viewBox="0 0 24 24" aria-hidden="true"><use href="#etoile5"/></svg>`).join('')
+        + `<span class="const-nom" style="left:${window.innerWidth / 2}px;top:${(oy + 222 * k).toFixed(0)}px">${esc(remplir(T(D.ceremonie.constellationNom)))}</span>`;
+      document.body.append(voile, ciel); vols.push(voile, ciel);
+      const etoiles = $$('.const-etoile', ciel);
+      const place = (x, y, s) => `translate(${(x - E * s / 2).toFixed(1)}px, ${(y - E * s / 2).toFixed(1)}px) scale(${s.toFixed(3)})`;
+      const fin = () => { const i = vols.indexOf(ciel); if (i < 0) return; ciel.remove(); setTimeout(() => voile.remove(), 400); vols = vols.filter(x => x !== ciel && x !== voile); fini(); };
+      requestAnimationFrame(() => voile.classList.add('on'));
+      // 1. Elles jaillissent de la sacoche et prennent leur place sur le contour
+      const sorties = etoiles.map((e, i) => e.animate([
+        { transform: place(sx, sy, 0.2), opacity: 0 },
+        { transform: place((sx + pts[i][0]) / 2, Math.min(sy, pts[i][1]) - 40, 1.2), opacity: 1, offset: 0.5 },
+        { transform: place(pts[i][0], pts[i][1], 1), opacity: 1 },
+      ], { duration: RM ? 1 : 900, delay: RM ? 0 : i * 45, easing: 'cubic-bezier(.2,.8,.25,1)', fill: 'forwards' }).finished);
+      Promise.all(sorties).then(() => { ciel.classList.add('dessine'); return wait(RM ? 700 : 2200); }).then(() => {
+        if (vols.indexOf(ciel) < 0) return;
+        ciel.classList.remove('dessine'); ciel.classList.add('range'); voile.classList.remove('on');
+        try { cibles[0].closest('.etagere-ciel').scrollIntoView({ block: 'nearest', behavior: RM ? 'auto' : 'smooth' }); } catch (e) { }
+        return wait(RM ? 0 : 350).then(() => Promise.all(etoiles.map((e, i) => {
+          const rc = cibles[i].getBoundingClientRect();
+          const a = e.animate([{ transform: place(pts[i][0], pts[i][1], 1) }, { transform: place(rc.left + rc.width / 2, rc.top + rc.height / 2, rc.width / E) }],
+            { duration: RM ? 1 : 650, delay: RM ? 0 : i * 70, easing: 'cubic-bezier(.55,0,.25,1)', fill: 'forwards' });
+          return a.finished.then(() => { e.style.opacity = '0'; allumer(i); });
+        })));
+      }).then(fin, fin);
+    });
+  }
   // Une fenêtre par-dessus l'écran de fin (diplôme agrandi, trésors) : Échap ou « Fermer », le focus revient au bouton
   function fenetre(cls, label, contenu, apres) {
     const precedent = document.activeElement;
@@ -407,13 +466,22 @@
     const f = $('[data-a="fermer"]', fen); if (f) f.focus({ preventScroll: true });
     return fen;
   }
+  // Le diplôme en grand (depuis l'écran de fin ou le menu) : un nouveau toucher sur le diplôme le referme
   function fenetreDiplome() {
-    fenetre('fen-diplome', 'Le diplôme', `${diplomeHTML()}
+    const fen = fenetre('fen-diplome', 'Le diplôme', `<button type="button" class="dip-fermer" data-a="fermer" aria-label="Fermer le diplôme">${diplomeHTML()}</button>
   <div class="fen-actions"><a class="btn btn-or" href="${lienImpression()}" target="_blank" rel="noopener">${A.icone('imprimer')} ${esc(T(D.fin.imprimer))}</a><button type="button" class="btn btn-petit" data-a="fermer">${esc(T(D.fin.fermer))}</button></div>`);
+    return fen;
   }
   // « Mes trésors » : l'étagère complète, le détail de chaque médaille, et le ciel des étoiles trouvées.
   // Une médaille gagnée après la cérémonie (un dessin, le carnet…) s'accroche en arrivant, avec son explication.
   function fenetreTresors(apres) {
+    // « Rejouer la remise des badges » : la fenêtre se ferme, et Quenotte ressort toutes les médailles de sa sacoche
+    let rejouer = false;
+    const ensuite = () => {
+      if (!rejouer) { if (apres) apres(); return; }
+      State.remis = []; State.etoilesRemises = false; save();
+      fondu(() => show(5, { diplome: true, temps: 'ceremonie' }), 600);
+    };
     const ids = badgesGagnes(); State.remis = (State.remis || []).filter(id => ids.indexOf(id) >= 0);
     const nouveaux = ids.filter(id => State.remis.indexOf(id) < 0);
     let ciel = ''; for (let i = 0; i < totalEtoiles; i++) ciel += `<svg class="ciel-etoile${i < nbEtoiles() ? '' : ' eteinte'}" viewBox="0 0 24 24" aria-hidden="true"><use href="#etoile5"/></svg>`;
@@ -421,23 +489,43 @@
   <section class="etagere" aria-labelledby="t-etagere-f"><h3 class="etagere-titre"><span id="t-etagere-f">${esc(T(D.ceremonie.etagere))}</span><span class="etagere-compte">${ids.length} / ${D.badges.length}</span></h3>${etagereHTML(State.remis)}</section>
   <div class="tresors-info" aria-live="polite"><p class="tresors-aide">${esc(T(D.tresors.aide))}</p></div>
   <section class="ciel-etoiles" aria-label="${esc(remplir(T(D.tresors.ciel)))}"><p><b>${esc(remplir(T(D.tresors.ciel)))}</b><span>${esc(T(D.tresors.cielAide))}</span></p><div class="ciel-liste">${ciel}</div></section>
-  <div class="fen-actions"><button type="button" class="btn btn-or" data-a="fermer">${esc(T(D.fin.fermer))}</button></div>`, apres);
-    const info = $('.tresors-info', fen);
+  <div class="fen-actions">${ids.length ? `<button type="button" class="btn btn-petit" data-a="rejouer">${A.icone('recommencer')} ${esc(T(D.tresors.rejouer))}</button>` : ''}<button type="button" class="btn btn-or" data-a="fermer">${esc(T(D.fin.fermer))}</button></div>`, ensuite);
+    const r = $('[data-a="rejouer"]', fen);
+    if (r) r.onclick = () => { rejouer = true; $('[data-a="fermer"]', fen).click(); };
+    const info = $('.tresors-info', fen); let choisie = false;
+    const ficheHTML = (id, g, neuf) => `<div class="info-med">${A.medaille(id, g)}<div><span class="info-etat${g ? '' : ' non'}">${esc(neuf ? T(D.tresors.nouveau) : T(g ? D.tresors.gagne : D.tresors.aGagner))}</span><b>${esc(window.CERTIFICAT.nomBadge(id, g))}</b><p>${esc(window.CERTIFICAT.texteBadge(id, g))}</p></div></div>`;
     const montrer = (id, g, neuf) => {
       $$('.case-med.choisie', fen).forEach(x => x.classList.remove('choisie'));
       const c = $(`.case-med[data-badge="${id}"]`, fen); if (c) c.classList.add('choisie');
-      info.innerHTML = `<div class="info-med">${A.medaille(id, g)}<div><span class="info-etat${g ? '' : ' non'}">${esc(neuf ? T(D.tresors.nouveau) : T(g ? D.tresors.gagne : D.tresors.aGagner))}</span><b>${esc(window.CERTIFICAT.nomBadge(id, g))}</b><p>${esc(window.CERTIFICAT.texteBadge(id, g))}</p></div></div>`;
+      info.innerHTML = ficheHTML(id, g, neuf);
     };
+    // Le cadre garde la même hauteur pour toutes les médailles : celle de la plus longue explication, mesurée à la
+    // largeur réelle (rien n'est coupé, rien ne bouge d'une médaille à l'autre) ; recalculée si l'écran tourne
+    const fixerCadre = () => {
+      if (!fen.isConnected) { window.removeEventListener('resize', fixerCadre); return; }
+      const m = info.cloneNode(false); m.removeAttribute('aria-live'); m.setAttribute('aria-hidden', 'true');
+      m.style.cssText = 'position:absolute;visibility:hidden;left:0;top:0;height:auto;min-height:0;width:' + info.offsetWidth + 'px';
+      info.parentNode.appendChild(m);
+      let h = 0;
+      const mesure = html => { m.innerHTML = html; h = Math.max(h, m.offsetHeight); };
+      mesure(info.innerHTML);
+      D.badges.forEach(b => { const g = State.badges.indexOf(b.id) >= 0; mesure(ficheHTML(b.id, g, g)); });
+      info.parentNode.removeChild(m);
+      info.style.height = Math.ceil(h) + 'px';
+    };
+    fixerCadre(); window.addEventListener('resize', fixerCadre);
+    // Les polices du conte arrivent parfois après l'ouverture : on remesure quand elles sont prêtes
+    try { document.fonts.ready.then(fixerCadre); } catch (e) { }
     $$('.case-med', fen).forEach(c => c.addEventListener('click', () => {
       if (c.classList.contains('attend')) return;
-      SON.play('clic'); montrer(c.dataset.badge, !c.classList.contains('a-gagner'), false);
+      SON.play('clic'); choisie = true; montrer(c.dataset.badge, !c.classList.contains('a-gagner'), false);
     }));
     // Les nouvelles médailles s'accrochent l'une après l'autre
     nouveaux.forEach((id, k) => setTimeout(() => {
       if (!fen.isConnected) return;
       const c = $(`.case-med[data-badge="${id}"]`, fen); if (!c) return;
       decrocherAttente(c, id); if (!RM) c.classList.add('posee');
-      SON.play(k ? 'toc' : 'badge'); montrer(id, true, true);
+      SON.play(k ? 'toc' : 'badge'); if (!choisie) montrer(id, true, true); // l'explication choisie par l'enfant reste affichée
       if (State.remis.indexOf(id) < 0) { State.remis.push(id); save(); }
     }, (RM ? 100 : 650) + k * (RM ? 100 : 1300)));
   }
@@ -1320,7 +1408,7 @@ ${places.map(dent).join('')}
       if (temps === 'ceremonie') return `<section class="ch ch5 fin5 temps-ceremonie">${titre}<div class="confettis" aria-hidden="true"></div>
   <div class="ceremonie">
     <div class="ceremonie-q">${A.quenotteSacoche()}<span class="sac-invite" aria-hidden="true">${esc(T(D.ceremonie.touche))}</span></div>
-    <section class="etagere" aria-labelledby="t-etagere"><h3 class="etagere-titre"><span id="t-etagere">${esc(T(D.ceremonie.etagere))}</span><span class="etagere-compte"></span></h3>${etagereHTML(State.remis || [])}</section>
+    <section class="etagere" aria-labelledby="t-etagere"><h3 class="etagere-titre"><span id="t-etagere">${esc(T(D.ceremonie.etagere))}</span><span class="etagere-compte"></span></h3>${cielHTML(State.etoilesRemises ? nbEtoiles() : 0)}${etagereHTML(State.remis || [])}</section>
   </div>
 </section>`;
       return tableauHTML(titre);
@@ -1361,12 +1449,15 @@ ${places.map(dent).join('')}
       });
     },
     // La remise des badges : chaque toucher de la sacoche en sort une médaille, qui s'envole au milieu de l'écran
-    // (Quenotte dit ce qu'elle récompense), puis va s'accrocher à son crochet. « Passer » les accroche toutes.
+    // (Quenotte dit ce qu'elle récompense), puis va s'accrocher à son crochet. Ensuite, les étoiles trouvées sortent
+    // ensemble : elles dessinent la constellation de l'enfant (une dent), puis s'allument une à une dans son ciel.
+    // « Passer » accroche et allume tout d'un coup.
     ceremonie(r, encore) {
       const sac = $('.sacoche', r), zone = $('.ceremonie', r), invite = $('.sac-invite', r), compte = $('.etagere-compte', r);
-      const ids = badgesGagnes();
+      const ids = badgesGagnes(), nbE = nbEtoiles();
       State.remis = (State.remis || []).filter(id => ids.indexOf(id) >= 0);
       const file = ids.filter(id => State.remis.indexOf(id) < 0);
+      let etoilesAttendent = nbE > 0 && !State.etoilesRemises;
       let occupe = false, finie = false;
       const majCompte = () => { compte.textContent = $$('.case-med:not(.a-gagner):not(.attend)', r).length + ' / ' + D.badges.length; };
       const accrocher = (id, anime) => {
@@ -1374,6 +1465,12 @@ ${places.map(dent).join('')}
         decrocherAttente(c, id); if (anime) { c.classList.remove('posee'); void c.offsetWidth; c.classList.add('posee'); }
         if (State.remis.indexOf(id) < 0) { State.remis.push(id); save(); }
         majCompte();
+      };
+      const cases = () => $$('.ciel-cases .ciel-etoile', r);
+      const allumer = (i, anime) => {
+        const e = cases()[i]; if (!e) return;
+        e.classList.remove('eteinte'); if (anime) e.classList.add('allume');
+        $('.ciel-compte', r).textContent = $$('.ciel-cases .ciel-etoile:not(.eteinte)', r).length + ' / ' + totalEtoiles;
       };
       const continuer = () => { State.ceremonie = true; save(); SON.play('clic'); fondu(() => show(5, { diplome: true, temps: 'tableau' }), 600); };
       const finir = () => {
@@ -1383,25 +1480,53 @@ ${places.map(dent).join('')}
         pluie($('.confettis', r), 36); SON.play('harpe');
         NARR.dire(B(D.ceremonie.fin)).then(() => { if (encore()) NARR.action(A.icone('suite') + ' ' + esc(T(D.ceremonie.continuer)), continuer); });
       };
+      // Après les médailles : les étoiles attendent encore dans la sacoche
+      const annoncerEtoiles = () => {
+        if (!encore() || !etoilesAttendent || occupe) return;
+        zone.classList.add('pleine');
+        NARR.dire({ txt: remplir(T(D.ceremonie.etoiles.txt)), expr: D.ceremonie.etoiles.expr }).then(() => {
+          if (encore() && etoilesAttendent && !occupe) NARR.action(`<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#etoile5"/></svg> ${esc(T(D.ceremonie.etoilesBouton))}`, sortirEtoiles);
+        });
+      };
+      const apres = () => {
+        occupe = false;
+        if (file.length) { NARR.action(A.icone('suite') + ' ' + esc(T(D.ceremonie.suivant)), sortir); return; }
+        if (etoilesAttendent) { setTimeout(annoncerEtoiles, RM ? 0 : 600); return; }
+        setTimeout(finir, RM ? 0 : 700);
+      };
       const sortir = () => {
-        if (occupe || finie || !file.length || !encore()) return;
+        if (occupe || finie || !encore()) return;
+        if (!file.length) { if (etoilesAttendent) sortirEtoiles(); return; }
         occupe = true; NARR.action(null); invite.hidden = true;
         const id = file.shift(), nom = window.CERTIFICAT.nomBadge(id, true);
         sac.classList.remove('secoue'); void sac.getBoundingClientRect(); sac.classList.add('secoue', 'ouvre');
         SON.play('badge');
         NARR.dire({ txt: nom + ' ! ' + window.CERTIFICAT.texteBadge(id, true), expr: 'joie' });
-        const cible = $(`.case-med[data-badge="${id}"]`, r);
-        volMedaille(id, nom, sac, cible).then(() => {
+        volMedaille(id, nom, sac, $(`.case-med[data-badge="${id}"]`, r)).then(() => {
           sac.classList.remove('ouvre');
           if (!encore()) return;
           accrocher(id, true); SON.play('toc');
-          occupe = false;
-          if (!file.length) { setTimeout(finir, RM ? 0 : 700); return; }
-          NARR.action(A.icone('suite') + ' ' + esc(T(D.ceremonie.suivant)), sortir);
+          if (!file.length && !etoilesAttendent) zone.classList.remove('pleine');
+          apres();
         });
       };
+      function sortirEtoiles() {
+        if (occupe || finie || !etoilesAttendent || !encore()) return;
+        occupe = true; etoilesAttendent = false; NARR.action(null); invite.hidden = true;
+        sac.classList.remove('secoue'); void sac.getBoundingClientRect(); sac.classList.add('secoue', 'ouvre');
+        SON.play('etoile');
+        NARR.dire({ txt: remplir(T(nbE >= 3 ? D.ceremonie.constellation.txt : D.ceremonie.constellationPeu.txt)), expr: 'joie' });
+        volConstellation(nbE, sac, cases().slice(0, nbE), i => { if (encore()) { allumer(i, true); if (i % 3 === 0) SON.play('etoile'); } }).then(() => {
+          sac.classList.remove('ouvre'); zone.classList.remove('pleine');
+          if (!encore()) return;
+          State.etoilesRemises = true; save();
+          apres();
+        });
+      }
       const toutAccrocher = () => {
         file.splice(0).forEach(id => accrocher(id, !RM));
+        for (let i = 0; i < nbE; i++) allumer(i, !RM);
+        etoilesAttendent = false; State.etoilesRemises = true; save();
         annulerVols(); occupe = false; sac.classList.remove('ouvre');
         finir();
       };
@@ -1415,11 +1540,11 @@ ${places.map(dent).join('')}
         NARR.dire({ txt: window.CERTIFICAT.nomBadge(c.dataset.badge, g) + (g ? ' ! ' : ' : ') + window.CERTIFICAT.texteBadge(c.dataset.badge, g), expr: g ? 'joie' : 'clin' });
       }));
       majCompte();
-      if (!file.length) { finir(); return; }
-      zone.classList.add('pleine');
+      if (!file.length && !etoilesAttendent) { finir(); return; }
       etape(toutAccrocher);
-      const n = file.length;
-      NARR.dire(n > 1 ? { txt: remplir(T(D.ceremonie.intro)), expr: D.ceremonie.intro.expr } : B(D.ceremonie.intro1));
+      if (!file.length) { annoncerEtoiles(); return; }
+      zone.classList.add('pleine');
+      NARR.dire(file.length > 1 ? { txt: remplir(T(D.ceremonie.intro.txt)), expr: D.ceremonie.intro.expr } : B(D.ceremonie.intro1));
     },
     unmount() { this.jeton = (this.jeton || 0) + 1; this.jetonDip = (this.jetonDip || 0) + 1; annulerVols(); cancelAnimationFrame(this.raf); window.removeEventListener('deviceorientation', this.incline); window.removeEventListener('keydown', this.clavierNuages); window.removeEventListener('keydown', this.clavier); clearTimeout(this.tAide); },
   };

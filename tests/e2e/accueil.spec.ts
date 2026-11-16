@@ -34,12 +34,15 @@ test('par le QR code : directement l\'accueil personnalisé, sans écran de choi
 test('« Changer d\'histoire » ramène à l\'écran de choix', async ({ page }) => {
   // Depuis la couverture : « Retour à l'accueil » dans le menu des réglages
   await ouvrir(page, '#p=' + code(LEO));
-  await page.locator('#btn-prefs').click(); await page.locator('#pref-changer').click();
+  await page.locator('#btn-prefs').click(); await page.locator('#g-grands').click(); await page.locator('#pref-changer').click();
   await expect(page.locator('.ecran-choix')).toBeVisible();
   await expect(page.locator('.carte-choix.reprendre')).toContainText('Léo');
   // En pleine histoire : le menu Préférences
   await ouvrir(page, '?chapitre=1&scene=2#p=' + code(LEO));
   await page.locator('#btn-prefs').click();
+  // « Pour les grands » est replié pendant l'histoire
+  await expect(page.locator('#pref-changer')).toBeHidden();
+  await page.locator('#g-grands').click();
   await page.locator('#pref-changer').click();
   await expect(page.locator('.ecran-choix')).toBeVisible();
   // L'histoire de Léo reprend où elle en était
@@ -136,7 +139,7 @@ test('débuter, changer d\'histoire, reprendre : sur place, sans recharger (le p
   expect(new URL(page.url()).hash).toBe('#exemple');
   expect(await marque()).toBe(1);
   // Changer d'histoire, puis revenir : toujours la même page
-  await page.locator('#btn-prefs').click(); await page.locator('#pref-changer').click();
+  await page.locator('#btn-prefs').click(); await page.locator('#g-grands').click(); await page.locator('#pref-changer').click();
   await expect(page.locator('.ecran-choix')).toBeVisible();
   await expect(page.locator('.carte-choix.voyage')).toContainText('Clémentine');
   expect(await marque()).toBe(1);
@@ -145,7 +148,7 @@ test('débuter, changer d\'histoire, reprendre : sur place, sans recharger (le p
   await expect(bandeau(page)).toContainText('Coucou Léo');
   // Puis changer d'histoire et reprendre Léo : sur place cette fois
   await page.evaluate(() => { (window as any).MARQUE = 2; });
-  await page.locator('#btn-prefs').click(); await page.locator('#pref-changer').click();
+  await page.locator('#btn-prefs').click(); await page.locator('#g-grands').click(); await page.locator('#pref-changer').click();
   await expect(page.locator('.carte-choix.reprendre')).toContainText('Léo');
   await expect(page.locator('.carte-choix.voyage')).toContainText('Clémentine');
   await page.locator('.carte-choix.reprendre').click();
@@ -172,6 +175,8 @@ test("l'accueil : le bouton des réglages avec l'essentiel, et le thème de Quen
   // Dans l'histoire, le menu complet revient
   await page.locator('.carte-choix.voyage').click();
   await page.locator('#btn-prefs').click();
+  await expect(page.locator('#g-grands')).toHaveAttribute('aria-expanded', 'false');
+  await page.locator('#g-grands').click();
   await expect(page.locator('#pref-reset')).toBeVisible();
 });
 

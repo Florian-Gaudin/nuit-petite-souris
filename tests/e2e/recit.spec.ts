@@ -40,7 +40,8 @@ test('Inès : troisième dent, licorne, frère Tom dans la chambre, 10 € sur l
   expect(await rendu(page, ['camera', 'cheminee'])).toMatch(/^Voilà ton radiateur, bien éteint\..*au chaud/);
   expect(await rendu(page, ['badges', 6, 'nom'])).toBe('Collectionneuse');
   await page.goto('certificat/#p=' + code(INES));
-  await expect(page.locator('.dip-texte')).toContainText('3e dent de lait, une incisive latérale du bas');
+  await expect(page.locator('.dip-rang')).toContainText('3e dent de lait');
+  await expect(page.locator('.dip-dent-nom')).toContainText('une incisive latérale du bas');
   await expect(page.locator('.dip-sign')).toContainText('Paillette');
   await expect(page.locator('.machoire path[fill="#D64045"]')).toHaveCount(1);
   await expect(page.locator('.machoire path[fill="#F2A3B5"]')).toHaveCount(2);
@@ -240,7 +241,7 @@ test("répondre à Quenotte (dessin) et l'album des dents", async ({ page }) => 
   // L'album vide : plus de bouton sur l'accueil (il revient avec la prochaine histoire terminée)
   await page.locator('.album [data-a="fermer"]').click();
   await ouvrir(page, '?reset=1#exemple');
-  await page.locator('#btn-prefs').click();
+  await page.locator('#btn-prefs').click(); await page.locator('#g-grands').click();
   await expect(page.locator('#pref-changer')).toContainText("Retour à l'accueil");
   await page.locator('#pref-changer').click();
   await expect(page.locator('.ecran-choix')).toBeVisible();

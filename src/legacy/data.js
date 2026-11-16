@@ -388,6 +388,12 @@ window.DATA = {
     intro1: { txt: "Cette nuit, tu as gagné un badge ! Il est dans ma sacoche. Touche-la : je l'accroche sur ton étagère.", expr: "joie" },
     touche: "Touche ma sacoche !",
     suivant: "Le badge suivant",
+    etoiles: { txt: "Et ce n'est pas tout : dans ma sacoche, il y a aussi les {lesEtoiles} que tu as {trouvees} pendant le voyage ! Touche-la encore.", expr: "clin" },
+    etoilesBouton: "Les étoiles",
+    constellation: { txt: "Regarde : tes étoiles dessinent une constellation, la Dent de {enfant} ! Je les range dans ton ciel.", expr: "joie" },
+    constellationPeu: { txt: "Je les range dans ton ciel, elles y brilleront pour toujours !", expr: "joie" },
+    constellationNom: "La Dent de {enfant}",
+    ciel: "Mon ciel d'étoiles",
     fin: { txt: "Ton étagère brille ! Les crochets avec un point d'interrogation attendent encore leur médaille : touche-les pour savoir comment la gagner.", expr: "joie" },
     continuer: "Continuer",
     etagere: "L'étagère de {enfant}",
@@ -401,6 +407,8 @@ window.DATA = {
     aGagner: "À gagner",
     ciel: "{lesEtoiles} {trouvees} sur {totalEtoiles}",
     cielAide: "Elles se cachent dans les images du voyage.",
+    rejouer: "Rejouer la remise des badges",
+    menu: "Mes badges et mes étoiles",
   },
   fin: {
     imprimer: "Imprimer le diplôme",
@@ -413,6 +421,7 @@ window.DATA = {
     albumAide: "Toutes tes dents et tes histoires",
     revoir: "Revoir l'histoire",
     fermer: "Fermer",
+    menuDiplome: "Mon diplôme",
   },
 
   // ---------- Chapitre secret : la 13e scène, le théâtre du Grand Marionnettiste ----------

@@ -79,6 +79,17 @@ test('un badge gagné après la remise : « Nouveau » sur Mes trésors, et il s
   // Fermer : l'écran de fin se redessine, sans « Nouveau »
   await page.locator('.fen-tresors .fermer-x').click();
   await expect(page.locator('#btn-tresors .tuile-nouveau')).toHaveCount(0);
+  // Rejouer la remise des badges : toutes les médailles retournent dans la sacoche
+  await page.locator('#btn-tresors').click();
+  await page.locator('.fen-tresors [data-a="rejouer"]').click();
+  await expect(page.locator('.ceremonie.pleine')).toBeVisible();
+  await expect(page.locator('.case-med.attend')).toHaveCount(3);
+  await expect(page.locator('.etagere-compte')).toHaveText('0 / 13');
+  await page.locator('.sacoche').click();
+  await expect(page.locator('.etagere-compte')).toHaveText('1 / 13');
+  await page.locator('#btn-passer').click();
+  await page.locator('#bandeau-actions button', { hasText: 'Continuer' }).click();
+  await expect(page.locator('#btn-tresors')).toBeVisible();
 });
 
 test('le diplôme imprimé : seulement les médailles gagnées, jamais celles qui manquent', async ({ page }) => {
@@ -88,4 +99,58 @@ test('le diplôme imprimé : seulement les médailles gagnées, jamais celles qu
   await expect(page.locator('.dip-medaille figcaption')).toHaveText(['Détective de nuit', 'Amie de Quenotte', 'Dent jumelle']);
   await expect(page.locator('.medaille.vide')).toHaveCount(0);
   await expect(page.locator('.dip-bilan')).toContainText('4 étoiles trouvées sur 20');
+});
+
+test('les étoiles trouvées sortent de la sacoche en constellation et s\'allument dans le ciel de l\'étagère', async ({ page }) => {
+  await ouvrir(page, '?reset=1#exemple');
+  await page.evaluate(() => {
+    const W = window as any, A = W.APP; A.state.unlocked = 5; A.state.badges = ['detective'];
+    const e: any = {}; let n = 0; for (const s of W.DATA.scenes) { e[s.id] = []; for (const b of s.bonus) if (n < 5) { e[s.id].push(b); n++; } } A.state.etoiles = e;
+    A.show(5, { diplome: true, temps: 'ceremonie' });
+  });
+  await expect(page.locator('.ciel-cases .ciel-etoile')).toHaveCount(20);
+  await expect(page.locator('.ciel-compte')).toHaveText('0 / 20');
+  await page.locator('.sacoche').click(); // Détective de nuit
+  await page.locator('#bandeau-actions button', { hasText: 'Le badge suivant' }).click(); // Dent jumelle
+  await expect(page.locator('#bandeau-texte')).toContainText('les 5 étoiles que tu as trouvées');
+  await page.locator('#bandeau-actions button', { hasText: 'Les étoiles' }).click();
+  await expect(page.locator('#bandeau-texte')).toContainText('la Dent de Clémentine');
+  await expect(page.locator('.ciel-compte')).toHaveText('5 / 20');
+  await expect(page.locator('.ciel-cases .ciel-etoile:not(.eteinte)')).toHaveCount(5);
+  await expect(page.locator('#bandeau-texte')).toContainText('Ton étagère brille');
+  expect((await etat(page)).etoilesRemises).toBe(true);
+});
+
+test('Mes trésors : le cadre des explications garde la même hauteur, et chaque explication y tient en entier', async ({ page }) => {
+  await finir(page, ['detective']);
+  await page.evaluate(() => { const A = (window as any).APP; A.state.ceremonie = true; A.state.remis = ['detective', 'jumelle']; A.show(5, { diplome: true }); });
+  await page.locator('#btn-tresors').click();
+  const info = page.locator('.tresors-info');
+  const hauteurs = new Set<number>();
+  for (const c of await page.locator('.fen-tresors .case-med').all()) {
+    await c.click();
+    const [h, contenu] = await info.evaluate(e => [e.offsetHeight, e.scrollHeight]);
+    expect(contenu, await c.getAttribute('data-badge') || '').toBeLessThanOrEqual(h);
+    hauteurs.add(h);
+  }
+  expect(hauteurs.size).toBe(1);
+});
+
+test('le menu des réglages : « Mon diplôme » (un toucher le referme), « Mes badges et mes étoiles », « Pour les grands » replié', async ({ page }) => {
+  await finir(page, ['detective']);
+  await page.evaluate(() => { const A = (window as any).APP; A.state.ceremonie = true; A.state.fini = true; A.show(1, { scene: 0 }); });
+  await page.locator('#btn-prefs').click();
+  await expect(page.locator('#pref-parents')).toBeHidden();
+  await expect(page.locator('#g-grands')).toHaveAttribute('aria-expanded', 'false');
+  await page.locator('#pref-diplome').click();
+  await expect(page.locator('.fen-diplome .diplome')).toBeVisible();
+  await page.locator('.fen-diplome .dip-fermer').click();
+  await expect(page.locator('.fen-diplome')).toHaveCount(0);
+  await page.locator('#btn-prefs').click();
+  await page.locator('#pref-tresors').click();
+  await expect(page.locator('.fen-tresors .etagere')).toBeVisible();
+  await page.keyboard.press('Escape');
+  await page.locator('#btn-prefs').click();
+  await page.locator('#g-grands').click();
+  await expect(page.locator('#pref-parents')).toBeVisible();
 });

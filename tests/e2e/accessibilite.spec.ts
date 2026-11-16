@@ -48,7 +48,7 @@ test('la page Informations : depuis l\'accueil et les réglages', async ({ page 
   await expect(page.locator('#mentions')).toContainText('GitHub, Inc.');
   await expect(page.locator('#mentions a[href="mailto:lanuitdelapetitesouris@gmail.com"]')).toHaveCount(1);
   await ouvrir(page, '#exemple');
-  await page.locator('#btn-prefs').click();
+  await page.locator('#btn-prefs').click(); await page.locator('#g-grands').click();
   await page.locator('#pref-infos').click();
   await expect(page.locator('#accessibilite h2')).toHaveText('Accessibilité');
 });

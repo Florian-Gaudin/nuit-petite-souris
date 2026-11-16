@@ -665,7 +665,7 @@ input,textarea,[contenteditable]{-webkit-user-select:text;user-select:text;-webk
 .tresors-tete{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .tresors-tete h2{margin:0;font-size:1.35rem;color:var(--lanterne)}
 .fermer-x{flex:none;width:44px;height:44px;border-radius:50%;border:2px solid #3d4a95;background:rgba(27,34,80,.85);color:var(--clair);font:800 1.1rem var(--display);cursor:pointer}
-.tresors-info{min-height:92px;display:flex;align-items:center;padding:10px 12px;border-radius:14px;background:var(--papier);color:var(--encre)}
+.tresors-info{position:relative;box-sizing:border-box;min-height:92px;display:flex;align-items:center;padding:10px 12px;border-radius:14px;background:var(--papier);color:var(--encre)}
 .tresors-aide{margin:0;width:100%;text-align:center;color:#5c4a1e;font-weight:600}
 .info-med{display:flex;align-items:center;gap:12px}
 .info-med .medaille{flex:none;width:54px;height:auto}
@@ -1378,3 +1378,34 @@ html.grand-texte .livre-ancien .livre-texte p{font-size:1.5rem}
   .sac-invite::before{left:auto;right:-7px;top:50%;margin-top:-8px;border:8px solid transparent;border-right:0;border-left:8px solid var(--lanterne)}
   @keyframes sac-invite-cote{50%{transform:translateX(-4px)}}
 }
+
+/* Le ciel d'étoiles, en haut de l'étagère */
+.etagere-ciel{margin:2px 0 4px;padding:7px 10px 9px;border-radius:12px;background:radial-gradient(120% 160% at 50% 0%,#26306b,#0e1330);border:1.5px solid #3d4a95}
+.ciel-titre{display:flex;justify-content:space-between;gap:8px;margin:0 0 5px;font:700 .82rem var(--display);color:var(--muet)}
+.ciel-compte{font-variant-numeric:tabular-nums;color:var(--lanterne)}
+.ciel-cases{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:3px 2px;justify-items:center}
+.ciel-cases .ciel-etoile{width:min(100%,22px);height:auto;aspect-ratio:1}
+.ciel-etoile{transition:opacity .3s,filter .3s}
+.ciel-etoile.allume{animation:etoile-allume .7s ease-out}
+@keyframes etoile-allume{0%{transform:scale(2);filter:drop-shadow(0 0 8px #FFE7A0)}100%{transform:none}}
+/* La constellation : les étoiles en vol, le trait de lumière, son nom */
+.const-vol{position:fixed;inset:0;z-index:28;pointer-events:none}
+.const-etoile{position:absolute;left:0;top:0;width:30px;height:30px;transform-origin:0 0;opacity:0;filter:drop-shadow(0 0 7px rgba(255,214,120,.95));will-change:transform}
+.const-lignes{position:absolute;left:0;top:0;overflow:visible}
+.const-lignes polygon{fill:none;stroke:rgba(255,231,160,.8);stroke-width:1.8;stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset 1.2s ease,opacity .4s}
+.const-vol.dessine .const-lignes polygon{stroke-dashoffset:0}
+.const-vol.range .const-lignes polygon{opacity:0}
+.const-nom{position:absolute;transform:translateX(-50%);white-space:nowrap;padding:5px 16px;border-radius:999px;background:var(--papier);color:var(--encre);font:800 1.05rem var(--display);box-shadow:0 8px 20px rgba(0,0,0,.45);opacity:0;transition:opacity .4s}
+.const-vol.dessine .const-nom{opacity:1}
+
+/* « Pour les grands » : replié pendant l'histoire, un toucher le déplie */
+.prefs-menu .prefs-plier{display:flex;align-items:center;justify-content:space-between;width:calc(100% - 12px);min-height:44px;margin:6px 6px 0;padding:0 8px 0 6px;border:0;border-radius:10px;background:none;cursor:pointer;text-align:left}
+.prefs-menu .prefs-plier:hover,.prefs-menu .prefs-plier:focus-visible{background:rgba(201,162,39,.14)}
+.prefs-plier .chevron{width:20px;height:20px;transition:transform .2s}
+.prefs-plier[aria-expanded="true"] .chevron{transform:rotate(180deg)}
+
+/* Le diplôme agrandi : un toucher dessus le referme */
+.dip-fermer{display:block;width:100%;padding:0;border:0;background:none;color:inherit;font:inherit;text-align:inherit;cursor:zoom-out;border-radius:8px;-webkit-tap-highlight-color:transparent}
+.dip-fermer:focus-visible{outline:3px solid var(--lanterne);outline-offset:4px}
+/* Dans la fenêtre « Mes trésors » (une colonne flexible qui défile), rien ne doit être écrasé : le cadre garde sa hauteur */
+.fen-tresors .atelier-in>*{flex:none}

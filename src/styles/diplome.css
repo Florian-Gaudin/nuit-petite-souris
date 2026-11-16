@@ -8,13 +8,25 @@
 .dip-sous{font-style:italic;color:#7a6220;font-size:clamp(.88rem,2.7vw,1.05rem)}
 .dip-decerne{margin-top:10px;font-size:.88rem;color:#5c4a1e}
 .dip-nom{font-family:'Baloo 2','Trebuchet MS',sans-serif;font-weight:800;font-size:clamp(2.1rem,8.5vw,3.2rem);color:#D64045;line-height:1.05;overflow-wrap:anywhere}
-.dip-texte{font-size:clamp(.9rem,2.6vw,1.02rem);line-height:1.5;margin:8px auto 0;max-width:32em;text-wrap:pretty}
-.dip-machoire{width:min(50%,200px);margin:10px auto 0}
+/* La dent de la nuit (la mâchoire, et « pour sa 2e dent de lait »), puis trois exploits courts avec leur emblème */
+.dip-texte{margin:10px auto 0;max-width:32em}
+.dip-dent{display:flex;align-items:center;justify-content:center;gap:14px}
+.dip-machoire{flex:0 0 auto;width:min(38%,150px)}
+.dip-pour{margin:0;display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left}
+.dip-pour-lib{font-size:.85rem;font-style:italic;color:#5c4a1e}
+.dip-rang{font-size:clamp(1.15rem,4.6vw,1.5rem);font-weight:700;line-height:1.15;color:#1F2235}
+.dip-dent-nom{font-size:.84rem;font-style:italic;line-height:1.3;color:#5c4a1e}
+.dip-orne{width:min(70%,240px);margin:10px auto 8px}
+.dip-orne svg{display:block;width:100%;height:auto}
+.dip-exploits{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.dip-exploits li{display:flex;flex-direction:column;align-items:center;gap:5px;font:600 .8rem/1.25 'Baloo 2','Trebuchet MS',sans-serif;color:#3a2f1a;text-align:center;text-wrap:balance}
+.dip-exploits .badge-ico{width:36px;height:36px}
 .machoire{width:100%;height:auto;display:block}
 .pastille-dent{display:inline-block;width:10px;height:12px;border-radius:3px;vertical-align:-1px;border:1px solid #9a2a32}
 .pastille-dent.rouge{background:#D64045}
 .pastille-dent.rose{background:#F2A3B5;border-color:#c46a7e}
-.machoire-legende{font-size:.7rem;color:#7a6220;font-style:italic;text-align:center;margin-top:2px}
+.dip-dent .machoire-legende{display:none} /* à l'écran : « une incisive centrale du bas » suffit */
+.machoire-legende{font-size:.62rem;color:#7a6220;font-style:italic;text-align:center;margin-top:2px}
 /* Le bilan, en une ligne : les étoiles et les badges ont leur étagère, « Mes trésors » */
 .dip-bilan{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 18px;margin:10px 0 0;font:700 .9rem/1.3 'Baloo 2','Trebuchet MS',sans-serif;color:#6b5418}
 .dip-bilan span{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
@@ -46,8 +58,15 @@
   .dip-entete{font-size:1.9rem}
   .dip-sous{font-size:1.15rem}
   .dip-nom{font-size:3.4rem}
-  .dip-texte{font-size:1.08rem;line-height:1.5}
-  .dip-machoire{width:62mm}
+  .dip-texte{max-width:none}
+  .dip-machoire{width:58mm}
+  .dip-dent{gap:10mm}
+  .dip-rang{font-size:2rem}
+  .dip-pour-lib,.dip-dent-nom{font-size:1.05rem}
+  .dip-dent .machoire-legende{display:block;font-size:.8rem}
+  .dip-exploits{gap:6mm;max-width:170mm;margin:0 auto}
+  .dip-exploits li{font-size:1rem}
+  .dip-exploits .badge-ico{width:48px;height:48px}
   .dip-bilan{font-size:1rem}
   .dip-medailles-liste{gap:4mm 2mm}
   .dip-medaille{width:24mm}
