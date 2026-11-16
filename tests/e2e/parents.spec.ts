@@ -68,6 +68,9 @@ test('création complète d\'un profil jusqu\'au QR code', async ({ page }) => {
   await expect(conseil).toContainText('Posez le vrai billet de 20 € sur le radiateur (bien éteint !).');
   await expect(conseil).toContainText('avec un téléphone ou une tablette');
   await expect(conseil).not.toContainText(' ton ');
+  // L'histoire créée est déjà dans l'album des dents, « en cours », sans l'avoir ouverte
+  const album = await page.evaluate(() => JSON.parse(localStorage.getItem('souris.album') || '[]'));
+  expect(album.map((x: { prenom: string; fini: boolean; nuit: string }) => [x.prenom, x.fini, x.nuit])).toEqual([['Léa', false, '2026-12-24']]);
   // Le QR code téléchargé : une carte aux couleurs du site (1080 × 1440), pas un simple carré blanc
   const [telechargement] = await Promise.all([page.waitForEvent('download'), page.locator('button', { hasText: 'Télécharger le QR code' }).click()]);
   expect(telechargement.suggestedFilename()).toBe('petite-souris-lea.png');

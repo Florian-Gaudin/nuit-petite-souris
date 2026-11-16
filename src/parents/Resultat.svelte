@@ -5,6 +5,7 @@
   import { surpriseActive } from '../lib/profil';
   import { svgQr, pngQr } from '../lib/qr';
   import { DOUDOUS } from './icones';
+  import { rangerHistoire } from '../lib/album';
 
   let { profil, modifier }: { profil: Profil; modifier: () => void } = $props();
 
@@ -12,6 +13,8 @@
   const url = $derived(baseHistoire() + '#p=' + code);
   const qr = $derived(svgQr(url));
   let info = $state('');
+  // Le QR code obtenu : l'histoire entre dans l'album des dents, « en cours »
+  $effect(() => { rangerHistoire(profil); });
   const surprise = $derived(surpriseActive(profil));
 
   const rang = $derived(rangDent(profil.dents));

@@ -305,12 +305,8 @@
   // ---------- L'album des dents : chaque histoire créée y est rangée dès son ouverture (« en cours »), puis marquée
   // terminée au diplôme ; l'exemple de Clémentine seulement une fois terminé ----------
   const CLE_ALBUM = 'souris.album';
-  const lireAlbum = () => { try { const a = JSON.parse(window.STOCKAGE.lire(CLE_ALBUM) || '[]'); return Array.isArray(a) ? a : []; } catch (e) { return []; } };
-  function rangerDansAlbum(fini) {
-    const P = window.PROFIL.profil, avant = lireAlbum(), ancien = avant.find(x => x.id === window.PROFIL.id), a = avant.filter(x => x.id !== window.PROFIL.id);
-    a.push({ id: window.PROFIL.id, code: window.PROFIL.code, prenom: P.prenom, nuit: State.nuit, dent: P.dents.nuit, deja: P.dents.deja, fini: !!(fini || (ancien && ancien.fini !== false)) });
-    window.STOCKAGE.ecrire(CLE_ALBUM, JSON.stringify(a.slice(-60)));
-  }
+  const lireAlbum = () => window.ALBUM.lire(); // voir src/lib/album.ts (l'espace parents y range aussi chaque histoire créée)
+  function rangerDansAlbum(fini) { window.ALBUM.ranger(window.PROFIL.profil, { nuit: State.nuit, fini }); }
   // Le carnet des Ardennes : les cartes « Le savais-tu ? » et le livre de la légende (après le diplôme)
   // La grande carte du carnet, sous le diplôme : cuir rouge, cadre doré, éventail de cartes et progression
   function carteCarnet() {
@@ -326,7 +322,7 @@
   function album() {
     const a = lireAlbum(), parEnfant = {};
     a.forEach(x => { (parEnfant[x.prenom] = parEnfant[x.prenom] || []).push(x); });
-    const date = n => new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(n + 'T12:00:00'));
+    const date = n => { try { return new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(n + 'T12:00:00')); } catch (e) { return 'à venir'; } };
     const pages = Object.keys(parEnfant).map(prenom => {
       const nuits = parEnfant[prenom].sort((x, y) => (x.nuit < y.nuit ? -1 : 1)), derniere = nuits[nuits.length - 1];
       const toutes = new Set(); nuits.forEach(x => { toutes.add(x.dent); (x.deja || []).forEach(d => toutes.add(d)); });
@@ -489,6 +485,7 @@
     document.body.classList.add('mode-choix');
     MUS.ambiance('accueil'); // le thème de Quenotte, dès le premier toucher (les navigateurs interdisent la lecture avant)
     const m = window.PROFIL.memoire, exemple = window.PRENOM_EXEMPLE;
+    if (m && m.profil) window.ALBUM.ranger(m.profil); // la dernière histoire de l'appareil est toujours dans l'album
     root.className = 'scene choix-scene';
     // La carte de l'espace parents (en jaune quand aucune histoire n'est encore créée), l'exemple en bleu discret avec la vidéo
     const PARENTS = principale => `<a class="carte-choix parents${principale ? ' principale' : ''}" href="parents/"><span class="ic">${A.icone('famille')}</span><span><b>${principale ? "Créer l'histoire de mon enfant" : 'Espace parents'}</b><small>${principale ? "Dans l'espace parents, en quelques minutes" : "Préparer ou modifier l'histoire personnalisée"}</small></span></a>`;
@@ -533,7 +530,7 @@
     if (e) e.preventDefault();
     if (courant && courant.unmount) { try { courant.unmount(); } catch (er) { } }
     courant = null; SON.ronfleStop(); NARR.action(null);
-    if (window.PROFIL.origine === 'adresse' || window.PROFIL.origine === 'memoire') window.PROFIL.memoire = { prenom: window.PROFIL.profil.prenom, code: window.PROFIL.code };
+    if (window.PROFIL.origine === 'adresse' || window.PROFIL.origine === 'memoire') window.PROFIL.memoire = { prenom: window.PROFIL.profil.prenom, code: window.PROFIL.code, profil: window.PROFIL.profil };
     try { history.replaceState(null, '', location.pathname); } catch (er) { }
     afficherChoix(); window.scrollTo(0, 0);
   }

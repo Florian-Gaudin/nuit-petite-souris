@@ -21,7 +21,7 @@ const CLE = 'souris.profil';
 export type Origine = 'adresse' | 'memoire' | 'exemple' | 'choix';
 export interface ProfilCourant {
   profil: Profil; code: string; id: string; origine: Origine; erreur: string | null; surprise?: boolean;
-  memoire?: { prenom: string; code: string } | null; // le dernier profil scanné ici, pour « Reprendre l'histoire de… »
+  memoire?: { prenom: string; code: string; profil?: Profil } | null; // le dernier profil scanné ici, pour « Reprendre l'histoire de… »
 }
 export const ADRESSE_EXEMPLE = '#exemple';
 
@@ -66,7 +66,7 @@ export function chargerProfil(opts: { choix?: boolean } = {}): ProfilCourant {
   }
   const codeMemoire = stockage.lire(CLE);
   const lm = codeMemoire ? decoderProfil(codeMemoire) : null;
-  if (opts.choix) return exemple('choix', lm && lm.ok ? { prenom: lm.profil.prenom, code: lm.code } : null);
+  if (opts.choix) return exemple('choix', lm && lm.ok ? { prenom: lm.profil.prenom, code: lm.code, profil: lm.profil } : null);
   if (lm && lm.ok) return { profil: lm.profil, code: lm.code, id: idProfil(lm.profil), origine: 'memoire', erreur };
   return exemple('exemple');
 }
