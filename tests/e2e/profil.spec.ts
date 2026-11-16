@@ -8,7 +8,8 @@ const origine = (page: Page) => page.evaluate(() => (window as any).PROFIL?.orig
 test('sans profil : l\'écran de choix, puis l\'exemple de Clémentine', async ({ page }) => {
   await ouvrir(page, '?reset=1');
   expect(await origine(page)).toBe('choix');
-  await expect(page.locator('#fil')).toBeHidden();
+  await expect(page.locator('#fil .ruban')).toBeHidden(); // seul le bouton des réglages reste
+  await expect(page.locator('#btn-prefs')).toBeVisible();
   await expect(page.locator('.carte-choix')).toHaveCount(2); // pas encore d'histoire à reprendre
   await expect(page.locator('.carte-choix.parents')).toHaveAttribute('href', 'parents/');
   await page.locator('.carte-choix.voyage').click();

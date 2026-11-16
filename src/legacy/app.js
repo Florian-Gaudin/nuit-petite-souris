@@ -178,7 +178,7 @@
       bascule('pref-plein', A.icone(PLEIN.actif() ? 'reduire' : 'plein'), 'Plein écran', PLEIN.actif());
       bascule('pref-vibreur', `<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="3" width="8" height="18" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M4 8v8M20 8v8M1.5 10v4M22.5 10v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`, 'Vibreur', vibreurActif());
       // Mes trésors : le carnet dès la première carte découverte, l'album dès la première histoire rangée
-      const carnetVu = window.CARNET && window.CARNET.compte(State).n > 0, albumVu = lireAlbum().length > 0;
+      const carnetVu = window.CARNET && window.CARNET.compte(State).n > 0, albumVu = lireAlbum().length > 0 && !document.body.classList.contains('mode-choix'); // sur l'accueil, l'album a son bouton
       $('#pref-carnet').hidden = !carnetVu; $('#pref-album').hidden = !albumVu; $('#groupe-tresors').hidden = !carnetVu && !albumVu;
       $('#pref-reset').innerHTML = A.icone('recommencer') + " Recommencer l'histoire"; $('#pref-reset').classList.remove('confirme');
     };
@@ -476,24 +476,34 @@
   const ETOILES_CHOIX = [[40, 60, 2.2], [120, 140, 1.6], [330, 50, 2.6], [370, 190, 1.8], [60, 260, 1.5], [250, 110, 1.4], [300, 330, 2], [30, 480, 1.8], [370, 560, 2.2], [200, 40, 1.6], [90, 700, 2], [340, 740, 1.5], [180, 620, 1.3]]
     .map(([x, y, r], i) => `<circle class="etoile" cx="${x}" cy="${y}" r="${r}" fill="#fff" style="animation-delay:${(i * 0.37).toFixed(2)}s"/>`).join('')
     + '<path d="M330 120a34 34 0 1 0 0 68a26 26 0 1 1 0-68z" fill="#FFF4D6" opacity=".9"/>';
+  const QR_ICONE = '<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3z" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M5.5 5.5h2v2h-2zM16.5 5.5h2v2h-2zM5.5 16.5h2v2h-2zM14 14h3v3h-3zM18 18h3v3h-3z" fill="currentColor"/></svg>';
   function afficherChoix() {
     document.body.classList.add('mode-choix');
+    MUS.ambiance('accueil'); // le thème de Quenotte, dès le premier toucher (les navigateurs interdisent la lecture avant)
     const m = window.PROFIL.memoire, exemple = window.PRENOM_EXEMPLE;
     root.className = 'scene choix-scene';
-    root.innerHTML = `<section class="ecran-choix">
+    // La carte de l'espace parents (en jaune quand aucune histoire n'est encore créée), l'exemple en bleu discret avec la vidéo
+    const PARENTS = principale => `<a class="carte-choix parents${principale ? ' principale' : ''}" href="parents/"><span class="ic">${A.icone('famille')}</span><span><b>${principale ? "Créer l'histoire de mon enfant" : 'Espace parents'}</b><small>${principale ? "Dans l'espace parents, en quelques minutes" : "Préparer ou modifier l'histoire personnalisée"}</small></span></a>`;
+    const VOYAGE = `<a class="carte-choix voyage" href="#exemple"><span class="ic">${A.icone('etoile')}</span><span><b>Découvrir l'aventure</b><small>Pour tester l'aventure avec l'histoire de ${esc(exemple)}</small></span></a><a class="lien-video" href="decouvrir/"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><path d="M10 8l6 4-6 4z" fill="currentColor"/></svg>Voir la vidéo de présentation</a>`;
+    root.innerHTML = `<section class="ecran-choix${m ? ' avec-histoire' : ''}">
   <svg class="choix-ciel" viewBox="0 0 400 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${ETOILES_CHOIX}</svg>
   <div class="choix-haut">
     <img class="choix-logo" src="icones/icone.svg" alt="" width="128" height="128">
     <h1 class="titre">La nuit de la Petite Souris</h1>
+    ${m ? '' : `<p class="choix-accroche">Une histoire du soir personnalisée pour la nuit où votre enfant perd une dent.</p>`}
   </div>
+  ${m ? '' : `<ol class="choix-etapes" aria-label="Comment ça marche">
+    <li><span class="ic">${A.icone('crayon')}</span>Vous créez l'histoire<small>prénom, dent, ville</small></li>
+    <li><span class="ic">${QR_ICONE}</span>Vous imprimez ou affichez le QR code</li>
+    <li><span class="ic">${A.icone('etoile')}</span>Votre enfant le scanne au réveil</li>
+  </ol>`}
   <nav class="choix-cartes" aria-label="Choisir son parcours">
-    ${m ? `<a class="carte-choix reprendre principale" href="#p=${m.code}"><span class="ic">${A.icone('lanterne')}</span><span><b>L'histoire de ${esc(m.prenom)}</b><small>Retrouver Quenotte là où on l'a laissée</small></span></a>` : ''}
-    <a class="carte-choix parents${m ? '' : ' principale'}" href="parents/"><span class="ic">${A.icone('famille')}</span><span><b>${m ? 'Espace parents' : "Créer l'histoire de mon enfant"}</b><small>${m ? "Préparer ou modifier l'histoire personnalisée" : "Dans l'espace parents, en quelques minutes"}</small></span></a>
-    <a class="carte-choix voyage" href="#exemple"><span class="ic">${A.icone('etoile')}</span><span><b>Découvrir l'aventure</b><small>Pour tester l'aventure avec l'histoire de ${esc(exemple)}</small></span></a>
+    ${m ? `<a class="carte-choix reprendre principale" href="#p=${m.code}"><span class="ic">${A.icone('lanterne')}</span><span><b>L'histoire de ${esc(m.prenom)}</b><small>Retrouver Quenotte là où on l'a laissée</small></span></a>
+    <details class="autres-options"><summary>Autres options<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></summary><div class="autres-cartes">${PARENTS(false)}${VOYAGE}</div></details>`
+    : `${PARENTS(true)}<p class="choix-confiance">Gratuit · sans publicité · sans compte · rien ne quitte votre téléphone</p>${VOYAGE}`}
   </nav>
-  <button class="lien-album" id="lien-album">${A.icone('etoile')} ${esc(T(D.album.titre))}</button>
-  ${window.DON_POSSIBLE ? `<p class="don-accueil"><span class="phrase">Gratuite pour toutes les familles, l'appli vit grâce à vos petits dons.</span> <a href="parents/#don"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z" fill="currentColor"/></svg>Faire un don</a></p>` : ''}
-  <a class="lien-infos" href="infos/">Informations · confidentialité</a>
+  ${lireAlbum().length ? `<button class="lien-album" id="lien-album">${A.icone('etoile')} ${esc(T(D.album.titre))}</button>` : ''}
+  <p class="don-accueil">${window.DON_POSSIBLE ? `<a class="lien-don" href="parents/#don"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z" fill="currentColor"/></svg>Faire un don</a><span aria-hidden="true">·</span>` : ''}<a class="lien-infos" href="infos/">Informations · confidentialité</a></p>
 </section>`;
     // Sans recharger la page (le plein écran est gardé) quand l'histoire choisie est déjà chargée ;
     // sinon le lien change l'adresse et la page se recharge avec le bon profil
@@ -504,7 +514,7 @@
       document.body.classList.remove('mode-choix');
       show(0);
     };
-    $('#lien-album', root).onclick = album;
+    if ($('#lien-album', root)) $('#lien-album', root).onclick = album;
     const exempleCharge = window.PROFIL.origine === 'choix' || window.PROFIL.origine === 'exemple';
     if (exempleCharge) $('.carte-choix.voyage', root).onclick = surPlace('#exemple', 'exemple');
     if (m && m.code === window.PROFIL.code) $('.carte-choix.reprendre', root).onclick = surPlace('#p=' + m.code, 'adresse');

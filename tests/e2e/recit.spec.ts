@@ -236,13 +236,14 @@ test("répondre à Quenotte (dessin) et l'album des dents", async ({ page }) => 
   await page.locator('.album .supprimer').click();
   await expect(page.locator('.album-page')).toHaveCount(0);
   await expect(page.locator('.album')).toContainText("L'album se remplit");
-  // L'album vide reste accessible depuis l'accueil
+  // L'album vide : plus de bouton sur l'accueil (il revient avec la prochaine histoire terminée)
   await page.locator('.album [data-a="fermer"]').click();
   await ouvrir(page, '?reset=1#exemple');
   await page.locator('#btn-prefs').click();
   await expect(page.locator('#pref-changer')).toContainText("Retour à l'accueil");
   await page.locator('#pref-changer').click();
-  await expect(page.locator('#lien-album')).toBeVisible();
+  await expect(page.locator('.ecran-choix')).toBeVisible();
+  await expect(page.locator('#lien-album')).toHaveCount(0);
 });
 
 test("le lièvre repart au galop, Quenotte sur le dos, et sort par la droite", async ({ page }) => {

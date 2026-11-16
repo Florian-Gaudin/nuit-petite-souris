@@ -10,15 +10,15 @@ test('le don : discret sur l\'accueil, complet dans l\'espace parents', async ({
   await ouvrir(page, '?reset=1');
   if (!LIEN_DON) {
     // Tant que l'adresse de la page de don n'est pas réglée, rien ne s'affiche
-    await expect(page.locator('.don-accueil')).toHaveCount(0);
+    await expect(page.locator('.lien-don')).toHaveCount(0);
     await page.goto('parents/');
     await tenirVerrou(page);
     await expect(page.locator('#don')).toHaveCount(0);
     return;
   }
   // L'accueil mène à l'espace parents (verrou), jamais directement au paiement
-  await expect(page.locator('.don-accueil a')).toHaveAttribute('href', 'parents/#don');
-  await page.locator('.don-accueil a').click();
+  await expect(page.locator('.lien-don')).toHaveAttribute('href', 'parents/#don');
+  await page.locator('.lien-don').click();
   await expect(page.locator('.tenir')).toBeVisible();
   await tenirVerrou(page);
   await expect(page.locator('#don a')).toHaveAttribute('href', LIEN_DON);

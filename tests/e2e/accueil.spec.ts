@@ -79,18 +79,31 @@ test('la carte : l\'outre-mer dans son encadré, un département inconnu sans é
   await expect(bandeau(page)).toContainText('à Quelque part');
 });
 
-test("l'écran de choix tient sans défiler, avec ses trois cartes et le don", async ({ page }) => {
-  await ouvrir(page, '#p=' + code(LEO)); // un profil mémorisé : la carte « Reprendre » s'ajoute
-  for (const [w, h] of [[320, 568], [360, 640], [375, 667], [412, 915], [768, 1024], [1280, 720], [740, 360]]) {
-    await page.setViewportSize({ width: w, height: h });
-    await ouvrir(page, './');
-    await expect(page.locator('.carte-choix')).toHaveCount(3);
+test("l'écran de choix tient sans défiler : pour un parent qui découvre, puis avec une histoire (options ouvertes ou non)", async ({ page }) => {
+  const tient = async (etat: string) => {
     const { haut, fenetre, bas } = await page.evaluate(() => ({
       haut: document.documentElement.scrollHeight, fenetre: innerHeight,
-      bas: Math.max(...[...document.querySelectorAll('.carte-choix, .don-accueil')].map(e => e.getBoundingClientRect().bottom)),
+      bas: Math.max(...[...document.querySelectorAll('.carte-choix, .don-accueil, .choix-etapes, .lien-video')].filter(e => e.checkVisibility()).map(e => e.getBoundingClientRect().bottom)),
     }));
-    expect(haut, `${w}×${h} : la page défile`).toBeLessThanOrEqual(fenetre);
-    expect(bas, `${w}×${h} : un élément dépasse`).toBeLessThanOrEqual(fenetre);
+    expect(haut, `${etat} : la page défile`).toBeLessThanOrEqual(fenetre);
+    expect(bas, `${etat} : un élément dépasse`).toBeLessThanOrEqual(fenetre);
+  };
+  const tailles = [[320, 568], [360, 640], [375, 667], [412, 915], [768, 1024], [1280, 720], [740, 360]];
+  for (const [w, h] of tailles) {
+    await page.setViewportSize({ width: w, height: h });
+    await ouvrir(page, '?reset=1');
+    await expect(page.locator('.choix-etapes li')).toHaveCount(3);
+    await tient(`${w}×${h} sans histoire`);
+  }
+  await ouvrir(page, '#p=' + code(LEO)); // un profil mémorisé : un seul gros bouton, le reste replié
+  for (const [w, h] of tailles) {
+    await page.setViewportSize({ width: w, height: h });
+    await ouvrir(page, './');
+    await expect(page.locator('.choix-etapes')).toHaveCount(0);
+    await tient(`${w}×${h} avec histoire`);
+    await page.locator('.autres-options summary').click();
+    await expect(page.locator('.carte-choix.voyage')).toBeVisible();
+    await tient(`${w}×${h} options ouvertes`);
   }
 });
 
@@ -103,6 +116,10 @@ test("l'écran de choix : l'histoire de l'enfant en jaune en haut, sinon l'espac
   await ouvrir(page, './');
   expect(await ordre()).toEqual(['reprendre principale', 'parents', 'voyage']);
   await expect(page.locator('.carte-choix.principale')).toContainText('Léo');
+  await expect(page.locator('.carte-choix.voyage')).toBeHidden(); // replié sous « Autres options »
+  await page.locator('.autres-options summary').click();
+  await expect(page.locator('.carte-choix.voyage')).toBeVisible();
+  await expect(page.locator('.lien-video')).toHaveAttribute('href', 'decouvrir/');
 });
 
 test('débuter, changer d\'histoire, reprendre : sur place, sans recharger (le plein écran est gardé)', async ({ page }) => {
@@ -111,6 +128,7 @@ test('débuter, changer d\'histoire, reprendre : sur place, sans recharger (le p
   await page.evaluate(() => { (window as any).MARQUE = 1; });
   const marque = () => page.evaluate(() => (window as any).MARQUE);
   // Débuter le voyage : l'exemple est déjà chargé
+  await page.locator('.autres-options summary').click();
   await page.locator('.carte-choix.voyage').click();
   await expect(bandeau(page)).toContainText('Coucou Clémentine');
   expect(new URL(page.url()).hash).toBe('#exemple');
@@ -140,4 +158,17 @@ test('les textes ne se sélectionnent pas (pas de « Toucher pour rechercher »)
   await tenirVerrou(page);
   expect(await page.evaluate(() => getComputedStyle(document.querySelector('h1')!).userSelect)).toBe('none');
   expect(await page.evaluate(() => getComputedStyle(document.querySelector('input[type=text]')!).userSelect)).toBe('text');
+});
+
+test("l'accueil : le bouton des réglages avec l'essentiel, et le thème de Quenotte au premier toucher", async ({ page }) => {
+  await ouvrir(page, '?reset=1');
+  await page.locator('#btn-prefs').click();
+  await expect(page.locator('#pref-son')).toBeVisible();
+  for (const id of ['#pref-grand', '#pref-parents', '#pref-infos', '#pref-changer', '#pref-reset']) await expect(page.locator(id)).toBeHidden();
+  await page.locator('#pref-fermer').click();
+  expect(await page.evaluate(() => (window as any).MUSIQUE.ambianceCourante)).toBe('accueil');
+  // Dans l'histoire, le menu complet revient
+  await page.locator('.carte-choix.voyage').click();
+  await page.locator('#btn-prefs').click();
+  await expect(page.locator('#pref-reset')).toBeVisible();
 });
