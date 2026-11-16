@@ -1578,3 +1578,4 @@ body.mode-choix .prefs-accueil{visibility:hidden}
 @keyframes livre-entree{0%{opacity:0;transform:scale(1.08)}100%{opacity:1;transform:none}}
 .carnet.mode-livre .livre-haut{position:relative;z-index:4}
 @media (prefers-reduced-motion:reduce){.livre-ancien.entree{animation:none}}
+.carnet.mode-livre .carnet-x{z-index:6}
