@@ -38,9 +38,15 @@ export const BILLETS_INFO: Record<Billet, { couleur: string; fonce: string }> = 
   10: { couleur: '#E4A39A', fonce: '#a8564b' },
   20: { couleur: '#9DB8E0', fonce: '#4d6fa3' },
   50: { couleur: '#F2B66B', fonce: '#b8752a' },
+  100: { couleur: '#D64045', fonce: '#8f2a30' },
+  101: { couleur: '#E2B04A', fonce: '#8a5a1a' },
 };
 export function svgBillet(v: Billet): string {
   const c = BILLETS_INFO[v];
+  // Le petit paquet surprise : papier rouge, ruban et nœud dorés
+  if (v === 100) return `<svg viewBox="0 0 96 52" aria-hidden="true"><path d="M48 13q-12-12-16-4t16 4q12-12 16-4t-16 4z" fill="#FFC857" stroke="#9c7a2a" stroke-width="1.5"/><rect x="31" y="13" width="34" height="34" rx="3" fill="${c.couleur}" stroke="${c.fonce}" stroke-width="2"/><rect x="45.5" y="13" width="5" height="34" fill="#FFC857"/><rect x="31" y="27.5" width="34" height="5" fill="#FFC857"/></svg>`;
+  // La boîte de chocolats : un ballotin doré entrouvert
+  if (v === 101) return `<svg viewBox="0 0 96 52" aria-hidden="true"><path d="M26 22l7-16 40 4-4 12z" fill="#F3D27E" stroke="${c.fonce}" stroke-width="1.5"/><circle cx="38" cy="20" r="6.5" fill="#6B3E26"/><rect x="44" y="13.5" width="11" height="11" rx="2" fill="#8a5232"/><circle cx="61" cy="20" r="6.5" fill="#6B3E26"/><path d="M22 23h52l-7 24H29z" fill="${c.couleur}" stroke="${c.fonce}" stroke-width="2"/><path d="M24 31h48" stroke="#D64045" stroke-width="3"/></svg>`;
   // Les pièces : bimétalliques (1 € argent au centre doré, 2 € doré au centre argenté)
   if (v <= 2) {
     const centre = v === 1 ? '#F3D98A' : '#D5D9E0';

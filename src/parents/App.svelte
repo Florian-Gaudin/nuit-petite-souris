@@ -2,7 +2,7 @@
   // L'espace parents : verrou anti-enfant, formulaire en cinq étapes, puis le QR code.
   import { stockage } from '../lib/stockage';
   import { chargerProfil } from '../lib/profilCourant';
-  import { ORDRE_DOUDOUS, BILLETS, CACHETTES, LOGEMENTS } from '../lib/profil';
+  import { ORDRE_DOUDOUS, BILLETS, CACHETTES, LOGEMENTS, PAQUET, CHOCOLATS } from '../lib/profil';
   import { type Brouillon, nouveauBrouillon, depuisProfil, versProfil, erreursEtape, erreursProfil, ETAPES } from './brouillon';
   import { DOUDOUS, CACHETTES_INFO, LOGEMENTS_INFO, svgBillet } from './icones';
   import SchemaDents from './SchemaDents.svelte';
@@ -163,19 +163,19 @@
         {:else if etape === 2}
           <h2>Le cadeau</h2>
           <fieldset>
-            <legend>La somme que vous souhaitez offrir à votre enfant</legend>
-            <p class="aide">Une pièce ou un billet, que Quenotte laissera à l'endroit choisi juste en dessous.</p>
+            <legend>Le cadeau que vous souhaitez offrir à votre enfant</legend>
+            <p class="aide">Une pièce, un billet, un petit paquet surprise ou une boîte de chocolats, que Quenotte laissera à l'endroit choisi juste en dessous.</p>
             <div class="choix billets">
               {#each BILLETS as v}
                 <label class="option billet" class:choisi={b.billet === v}>
-                  <input type="radio" bind:group={b.billet} value={v} />{@html svgBillet(v)}<span>{v} €</span>
+                  <input type="radio" bind:group={b.billet} value={v} />{@html svgBillet(v)}<span>{v === PAQUET ? 'Petit paquet' : v === CHOCOLATS ? 'Chocolats' : v + ' €'}</span>
                 </label>
               {/each}
             </div>
           </fieldset>
           <fieldset>
             <legend>Où le cadeau séchera-t-il ?</legend>
-            <p class="aide">Dans l'histoire, le billet devient un bateau (la pièce, elle, voyage dans une coquille de noix), puis sèche à cet endroit jusqu'au matin. Le mot sous l'oreiller l'indiquera à votre enfant.</p>
+            <p class="aide">Dans l'histoire, le billet devient un bateau (la pièce, le paquet ou les chocolats voyagent dans une coquille de noix), puis sèche à cet endroit jusqu'au matin. Le mot sous l'oreiller l'indiquera à votre enfant.</p>
             <div class="choix grille">
               {#each CACHETTES as k}
                 <label class="option icone" class:choisi={b.cachette === k}>

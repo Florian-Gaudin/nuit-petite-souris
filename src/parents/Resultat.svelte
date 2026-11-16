@@ -1,6 +1,6 @@
 <script lang="ts">
   // L'écran final : le QR code de l'histoire et ce qu'on peut en faire.
-  import { type Profil, encoderProfil, nomDent, rangDent, LIEU_CACHETTE_PARENTS } from '../lib/profil';
+  import { type Profil, encoderProfil, nomDent, rangDent, LIEU_CACHETTE_PARENTS, cadeauParents } from '../lib/profil';
   import { baseHistoire } from '../lib/profilCourant';
   import { surpriseActive } from '../lib/profil';
   import { svgQr, pngQr } from '../lib/qr';
@@ -53,7 +53,7 @@
   <ul class="recap">
     <li>Doudou : {profil.doudou.type === 'aucun' ? 'pas de doudou' : `${profil.doudou.nom} (${DOUDOUS[profil.doudou.type].nom.toLowerCase()})`}</li>
     <li>Dent : {nomDent(profil.dents.nuit)}, {rang === 1 ? '1re' : rang + 'e'} dent</li>
-    <li>Cadeau : {profil.billet <= 2 ? 'une pièce' : 'un billet'} de {profil.billet} € qui sèchera {lieu}</li>
+    <li>Cadeau : {cadeauParents(profil.billet)} qui sèchera {lieu}</li>
     <li>Ville : {profil.ville.nom}, {profil.logement === 'appartement' ? 'en appartement' : 'dans une maison'}</li>
     <li>Cours d'eau : {profil.riviere || 'la rivière (sans nom)'}</li>
     <li>Nuit du {date}</li>
@@ -70,7 +70,7 @@
 
   <div class="conseil">
     <strong>Pour le grand matin :</strong> imprimez le mot de la souris et glissez-le sous l'oreiller, à la place de la dent.
-    Posez {profil.billet <= 2 ? 'la vraie pièce' : 'le vrai billet'} de {profil.billet} € {lieu}{eteint}.
+    Posez {cadeauParents(profil.billet, true)} {lieu}{eteint}.
     Au réveil, scannez le QR code avec un téléphone ou une tablette : {profil.prenom} découvre le voyage de Quenotte.
   </div>
 

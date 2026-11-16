@@ -131,7 +131,7 @@ ${tap('bulles', 'Des bulles dans l’eau', `${halo(410, 440, 60)}<g class="bulle
 <path d="M0 600V380Q120 360 240 400L300 600Z" fill="#24483E"/><path d="M0 600V440Q120 430 230 470L260 600Z" fill="#1A2A26"/>
 <path d="M1000 600V360Q900 350 780 400L720 600Z" fill="#24483E"/><path d="M1000 600V430Q900 420 790 460L760 600Z" fill="#1A2A26"/>
 <g fill="#2F5D50"><ellipse cx="60" cy="390" rx="40" ry="18"/><ellipse cx="900" cy="372" rx="46" ry="18"/></g>
-${window.CONFIG.cadeau === 'piece' ? tap('billet', 'La pièce de ' + window.CONFIG.euros + (window.CONFIG.euros === '1' ? ' euro' : ' euros') + ', et son bateau à construire', `<g class="billet-in">${halo(0, 0, 84)}
+${window.CONFIG.cadeau !== 'billet' ? tap('billet', window.CONFIG.unCadeau.charAt(0).toUpperCase() + window.CONFIG.unCadeau.slice(1) + ', et son bateau à construire', `<g class="billet-in">${halo(0, 0, 84)}
   <g class="pli pli0"><use href="#billet" x="-50" y="-27" width="100" height="54"/></g>
   <g class="pli pli1"><path d="M-62 0q62 14 124 0q-8 30-62 30t-62-30z" fill="#A47B54" stroke="#6E4630" stroke-width="2"/><path d="M-44 10q44 9 88 0" fill="none" stroke="#6E4630" stroke-width="2" opacity=".6"/><use href="#billet" x="-44" y="-22" width="52" height="28"/></g>
   <g class="pli pli2"><path d="M8 4v-60" stroke="#6E4630" stroke-width="5" stroke-linecap="round"/><path d="M-62 0q62 14 124 0q-8 30-62 30t-62-30z" fill="#A47B54" stroke="#6E4630" stroke-width="2"/><use href="#billet" x="-44" y="-22" width="52" height="28"/></g>

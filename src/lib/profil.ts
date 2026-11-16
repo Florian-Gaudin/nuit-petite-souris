@@ -7,8 +7,21 @@ export type Genre = 'f' | 'g';
 export type TypeDoudou = 'ours' | 'lapin' | 'chat' | 'chien' | 'bebe' | 'licorne' | 'dinosaure' | 'linge' | 'aucun';
 export type Logement = 'maison' | 'appartement';
 export type Cachette = 'cheminee' | 'radiateur' | 'table-de-nuit' | 'bureau' | 'etagere' | 'coffre';
-// La somme offerte : une pièce (1 ou 2 €) ou un billet (5 à 50 €). Le nom « Billet » est resté pour les deux.
-export type Billet = 1 | 2 | 5 | 10 | 20 | 50;
+// Le cadeau : une pièce (1 ou 2 €), un billet (5 à 50 €), un petit paquet surprise (100) ou une boîte de chocolats (101).
+// Le nom « Billet » est resté pour tous : la valeur voyage telle quelle dans le QR code.
+export type Billet = 1 | 2 | 5 | 10 | 20 | 50 | 100 | 101;
+export const PAQUET = 100, CHOCOLATS = 101;
+export type NatureCadeau = 'piece' | 'billet' | 'paquet' | 'chocolat';
+export const natureCadeau = (v: Billet): NatureCadeau => (v === PAQUET ? 'paquet' : v === CHOCOLATS ? 'chocolat' : v <= 2 ? 'piece' : 'billet');
+// Pour les parents : « une pièce de 2 € », « un billet de 20 € », « un petit paquet surprise », « une boîte de chocolats »
+export function cadeauParents(v: Billet, vrai = false): string {
+  switch (natureCadeau(v)) {
+    case 'paquet': return vrai ? 'le petit paquet surprise' : 'un petit paquet surprise';
+    case 'chocolat': return vrai ? 'la boîte de chocolats' : 'une boîte de chocolats';
+    case 'piece': return (vrai ? 'la vraie pièce' : 'une pièce') + ` de ${v} €`;
+    default: return (vrai ? 'le vrai billet' : 'un billet') + ` de ${v} €`;
+  }
+}
 
 // Dents de lait, numérotation dentaire internationale :
 // 51-55 haut droit, 61-65 haut gauche, 71-75 bas gauche, 81-85 bas droit (côté de l'enfant),
@@ -37,8 +50,9 @@ export const ORDRE_DOUDOUS: readonly TypeDoudou[] = ['ours', 'lapin', 'chat', 'c
 export const LOGEMENTS: readonly Logement[] = ['maison', 'appartement'];
 // L'ordre compte pour les QR codes déjà imprimés (la cachette est codée par sa position) : on ajoute à la fin
 export const CACHETTES: readonly Cachette[] = ['cheminee', 'radiateur', 'table-de-nuit', 'bureau', 'etagere', 'coffre'];
-export const BILLETS: readonly Billet[] = [1, 2, 5, 10, 20, 50];
-export const estPiece = (v: Billet) => v <= 2;
+export const BILLETS: readonly Billet[] = [1, 2, 5, 10, 20, 50, PAQUET, CHOCOLATS];
+// Grammaire du cadeau : féminin pour la pièce et la boîte de chocolats (« elle sèche », « trouvée »)
+export const estPiece = (v: Billet) => v <= 2 || v === CHOCOLATS;
 
 // Où sèche le billet, dit par Quenotte (« … sèche sur la cheminée »)
 export const LIEU_CACHETTE: Record<Cachette, string> = {

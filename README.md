@@ -1,6 +1,6 @@
 # La nuit de la Petite Souris — l'appli
 
-Version personnalisable de « La nuit de la Petite Souris » : un espace parents crée le profil de l'enfant (prénom, doudou, dent tombée, billet, endroit du cadeau, ville, date), puis un QR code lance l'histoire de Quenotte, racontée pour cet enfant.
+Version personnalisable de « La nuit de la Petite Souris » : un espace parents crée le profil de l'enfant (prénom, doudou, dent tombée, cadeau, endroit du cadeau, ville, date), puis un QR code lance l'histoire de Quenotte, racontée pour cet enfant.
 
 Site : **https://florian-gaudin.github.io/nuit-petite-souris/**
 
@@ -14,7 +14,7 @@ Site : **https://florian-gaudin.github.io/nuit-petite-souris/**
 
 Le profil (`src/lib/profil.ts`) voyage après le « # » de l'adresse : `…/nuit-petite-souris/#p=CODE`. Cette partie de l'adresse n'est jamais envoyée au serveur.
 
-- **Contenu** : prénom, fille ou garçon, doudou (type et nom, dont le linge : lange ou serviette), frère ou sœur, nom du chat, dent de la nuit et dents déjà tombées (les 20 dents de lait), somme offerte (pièce de 1 ou 2 €, ou billet de 5 à 50 €), cachette du cadeau (dont le coffre à jouets), ville, maison ou appartement, cours d'eau le plus proche (facultatif), date de la nuit.
+- **Contenu** : prénom, fille ou garçon, doudou (type et nom, dont le linge : lange ou serviette), frère ou sœur, nom du chat, dent de la nuit et dents déjà tombées (les 20 dents de lait), cadeau (pièce de 1 ou 2 €, billet de 5 à 50 €, petit paquet surprise ou boîte de chocolats), cachette du cadeau (dont le coffre à jouets), ville, maison ou appartement, cours d'eau le plus proche (facultatif), date de la nuit.
 - **Compatibilité** : le logement et le cours d'eau ne sont écrits dans le code que s'ils diffèrent de « maison, sans cours d'eau ». Les QR codes imprimés avant leur ajout restent lisibles, et les progressions déjà enregistrées gardent leur identifiant.
 - **Format** : champs séparés par « | », choix fixes en chiffres, dents en masque, puis compression. Un profil complet tient en 260 caractères environ, soit un QR de 65 modules, lisible en A6.
 - **Sécurité** : chaque valeur est vérifiée ; les noms n'acceptent que lettres, chiffres, espaces et ponctuation simple. Un QR abîmé ou falsifié est ignoré.
@@ -22,7 +22,7 @@ Le profil (`src/lib/profil.ts`) voyage après le « # » de l'adresse : `…/nui
 
 ## Le voyage en huit scènes
 
-Château → forêt → place Ducale → montgolfière → **le cours d'eau de l'enfant** (le billet devient bateau) → **le lièvre** (à travers les champs jusqu'au panneau de la ville) → arrivée (maison ou immeuble, la girouette) → le chat (jardin ou palier).
+Château → forêt → place Ducale → montgolfière → **le cours d'eau de l'enfant** (le billet devient bateau ; la pièce, le paquet ou les chocolats voyagent dans une coquille de noix) → **le lièvre** (à travers les champs jusqu'au panneau de la ville) → arrivée (maison ou immeuble, la girouette) → le chat (jardin ou palier).
 
 Quenotte reste dans les Ardennes jusqu'à la montgolfière ; le cours d'eau peut donc être n'importe lequel, même à quelques kilomètres de chez l'enfant. Sans cours d'eau indiqué, l'histoire dit « la rivière ».
 
@@ -61,7 +61,7 @@ Page `…/parents/`, accessible depuis l'écran de choix et depuis le menu Préf
 1. **Verrou** : maintenir un bouton 3 secondes, pour que les enfants n'y tombent pas par hasard.
 2. **L'enfant** : prénom, fille ou garçon, doudou (8 choix), frère ou sœur.
 3. **La dent** : schéma des 20 dents de lait, vu de face ; la dent de la nuit et celles déjà tombées. Le schéma annonce l'histoire qui sera racontée : première dent, retrouvailles des jumelles, ou suite de la collection.
-4. **Le cadeau** : billet de 5, 10, 20 ou 50 €, et l'endroit où il sèche.
+4. **Le cadeau** : pièce de 1 ou 2 €, billet de 5, 10, 20 ou 50 €, petit paquet surprise ou boîte de chocolats, et l'endroit où il sèche (jamais « au chaud » pour les chocolats).
 5. **La maison** : la ville, avec les suggestions du service public des communes (geo.api.gouv.fr, seul le texte tapé est envoyé), et le nom du chat du voisin.
 6. **La nuit** : la date.
 
@@ -72,7 +72,7 @@ Page `…/parents/`, accessible depuis l'écran de choix et depuis le menu Préf
 L'histoire se raconte selon le profil (`src/lib/recit.ts`) :
 
 - **La dent** : trois histoires. Toute première dent (une place neuve l'attend au château), dent dont la jumelle est déjà tombée (les retrouvailles, texte d'origine quand une seule dent attendait), ou dent suivante (elle rejoint la collection). Le rang (« ta troisième dent »), le type de dent et le schéma des 20 dents du diplôme suivent.
-- **Le billet** : sa valeur dans les textes et sur les dessins, et sa couleur (5 € gris, 10 € rouge, 20 € bleu, 50 € orange).
+- **Le cadeau** : sa nature et sa valeur dans les textes (au bon genre) et sur les dessins, et sa couleur (5 € gris, 10 € rouge, 20 € bleu, 50 € orange ; paquet rouge au ruban doré ; boîte de chocolats dorée).
 - **La cachette** : « sur ta cheminée, bien éteinte », « sur ton bureau »… dans la Meuse, la caméra, la lettre et le mot A6.
 - **Fille ou garçon** : « Chère / Cher », « Amie / Ami de Quenotte », « Exploratrice / Explorateur », « Collectionneuse / Collectionneur ».
 - **Doudou** : présent ou non (sans doudou, le témoin du diplôme est la lune).

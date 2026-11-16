@@ -39,7 +39,7 @@ window.CERTIFICAT = (function () {
     <div class="dip-sous">de dent de lait perdue</div>
     <div class="dip-decerne">décerné à</div>
     <div class="dip-nom">${esc(C.enfant)}</div>
-    <p class="dip-texte">qui a perdu sa <b>${C.ordinalHtml} dent de lait</b>, ${esc(C.dentNom)}, qui a guidé ${esc(C.souris)} jusqu'à ${C.logement === 'appartement' ? 'son appartement' : 'sa maison'} et l'a aidée à passer devant le chat ${esc(C.chat)}.<br>${C.cadeau === 'piece' ? 'Sa pièce' : 'Son billet'} de ${C.euros} € a traversé ${esc(C.riviere)} en bateau.</p>
+    <p class="dip-texte">qui a perdu sa <b>${C.ordinalHtml} dent de lait</b>, ${esc(C.dentNom)}, qui a guidé ${esc(C.souris)} jusqu'à ${C.logement === 'appartement' ? 'son appartement' : 'sa maison'} et l'a aidée à passer devant le chat ${esc(C.chat)}.<br>${{ piece: 'Sa pièce de ' + C.euros + ' €', billet: 'Son billet de ' + C.euros + ' €', paquet: 'Son petit paquet surprise', chocolat: 'Sa boîte de chocolats' }[C.cadeau] || 'Son cadeau'} a traversé ${esc(C.riviere)} en bateau.</p>
     <div class="dip-etoiles" aria-label="${etoiles} étoiles découvertes sur ${total}">${etoilesSVG}<span>${etoiles} étoile${etoiles > 1 ? 's' : ''} découverte${etoiles > 1 ? 's' : ''} sur ${total}</span></div>
     <div class="dip-milieu">
       <div class="dip-machoire">${window.MACHOIRE(C.profil)}</div>

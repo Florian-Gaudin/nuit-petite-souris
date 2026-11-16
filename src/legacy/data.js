@@ -130,15 +130,19 @@ window.DATA = {
           demande: { cadeau: {
             billet: { txt: "J'ai une idée ! J'ai {unCadeau} pour toi, et je vais le plier pour en faire un bateau. Aide-moi : touche le billet pour le plier.", expr: "clin" },
             piece: { txt: "J'ai une idée ! J'ai {unCadeau} pour toi. Une pièce, ça coule… alors je vais lui construire un bateau. Aide-moi : touche la pièce pour commencer.", expr: "clin" },
+            paquet: { txt: "J'ai une idée ! J'ai {unCadeau} pour toi. Un paquet, ça prend l'eau… alors je vais lui construire un bateau. Aide-moi : touche le paquet pour commencer.", expr: "clin" },
+            chocolat: { txt: "J'ai une idée ! J'ai {unCadeau} pour toi. Des chocolats, ça ne nage pas… alors je vais leur construire un bateau. Aide-moi : touche la boîte pour commencer.", expr: "clin" },
           } },
           etapes: [
-            { cadeau: { billet: "Un pli…", piece: "Une coquille de noix…" } },
-            { cadeau: { billet: "Deux plis…", piece: "Un mât en brindille…" } },
-            { cadeau: { billet: "Trois plis… Le bateau est prêt !", piece: "Une feuille pour la voile… Le bateau est prêt !" } },
+            { cadeau: { billet: "Un pli…", piece: "Une coquille de noix…", paquet: "Une coquille de noix…", chocolat: "Une coquille de noix…" } },
+            { cadeau: { billet: "Deux plis…", piece: "Un mât en brindille…", paquet: "Un mât en brindille…", chocolat: "Un mât en brindille…" } },
+            { cadeau: { billet: "Trois plis… Le bateau est prêt !", piece: "Une feuille pour la voile… Le bateau est prêt !", paquet: "Une feuille pour la voile… Le bateau est prêt !", chocolat: "Une feuille pour la voile… Le bateau est prêt !" } },
           ],
           reponse: { cadeau: {
             billet: { txt: "Je monte à bord et hop, je traverse ! Le bateau se balance sous la lune. Oh, quelques gouttes ont mouillé le billet. Ne t'inquiète pas, je le ferai sécher{auChaud} sur {cachetteNom}.", expr: "joie" },
             piece: { txt: "Je monte à bord avec ta pièce et hop, je traverse ! Le bateau se balance sous la lune. Oh, quelques gouttes ont mouillé la pièce. Ne t'inquiète pas, je la ferai sécher{auChaud} sur {cachetteNom}.", expr: "joie" },
+            paquet: { txt: "Je monte à bord avec ton paquet et hop, je traverse ! Le bateau se balance sous la lune. Oh, quelques gouttes ont mouillé son joli papier. Ne t'inquiète pas, je le ferai sécher{auChaud} sur {cachetteNom}.", expr: "joie" },
+            chocolat: { txt: "Je monte à bord avec ta boîte de chocolats et hop, je traverse ! Le bateau se balance sous la lune. Oh, quelques gouttes ont mouillé la boîte. Ne t'inquiète pas, je la ferai sécher sur {cachetteNom}. Les chocolats, eux, sont restés bien à l'abri !", expr: "joie" },
           } },
         },
         bulles: { bulle: { txt: "Splash ! Un poisson me dit bonjour. Il a l'air de bien s'amuser, lui.", expr: "surprise" } },

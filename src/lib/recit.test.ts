@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { type Profil, PROFIL_EXEMPLE } from './profil';
+import { type Profil, PROFIL_EXEMPLE, encoderProfil, decoderProfil } from './profil';
 import { vocabulaire, resoudre, nombreEnLettres, ordinal } from './recit';
 
 // Trois enfants, trois histoires
@@ -48,6 +48,20 @@ describe('récit adaptatif', () => {
     expect(deux.tonCadeau).toBe('ta pièce de 2 euros'); expect(deux.Il).toBe('Elle'); expect(deux.sec).toBe('sèche'); expect(deux.CadeauTrouve).toBe('Pièce trouvée');
     expect(deux.lieuBillet).toBe('sur ton coffre à jouets'); expect(deux.cachetteEtiquette).toBe('COFFRE À JOUETS');
     expect(resoudre({ cadeau: { billet: 'B', piece: 'P' } }, deux)).toBe('P');
+  });
+
+  it("le petit paquet surprise et la boîte de chocolats : au bon genre, jamais « au chaud » pour les chocolats", () => {
+    const paquet = vocabulaire({ ...JUMELLE, billet: 100 }), choco = vocabulaire({ ...JUMELLE, billet: 101 });
+    expect(paquet.cadeau).toBe('paquet'); expect(paquet.unCadeau).toBe('un petit paquet surprise'); expect(paquet.TonCadeau).toBe('Ton petit paquet surprise');
+    expect(paquet.il).toBe('il'); expect(paquet.trouvee).toBe('trouvé'); expect(paquet.CadeauTrouve).toBe('Paquet trouvé'); expect(paquet.auChaud).toBe(' au chaud,');
+    expect(choco.cadeau).toBe('chocolat'); expect(choco.unCadeau).toBe('une boîte de chocolats'); expect(choco.tonCadeauCourt).toBe('ta boîte de chocolats');
+    expect(choco.Il).toBe('Elle'); expect(choco.sec).toBe('sèche'); expect(choco.CadeauTrouve).toBe('Chocolats trouvés');
+    expect(choco.auChaud).toBe(''); expect(choco.auChaudFin).toBe('');
+    expect(choco.eteint).toBe(', bien éteinte (heureusement pour les chocolats !)');
+    expect(vocabulaire({ ...JUMELLE, billet: 101, cachette: 'bureau' }).eteint).toBe('');
+    expect(resoudre({ cadeau: { billet: 'B', piece: 'P', paquet: 'Q', chocolat: 'C' } }, choco)).toBe('C');
+    // Le cadeau voyage dans le QR code
+    for (const billet of [100, 101] as const) expect(decoderProfil(encoderProfil({ ...JUMELLE, billet }))).toMatchObject({ ok: true, profil: { billet } });
   });
 
   it('aiguillages', () => {

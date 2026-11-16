@@ -1,6 +1,6 @@
 // Le récit adaptatif : le vocabulaire de l'histoire calculé à partir du profil, et le choix
 // de la bonne version d'un texte (selon la dent, le doudou, le frère ou la sœur, la cachette).
-import { type Cachette, type Profil, type Variante, LIEU_CACHETTE, NOMS_DENTS, arcade, estPiece, rangDent, varianteDent } from './profil';
+import { type Cachette, type NatureCadeau, type Profil, type Variante, LIEU_CACHETTE, NOMS_DENTS, arcade, estPiece, natureCadeau, rangDent, varianteDent } from './profil';
 
 const NOMBRES = ['zéro', 'une', 'deux', 'trois', 'quatre', 'cinq', 'six', 'sept', 'huit', 'neuf', 'dix', 'onze', 'douze', 'treize', 'quatorze', 'quinze', 'seize', 'dix-sept', 'dix-huit', 'dix-neuf', 'vingt'];
 const ORDINAUX = ['', 'première', 'deuxième', 'troisième', 'quatrième', 'cinquième', 'sixième', 'septième', 'huitième', 'neuvième', 'dixième', 'onzième', 'douzième', 'treizième', 'quatorzième', 'quinzième', 'seizième', 'dix-septième', 'dix-huitième', 'dix-neuvième', 'vingtième'];
@@ -16,6 +16,8 @@ export const COULEURS_BILLET: Record<number, { clair: string; moyen: string; fon
   10: { clair: '#F0C3BC', moyen: '#E4A39A', fonce: '#a8564b' },
   20: { clair: '#C3D4EE', moyen: '#9DB8E0', fonce: '#4d6fa3' },
   50: { clair: '#F7D2A3', moyen: '#F2B66B', fonce: '#b8752a' },
+  100: { clair: '#FFC857', moyen: '#D64045', fonce: '#8f2a30' }, // le paquet : papier rouge, ruban doré
+  101: { clair: '#6B3E26', moyen: '#E2B04A', fonce: '#8a5a1a' }, // la boîte de chocolats : carton doré, chocolats
 };
 
 // « ta cheminée », « ton radiateur »… et l'avertissement « bien éteinte » quand il le faut
@@ -29,6 +31,8 @@ const CACHETTE: Record<Cachette, { nom: string; eteint: string; etiquette: strin
 };
 
 function cadeauTexte(v: number, det: 'un' | 'ton'): string {
+  if (v === 100) return (det === 'un' ? 'un' : 'ton') + ' petit paquet surprise';
+  if (v === 101) return (det === 'un' ? 'une' : 'ta') + ' boîte de chocolats';
   const piece = v <= 2, unite = v === 1 ? 'euro' : 'euros';
   const article = piece ? (det === 'un' ? 'une' : 'ta') : det;
   return `${article} ${piece ? 'pièce' : 'billet'} de ${v} ${unite}`;
@@ -67,20 +71,22 @@ export function vocabulaire(p: Profil) {
     tonFrere: fr ? (fr.genre === 'f' ? 'ta sœur ' : 'ton frère ') + fr.prenom : '',
     lieuBillet: LIEU_CACHETTE[p.cachette],                    // « sur la cheminée »
     cachetteNom: CACHETTE[p.cachette].nom,                   // « ta cheminée »
-    eteint: CACHETTE[p.cachette].eteint,                     // « , bien éteinte »
-    auChaud: p.cachette === 'cheminee' || p.cachette === 'radiateur' ? ' au chaud,' : '', // « sécher au chaud, sur… »
-    auChaudFin: p.cachette === 'cheminee' || p.cachette === 'radiateur' ? ' au chaud' : '', // « sécher au chaud jusqu'au matin »
+    // « , bien éteinte » ; avec des chocolats, Quenotte s'en réjouit
+    eteint: CACHETTE[p.cachette].eteint + (CACHETTE[p.cachette].eteint && natureCadeau(p.billet) === 'chocolat' ? ' (heureusement pour les chocolats !)' : ''),
+    // « sécher au chaud, sur… » : jamais pour des chocolats
+    auChaud: (p.cachette === 'cheminee' || p.cachette === 'radiateur') && natureCadeau(p.billet) !== 'chocolat' ? ' au chaud,' : '',
+    auChaudFin: (p.cachette === 'cheminee' || p.cachette === 'radiateur') && natureCadeau(p.billet) !== 'chocolat' ? ' au chaud' : '',
     cachetteEtiquette: CACHETTE[p.cachette].etiquette,       // pour la caméra
     billetCouleurs: COULEURS_BILLET[p.billet],
-    // Le cadeau : un billet, ou une pièce (féminin, et « 1 euro » au singulier)
-    cadeau: (estPiece(p.billet) ? 'piece' : 'billet') as 'piece' | 'billet',
+    // Le cadeau : un billet, une pièce (féminin, et « 1 euro » au singulier), un petit paquet ou une boîte de chocolats (féminin)
+    cadeau: natureCadeau(p.billet) as NatureCadeau,
     unCadeau: cadeauTexte(p.billet, 'un'),                   // « un billet de 5 euros », « une pièce de 1 euro »
     tonCadeau: cadeauTexte(p.billet, 'ton'),                 // « ton billet de 5 euros », « ta pièce de 2 euros »
     TonCadeau: majuscule(cadeauTexte(p.billet, 'ton')),
-    tonCadeauCourt: estPiece(p.billet) ? 'ta pièce' : 'ton billet',
-    leCadeau: estPiece(p.billet) ? 'la pièce' : 'le billet',
-    monCadeau: estPiece(p.billet) ? 'ma pièce' : 'mon billet',
-    CadeauTrouve: estPiece(p.billet) ? 'Pièce trouvée' : 'Billet trouvé',
+    tonCadeauCourt: { piece: 'ta pièce', billet: 'ton billet', paquet: 'ton paquet', chocolat: 'ta boîte de chocolats' }[natureCadeau(p.billet)],
+    leCadeau: { piece: 'la pièce', billet: 'le billet', paquet: 'le paquet', chocolat: 'la boîte de chocolats' }[natureCadeau(p.billet)],
+    monCadeau: { piece: 'ma pièce', billet: 'mon billet', paquet: 'mon paquet', chocolat: 'ma boîte de chocolats' }[natureCadeau(p.billet)],
+    CadeauTrouve: { piece: 'Pièce trouvée', billet: 'Billet trouvé', paquet: 'Paquet trouvé', chocolat: 'Chocolats trouvés' }[natureCadeau(p.billet)],
     il: estPiece(p.billet) ? 'elle' : 'il',
     Il: estPiece(p.billet) ? 'Elle' : 'Il',
     le: estPiece(p.billet) ? 'la' : 'le',
@@ -103,10 +109,10 @@ export type Vocabulaire = ReturnType<typeof vocabulaire>;
 //   { fratrie: { aCote, ailleurs, non } }          frère ou sœur dans la même chambre, ailleurs, ou pas
 //   { deja: { une, plusieurs } }                   une seule dent déjà au château, ou plusieurs
 //   { logement: { maison, appartement } }          selon le logement de l'enfant
-//   { cadeau: { billet, piece } }                  un billet, ou une pièce de 1 ou 2 €
+//   { cadeau: { billet, piece, paquet, chocolat } } un billet, une pièce de 1 ou 2 €, un petit paquet, une boîte de chocolats
 // Une branche absente ou null : le texte est omis.
 type Bulle = { txt: string; expr?: string };
-export type Texte = string | Bulle | null | undefined | { variante: Partial<Record<Variante, Texte>> } | { doudou: { oui?: Texte; non?: Texte } } | { fratrie: { aCote?: Texte; ailleurs?: Texte; non?: Texte } } | { deja: { une?: Texte; plusieurs?: Texte } } | { logement: { maison?: Texte; appartement?: Texte } } | { cadeau: { billet?: Texte; piece?: Texte } };
+export type Texte = string | Bulle | null | undefined | { variante: Partial<Record<Variante, Texte>> } | { doudou: { oui?: Texte; non?: Texte } } | { fratrie: { aCote?: Texte; ailleurs?: Texte; non?: Texte } } | { deja: { une?: Texte; plusieurs?: Texte } } | { logement: { maison?: Texte; appartement?: Texte } } | { cadeau: { billet?: Texte; piece?: Texte; paquet?: Texte; chocolat?: Texte } };
 
 export function resoudre(t: Texte, v: Pick<Vocabulaire, 'variante' | 'aDoudou' | 'aFratrie' | 'fratrieACote' | 'nbDejaChiffre' | 'logement' | 'cadeau'>): string | Bulle | null {
   for (let garde = 0; garde < 10; garde++) {

@@ -731,7 +731,7 @@
         [1.9, () => { mv(cs2, 40, 200); mv(bat, 90, 236); SON.play('pas'); }],
         [3.8, () => { mv(cs2, 70, 56); mv(bat, 120, 92); SON.play('pas'); rm('cheminee'); }],
         [5, () => { mv(bat, 160, 84); }],
-        [5.8, () => { det('bateau', C.cadeau === 'piece' ? 'PIÈCE' : 'BILLET – SÈCHE', 38, 26, 30, 12); chuchote(D.camera.cheminee); }],
+        [5.8, () => { det('bateau', { piece: 'PIÈCE', billet: 'BILLET – SÈCHE', paquet: 'PAQUET', chocolat: 'CHOCOLATS' }[C.cadeau] || 'CADEAU', 38, 26, 30, 12); chuchote(D.camera.cheminee); }],
         [7.3, () => { cs2.classList.add('coucou'); }],
         [8.8, () => { cs2.classList.remove('coucou'); mv(cs2, -90, 200); SON.play('pas'); rm('bateau'); }],
         // La chambre : un plan large, puis un gros plan sur l'oreiller où l'on ne voit que la patte de Quenotte
