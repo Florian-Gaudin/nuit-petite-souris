@@ -35,6 +35,7 @@ window.ARDENNES = {
   // ---------- Les cartes « Le savais-tu ? » ----------
   // secret : le secret à la feuille de chêne qui lui correspond pendant le voyage (scène.élément), ou null
   cartes: [
+    // Dans l'ordre où on les découvre pendant l'histoire (la légende reste en tête)
     {
       id: "legende", titre: "La légende des quatre fils Aymon", secret: null, livre: true,
       texte: [
@@ -42,6 +43,16 @@ window.ARDENNES = {
         "Le Grand Marionnettiste raconte leur histoire en douze tableaux.",
       ],
       aVoir: "L'horloge du Grand Marionnettiste, à Charleville.",
+      photo: null,
+    },
+    {
+      id: "cacasse", titre: "La cacasse à cul nu", secret: "chateau.cuisine",
+      texte: [
+        "C'est un plat des Ardennes, avec un nom qui fait bien rire !",
+        "Une « cacasse », c'est une cocotte en fonte. Dedans mijotent des pommes de terre et des oignons, tout doucement.",
+        "Et « à cul nu » ? Autrefois, on la cuisinait souvent toute simple, sans rien d'autre : la cocotte était toute « nue » !",
+      ],
+      aGouter: "Dans les auberges des Ardennes, l'hiver.",
       photo: null,
     },
     {
@@ -65,6 +76,16 @@ window.ARDENNES = {
       photo: null,
     },
     {
+      id: "marionnette", titre: "La capitale des marionnettes", secret: "place.marionnettiste",
+      texte: [
+        "Charleville est la capitale mondiale de la marionnette.",
+        "Tous les deux ans, des marionnettistes du monde entier y viennent pour un grand festival.",
+        "Et sur une façade de la ville, le Grand Marionnettiste raconte une légende toutes les heures.",
+      ],
+      aVoir: "L'horloge du Grand Marionnettiste, de dix heures à vingt et une heures.",
+      photo: null,
+    },
+    {
       id: "rimbaud", titre: "Arthur Rimbaud, le poète", secret: "place.plume",
       texte: [
         "Arthur Rimbaud est né à Charleville, il y a plus de cent cinquante ans.",
@@ -81,6 +102,25 @@ window.ARDENNES = {
         ],
       },
       aVoir: "Le musée Arthur-Rimbaud, au bord de la Meuse, à Charleville.",
+      photo: null,
+    },
+    {
+      id: "galette", titre: "La galette au sucre", secret: "place.galette",
+      texte: [
+        "La galette au sucre est un gâteau des Ardennes : une pâte toute moelleuse, avec du sucre et du beurre dessus.",
+        "On la partage au goûter, ou le dimanche matin. Miam !",
+      ],
+      // La recette simplifiée, présentée comme le poème de Rimbaud
+      recette: {
+        titre: "La recette, avec un grand",
+        etapes: [
+          "Mélange de la farine, deux œufs, un verre de lait tiède, un peu de levure et une pincée de sucre.",
+          "Couvre la pâte d'un torchon et laisse-la gonfler au chaud, une bonne heure.",
+          "Étale-la dans un moule, puis creuse des petits trous du bout des doigts.",
+          "Glisse du beurre dans les trous, couvre de sucre, et au four jusqu'à ce que ce soit doré !",
+        ],
+      },
+      aGouter: "Chez les boulangers des Ardennes.",
       photo: null,
     },
     {
@@ -121,45 +161,6 @@ window.ARDENNES = {
         "Pendant quelques jours, des milliers de gens y chantent et y dansent.",
       ],
       aVoir: "Le festival du Cabaret Vert, chaque été, à Charleville.",
-      photo: null,
-    },
-    {
-      id: "marionnette", titre: "La capitale des marionnettes", secret: "place.marionnettiste",
-      texte: [
-        "Charleville est la capitale mondiale de la marionnette.",
-        "Tous les deux ans, des marionnettistes du monde entier y viennent pour un grand festival.",
-        "Et sur une façade de la ville, le Grand Marionnettiste raconte une légende toutes les heures.",
-      ],
-      aVoir: "L'horloge du Grand Marionnettiste, de dix heures à vingt et une heures.",
-      photo: null,
-    },
-    {
-      id: "galette", titre: "La galette au sucre", secret: "place.galette",
-      texte: [
-        "La galette au sucre est un gâteau des Ardennes : une pâte toute moelleuse, avec du sucre et du beurre dessus.",
-        "On la partage au goûter, ou le dimanche matin. Miam !",
-      ],
-      // La recette simplifiée, présentée comme le poème de Rimbaud
-      recette: {
-        titre: "La recette, avec un grand",
-        etapes: [
-          "Mélange de la farine, deux œufs, un verre de lait tiède, un peu de levure et une pincée de sucre.",
-          "Couvre la pâte d'un torchon et laisse-la gonfler au chaud, une bonne heure.",
-          "Étale-la dans un moule, puis creuse des petits trous du bout des doigts.",
-          "Glisse du beurre dans les trous, couvre de sucre, et au four jusqu'à ce que ce soit doré !",
-        ],
-      },
-      aGouter: "Chez les boulangers des Ardennes.",
-      photo: null,
-    },
-    {
-      id: "cacasse", titre: "La cacasse à cul nu", secret: "chateau.cuisine",
-      texte: [
-        "C'est un plat des Ardennes, avec un nom qui fait bien rire !",
-        "Une « cacasse », c'est une cocotte en fonte. Dedans mijotent des pommes de terre et des oignons, tout doucement.",
-        "Et « à cul nu » ? Autrefois, on la cuisinait souvent toute simple, sans rien d'autre : la cocotte était toute « nue » !",
-      ],
-      aGouter: "Dans les auberges des Ardennes, l'hiver.",
       photo: null,
     },
   ],
