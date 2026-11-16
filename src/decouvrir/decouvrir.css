@@ -26,8 +26,8 @@ body { background: radial-gradient(circle at 20% 0%, #2b356f 0, transparent 45%)
 .dc-qr #qr svg { display: block; width: 100%; height: auto; border-radius: 10px; }
 .dc-qr figcaption { margin-top: 6px; font-size: .9rem; color: #5a5470; }
 .dc-don { text-align: center; }
-.dc-btn-don { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 16px; border-radius: 999px; background: transparent; color: var(--rose); border: 1.5px solid rgba(242, 163, 181, .5); font: 700 .95rem var(--display); text-decoration: none; }
-.dc-btn-don:hover, .dc-btn-don:focus-visible { background: rgba(242, 163, 181, .12); outline: 3px solid var(--lanterne); outline-offset: 2px; }
+.dc-btn-don { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 16px; border-radius: 999px; background: transparent; color: #b8323a; border: 1.5px solid #d9a3a6; font: 700 .95rem var(--display); text-decoration: none; }
+.dc-btn-don:hover, .dc-btn-don:focus-visible { background: #fbe9e9; outline: 3px solid var(--lanterne); outline-offset: 2px; }
 .dc-pied { text-align: center; font-size: .85rem; }
 .dc-pied a { color: var(--muet); font-weight: 600; }
 .decouvrir a:focus-visible, .decouvrir button:focus-visible { outline: 3px solid var(--lanterne); outline-offset: 2px; }
