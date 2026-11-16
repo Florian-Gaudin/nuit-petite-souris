@@ -1137,7 +1137,6 @@ html.grand-texte .livre-ancien .livre-texte p{font-size:1.5rem}
 /* Le livre en plein écran : la page garde la même taille d'une page à l'autre */
 .carnet.mode-livre{padding:0;background:#1a0f08}
 .carnet.mode-livre .atelier-in{width:100%;max-width:none;height:100%;max-height:none;border-radius:0;overflow:hidden;background:radial-gradient(circle at 50% 35%,#4a2e1a,#1a0f08 75%);padding:max(10px,env(safe-area-inset-top,0px)) max(10px,env(safe-area-inset-right,0px)) max(10px,env(safe-area-inset-bottom,0px)) max(10px,env(safe-area-inset-left,0px))}
-.carnet.mode-livre .actions-dessin{display:none}
 .carnet.mode-livre .carnet-corps{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;gap:10px}
 .livre-haut{flex:none;display:flex;align-items:center;gap:8px;width:100%;max-width:720px;margin:0 auto}
 .livre-haut .carnet-chemin{flex:1;color:#e8d4b8}
@@ -1291,8 +1290,6 @@ html.grand-texte .livre-ancien .livre-texte p{font-size:1.5rem}
 .livre-ferme svg{display:block;width:100%;height:auto;filter:drop-shadow(0 8px 14px rgba(60,30,10,.4))}
 .livre-ferme:focus-visible{outline:3px solid var(--lanterne);outline-offset:4px;border-radius:6px}
 @keyframes livre-respire{from{transform:scale(1) rotate(-1deg)}to{transform:scale(1.04) rotate(1deg)}}
-.carte-invitation{margin:10px auto 0;max-width:34em;padding:10px 14px;border-radius:14px;background:#fff;border:2px solid #C9A227;font-weight:700;color:#7a1f1f;text-align:center}
-.btn-livre{width:100%;max-width:440px;min-height:56px;font-size:1.15rem}
 @media (prefers-reduced-motion:reduce){.carte-livre::after,.carte-livre .etincelle,.livre-ferme{animation:none}}
 
 /* En route vers la ville : Quenotte arrive à pied par la gauche, juste descendue de la montgolfière */
@@ -1488,3 +1485,44 @@ body.mode-choix .prefs-accueil{visibility:hidden}
 .decor-etoiles .chante .cst-lueur,.decor-etoiles .chante .pt-lueur{animation:etoile-chante-lueur .6s ease-out}
 @keyframes etoile-chante{0%{transform:scale(1.9)}100%{transform:scale(1.25)}}
 @keyframes etoile-chante-lueur{0%{opacity:1;transform:scale(2)}100%{transform:none}}
+
+/* ---------- Le carnet : la croix en haut, une barre de navigation en bas, le livre qui se touche ---------- */
+.carnet .atelier-in{position:relative}
+.carnet-x{position:sticky;top:0;z-index:3;align-self:flex-end;flex:none;width:44px;height:44px;margin:-4px -4px -40px 0;border-radius:50%;border:2px solid #e2d3ad;background:#fff;color:var(--encre);font:800 1.1rem var(--display);cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.carnet-x:hover,.carnet-x:focus-visible{border-color:var(--lanterne2);outline:3px solid var(--lanterne);outline-offset:1px}
+.carnet .carnet-corps>h2,.carnet .carnet-corps>.carnet-chemin{padding-right:48px}
+.carnet.mode-livre .carnet-x{position:absolute;top:max(10px,env(safe-area-inset-top,0px));right:max(10px,env(safe-area-inset-right,0px));margin:0;background:rgba(255,246,224,.92)}
+.carnet.mode-livre .livre-haut{padding-right:52px}
+.carnet-barre{position:sticky;bottom:-14px;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:10px;margin:6px -14px -14px;padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px));background:linear-gradient(rgba(255,246,224,0),var(--papier) 26%);}
+.barre-fleche,.barre-grille{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:52px;border-radius:999px;border:2px solid #3d4a95;background:#1b2250;color:#fff;font:800 1rem var(--display);cursor:pointer;box-shadow:0 4px 0 #0e1330}
+.barre-fleche{width:56px;flex:none}
+.barre-grille{flex:0 1 180px;padding:0 18px}
+.barre-fleche svg,.barre-grille svg{width:22px;height:22px}
+.barre-fleche:disabled{opacity:.3;cursor:default;box-shadow:none}
+.barre-fleche:not(:disabled):hover,.barre-grille:hover{background:#273066}
+.barre-fleche:focus-visible,.barre-grille:focus-visible{outline:3px solid var(--lanterne);outline-offset:2px}
+/* Le livre de la légende : vivant, il appelle le doigt */
+.livre-scene{display:flex;flex-direction:column;align-items:center;gap:12px}
+.livre-ferme{position:relative;perspective:900px}
+.livre-couv{display:block;transform-origin:0 50%;transition:transform .65s cubic-bezier(.5,0,.3,1),filter .65s}
+.livre-ferme:hover .livre-couv{transform:rotateY(-12deg)}
+.livre-ferme .livre-couv{animation:livre-entrouvre 4.5s ease-in-out infinite}
+@keyframes livre-entrouvre{0%,70%,100%{transform:none}80%{transform:rotateY(-16deg)}88%{transform:rotateY(-6deg)}}
+.livre-ferme.ouvre .livre-couv{animation:none;transform:rotateY(-95deg);filter:brightness(.8)}
+.livre-reflet{position:absolute;inset:4% 8% 4% 6%;overflow:hidden;pointer-events:none;border-radius:4px}
+.livre-reflet::after{content:'';position:absolute;top:0;bottom:0;left:-60%;width:40%;background:linear-gradient(100deg,transparent,rgba(255,236,160,.45),transparent);animation:carte-reflet 3.2s ease-in-out infinite}
+.livre-ferme .etincelle{position:absolute;width:10px;height:10px;pointer-events:none;background:radial-gradient(circle,#fff6c8 0 30%,transparent 70%);animation:etincelle 1.8s ease-in-out infinite}
+.livre-ferme .etincelle::before,.livre-ferme .etincelle::after{content:'';position:absolute;left:50%;top:50%;width:16px;height:2px;margin:-1px 0 0 -8px;background:#ffe9a0;border-radius:2px}
+.livre-ferme .etincelle::after{transform:rotate(90deg)}
+.livre-ferme svg.main-livre{position:absolute;right:-6%;bottom:-4%;width:58px;height:58px;opacity:0;pointer-events:none;filter:drop-shadow(0 3px 4px rgba(0,0,0,.35))}
+.livre-ferme.montre-main .main-livre{animation:main-tapote 1.4s ease-in-out infinite}
+@keyframes main-tapote{0%{opacity:0;transform:translate(14px,14px)}20%{opacity:1;transform:none}45%{transform:scale(.88)}60%{transform:none}100%{opacity:1;transform:none}}
+.livre-ferme.ouvre .main-livre,.livre-ferme.ouvre .etincelle{display:none}
+/* La bulle de Quenotte, qui désigne le livre */
+.bulle-quenotte{position:relative;display:flex;align-items:center;gap:10px;max-width:30em;padding:10px 14px 10px 10px;border-radius:18px;background:#fff;border:2px solid #C9A227;box-shadow:0 4px 12px rgba(120,80,20,.15)}
+.bulle-quenotte::before{content:'';position:absolute;top:-11px;left:50%;margin-left:-10px;border:10px solid transparent;border-top:0;border-bottom:11px solid #C9A227}
+.bulle-quenotte::after{content:'';position:absolute;top:-8px;left:50%;margin-left:-8px;border:8px solid transparent;border-top:0;border-bottom:9px solid #fff}
+.bulle-portrait{flex:none;width:46px;height:46px}
+.bulle-portrait svg{width:100%;height:100%}
+.bulle-quenotte p{margin:0;font-weight:700;color:#7a1f1f;line-height:1.35}
+@media (prefers-reduced-motion:reduce){.livre-ferme .livre-couv,.livre-reflet::after,.livre-ferme .etincelle,.livre-ferme.montre-main .main-livre{animation:none}.livre-ferme.montre-main .main-livre{opacity:1}}

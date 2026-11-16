@@ -188,3 +188,23 @@ test("le carnet : les cartes restent grisées jusqu'à leur découverte, le livr
   await page.locator('#btn-prefs').click();
   await expect(page.locator('#pref-carnet')).toBeHidden();
 });
+
+test("le carnet : une barre ‹ grille › en bas, la croix en haut ; le livre se touche pour s'ouvrir", async ({ page }) => {
+  await diplome(page, true);
+  await page.locator('#btn-carnet5').click();
+  await page.locator('.carte-ard', { hasText: 'légende' }).click();
+  // Plus de bouton « Ouvrir le livre » : c'est le livre qui se touche, et Quenotte y invite
+  await expect(page.locator('.btn-livre')).toHaveCount(0);
+  await expect(page.locator('.bulle-quenotte')).toContainText('Touche le livre');
+  await expect(page.locator('.carnet-barre [data-a="prec"]')).toBeDisabled();
+  await expect(page.locator('.carnet-barre [data-a="grille"]')).toContainText('1 / 10');
+  // Les flèches du clavier changent de carte, comme le glissement du doigt
+  await page.keyboard.press('ArrowRight');
+  await expect(page.locator('.carnet-barre [data-a="grille"]')).toContainText('2 / 10');
+  await page.locator('.carnet-barre [data-a="prec"]').click();
+  await page.locator('.livre-ferme').click();
+  await expect(page.locator('.livre-ancien')).toBeVisible();
+  // La croix ferme le carnet, même depuis le livre
+  await page.locator('.carnet-x').click();
+  await expect(page.locator('.carnet')).toHaveCount(0);
+});

@@ -38,7 +38,7 @@ window.ARDENNES = {
       id: "legende", titre: "La légende des quatre fils Aymon", secret: null, livre: true,
       texte: [
         "Il y a très, très longtemps, quatre frères et leur cheval magique, Bayard, ont vécu de grandes aventures dans les Ardennes.",
-        "Le Grand Marionnettiste raconte leur histoire en douze tableaux. Ouvre le livre !",
+        "Le Grand Marionnettiste raconte leur histoire en douze tableaux.",
       ],
       aVoir: "L'horloge du Grand Marionnettiste, à Charleville.",
       photo: null,

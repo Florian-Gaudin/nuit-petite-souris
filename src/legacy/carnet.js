@@ -3,6 +3,7 @@
 // Tous les textes sont dans src/contenu/ardennes.js. Ici : l'affichage et les illustrations (originales).
 window.CARNET = (function () {
   'use strict';
+  const RM = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const FEUILLE = 'M12 1C14 1 15 3 14.5 4.5C17 4 18 6 16 7.5C19 7.5 19.5 10 17 11C19.5 11.5 19 14.5 16 14C17 16 15.5 17.5 13.2 17L12.6 19V22.5H11.4V19L10.8 17C8.5 17.5 7 16 8 14C5 14.5 4.5 11.5 7 11C4.5 10 5 7.5 8 7.5C6 6 7 4 9.5 4.5C9 3 10 1 12 1Z';
   const feuille = (taille) => `<svg class="feuille-ico" width="${taille}" height="${taille}" viewBox="0 0 24 24" aria-hidden="true"><path d="${FEUILLE}" fill="#9BC53D" stroke="#3E6B1F"/></svg>`;
@@ -211,7 +212,7 @@ ${o.pierre ? '<rect x="-14" y="-40" width="28" height="18" rx="2" fill="#cbbfa8"
     const fen = document.createElement('div');
     fen.className = 'atelier carnet';
     fen.setAttribute('role', 'dialog'); fen.setAttribute('aria-modal', 'true'); fen.setAttribute('aria-label', AR.titre);
-    fen.innerHTML = `<div class="atelier-in"><div class="carnet-corps"></div><div class="actions-dessin"><button type="button" class="btn btn-or" data-a="fermer">Fermer le carnet</button></div></div>`;
+    fen.innerHTML = `<div class="atelier-in"><button type="button" class="carnet-x" data-a="fermer" aria-label="Fermer le carnet">✕</button><div class="carnet-corps"></div></div>`;
     document.body.appendChild(fen);
     const corps = fen.querySelector('.carnet-corps');
     const titreFocus = () => { const h = corps.querySelector('h2'); if (h) { h.setAttribute('tabindex', '-1'); h.focus({ preventScroll: true }); } corps.scrollTop = 0; fen.querySelector('.atelier-in').scrollTop = 0; };
@@ -237,17 +238,34 @@ ${(() => { const li = AR.cartes.map((c, i) => {
       vue = 'carte'; page = i; fen.classList.remove('mode-livre');
       const c = AR.cartes[i], ouvertes = AR.cartes.map((x, k) => decouverte(x, state) ? k : -1).filter(k => k >= 0);
       const rang = ouvertes.indexOf(i), avant = rang > 0 ? ouvertes[rang - 1] : -1, apres = rang >= 0 && rang < ouvertes.length - 1 ? ouvertes[rang + 1] : -1;
-      const photo = c.livre ? `<button type="button" class="livre-ferme" data-a="livre-image" aria-label="${esc(AR.livre.ouvrir)}">${livreFerme()}</button><p class="carte-invitation">${esc(T(AR.livre.invitation))}</p>` : c.photo && c.photo.fichier ? `<figure class="carte-photo"><img src="cartes/${esc(c.photo.fichier)}" alt="${esc(c.photo.description || c.titre)}">${c.photo.credit ? `<figcaption>${esc(c.photo.credit)}</figcaption>` : ''}</figure>` : `<div class="carte-dessin">${icone(c.id)}</div>`;
+      const photo = c.livre ? `<div class="livre-scene"><button type="button" class="livre-ferme" data-a="livre" aria-label="${esc(AR.livre.ouvrir)}"><span class="livre-couv">${livreFerme()}</span><span class="livre-reflet" aria-hidden="true"></span>${[[4, 18], [94, 30], [10, 82], [90, 76], [50, 2]].map(([x, y], k) => `<i class="etincelle" style="left:${x}%;top:${y}%;animation-delay:${(k * .5).toFixed(1)}s" aria-hidden="true"></i>`).join('')}<svg class="main-livre" viewBox="0 0 48 48" aria-hidden="true"><path d="M20 44c-5-3-9-9-10-14-.5-2.5 2-4 4-2l3 3V10a3 3 0 0 1 6 0v12a3 3 0 0 1 6 0v2a3 3 0 0 1 6 0v2a3 3 0 0 1 6 0v8c0 5-3 9-7 10z" fill="#fff" stroke="#3b2a00" stroke-width="2.2" stroke-linejoin="round"/></svg></button>
+<div class="bulle-quenotte"><span class="bulle-portrait" aria-hidden="true">${window.ART && window.ART.portrait ? window.ART.portrait() : ''}</span><p>${esc(T(AR.livre.invitation))}</p></div></div>` : c.photo && c.photo.fichier ? `<figure class="carte-photo"><img src="cartes/${esc(c.photo.fichier)}" alt="${esc(c.photo.description || c.titre)}">${c.photo.credit ? `<figcaption>${esc(c.photo.credit)}</figcaption>` : ''}</figure>` : `<div class="carte-dessin">${icone(c.id)}</div>`;
       const poeme = c.poeme ? `<blockquote class="carte-poeme"><p class="carte-poeme-titre">${esc(c.poeme.titre)}</p>${c.poeme.vers.map(v => `<span>${esc(v)}</span>`).join('')}</blockquote>` : '';
       const trouvee = c.secret && trouves.indexOf(c.secret) >= 0;
       corps.innerHTML = `<p class="carnet-chemin">Le savais-tu ? · ${rang + 1} / ${ouvertes.length}</p><h2>${esc(c.titre)}</h2>${photo}
 <div class="carte-texte" aria-live="polite">${c.texte.map(t => `<p>${esc(T(t))}</p>`).join('')}${poeme}${c.aVoir ? `<p class="carte-avoir"><strong>${esc(AR.aVoir)} :</strong> ${esc(c.aVoir)}</p>` : ''}${trouvee ? `<p class="carte-trouvee">${feuille(18)} ${esc(AR.trouve)}</p>` : ''}</div>
-<div class="carnet-nav">${c.livre ? `<button type="button" class="btn btn-or btn-livre" data-a="livre">📖 ${esc(AR.livre.ouvrir)}</button>` : ''}<div class="carnet-pages">${avant >= 0 ? '<button type="button" class="btn btn-petit" data-a="prec">◂ Précédente</button>' : ''}${apres >= 0 ? '<button type="button" class="btn btn-petit" data-a="suiv">Suivante ▸</button>' : ''}</div><button type="button" class="btn btn-petit" data-a="grille">Toutes les cartes</button></div>`;
+<nav class="carnet-barre" aria-label="Les cartes du carnet">
+  <button type="button" class="barre-fleche" data-a="prec" aria-label="Carte précédente"${avant >= 0 ? '' : ' disabled'}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  <button type="button" class="barre-grille" data-a="grille" aria-label="Toutes les cartes"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7.5" height="7.5" rx="2" fill="currentColor"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="2" fill="currentColor"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="2" fill="currentColor"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="2" fill="currentColor"/></svg><span>${rang + 1} / ${ouvertes.length}</span></button>
+  <button type="button" class="barre-fleche" data-a="suiv" aria-label="Carte suivante"${apres >= 0 ? '' : ' disabled'}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+</nav>`;
+      voisines = { avant, apres };
       const act = (a, f) => { const b = corps.querySelector(`[data-a="${a}"]`); if (b) b.onclick = f; };
       act('prec', () => { son('papier'); carte(avant); }); act('suiv', () => { son('papier'); carte(apres); });
-      act('grille', grille); act('livre', () => { son('page'); livre(0); }); act('livre-image', () => { son('page'); livre(0); });
+      act('grille', grille);
+      // Le livre : un toucher, la couverture s'ouvre, puis les pages ; une main vient le montrer si l'on hésite
+      act('livre', () => {
+        const b = corps.querySelector('.livre-ferme'); if (!b || b.classList.contains('ouvre')) return;
+        son('page'); b.classList.add('ouvre'); clearTimeout(mainT);
+        // Pendant que la couverture s'ouvre, les flèches et les glissements ne changent pas de carte
+        vue = 'ouverture';
+        if (RM) livre(0); else setTimeout(() => { if (fen.isConnected && vue === 'ouverture') livre(0); }, 650);
+      });
+      clearTimeout(mainT);
+      if (c.livre) mainT = setTimeout(() => { const b = corps.querySelector('.livre-ferme'); if (b && vue === 'carte') b.classList.add('montre-main'); }, 3000);
       titreFocus();
     };
+    let voisines = { avant: -1, apres: -1 }, mainT = null;
     // Les pages du livre : la couverture, les douze tableaux, la fin, puis la treizième scène
     const L = AR.livre, NB = L.tableaux.length + 3;
     const livre = p => {
@@ -272,7 +290,7 @@ ${(() => { const li = AR.cartes.map((c, i) => {
         // La lettrine est décorative : le texte complet reste lu tel quel par les lecteurs d'écran
         return `<p class="avec-lettrine"><span class="lettrine" aria-hidden="true">${esc(txt[0])}</span><span class="visuellement-cache">${esc(txt[0])}</span>${esc(txt.slice(1))}</p>`;
       };
-      corps.innerHTML = `<div class="livre-haut"><p class="carnet-chemin">Page ${page + 1} sur ${NB}</p><button type="button" class="btn btn-petit" data-a="grille">Toutes les cartes</button><button type="button" class="btn btn-petit" data-a="fermer-livre" aria-label="Fermer le carnet">✕</button></div>
+      corps.innerHTML = `<div class="livre-haut"><p class="carnet-chemin">Page ${page + 1} sur ${NB}</p><button type="button" class="btn btn-petit" data-a="grille">Toutes les cartes</button></div>
 <article class="livre-ancien${sens ? ' ' + sens : ''}">
   <div class="livre-page">
     ${heure ? `<p class="livre-heure">${esc(heure)}</p>` : ''}<h2>${esc(titre)}</h2>
@@ -285,7 +303,7 @@ ${(() => { const li = AR.cartes.map((c, i) => {
 <div class="carnet-pages livre-bas">${page > 0 ? '<button type="button" class="btn btn-petit" data-a="prec">◂ Précédente</button>' : ''}${page < NB - 1 ? `<button type="button" class="btn btn-or" data-a="suiv">${page === 0 ? 'Commencer ▸' : 'Suivante ▸'}</button>` : ''}</div>`;
       sens = '';
       const act = (a, f) => { const b = corps.querySelector(`[data-a="${a}"]`); if (b) b.onclick = f; };
-      act('prec', () => tourner(-1)); act('suiv', () => tourner(1)); act('grille', grille); act('fermer-livre', () => fermer());
+      act('prec', () => tourner(-1)); act('suiv', () => tourner(1)); act('grille', grille);
       // Tourner la page en la faisant glisser du doigt (vers la gauche : page suivante)
       titreFocus();
     };
@@ -300,19 +318,23 @@ ${(() => { const li = AR.cartes.map((c, i) => {
 
     // Tourner la page en glissant du doigt (ou de la souris), depuis n'importe quel endroit de l'écran du livre
     let x0 = null, y0 = 0;
+    const changerCarte = d => { const k = d > 0 ? voisines.apres : voisines.avant; if (k >= 0) { son('papier'); carte(k); } };
     const geste = (x, y) => {
-      if (x0 == null || vue !== 'livre') { x0 = null; return; }
+      if (x0 == null || vue === 'grille' || vue === 'ouverture') { x0 = null; return; }
       const dx = x - x0, dy = y - y0; x0 = null;
-      if (Math.abs(dx) > 35 && Math.abs(dx) > Math.abs(dy)) tourner(dx < 0 ? 1 : -1);
+      if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.4) { if (vue === 'livre') tourner(dx < 0 ? 1 : -1); else changerCarte(dx < 0 ? 1 : -1); }
     };
     fen.addEventListener('touchstart', e => { const t = e.touches[0]; x0 = t.clientX; y0 = t.clientY; }, { passive: true });
     fen.addEventListener('touchend', e => { const t = e.changedTouches[0]; geste(t.clientX, t.clientY); });
     fen.addEventListener('pointerdown', e => { if (e.pointerType === 'mouse' && !e.target.closest('button')) { x0 = e.clientX; y0 = e.clientY; } });
     fen.addEventListener('pointerup', e => { if (e.pointerType === 'mouse') geste(e.clientX, e.clientY); });
-    const fermer = () => { document.removeEventListener('keydown', clavier); fen.remove(); if (precedent && precedent.focus) try { precedent.focus({ preventScroll: true }); } catch (e) { } if (o.apres) o.apres(); };
+    const fermer = () => { clearTimeout(mainT); document.removeEventListener('keydown', clavier); fen.remove(); if (precedent && precedent.focus) try { precedent.focus({ preventScroll: true }); } catch (e) { } if (o.apres) o.apres(); };
     const clavier = e => {
       if (e.key === 'Escape') { e.preventDefault(); fermer(); return; }
-      if (vue === 'livre' && (e.key === 'ArrowRight' || e.key === 'ArrowLeft') && !(e.target && /INPUT|TEXTAREA/.test(e.target.tagName))) { e.preventDefault(); tourner(e.key === 'ArrowRight' ? 1 : -1); }
+      if (vue !== 'grille' && vue !== 'ouverture' && (e.key === 'ArrowRight' || e.key === 'ArrowLeft') && !(e.target && /INPUT|TEXTAREA/.test(e.target.tagName))) {
+        e.preventDefault(); const d = e.key === 'ArrowRight' ? 1 : -1;
+        if (vue === 'livre') tourner(d); else changerCarte(d);
+      }
     };
     document.addEventListener('keydown', clavier);
     fen.querySelector('[data-a="fermer"]').onclick = fermer;
