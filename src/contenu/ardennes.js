@@ -149,6 +149,16 @@ window.ARDENNES = {
         "Une « cacasse », c'est une cocotte en fonte. Dedans mijotent des pommes de terre, des oignons et des lardons.",
         "Et « à cul nu » ? Autrefois, on la cuisinait souvent sans viande : la cocotte était toute « nue » !",
       ],
+      // La recette simplifiée, présentée comme le poème de Rimbaud
+      recette: {
+        titre: "La recette, avec un grand",
+        etapes: [
+          "Dans la cocotte, fais dorer des lardons et deux oignons coupés.",
+          "Ajoute des pommes de terre en rondelles, du sel et du poivre.",
+          "Un verre d'eau, le couvercle, et laisse mijoter une heure, tout doucement.",
+          "Sers bien chaud, directement dans la cocotte !",
+        ],
+      },
       aGouter: "Dans les auberges des Ardennes, l'hiver.",
       photo: null,
     },

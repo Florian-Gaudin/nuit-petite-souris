@@ -1534,3 +1534,7 @@ body.mode-choix .prefs-accueil{visibility:hidden}
 .decor-chateau .cuisine.fume .vapeur path{animation:vapeur-nuage 1.6s ease-out}
 @keyframes vapeur-nuage{0%{opacity:.9;transform:none}100%{opacity:0;transform:translateY(-34px) scale(2.2)}}
 @media (prefers-reduced-motion:reduce){.decor-chateau .cuisine .vapeur path{animation:none}}
+/* La recette de la cacasse : le même encadré que le poème, en étapes numérotées */
+.carte-recette ol{margin:0;padding-left:1.4em;display:flex;flex-direction:column;gap:4px}
+.carte-recette li{line-height:1.45}
+.carte-recette li::marker{font-family:var(--display);font-weight:800;font-style:normal;color:#b9801a}
