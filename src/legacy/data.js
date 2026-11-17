@@ -186,19 +186,26 @@ window.DATA = {
     {
       id: "aiglemont", titre: "{ville}", heure: "02:25", ambiance: "aiglemont",
       intro: { logement: {
-        maison: { txt: "Merci, lièvre ! Me voici à {ville}. Toutes les maisons dorment et les volets sont fermés. Mais laquelle est la tienne ?", expr: "surprise" },
+        maison: { txt: "Merci, lièvre ! Me voici à {ville}. Presque toutes les maisons dorment, les volets sont fermés. Mais laquelle est la tienne ?", expr: "surprise" },
         appartement: { txt: "Merci, lièvre ! Me voici à {ville}. Tous les immeubles dorment et les fenêtres sont éteintes. Mais lequel est le tien ?", expr: "surprise" },
       } },
       oblig: ["girouette"], bonus: ["lampadaire", "fenetre"],
       elements: {
+        // Le guide : la girouette du clocher (maison), ou les réverbères de la rue (immeuble)
         girouette: {
-          demande: { txt: "Tu vois la girouette, sur le toit ? Fais-la tourner, elle va me guider !", expr: "clin" },
+          demande: { logement: {
+            maison: { txt: "Tu vois la girouette, tout en haut du clocher ? Fais-la tourner, elle va me guider !", expr: "clin" },
+            appartement: { txt: "Tu vois le réverbère éteint, juste à côté de moi ? Touche-le : il va allumer les autres et me montrer le chemin !", expr: "clin" },
+          } },
           reponse: { logement: {
-            maison: { txt: "Elle tourne, elle tourne… elle s'arrête. Ta maison est par là !", expr: "joie" },
-            appartement: { txt: "Elle tourne, elle tourne… elle s'arrête. Ton immeuble est par là !", expr: "joie" },
+            maison: { txt: "Elle tourne, elle tourne… elle s'arrête, le bec vers la grande maison. Ta maison est par là !", expr: "joie" },
+            appartement: { txt: "Les réverbères s'allument un par un… jusqu'à la porte de ton immeuble ! Ton immeuble est par là !", expr: "joie" },
           } },
         },
-        lampadaire: { bulle: { txt: "Ce lampadaire grésille comme s'il ronflait. Dors bien, lampadaire !", expr: "clin" } },
+        lampadaire: { bulle: { logement: {
+          maison: { txt: "Une balançoire ! Elle se balance toute seule dans le vent de la nuit… Demain, c'est toi qui iras tout là-haut !", expr: "joie" },
+          appartement: { txt: "Ce lampadaire grésille comme s'il ronflait. Dors bien, lampadaire !", expr: "clin" },
+        } } },
         fenetre: { bulle: { txt: "Là-haut, une petite lumière : la veilleuse de ta chambre ! Je vais m'approcher pour voir.", expr: "chuchote" } },
       },
       pont: { logement: {

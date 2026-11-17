@@ -488,3 +488,28 @@ test("le ruban : la pastille du diplôme apparaît une fois l'histoire terminée
   await expect(page.locator('.perle.perle-dip')).toHaveClass(/active/);
   await expect(page.locator('.perle[data-n="5"]')).not.toHaveClass(/active/);
 });
+
+test("la ville en immeubles : un toucher sur le premier réverbère allume tout le chemin jusqu'à la porte", async ({ page }) => {
+  const JADE = { ...structuredClone(LEO), logement: 'appartement' as const };
+  await ouvrir(page, '?reset=1#p=' + code(JADE));
+  await ouvrir(page, '?chapitre=1&scene=7#p=' + code(JADE));
+  await expect(page.locator('svg.decor-aiglemont.immeubles .reverb-chemin')).toHaveCount(4);
+  await expect(page.locator('.reverb-chemin.on')).toHaveCount(0);
+  for (let i = 0; i < 20 && !(await page.locator('.tap[data-el="girouette"].cible').count()); i++) {
+    if (await page.locator('#bandeau.attente .bandeau-suite').isVisible()) await page.locator('.bandeau-suite').click();
+    await page.waitForTimeout(250);
+  }
+  await page.locator('.tap[data-el="girouette"]').dispatchEvent('click');
+  await expect(page.locator('.reverb-chemin.on')).toHaveCount(4);
+  await expect(page.locator('svg.decor-aiglemont.porte-allumee')).toHaveCount(1);
+  await expect(page.locator('#bandeau-texte')).toContainText('jusqu\'à la porte de ton immeuble');
+});
+
+test("la ville en maisons : la balançoire remplace le lampadaire, sans changer le nombre d'étoiles", async ({ page }) => {
+  await ouvrir(page, '?reset=1#p=' + code(LEO));
+  await ouvrir(page, '?chapitre=1&scene=7#p=' + code({ ...structuredClone(LEO), logement: 'maison' as const }));
+  await expect(page.locator('svg.decor-aiglemont.maisons .balancoire')).toHaveCount(1);
+  await expect(page.locator('#secrets-n')).toHaveText('0/2');
+  await page.locator('.tap[data-el="lampadaire"]').dispatchEvent('click');
+  await expect(page.locator('#bandeau-texte')).toContainText('balançoire');
+});

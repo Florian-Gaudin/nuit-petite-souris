@@ -1597,3 +1597,25 @@ body.mode-choix .prefs-accueil{visibility:hidden}
 @keyframes vv-flotte{50%{transform:translateY(-14px) rotate(-1.5deg)}}
 @keyframes vv-entre{from{opacity:0}to{opacity:1}}
 @media (prefers-reduced-motion:reduce){.voyage-ville .vv-ballon-in{animation:none}}
+/* La ville, version maison : nuages qui passent, cheminées qui fument, lucioles, chat, balançoire */
+.decor-aiglemont .nuage-passe{animation:nuage-passe 70s linear infinite}
+@keyframes nuage-passe{from{transform:translateX(1100px)}to{transform:translateX(-200px)}}
+.decor-aiglemont .fumee{animation:fumee 4s ease-out infinite}
+@keyframes fumee{0%{transform:translateY(8px);opacity:0}30%{opacity:1}100%{transform:translate(10px,-24px);opacity:0}}
+.decor-aiglemont .luciole-v{animation:luciole-v 2.6s ease-in-out infinite}
+@keyframes luciole-v{0%,100%{opacity:.15;transform:none}50%{opacity:1;transform:translate(4px,-6px)}}
+.decor-aiglemont .queue-chat{transform-box:fill-box;transform-origin:0 100%;animation:queue-chat 3s ease-in-out infinite}
+@keyframes queue-chat{50%{transform:rotate(14deg)}}
+.decor-aiglemont .balance{transform-box:view-box;transform-origin:0 0;animation:balance-douce 4s ease-in-out infinite}
+@keyframes balance-douce{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg)}}
+.decor-aiglemont .tap.balance-on .balance{animation:balance-forte 3.2s ease-in-out}
+@keyframes balance-forte{0%{transform:rotate(0)}15%{transform:rotate(28deg)}35%{transform:rotate(-24deg)}55%{transform:rotate(16deg)}75%{transform:rotate(-9deg)}100%{transform:rotate(0)}}
+/* La ville, version immeuble : les réverbères du chemin, éteints puis allumés un par un */
+.decor-aiglemont .reverb-chemin .ampoule-r{fill:#4a4e5e;transition:fill .3s}
+.decor-aiglemont .reverb-chemin .lueur,.decor-aiglemont .reverb-chemin .flaque{opacity:0;transition:opacity .5s}
+.decor-aiglemont .reverb-chemin.on .ampoule-r{fill:#FFC857}
+.decor-aiglemont .reverb-chemin.on .lueur{opacity:1}
+.decor-aiglemont .reverb-chemin.on .flaque{opacity:.3}
+.decor-aiglemont .porte-vitre{transition:opacity .8s}
+.decor-aiglemont.porte-allumee .porte-vitre{opacity:1}
+@media (prefers-reduced-motion:reduce){.decor-aiglemont .nuage-passe,.decor-aiglemont .fumee,.decor-aiglemont .luciole-v,.decor-aiglemont .queue-chat,.decor-aiglemont .balance{animation:none}}

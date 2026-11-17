@@ -111,8 +111,20 @@ window.SCENES = (function () {
       epouvantail(g) { g.classList.remove('salue'); void g.getBBox(); g.classList.add('salue'); SON.play('grince'); },
     },
     aiglemont: {
-      girouette(g) { g.classList.remove('tourne'); void g.getBBox(); g.classList.add('tourne'); SON.play('girouette'); },
-      lampadaire() { SON.play('gresille'); },
+      girouette(g) {
+        if (svg.classList.contains('immeubles')) {
+          // Les réverbères s'allument l'un après l'autre jusqu'à la porte de l'immeuble
+          $$('.reverb-chemin', svg).forEach(r => r.classList.remove('on'));
+          $$('.reverb-chemin', svg).forEach((r, i) => setTimeout(() => { if (r.isConnected) { r.classList.add('on'); SON.play('allume', { volume: 0.5 }); } }, (RM ? 0 : 450) * i));
+          setTimeout(() => { if (svg) svg.classList.add('porte-allumee'); }, RM ? 0 : 1900);
+          return;
+        }
+        g.classList.remove('tourne'); void g.getBBox(); g.classList.add('tourne'); SON.play('girouette');
+      },
+      lampadaire(g) {
+        if (svg.classList.contains('maisons')) { g.classList.remove('balance-on'); void g.getBBox(); g.classList.add('balance-on'); SON.play('grince'); return; }
+        SON.play('gresille');
+      },
       fenetre() { SON.play('allume'); },
     },
     fenetre: {

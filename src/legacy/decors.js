@@ -187,18 +187,93 @@ ${A.souris(sx, sy, sw, 'class="quenotte trotte"')}
 
   // ---------- 5. Aiglemont ----------
   function aiglemont(nuit) {
-    const sx = 40, sy = 376, sw = 150;
-    const L = A.pointSouris(sx, sy, sw, 'lanterne');
-    const volet = (x, y) => `<rect x="${x}" y="${y}" width="26" height="36" fill="#2b3470"/><g fill="#3E7C8F" stroke="#2b5a66" stroke-width="1.5"><rect x="${x}" y="${y}" width="13" height="36"/><rect x="${x + 13}" y="${y}" width="13" height="36"/></g>`;
-    const maison = (x, y, w, h, toit) => `<rect x="${x}" y="${y - h}" width="${w}" height="${h}" fill="#E9E2D6"/><path d="M${x - 10} ${y - h}l${w / 2 + 10}-${h * 0.55} ${w / 2 + 10} ${h * 0.55}z" fill="${toit}"/><rect x="${x + w / 2 - 12}" y="${y - 50}" width="24" height="50" fill="#6E4630"/>${volet(x + 14, y - h + 18)}${volet(x + w - 40, y - h + 18)}`;
-    // Un immeuble : façade, fenêtres éteintes, toit plat, porte d'entrée
-    const immeuble = (x, base, w, haut, teinte) => {
-      let fen = '';
-      for (let y = haut + 22; y < base - 70; y += 46) for (let fx = x + 18; fx < x + w - 30; fx += 40) fen += `<rect x="${fx}" y="${y}" width="22" height="28" rx="2" fill="#2b3470"/>`;
-      return `<rect x="${x}" y="${haut}" width="${w}" height="${base - haut}" fill="${teinte}"/><rect x="${x - 6}" y="${haut - 8}" width="${w + 12}" height="10" fill="#8a8395"/>${fen}<rect x="${x + w / 2 - 16}" y="${base - 52}" width="32" height="52" fill="#4a3324"/><rect x="${x + w / 2 - 22}" y="${base - 58}" width="44" height="6" fill="#8a8395"/>`;
-    };
     const appart = window.CONFIG.logement === 'appartement';
-    // En ville : de hauts immeubles (ils montent plus haut que l'image, et se voient en entier quand l'écran est en hauteur)
+    // Quenotte arrive par le trottoir, en bas à gauche
+    const sx = appart ? 40 : 250, sy = appart ? 376 : 440, sw = appart ? 150 : 120;
+    const L = A.pointSouris(sx, sy, sw, 'lanterne');
+    const reverbere = (x, cls) => `<g class="${cls || ''}"><ellipse class="flaque" cx="${x}" cy="486" rx="70" ry="12" fill="#FFC857" opacity=".18"/><rect x="${x - 3}" y="330" width="6" height="146" fill="#4a4e5e"/><path d="M${x} 334q0-18 20-18h8" fill="none" stroke="#4a4e5e" stroke-width="5"/><path d="M${x + 18} 314h22l-4 10h-14z" fill="#3b4254"/><ellipse class="ampoule-r" cx="${x + 29}" cy="326" rx="9" ry="4" fill="#FFC857"/><circle class="lueur" cx="${x + 29}" cy="330" r="46" fill="url(#halo-or)"/></g>`;
+    if (appart) return immeubles(nuit, sx, sy, sw, L, reverbere);
+
+    // ---------- La version maison : une rue de maisons endormies, celle de l'enfant au centre ----------
+    const tuiles = (id, d, couleur, sombre) => `<clipPath id="${id}"><path d="${d}"/></clipPath><path d="${d}" fill="${couleur}"/>`
+      + `<g clip-path="url(#${id})" stroke="${sombre}" stroke-width="2" fill="none">${[...Array(16)].map((_, i) => `<path d="M0 ${150 + i * 13}h1000" stroke-dasharray="${14 + (i % 2) * 2} 4" stroke-dashoffset="${(i % 2) * 9}"/>`).join('')}</g>`;
+    const fumee = (x, y, k) => `<g class="fumee" style="animation-delay:${k * 1.3}s" fill="#cfd3ee"><circle cx="${x}" cy="${y}" r="7" opacity=".5"/><circle cx="${x + 6}" cy="${y - 14}" r="9" opacity=".4"/><circle cx="${x - 2}" cy="${y - 30}" r="11" opacity=".3"/></g>`;
+    const volets = (x, y, w, h, ouvert) => ouvert
+      ? `<rect x="${x - 12}" y="${y}" width="11" height="${h}" fill="#3E7C8F"/><rect x="${x + w + 1}" y="${y}" width="11" height="${h}" fill="#3E7C8F"/>`
+      : `<g fill="#3E7C8F" stroke="#2b5a66" stroke-width="1.5"><rect x="${x}" y="${y}" width="${w / 2}" height="${h}"/><rect x="${x + w / 2}" y="${y}" width="${w / 2}" height="${h}"/></g>`;
+    // Une fenêtre : éteinte (volets clos), avec une lampe de chevet, ou avec une silhouette
+    const fenetre = (x, y, w, h, quoi) => {
+      if (quoi === 'eteinte') return `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="#2b3470"/>${volets(x, y, w, h, false)}`;
+      const dedans = quoi === 'lampe'
+        ? `<path d="M${x + w * .6} ${y + h - 4}v-12" stroke="#6E4630" stroke-width="2"/><path d="M${x + w * .6 - 8} ${y + h - 16}h16l-4-10h-8z" fill="#d98a2b"/>`
+        : `<circle cx="${x + w * .4}" cy="${y + h * .45}" r="6" fill="#8a5a1a" opacity=".55"/><path d="M${x + w * .4 - 9} ${y + h}q9-16 18 0z" fill="#8a5a1a" opacity=".55"/>`;
+      return `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="#FFC857"/>${dedans}<path d="M${x} ${y + h / 2}h${w}M${x + w / 2} ${y}v${h}" stroke="#F3EFE6" stroke-width="2"/><rect x="${x}" y="${y}" width="${w}" height="${h}" fill="none" stroke="#F3EFE6" stroke-width="2.5"/>${volets(x, y, w, h, true)}`;
+    };
+    // Une maison : murs, toit de tuiles, gouttière et descente, cheminée qui fume, fenêtres, porte et son numéro
+    const maison = (o) => {
+      const { x, base, w, h, toit, sombre, mur, id, num, fen, chem } = o, haut = base - h, pic = haut - w * 0.36;
+      const dToit = `M${x - 14} ${haut}L${x + w / 2} ${pic}L${x + w + 14} ${haut}Z`;
+      return `<rect x="${x + chem}" y="${pic + 18}" width="20" height="${haut - pic}" fill="#8a5a4a"/><rect x="${x + chem - 3}" y="${pic + 12}" width="26" height="8" fill="#6b4438"/>${fumee(x + chem + 10, pic + 4, num % 3)}
+<rect x="${x}" y="${haut}" width="${w}" height="${h}" fill="${mur}"/><rect x="${x}" y="${haut}" width="10" height="${h}" fill="#000" opacity=".08"/>
+${tuiles('tuiles-' + id, dToit, toit, sombre)}
+<path d="M${x - 14} ${haut + 2}h${w + 28}" stroke="#7d8597" stroke-width="5" stroke-linecap="round"/><path d="M${x + w + 8} ${haut + 2}v${h - 4}" stroke="#7d8597" stroke-width="4"/>
+${fen.map(f => fenetre(x + f[0], haut + f[1], f[2], f[3], f[4])).join('')}
+<rect x="${x + w / 2 - 17}" y="${base - 58}" width="34" height="58" rx="3" fill="#6E4630"/><circle cx="${x + w / 2 + 9}" cy="${base - 28}" r="2.5" fill="#C9A227"/><rect x="${x + w / 2 - 22}" y="${base - 62}" width="44" height="6" fill="#8a7a6a"/>
+<rect x="${x + w / 2 + 22}" y="${base - 54}" width="18" height="14" rx="2" fill="#fff"/><text x="${x + w / 2 + 31}" y="${base - 43}" text-anchor="middle" font-family="Baloo 2, sans-serif" font-weight="800" font-size="11" fill="#3E7C8F">${num}</text>`;
+    };
+    const barriere = (x1, x2, y) => { let s = `<path d="M${x1} ${y - 10}h${x2 - x1}M${x1} ${y - 20}h${x2 - x1}" stroke="#E9E2D6" stroke-width="3"/>`; for (let x = x1; x <= x2; x += 13) s += `<path d="M${x} ${y}v-26l3-4 3 4v26z" fill="#F3EFE6"/>`; return s; };
+    const haie = (x, y, w) => `<g fill="#1E3F36">${[...Array(Math.ceil(w / 26))].map((_, i) => `<circle cx="${x + i * 26 + 13}" cy="${y}" r="17"/>`).join('')}</g><g fill="#2F5D50">${[...Array(Math.ceil(w / 26))].map((_, i) => `<circle cx="${x + i * 26 + 9}" cy="${y - 5}" r="9"/>`).join('')}</g>`;
+    const petite = (x, base, w, h, toit, allumee) => `<rect x="${x}" y="${base - h}" width="${w}" height="${h}" fill="#3a4170"/><path d="M${x - 6} ${base - h}l${w / 2 + 6}-${h * .5} ${w / 2 + 6} ${h * .5}z" fill="${toit}"/><rect x="${x + w * .35}" y="${base - h * .65}" width="${w * .3}" height="${h * .3}" fill="${allumee ? '#FFC857' : '#2b3470'}" opacity="${allumee ? .8 : 1}"/>`;
+    const nuages = [[-330, 4], [-210, 18], [-90, 9], [40, 27], [120, 2]].map(([y, d], i) => `<g class="nuage-passe" style="animation-delay:-${d * 3}s;animation-duration:${70 + (i % 3) * 25}s"><g transform="translate(0,${y})" fill="#cfd3ee" opacity="${.14 + (i % 3) * .05}"><ellipse cx="0" cy="0" rx="70" ry="18"/><ellipse cx="30" cy="-12" rx="40" ry="18"/><ellipse cx="-30" cy="-6" rx="34" ry="14"/></g></g>`).join('');
+const grandArbre = (x, s) => `<g transform="translate(${x},520) scale(${s})"><rect x="-10" y="-300" width="20" height="300" fill="#2a1a10"/><path d="M0-200L-40-240M0-150L36-190" stroke="#2a1a10" stroke-width="8" stroke-linecap="round"/>`
+      + `<g fill="#183b31"><circle cx="0" cy="-330" r="70"/><circle cx="-50" cy="-270" r="56"/><circle cx="48" cy="-260" r="58"/><circle cx="-20" cy="-410" r="58"/><circle cx="30" cy="-460" r="46"/><circle cx="0" cy="-200" r="44"/></g>`
+      + `<g fill="#1E3F36"><circle cx="-30" cy="-350" r="30"/><circle cx="34" cy="-300" r="28"/><circle cx="6" cy="-440" r="24"/></g></g>`;
+    const lucioles = [[300, 470], [668, 455], [880, 470], [140, 450], [560, 480]].map(([x, y], i) => `<circle class="luciole-v" style="animation-delay:${i * .7}s" cx="${x}" cy="${y}" r="3" fill="#ffe9a0"/>`).join('');
+    return `<svg class="decor decor-aiglemont maisons" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet" role="group" aria-label="Les maisons endormies, et le clocher avec sa girouette">
+${A.fond(nuit, 61, { x: 860, y: 70, r: 30 })}
+<!-- une grande lune, haut dans le ciel (visible quand l'écran est en hauteur), et une chouette sur sa branche -->
+<g transform="translate(640,-250)"><circle r="120" fill="url(#halo-or)" opacity=".5"/><circle r="52" fill="#FFF4D6"/><circle cx="-16" cy="-10" r="9" fill="#efe2bd"/><circle cx="14" cy="16" r="6" fill="#efe2bd"/><circle cx="20" cy="-18" r="4" fill="#efe2bd"/></g>
+${nuages}
+<!-- au loin : les collines, le clocher, les petites maisons -->
+<path d="M0 420Q200 360 420 380T820 350T1000 370V600H0Z" fill="#1b2a52"/>
+<g transform="translate(330,388)"><rect x="-22" y="-110" width="44" height="110" fill="#2a3256"/><path d="M-28-110L0-176 28-110z" fill="#3a4170"/><rect x="-7" y="-92" width="14" height="20" rx="7" fill="#FFC857" opacity=".7"/><circle cx="0" cy="-50" r="9" fill="#cfd3ee" opacity=".6"/></g>
+${petite(20, 410, 70, 50, '#5b4a6a', true)}${petite(110, 404, 60, 44, '#4a5478', false)}${petite(470, 396, 56, 40, '#5b4a6a', true)}${petite(760, 398, 64, 46, '#4a5478', false)}${petite(860, 404, 74, 50, '#5b4a6a', true)}
+<!-- les jardins, le trottoir et la rue pavée -->
+<rect x="0" y="400" width="1000" height="200" fill="#24483E"/><path d="M0 440Q500 425 1000 440V520H0Z" fill="#2F5D50" opacity=".55"/>
+<rect x="0" y="520" width="1000" height="22" fill="#6b6f82"/><path d="M0 522h1000" stroke="#8a8ea0" stroke-width="3"/>
+<rect x="0" y="542" width="1000" height="900" fill="#3a3f52"/>
+<g fill="#4a5064">${[...Array(60)].map((_, i) => `<rect x="${(i % 20) * 52 + (Math.floor(i / 20) % 2) * 26 - 10}" y="${548 + Math.floor(i / 20) * 18}" width="46" height="13" rx="4"/>`).join('')}</g>
+<circle class="lueur-maison" cx="562" cy="365" r="210" fill="url(#halo-or)"/>
+<!-- les trois maisons du premier plan ; celle de l'enfant, au centre, est la plus grande -->
+${maison({ x: 60, base: 512, w: 220, h: 140, toit: '#D64045', sombre: '#a8323a', mur: '#E9E2D6', id: 'g', num: 10, chem: 150, fen: [[24, 26, 34, 44, 'eteinte'], [160, 26, 34, 44, 'lampe']] })}
+${maison({ x: 720, base: 512, w: 230, h: 140, toit: '#D64045', sombre: '#a8323a', mur: '#e7d9c6', id: 'd', num: 14, chem: 40, fen: [[26, 26, 34, 44, 'silhouette'], [168, 26, 34, 44, 'eteinte']] })}
+${maison({ x: 360, base: 520, w: 300, h: 210, toit: '#3E7C8F', sombre: '#2b5a66', mur: '#F3EBDD', id: 'c', num: 12, chem: 52, fen: [[40, 30, 40, 50, 'eteinte'], [40, 118, 40, 50, 'lampe'], [222, 118, 40, 50, 'eteinte']] })}
+<!-- le muret et son chat, la boîte aux lettres, le nain de jardin, les haies, les barrières et le portillon -->
+<g transform="translate(286,500)"><rect x="0" y="-24" width="70" height="24" fill="#8a7a6a"/><path d="M0-12h70M23-24v12M46-12v12M12-12v12" stroke="#6b5d50" stroke-width="2"/>
+  <g transform="translate(46,-24)"><path d="M-8 0q-2-16 6-22l-2-8 6 5h6l6-5-2 8q8 6 6 22z" fill="#1F2235"/><path d="M14-2q14 2 12-14" fill="none" stroke="#1F2235" stroke-width="4" stroke-linecap="round" class="queue-chat"/><circle cx="1" cy="-20" r="1.6" fill="#FFC857"/><circle cx="7" cy="-20" r="1.6" fill="#FFC857"/></g></g>
+${haie(0, 518, 60)}${haie(940, 518, 70)}
+${barriere(64, 230, 524)}${barriere(290, 470, 524)}${barriere(550, 700, 524)}${barriere(724, 870, 524)}
+<g transform="translate(510,524)"><path d="M-38 0v-28h76v28" fill="none" stroke="#F3EFE6" stroke-width="3"/><path d="M-36-6h32M4-6h32M-36-20h32M4-20h32" stroke="#F3EFE6" stroke-width="3"/></g>
+<g transform="translate(452,524)"><rect x="-2" y="-30" width="4" height="30" fill="#6E4630"/><rect x="-11" y="-44" width="22" height="16" rx="6" fill="#D64045"/><rect x="-7" y="-38" width="14" height="2" fill="#7a1f26"/></g>
+<g transform="translate(612,522)"><path d="M-9 0l3-14h12l3 14z" fill="#3E7C8F"/><circle cx="0" cy="-18" r="6" fill="#f2c9a5"/><path d="M-6-18q6 10 12 0" fill="#fff"/><path d="M-7-22L0-38 7-22z" fill="#D64045"/></g>
+<!-- le vélo couché dans l'herbe, la niche -->
+<g transform="translate(200,486) rotate(-8)" fill="none" stroke="#c9d3e0" stroke-width="2.5"><circle cx="-16" cy="0" r="11"/><circle cx="16" cy="0" r="11"/><path d="M-16 0l10-16h18L16 0M-6-16L0 0h14M12-16l-3-6h6" stroke="#D64045"/></g>
+<g transform="translate(915,512)"><path d="M-22 0v-22l22-16 22 16V0z" fill="#8B5A3C"/><path d="M-26-20l26-20 26 20" fill="none" stroke="#6E4630" stroke-width="5" stroke-linecap="round"/><path d="M-9 0v-12a9 9 0 0 1 18 0V0z" fill="#2a1a10"/><text x="0" y="-26" text-anchor="middle" font-family="Baloo 2, sans-serif" font-weight="800" font-size="8" fill="#F3EFE6">REX</text></g>
+${grandArbre(50, 1.45)}${grandArbre(955, 1.55)}
+<!-- le réverbère du trottoir -->
+<g transform="translate(-10,36)">${reverbere(110)}</g>
+${lucioles}
+${tap('fenetre', 'La fenêtre de la chambre', `${halo(0, 0, 44)}<rect class="vitre" x="-20" y="-25" width="40" height="50" rx="3" fill="#FFC857"/>${window.DESSINS.silhouetteFenetre({ type: window.CONFIG.profil.doudou.type, fratrie: !!(window.CONFIG.profil.fratrie && window.CONFIG.profil.fratrie.dortACote) })}<path d="M-20 0h40M0-25v50" stroke="#F3EFE6" stroke-width="2.5"/><rect x="-20" y="-25" width="40" height="50" rx="3" fill="none" stroke="#F3EFE6" stroke-width="3"/><rect x="-32" y="-25" width="11" height="50" fill="#3E7C8F"/><rect x="21" y="-25" width="11" height="50" fill="#3E7C8F"/>`, 'transform="translate(562,365)"')}
+${tap('girouette', 'La girouette du clocher', `${halo(0, -24, 52)}<rect x="-2.5" y="-14" width="5" height="34" fill="#6b6560"/><g class="coq"><path d="M-34-24h68" stroke="#F3EFE6" stroke-width="4" stroke-linecap="round"/><path d="M24-34l12 10-12 10z" fill="#F3EFE6"/><path d="M-6-28q-6-18 8-22 10-2 14 8 2 8-6 14z" fill="#D64045"/><path d="M-10-46l4-8 4 8 4-8 2 10z" fill="#FFC857"/><circle cx="8" cy="-40" r="1.8" fill="#2B2B33"/></g>`, 'transform="translate(330,196)"')}
+${tap('lampadaire', 'La balançoire, sous le grand arbre', `${halo(0, 70, 60)}<rect x="-9" y="-40" width="18" height="170" fill="#4a3324"/><path d="M0-30L-62 0" stroke="#4a3324" stroke-width="9" stroke-linecap="round"/>
+  <g fill="#1E3F36"><circle cx="-30" cy="-70" r="46"/><circle cx="30" cy="-80" r="44"/><circle cx="0" cy="-110" r="46"/></g><g fill="#2F5D50"><circle cx="-42" cy="-90" r="24"/><circle cx="20" cy="-110" r="26"/><circle cx="36" cy="-60" r="22"/></g>
+  <g class="balancoire" transform="translate(-48,-6)"><g class="balance"><path d="M-12 0v86M12 0v86" stroke="#c9b9a0" stroke-width="2.5"/><rect x="-18" y="84" width="36" height="7" rx="2" fill="#8B5A3C"/></g></g>`, 'transform="translate(698,380)"')}
+${lueur(L.x, L.y, 100)}
+${A.souris(sx, sy, sw, 'class="quenotte trotte"')}
+</svg>`;
+  }
+  // ---------- La version immeuble : de hauts immeubles ; les réverbères tracent le chemin jusqu'à la porte ----------
+  function immeubles(nuit, sx, sy, sw, L, reverbere) {
     const tour = (x, w, haut, teinte, ombre, cols, k) => {
       let f = '';
       const pas = (w - 24) / cols;
@@ -208,44 +283,30 @@ ${A.souris(sx, sy, sw, 'class="quenotte trotte"')}
         if (r % 2 === 1) f += `<path d="M${(fx - 4).toFixed(0)} ${y + 30}h32M${(fx - 4).toFixed(0)} ${y + 20}h32" stroke="#4a4e5e" stroke-width="2"/><path d="M${(fx + 2).toFixed(0)} ${y + 20}v10M${(fx + 12).toFixed(0)} ${y + 20}v10M${(fx + 22).toFixed(0)} ${y + 20}v10" stroke="#4a4e5e" stroke-width="1.5"/>`;
       }
       return `<rect x="${x}" y="${haut}" width="${w}" height="${472 - haut}" fill="${teinte}"/><rect x="${x}" y="${haut}" width="10" height="${472 - haut}" fill="${ombre}" opacity=".6"/><rect x="${x - 6}" y="${haut - 10}" width="${w + 12}" height="12" fill="#6b6f82"/>${f}`
-        // le rez-de-chaussée : une porte vitrée et son auvent
-        + `<rect x="${x}" y="410" width="${w}" height="62" fill="${ombre}"/><rect x="${x + w / 2 - 20}" y="420" width="40" height="52" fill="#3a3f5c"/><rect x="${x + w / 2 - 16}" y="424" width="32" height="30" fill="#FFC857" opacity=".35"/><path d="M${x + w / 2 - 30} 418h60l-6-12h-48z" fill="#D64045"/>`;
+        + `<rect x="${x}" y="410" width="${w}" height="62" fill="${ombre}"/><rect x="${x + w / 2 - 20}" y="420" width="40" height="52" fill="#3a3f5c"/><rect class="${k === 2 ? 'porte-vitre' : ''}" x="${x + w / 2 - 16}" y="424" width="32" height="30" fill="#FFC857" opacity=".35"/><path d="M${x + w / 2 - 30} 418h60l-6-12h-48z" fill="#D64045"/>`;
     };
-    // Au loin, d'autres tours, quelques fenêtres encore allumées
     let loin = '';
     [[-30, 120, -240], [80, 90, -60], [160, 130, -320], [290, 100, -120], [380, 120, -260], [500, 90, -40], [580, 140, -380], [720, 110, -160], [820, 120, -300], [930, 100, -80]].forEach(([x, w, h], k) => {
       loin += `<rect x="${x}" y="${h}" width="${w}" height="${472 - h}" fill="${k % 2 ? '#1b2250' : '#212a5e'}"/>`;
       for (let y = h + 18; y < 440; y += 28) for (let fx = x + 12; fx < x + w - 14; fx += 22) if ((Math.sin(fx * 12.9898 + y * 78.233 + k * 3.7) * 43758.5453) % 1 > .86) loin += `<rect x="${fx}" y="${y}" width="9" height="12" fill="#FFC857" opacity=".55"/>`;
     });
-    // Un lampadaire de rue (décor) : son halo éclaire le trottoir
-    const reverbere = x => `<ellipse cx="${x}" cy="486" rx="70" ry="12" fill="#FFC857" opacity=".18"/><rect x="${x - 3}" y="330" width="6" height="146" fill="#4a4e5e"/><path d="M${x} 334q0-18 20-18h8" fill="none" stroke="#4a4e5e" stroke-width="5"/><path d="M${x + 18} 314h22l-4 10h-14z" fill="#3b4254"/><ellipse cx="${x + 29}" cy="326" rx="9" ry="4" fill="#FFC857"/><circle class="lueur" cx="${x + 29}" cy="330" r="46" fill="url(#halo-or)"/>`;
-    const batiments = appart
-      ? `${loin}
+    // Les réverbères du chemin : éteints au départ ; le premier, à côté de Quenotte, se touche
+    const CHEMIN = [230, 380, 530, 680];
+    return `<svg class="decor decor-aiglemont immeubles" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet" role="group" aria-label="Les immeubles endormis, et les réverbères éteints de la rue">
+${A.fond(nuit, 61, { x: 880, y: 80, r: 30 })}
+<circle class="lueur-maison" cx="735" cy="312" r="200" fill="url(#halo-or)"/>
+${loin}
 ${tour(10, 250, -150, '#cdbfae', '#a8998a', 4, 1)}${tour(296, 250, 92, '#d9c9b5', '#b3a28e', 4, 4)}${tour(600, 270, 156, '#e3d6c3', '#bcae99', 5, 2)}
-<!-- le trottoir, la bordure, la rue et son passage piéton -->
 <rect y="472" width="1000" height="30" fill="#6b6f82"/><path d="M0 474h1000" stroke="#8a8ea0" stroke-width="3"/><g stroke="#5d6174" stroke-width="2">${[60, 160, 260, 360, 460, 560, 660, 760, 860, 960].map(x => `<path d="M${x} 474v28"/>`).join('')}</g>
 <rect y="502" width="1000" height="8" fill="#4a4e5e"/><rect y="510" width="1000" height="200" fill="#262a38"/>
-<g fill="#e8e8ee" opacity=".55">${[0, 1, 2, 3, 4].map(i => `<rect x="${548 + i * 18}" y="516" width="10" height="84"/>`).join('')}</g>
+<g fill="#e8e8ee" opacity=".55">${[0, 1, 2, 3, 4].map(i => `<rect x="${848 + i * 18}" y="516" width="10" height="84"/>`).join('')}</g>
 <path d="M0 566h1000" stroke="#e8e8ee" stroke-width="4" stroke-dasharray="40 30" opacity=".35"/>
-<!-- un arbre dans sa grille, un banc, une poubelle -->
-<g transform="translate(560,472)"><rect x="-4" y="-60" width="8" height="60" fill="#5c3a24"/><circle cx="0" cy="-74" r="26" fill="#24483E"/><circle cx="-16" cy="-62" r="18" fill="#2F5D50"/><circle cx="16" cy="-60" r="18" fill="#1E3F36"/><rect x="-16" y="-2" width="32" height="4" fill="#4a4e5e"/></g>
 <g transform="translate(470,472)"><rect x="-28" y="-20" width="56" height="6" rx="2" fill="#8B5A3C"/><rect x="-28" y="-34" width="56" height="5" rx="2" fill="#8B5A3C"/><path d="M-22-14v14M22-14v14" stroke="#3b4254" stroke-width="4"/></g>
-<g transform="translate(900,472)"><rect x="-12" y="-34" width="24" height="34" rx="3" fill="#3E7C50"/><rect x="-14" y="-38" width="28" height="6" rx="2" fill="#2F5D50"/></g>
-${reverbere(392)}${reverbere(838)}`
-      : `${maison(80, 480, 150, 100, '#D64045')}
-${maison(330, 450, 170, 110, '#3E7C8F')}
-${maison(640, 400, 190, 130, '#D64045')}
-<rect x="920" y="300" width="100" height="70" fill="#E9E2D6"/><path d="M910 300l60-40 60 40z" fill="#3E7C8F"/>${volet(940, 318)}`;
-    return `<svg class="decor decor-aiglemont" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet" role="group" aria-label="${appart ? 'Les immeubles endormis' : 'Les maisons endormies'} et la girouette">
-${A.fond(nuit, 61, { x: 880, y: 80, r: 30 })}
-${appart ? '' : `<path d="M0 600V440Q300 400 600 350T1000 290V600Z" fill="#1E3F36"/>
-<path d="M0 600V480Q300 440 600 400T1000 340V600Z" fill="#24483E"/>
-<path d="M-20 580Q300 520 600 470T1020 400" fill="none" stroke="#1A2A26" stroke-width="56" stroke-linecap="round"/>`}
-<circle class="lueur-maison" cx="735" cy="${appart ? 312 : 380}" r="200" fill="url(#halo-or)"/>
-${batiments}
+<g transform="translate(990,472)"><rect x="-12" y="-34" width="24" height="34" rx="3" fill="#3E7C50"/><rect x="-14" y="-38" width="28" height="6" rx="2" fill="#2F5D50"/></g>
+${CHEMIN.slice(1).map((x, i) => reverbere(x, 'reverb-chemin r' + (i + 2))).join('')}
 ${tap('fenetre', 'La fenêtre de la chambre', `${halo(0, 0, 44)}<rect class="vitre" x="-18" y="-24" width="36" height="48" rx="3" fill="#FFC857"/>${window.DESSINS.silhouetteFenetre({ type: window.CONFIG.profil.doudou.type, fratrie: !!(window.CONFIG.profil.fratrie && window.CONFIG.profil.fratrie.dortACote) })}<path d="M-18 0h36M0-24v48" stroke="#F3EFE6" stroke-width="2.5"/><rect x="-18" y="-24" width="36" height="48" rx="3" fill="none" stroke="#F3EFE6" stroke-width="3"/>`, 'transform="translate(735,312)"')}
-${tap('girouette', 'La girouette', `${halo(0, -24, 52)}<rect x="-3" y="-14" width="6" height="40" fill="#6b6560"/><g class="coq"><path d="M-34-24h68" stroke="#F3EFE6" stroke-width="4" stroke-linecap="round"/><path d="M24-34l12 10-12 10z" fill="#F3EFE6"/><path d="M-6-28q-6-18 8-22 10-2 14 8 2 8-6 14z" fill="#D64045"/><path d="M-10-46l4-8 4 8 4-8 2 10z" fill="#FFC857"/><circle cx="8" cy="-40" r="1.8" fill="#2B2B33"/></g>`, appart ? 'transform="translate(420,66)"' : 'transform="translate(415,318)"')}
-${tap('lampadaire', 'Un lampadaire qui grésille', `${halo(0, -162, 52)}<rect x="-4" y="-150" width="8" height="150" fill="#6b6560"/><path d="M-20-150h40l-6-28h-28z" fill="#3b4254"/><circle class="lampe-lueur" cx="0" cy="-164" r="80" fill="url(#halo-or)"/><circle class="ampoule" cx="0" cy="-164" r="11" fill="#FFC857"/>`, 'transform="translate(230,470)"')}
+${tap('girouette', 'Le premier réverbère, éteint', `${halo(29, 360, 60)}<g class="reverb-chemin r1">${reverbere(0)}</g>`, `transform="translate(${CHEMIN[0]},0)"`)}
+${tap('lampadaire', 'Un lampadaire qui grésille', `${halo(0, -162, 52)}<rect x="-4" y="-150" width="8" height="150" fill="#6b6560"/><path d="M-20-150h40l-6-28h-28z" fill="#3b4254"/><circle class="lampe-lueur" cx="0" cy="-164" r="80" fill="url(#halo-or)"/><circle class="ampoule" cx="0" cy="-164" r="11" fill="#FFC857"/>`, 'transform="translate(920,470)"')}
 ${lueur(L.x, L.y, 100)}
 ${A.souris(sx, sy, sw, 'class="quenotte trotte"')}
 </svg>`;
