@@ -367,6 +367,20 @@ def etoile(rng, k):
     return instruments('etoile', [('celesta', 8, n, i * 0.14, 1.5, 78 - i * 4) for i, n in enumerate(['A5', 'C#6', 'E6'])] + [('glock', 9, 'A6', 0.45, 1.5, 44)], 1.7)
 
 
+# ---------------- La carte de France : feutrés, graves et chauds ----------------
+def toucheville(rng, k):              # l'étoile de la ville touchée : une harpe douce et grave, une nappe de cordes
+    notes = [('harpe', 46, n, i * 0.09, 2.2, 66 - i * 4) for i, n in enumerate(['D3', 'A3', 'D4'])]
+    notes += [('cordes', 48, n, 0.05, 1.8, 40) for n in ('D3', 'F#3', 'A3')]
+    return passe_bas(instruments('toucheville', notes, 2.0, salle=0.75), 3500)
+
+
+def arriveeville(rng, k):             # la souris arrive à la maison : un accord posé, chaud, qui s'éteint lentement
+    notes = [('harpe', 46, n, i * 0.12, 2.6, 64 - i * 3) for i, n in enumerate(['G2', 'D3', 'G3', 'B3'])]
+    notes += [('cordes', 48, n, 0.1, 2.4, 42) for n in ('G2', 'D3', 'B3')]
+    notes += [('celesta', 8, 'D5', 0.5, 1.6, 34)]
+    return passe_bas(instruments('arriveeville', notes, 2.8, salle=0.8), 3200)
+
+
 def allume(rng, k):
     return instruments('allume', [('harpe', 46, 'D5', 0, 2, 80), ('harpe', 46, 'A5', 0.18, 2, 74), ('glock', 9, 'D6', 0.3, 1.5, 36)], 1.6)
 
@@ -549,7 +563,7 @@ BRUITAGES = {
     'toc': (toc, 3), 'pointe': (pointe, 1), 'bip': (bip, 2), 'papier': (papier, 3), 'pli': (pli, 2), 'crayon': (crayon, 4),
     'plume': (plume, 1), 'bois': (bois, 1), 'buisson': (buisson, 3), 'croque': (croque, 2), 'grince': (grince, 1),
     'gresille': (gresille, 1), 'girouette': (girouette, 1), 'bruleur': (bruleur, 1), 'ressort': (ressort, 1),
-    'eau': (eau, 2), 'ronds': (ronds, 1), 'etoile': (etoile, 1), 'allume': (allume, 1), 'champignon': (champignon, 2),
+    'toucheville': (toucheville, 1), 'arriveeville': (arriveeville, 1), 'eau': (eau, 2), 'ronds': (ronds, 1), 'etoile': (etoile, 1), 'allume': (allume, 1), 'champignon': (champignon, 2),
     'luciole': (luciole, 1), 'filante': (filante, 1), 'harpe': (harpe, 1), 'accord': (accord, 1), 'fanfare': (fanfare, 1),
     'trompette': (trompette, 1), 'alerte': (alerte, 1), 'coup': (coup, 1), 'coup1': (coup1, 1), 'coup2': (coup2, 1),
     'coup3': (coup3, 1), 'tambour': (tambour, 1), 'contrebasse': (contrebasse, 1), 'flute': (flute, 1), 'pantin': (pantin, 1),

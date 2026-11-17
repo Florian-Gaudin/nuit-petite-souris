@@ -60,7 +60,7 @@ window.ARDENNES = {
       texte: [
         "La forêt des Ardennes est immense : elle continue en Belgique et au Luxembourg.",
         "Son animal emblème, c'est le sanglier.",
-        "Et le plus célèbre de tous s'appelle le Woinic : c'est le plus grand sanglier du monde, une statue de métal de dix mètres de haut avec son socle !",
+        "Et le plus célèbre de tous s'appelle le Woinic : c'est le plus grand sanglier du monde, une immense statue de métal !",
       ],
       aVoir: "Le Woinic, le sanglier géant des Ardennes.",
       photo: null,

@@ -1,7 +1,8 @@
 // Le plein écran automatique, sur toutes les pages : aucun navigateur ne l'autorise sans geste, on le demande donc
-// au premier toucher (et il ne survit pas à un changement de page : chaque page le redemande).
+// à chaque toucher tant qu'il n'est pas actif (il ne survit pas à un changement de page, ni au bouton retour).
 // Seule exception : « Plein écran » décoché à la main dans les réglages. Ce choix est gardé sur l'appareil jusqu'à ce
-// qu'on le recoche ; quitter le plein écran par la touche Échap ou le geste retour ne compte pas comme un refus.
+// qu'on le recoche ; quitter le plein écran par la touche Échap ou le geste retour ne compte pas comme un refus :
+// le toucher suivant le remet.
 // Dans l'appli installée (écran d'accueil, appli native), tout est déjà en plein écran : rien à faire.
 export const CLE_REFUS = 'souris.plein.refuse';
 
@@ -40,7 +41,7 @@ export function pleinEcranAuPremierToucher(): void {
     // Le bouton des réglages et son menu (où l'on peut décocher le plein écran) ne déclenchent rien
     const t = e.target as Element | null;
     if (t && t.closest && t.closest('.prefs')) return;
-    document.removeEventListener('click', entrer, true);
+    // À chaque toucher : sorti du plein écran autrement que par le menu (retour du téléphone, Échap), il revient
     if (pleinEcranActif() || pleinEcranRefuse()) return;
     entrerPleinEcran();
   };

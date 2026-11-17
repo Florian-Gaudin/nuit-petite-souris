@@ -158,18 +158,18 @@ test('le menu des réglages : « Mon diplôme » (un toucher le referme), « Mes
   await expect(page.locator('#pref-parents')).toBeVisible();
 });
 
-test('le menu, Mes trésors : chaque entrée n\'apparaît qu\'une fois l\'un de ses éléments découvert', async ({ page }) => {
+test('le menu, Mes trésors : chaque entrée reste grisée tant qu\'aucun de ses éléments n\'est découvert', async ({ page }) => {
   await ouvrir(page, '?reset=1#exemple');
   await ouvrir(page, '?chapitre=1&scene=0#exemple');
-  // Rien de découvert : pas de « Mes trésors » du tout
+  // Rien de découvert : les quatre trésors sont là, grisés et sans effet
   await page.locator('#btn-prefs').click();
-  await expect(page.locator('#groupe-tresors')).toBeHidden();
+  for (const id of ['#pref-diplome', '#pref-tresors', '#pref-carnet', '#pref-album']) await expect(page.locator(id)).toBeDisabled();
   await page.locator('#pref-fermer').click();
   // Un premier badge pendant le voyage : « Mes badges et mes étoiles » apparaît, pas encore le diplôme ni le carnet
   await page.evaluate(() => { const A = (window as any).APP; A.state.badges = ['detective']; });
   await page.locator('#btn-prefs').click();
-  await expect(page.locator('#pref-tresors')).toBeVisible();
-  for (const id of ['#pref-diplome', '#pref-carnet', '#pref-album']) await expect(page.locator(id)).toBeHidden();
+  await expect(page.locator('#pref-tresors')).toBeEnabled();
+  for (const id of ['#pref-diplome', '#pref-carnet', '#pref-album']) await expect(page.locator(id)).toBeDisabled();
   // L'étagère montre la médaille, sans voler la remise des badges de la fin
   await page.locator('#pref-tresors').click();
   await expect(page.locator('.fen-tresors .case-med[data-badge="detective"]:not(.attend):not(.a-gagner)')).toHaveCount(1);
@@ -179,6 +179,6 @@ test('le menu, Mes trésors : chaque entrée n\'apparaît qu\'une fois l\'un de 
   // Une carte du carnet trouvée : le carnet apparaît
   await page.evaluate(() => { const A = (window as any).APP; A.state.ardennes = ['chateau.cuisine']; });
   await page.locator('#btn-prefs').click();
-  await expect(page.locator('#pref-carnet')).toBeVisible();
-  await expect(page.locator('#pref-diplome')).toBeHidden();
+  await expect(page.locator('#pref-carnet')).toBeEnabled();
+  await expect(page.locator('#pref-diplome')).toBeDisabled();
 });

@@ -27,7 +27,7 @@ test('les trois coups ouvrent le théâtre ; le spectacle complet donne le badge
   test.setTimeout(120000);
   await troisCoups(page);
   const txt = page.locator('.th-txt');
-  await expect(txt).toContainText('treizième scène');
+  await expect(txt).toContainText("personne n'a jamais vue");
   await expect(page.locator('.th-affiche')).toContainText('Clémentine et la dent d');
   await expect(page.locator('.theatre')).not.toContainText('Pantoufle'); // le chat n'est pas encore connu à ce moment de l'histoire
   await page.waitForTimeout(400); await capture(page, 't0-ouverture');

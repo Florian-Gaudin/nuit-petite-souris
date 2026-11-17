@@ -104,7 +104,7 @@ ${tap('sanglier', 'Un sanglier endormi sous les fougères', `${halo(0, -14, 70)}
   <g class="zz" fill="#cfd3ee" font-family="Baloo 2, sans-serif" font-weight="800"><text x="58" y="-34" font-size="14">z</text><text x="68" y="-46" font-size="10">z</text></g>
 </g>${'<path transform="translate(-74,14) scale(0.7)" d="M0 0q-6-30 6-60M0-10l-16-10M0-22l-14-12M2-34l-12-12M3-46l-9-10M0-10l14-12M1-22l13-13M3-34l10-12" fill="none" stroke="#2F5D50" stroke-width="4" stroke-linecap="round"/><path transform="translate(96,14) scale(0.8)" d="M0 0q-6-30 6-60M0-10l-16-10M0-22l-14-12M2-34l-12-12M3-46l-9-10M0-10l14-12M1-22l13-13M3-34l10-12" fill="none" stroke="#2F5D50" stroke-width="4" stroke-linecap="round"/><path transform="translate(118,14) scale(0.65)" d="M0 0q-6-30 6-60M0-10l-16-10M0-22l-14-12M2-34l-12-12M3-46l-9-10M0-10l14-12M1-22l13-13M3-34l10-12" fill="none" stroke="#2F5D50" stroke-width="4" stroke-linecap="round"/>'}`, 'transform="translate(540,424) scale(1.6)"')}
 ${tap('luciole', 'Une luciole', `<animateMotion dur="18s" repeatCount="indefinite" path="M220 420C330 300 480 360 620 300S820 120 880 110S760 320 560 360S300 480 220 420"/>${halo(0, 0, 44)}<circle r="34" fill="transparent"/><circle class="lum" r="16" fill="url(#halo-or)"/><circle r="4.5" fill="#FFF4D6"/>`)}
-<rect class="dore" x="0" y="-1100" width="1000" height="1700" fill="#FFC857" opacity="0"/>
+<rect class="dore" x="0" y="-1100" width="1000" height="1700" fill="#9fb8a0" opacity="0"/>
 ${lueur(L.x, L.y, 120)}
 ${A.souris(sx, sy, sw, 'class="quenotte trotte"')}
 </svg>`;

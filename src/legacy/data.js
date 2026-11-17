@@ -65,9 +65,9 @@ window.DATA = {
           etapes: ["Oh, il s'allume ! Un…", "Deux…", "Trois champignons !"],
           reponse: { txt: "Ils s'allument quand on les touche ! Un, deux, trois champignons… et la forêt devient toute dorée. Merci, je vois enfin le chemin !", expr: "joie" },
         },
-        buisson: { bulle: { txt: "Bonsoir, petite souris ! Je suis le renard. Je veille sur la forêt pendant que tout le monde dort. Je sais où tu vas : continue tout droit, tu vas entendre l'eau.", expr: "surprise" } },
+        buisson: { bulle: { txt: "Bonsoir, petite souris ! Je suis le renard. Je veille sur la forêt pendant que tout le monde dort. Je sais où tu vas : continue tout droit, tu vas arriver sur une très belle place.", expr: "surprise" } },
         luciole: { bulle: { txt: "Cette luciole connaît tous les raccourcis ! Elle fait des zigzags pour me montrer la route.", expr: "clin" } },
-        sanglier: { bulle: { txt: "Chut… un sanglier ronfle sous les fougères ! C'est l'animal des Ardennes. Son cousin, le Woinic, est le plus grand sanglier du monde : dix mètres de haut !", expr: "chuchote" } },
+        sanglier: { bulle: { txt: "Chut… un sanglier ronfle sous les fougères ! C'est l'animal des Ardennes. Son cousin, le Woinic, est le plus grand sanglier du monde !", expr: "chuchote" } },
       },
       pont: { txt: "Au bout du chemin, j'aperçois les lumières de Charleville !", expr: "sourire" },
     },
@@ -265,7 +265,7 @@ window.DATA = {
   // Les secrets des Ardennes (feuille de chêne) : à part des étoiles, ils mènent au badge et aux cartes « Le savais-tu ? »
   ardennesTrouve: "Un secret des Ardennes !",
   ardennesTous: "Tous les secrets des Ardennes !",
-  indices: { txt: "Un conseil : dans chaque image, deux secrets brillent avec une petite étoile. Touche-les quand tu veux, chacun te donnera une étoile découverte !", expr: "clin" },
+  indices: { txt: "Un conseil : dans chaque image, il y a des secrets, avec des étoiles et des feuilles. Touche-les quand tu veux pour les découvrir !", expr: "clin" },
 
   // Petites phrases quand on découvre un bonus
   etoile: "Une étoile découverte !",
@@ -406,6 +406,12 @@ window.DATA = {
   diplome: { txt: "Bravo {enfant} ! Voici ton diplôme officiel, signé de ma patte. Tu peux l'imprimer avec un grand.", expr: "joie" },
   billetTrouve: { txt: "Tu l'as {trouvee} ? {Il} est {sec} maintenant. {Il} est à toi !", expr: "joie" },
 
+  // ---------- Entre les étoiles et la rivière : le voyage vers la ville de l'enfant ----------
+  voyage: {
+    depart: { txt: "Je quitte les Ardennes… Direction {ville} ! Ma montgolfière file au-dessus des forêts, des champs et des villages endormis.", expr: "joie" },
+    arrivee: { txt: "Regarde, tout là-bas : {ville} ! On y est presque.", expr: "surprise" },
+  },
+
   // ---------- La fin : le diplôme seul, puis la remise des badges (une seule fois), puis l'écran de fin ----------
   // {nbBadges}, {totalBadges}, {totalEtoiles}, {lesBadges} (« 3 badges », « 1 badge »), {lesEtoiles} et {trouvees}
   // (« 4 étoiles trouvées », « 1 étoile trouvée ») sont remplacés par l'application
@@ -461,7 +467,7 @@ window.DATA = {
     chat: "Le chat",
     dent: "La dent",
     rires: "Hi hi hi !",
-    ouverture: "Toc, toc, toc ! Mesdames, messieurs… et toi, {enfant} ! Bienvenue à la treizième scène : celle que personne n'a jamais vue.",
+    ouverture: "Toc, toc, toc ! Mesdames, messieurs… et toi, {enfant} ! Voici la scène que personne n'a jamais vue.",
     salut: "Voici ma troupe ! Touche chaque marionnette : elle te fera sa révérence.",
     salutReste: "Bravo ! Encore {n} marionnettes à saluer…",
     salutDernier: "Plus qu'une marionnette à saluer !",
@@ -480,9 +486,9 @@ window.DATA = {
     bayardFin: "Ils ont galopé toute la nuit pour saluer {enfant}. Touche Bayard : il te dira bonjour à sa façon !",
     final: { variante: { premiere: "Et voici la vedette de la soirée : la toute première dent de {enfant}, qui va monter au château !", jumelle: "Et voici la vedette de la soirée : la {ordinal} dent de {enfant}, qui va rejoindre sa jumelle au château !", suite: "Et voici la vedette de la soirée : la {ordinal} dent de {enfant}, qui va rejoindre la collection du château !" } },
     applaudir: "Applaudis la troupe ! Elle adore ça.",
-    encouragements: ["Plus fort ! La troupe t'entend à peine…", "Encore ! Le public se réveille !", "Bravo ! Bis ! Bis !", "Écoute la salle ! Encore un peu…", "Quelle ovation ! On continue ?"],
+    encouragements: ["Plus fort ! La troupe t'entend à peine…", "Encore ! Le public se réveille !", "Bravo ! Bravo !", "Écoute la salle ! Encore un peu…", "Quelle ovation ! On continue ?"],
     merci: "Merci, merci ! Quelle salle formidable ! Et l'histoire de Bayard en douze tableaux t'attend dans le carnet des Ardennes, après ton diplôme.",
-    cris: ["Bravo !", "Bis !", "Hourra !", "Youpi !", "Encore !", "Magnifique !"],
+    cris: ["Bravo !", "Hourra !", "Youpi !", "Encore !", "Magnifique !"],
     toc1: "Toc ! Le Grand Marionnettiste attend… trois coups ?",
     toc2: "Toc, toc ! Encore un coup !",
     boutons: { suite: "Suite", fil: "Tirer le fil", filQuenotte: "Le fil de Quenotte : fais-la avancer tout doucement", applaudir: "Applaudir", fermer: "Fermer le rideau", quitter: "Quitter le spectacle" },

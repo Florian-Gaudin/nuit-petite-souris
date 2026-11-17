@@ -189,10 +189,13 @@
       const surAccueil = document.body.classList.contains('mode-choix');
       const diplomeVu = !!State.fini && !surAccueil;
       const tresorsVu = (State.badges.length > 0 || nbEtoiles() > 0) && !surAccueil;
-      $('#pref-diplome').hidden = !diplomeVu; $('#pref-tresors').hidden = !tresorsVu; $('#pref-carnet').hidden = !carnetVu; $('#pref-album').hidden = !albumVu; $('#groupe-tresors').hidden = !carnetVu && !albumVu && !tresorsVu && !diplomeVu;
+      // Une entrée pas encore découverte reste visible, grisée et sans effet : on sait qu'il y a des trésors à trouver
+      const tresor = (id, vu) => { const b = $('#' + id); b.hidden = surAccueil; b.disabled = !vu; b.classList.toggle('pas-encore', !vu); b.setAttribute('aria-disabled', String(!vu)); };
+      tresor('pref-diplome', diplomeVu); tresor('pref-tresors', tresorsVu); tresor('pref-carnet', carnetVu); tresor('pref-album', albumVu);
+      $('#groupe-tresors').hidden = surAccueil;
       $('#pref-reset').innerHTML = A.icone('recommencer') + " Recommencer l'histoire"; $('#pref-reset').classList.remove('confirme');
       plierGrands(true);
-      plier('g-lire', 'reglages-liens', !$('#groupe-tresors').hidden && !document.body.classList.contains('mode-choix'));
+      plier('g-lire', 'reglages-liens', !document.body.classList.contains('mode-choix'));
     };
     // « Pour les grands » (espace parents, informations, accueil, recommencer) : replié pendant l'histoire
     const plier = (bouton, zone, plie) => { $('#' + zone).hidden = plie; $('#' + bouton).setAttribute('aria-expanded', String(!plie)); };
@@ -710,7 +713,7 @@
         if (!encore()) return;
         await window.OUVERTURE.zoom(svg, RM); if (!encore()) return;
         await window.OUVERTURE.voyage(svg, RM, ms => wait(ms), encore); if (!encore()) return;
-        sec.classList.add('arrive'); SON.play('etoile');
+        sec.classList.add('arrive'); SON.play('arriveeville');
         ensuite();
       };
       const dit = NARR.dire(B(D.origine));
@@ -720,7 +723,7 @@
       let touche = false;
       const toucher = async () => {
         if (touche) return; touche = true;
-        SON.unlock(); SON.play('filante');
+        SON.unlock(); SON.play('toucheville');
         sec.classList.add('trace-fait', 'vole'); $('.main-aide', r).classList.remove('on');
         // Le chemin se dessine du château jusqu'à l'étoile
         const trace = $('.trace', r);
@@ -751,24 +754,24 @@
     if (m && m.profil) window.ALBUM.ranger(m.profil); // la dernière histoire de l'appareil est toujours dans l'album
     root.className = 'scene choix-scene';
     // La carte de l'espace parents (en jaune quand aucune histoire n'est encore créée), l'exemple en bleu discret avec la vidéo
-    const PARENTS = principale => `<a class="carte-choix parents${principale ? ' principale' : ''}" href="parents/"><span class="ic">${A.icone('famille')}</span><span><b>${principale ? "Créer l'histoire de mon enfant" : 'Espace parents'}</b><small>${principale ? "Dans l'espace parents, en quelques minutes" : "Préparer ou modifier l'histoire personnalisée"}</small></span></a>`;
+    const PARENTS = principale => `<a class="carte-choix parents${principale ? ' principale' : ''}" href="parents/"><span class="ic">${A.icone('famille')}</span><span><b>${principale ? "Créer l'histoire de mon enfant" : 'Espace parents'}</b><small>${principale ? "En quelques minutes" : "Préparer ou modifier l'histoire personnalisée"}</small></span></a>`;
     const VOYAGE = `<a class="carte-choix voyage" href="#exemple"><span class="ic">${A.icone('etoile')}</span><span><b>Découvrir l'aventure</b><small>Pour tester l'aventure avec l'histoire de ${esc(exemple)}</small></span></a><a class="lien-video" href="decouvrir/"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><path d="M10 8l6 4-6 4z" fill="currentColor"/></svg>Voir la vidéo de présentation</a>`;
     root.innerHTML = `<section class="ecran-choix${m ? ' avec-histoire' : ''}">
   <svg class="choix-ciel" viewBox="0 0 400 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${ETOILES_CHOIX}</svg>
   <div class="choix-haut">
     <img class="choix-logo" src="icones/icone.svg" alt="" width="128" height="128">
     <h1 class="titre">La nuit de la Petite Souris</h1>
-    ${m ? '' : `<p class="choix-accroche">Une histoire du soir personnalisée pour la nuit où votre enfant perd une dent.</p>`}
+    ${m ? '' : `<p class="choix-accroche">Une histoire personnalisée pour la nuit où votre enfant perd une dent.</p>`}
   </div>
   ${m ? '' : `<ol class="choix-etapes" aria-label="Comment ça marche">
-    <li><span class="ic">${A.icone('crayon')}</span>Vous créez l'histoire<small>prénom, dent, ville</small></li>
+    <li><span class="ic">${A.icone('crayon')}</span>Vous créez l'histoire</li>
     <li><span class="ic">${QR_ICONE}</span>Vous imprimez ou affichez le QR code</li>
     <li><span class="ic">${A.icone('etoile')}</span>Votre enfant le scanne au réveil</li>
   </ol>`}
   <nav class="choix-cartes" aria-label="Choisir son parcours">
     ${m ? `<a class="carte-choix reprendre principale" href="#p=${m.code}"><span class="ic">${A.icone('lanterne')}</span><span><b>L'histoire de ${esc(m.prenom)}</b><small>Retrouver Quenotte là où on l'a laissée</small></span></a>
     <details class="autres-options"><summary>Autres options<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></summary><div class="autres-cartes">${PARENTS(false)}${VOYAGE}</div></details>`
-    : `${PARENTS(true)}<p class="choix-confiance">Gratuit · sans publicité · sans compte · rien ne quitte votre téléphone</p>${VOYAGE}`}
+    : `${PARENTS(true)}<p class="choix-confiance">Gratuit · sans publicité · sans compte</p>${VOYAGE}`}
   </nav>
   ${lireAlbum().length ? `<button class="lien-album" id="lien-album">${A.icone('etoile')} ${esc(T(D.album.titre))}</button>` : ''}
   <p class="don-accueil">${window.DON_POSSIBLE ? `<a class="lien-don" href="parents/#don"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z" fill="currentColor"/></svg>Faire un don</a><span aria-hidden="true">·</span>` : ''}<a class="lien-infos" href="infos/">Informations · confidentialité</a></p>
@@ -1754,9 +1757,10 @@ ${places.map(dent).join('')}
   // Plein écran automatique au premier toucher (une seule tentative : si on en sort, les réglages permettent d'y revenir),
   // sauf s'il a été décoché à la main dans les réglages (voir src/lib/pleinEcran.ts, commun à toutes les pages)
   if (PLEIN.api && !PLEIN.appli) {
+    // À chaque toucher (pas seulement le premier) : si on est sorti du plein écran autrement que par le menu
+    // (le bouton retour du téléphone, Échap…), il revient ; seul « Plein écran » décoché dans le menu l'arrête
     const autoPlein = e => {
       if (e.target && e.target.closest && e.target.closest('.prefs')) return;
-      document.removeEventListener('click', autoPlein, true);
       if (!PLEIN.actif() && !window.PLEIN_ECRAN.refuse()) PLEIN.entrer();
     };
     document.addEventListener('click', autoPlein, true);

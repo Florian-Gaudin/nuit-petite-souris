@@ -96,7 +96,7 @@ window.SCENES = (function () {
         const pt = $(`.pt-${etape}`, g); if (pt) pt.classList.add('allume');
         if (etape > 1) { const t = $(`.trait-${etape - 1}`, g); if (t) t.classList.add('on'); }
         SON.note(NOTES_DENT[(etape - 1) % NOTES_DENT.length]); // chaque étoile chante une note du thème
-        if (etape >= P.length) { const t = $(`.trait-${P.length}`, g); if (t) t.classList.add('on'); g.classList.add('dessine'); return; } // pas de fanfare : la mélodie des étoiles suffit
+        if (etape >= P.length) { const t = $(`.trait-${P.length}`, g); if (t) t.classList.add('on'); g.classList.add('dessine'); rejouerMelodie(NOTES_DENT, $$('.pt', g)); return; } // pas de fanfare : la mélodie se rejoue
         const suivant = P[etape], h = $('.halo', g);
         if (h) { h.setAttribute('cx', suivant[0]); h.setAttribute('cy', suivant[1]); }
         $$('.pt', g).forEach(p => p.classList.toggle('prochaine', p.classList.contains(`pt-${etape + 1}`)));
@@ -133,6 +133,16 @@ window.SCENES = (function () {
   // (l'étoile suivante qui palpite) n'arrive qu'après quelques secondes d'hésitation. Des étoiles leurres scintillent.
   // On trace sans lever le doigt, ou on touche les étoiles l'une après l'autre (au clavier : Entrée).
   const THEME_ETOILES = [76, 81, 83, 84, 83, 81, 79, 81, 83, 76];
+  // Une constellation réussie : sa mélodie se rejoue d'un trait, un peu plus vite, en faisant scintiller ses étoiles
+  let melodieT = [];
+  function rejouerMelodie(notes, etoiles) {
+    melodieT.forEach(clearTimeout); melodieT = [];
+    notes.forEach((n, i) => melodieT.push(setTimeout(() => {
+      SON.note(n);
+      const e = etoiles && etoiles[i % etoiles.length];
+      if (e) { e.classList.remove('chante'); void e.getBBox(); e.classList.add('chante'); }
+    }, 700 + i * 230)));
+  }
   const NOTES_DENT = THEME_ETOILES.slice(0, 7);
   const CONSTELLATIONS = [
     // place : [x, y, échelle] dans le ciel pendant le jeu (agrandies et centrées)
@@ -163,7 +173,7 @@ window.SCENES = (function () {
       const local = e => { const pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY; return pt.matrixTransform(g.getScreenCTM().inverse()); };
       const indice = () => { clearTimeout(hesiteT); hesiteT = setTimeout(() => { if (pts[n]) pts[n].classList.add('prochaine'); }, HESITATION); };
       const ligne = (a, b) => { const l = document.createElementNS(NS, 'line'); l.setAttribute('class', 'cst-trait'); l.setAttribute('x1', a[0]); l.setAttribute('y1', a[1]); l.setAttribute('x2', b[0]); l.setAttribute('y2', b[1]); traits.appendChild(l); };
-      const fin = () => { arret.abort(); clearTimeout(hesiteT); fil.style.display = 'none'; ligne(c.pts[c.pts.length - 1], c.pts[0]); g.classList.add('dessine'); fini(g); };
+      const fin = () => { arret.abort(); clearTimeout(hesiteT); fil.style.display = 'none'; ligne(c.pts[c.pts.length - 1], c.pts[0]); g.classList.add('dessine'); rejouerMelodie(c.notes.slice(0, pts.length), pts); fini(g); };
       const relier = () => {
         if (mien !== jeton || n >= pts.length) return;
         pts[n].classList.remove('prochaine'); pts[n].classList.add('allume');
@@ -242,7 +252,7 @@ window.SCENES = (function () {
       await NARR.dire(bulle(ciel[c.cle].demande), { vite: true }); if (mien !== jeton) return;
       const g = await tracer(c, mien); if (mien !== jeton) return;
       faites.push(g); // pas de son de succès : la mélodie des étoiles suffit, l'immersion reste
-      await wait(RM ? 100 : 900); if (mien !== jeton) return;
+      await wait(RM ? 100 : 3300); if (mien !== jeton) return; // le temps que la mélodie se rejoue
       await NARR.dire(bulle(ciel[c.cle].legende)); if (mien !== jeton) return;
       await NARR.attendre(); if (mien !== jeton) return;
       g.classList.add('pale');
@@ -265,7 +275,7 @@ window.SCENES = (function () {
     montgolfiere: { bruleur: async () => { svg.classList.add('vole'); SON.play('bruleur'); await wait(RM ? 100 : 3800); } },
     // La dent dessinée, puis la montgolfière traverse l'écran et s'en va par la droite
     // La dent dessinée, puis deux autres constellations et un vœu ; enfin la montgolfière s'en va par la droite
-    etoiles: { constellation: async () => { const mien = jeton; await wait(RM ? 100 : 1400); if (mien !== jeton) return; await cielDesConstellations(); if (mien !== jeton) return; svg.classList.add('envol'); SON.play('bruleur'); await wait(RM ? 100 : 2600); } },
+    etoiles: { constellation: async () => { const mien = jeton; await wait(RM ? 100 : 2600); if (mien !== jeton) return; await cielDesConstellations(); if (mien !== jeton) return; svg.classList.add('envol'); SON.play('bruleur'); await wait(RM ? 100 : 2600); } },
     lievre: { lievre: async () => {
       // Quenotte grimpe sur son dos, et ils filent en bondissant jusqu'au panneau de la ville
       svg.classList.add('galop');
@@ -399,7 +409,7 @@ window.SCENES = (function () {
     fermer();
     const mien = ++jeton;
     courant = n; sc = D.scenes[n];
-    NARR.fixer([sc, D.indices], T);
+    NARR.fixer([sc, D.indices].concat(sc.id === 'etoiles' ? [D.voyage] : []), T);
     root.innerHTML = frise(n) + `<div class="decor-wrap" id="decor-wrap"><h2 class="decor-titre"><span class="decor-heure">${heureTexte(sc.heure)}</span>${T(sc.titre)}</h2><div class="secrets" id="secrets" title="Secrets découverts dans cette image"><svg viewBox="0 0 24 24"><use href="#etoile5"/></svg><span id="secrets-n"></span>${(sc.ardennes || []).length ? `<svg class="feuille-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="${FEUILLE}"/></svg><span id="ardennes-n"></span>` : ''}</div>${DESSINS[sc.id](ctx.state.nuit)}</div>`;
     wrap = $('#decor-wrap', root); svg = $('svg.decor', root);
     if (sc.id === 'fenetre') frotterBuee();
@@ -440,7 +450,8 @@ window.SCENES = (function () {
     });
     // Un toucher à côté : la scène bouge doucement, rien de plus
     svg.addEventListener('pointerdown', e => {
-      if (e.target.closest('.tap')) return;
+      // Les constellations à tracer et l'étoile filante du vœu ne sont pas « à côté » : la scène ne bouge pas
+      if (e.target.closest('.tap, .cst, .cst-filante') || svg.classList.contains('jeu-ciel')) return;
       wrap.classList.remove('bouge'); void wrap.offsetWidth; wrap.classList.add('bouge');
     });
     $$('.pastille', root).forEach(p => p.onclick = () => { const k = +p.dataset.n; if (k <= ctx.state.scene && k !== courant) ctx.fondu(() => ouvrir(k)); });
@@ -453,10 +464,12 @@ window.SCENES = (function () {
     if (!direct) { const ok = await NARR.attendre(); if (mien !== jeton || !ok) return; }
     if (conseil()) {
       // Première scène : Quenotte explique les secrets à découvrir
-      await NARR.dire(derniere = bulle(D.indices)); if (mien !== jeton) return;
+      // L'image s'assombrit et le compteur des secrets, en haut à droite, s'encadre : c'est là qu'on les compte
+      wrap.classList.add('montre-secrets');
+      await NARR.dire(derniere = bulle(D.indices)); if (mien !== jeton) { wrap.classList.remove('montre-secrets'); return; }
       mainsIndices(true);
       const ok2 = await NARR.attendre();
-      mainsIndices(false);
+      mainsIndices(false); wrap.classList.remove('montre-secrets');
       ctx.state.indices = true; ctx.save();
       if (mien !== jeton || !ok2) return;
     }
@@ -636,6 +649,54 @@ window.SCENES = (function () {
     await fini(mien);
   }
 
+  // ---------- Entre les étoiles et la rivière : le voyage, une ellipse dans le temps et l'espace ----------
+  // La montgolfière file vers la maison de l'enfant : sous elle défilent les forêts des Ardennes, des champs, des
+  // villages, une rivière, puis sa ville apparaît au loin, avec son nom sur un panneau.
+  function voyageVille() {
+    return new Promise(fini => {
+      if (!wrap) { fini(); return; }
+      const ville = ctx.config.ville || '', mien = jeton, DUREE = RM ? 1500 : 9000;
+      const sapin = (x, y, s, c) => `<path transform="translate(${x},${y}) scale(${s})" d="M0-60L22-12H10L28 14H-28L-10-12H-22Z" fill="${c}"/>`;
+      const maison = (x, y, s) => `<g transform="translate(${x},${y}) scale(${s})"><rect x="-16" y="-22" width="32" height="22" fill="#2a3256"/><path d="M-20-22l20-16 20 16z" fill="#5b6182"/><rect x="-9" y="-15" width="6" height="7" fill="#FFC857"/><rect x="4" y="-15" width="6" height="7" fill="#FFC857" opacity=".6"/></g>`;
+      // Le paysage, de gauche à droite : 3 000 de large (la forêt, les champs et la rivière, les villages), puis la ville
+      let pays = '';
+      for (let x = 0; x < 1100; x += 46) pays += sapin(x, 520 - (x % 3) * 6, 0.9 + (x % 5) * 0.06, x % 2 ? '#183b31' : '#1E3F36');
+      for (let x = 1100; x < 2100; x += 120) pays += `<path d="M${x} 540h100v60H${x}z" fill="${(x / 120) % 2 ? '#2a4a2e' : '#33572f'}"/>`;
+      pays += '<path d="M1300 600C1360 560 1420 560 1480 540S1620 520 1700 548" fill="none" stroke="#3E7C8F" stroke-width="16" stroke-linecap="round"/>';
+      for (let x = 2150; x < 2900; x += 110) pays += maison(x, 540, 1) + (x % 220 ? sapin(x + 50, 545, 0.6, '#183b31') : '');
+      const villeX = 3350;
+      const silhouette = `<g transform="translate(${villeX},540)">
+        <path d="M-260 0v-60h40v-30h50v40h40v-80h60v50h40v-30l20-40 20 40v70h50v-50h50v60h40v-40h60V0z" fill="#232a55"/>
+        <g fill="#FFC857">${[[-230, -40], [-200, -60], [-150, -30], [-90, -100], [-70, -60], [-10, -40], [40, -50], [100, -30], [150, -40], [210, -20]].map(([x, y]) => `<rect x="${x}" y="${y}" width="8" height="10" rx="1"/>`).join('')}</g>
+        <g transform="translate(-20,40)"><rect x="-4" y="-62" width="8" height="62" fill="#6E4630"/><rect x="${-Math.max(70, ville.length * 9)}" y="-92" width="${Math.max(140, ville.length * 18)}" height="34" rx="6" fill="#fff" stroke="#D64045" stroke-width="5"/>
+        <text x="0" y="-68" text-anchor="middle" font-family="Baloo 2, sans-serif" font-weight="800" font-size="22" fill="#1F2235">${ville.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]))}</text></g></g>`;
+      const v = document.createElement('div');
+      v.className = 'voyage-ville';
+      v.innerHTML = `<svg viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid slice" role="img" aria-label="La montgolfière de ${ctx.config.souris} vole vers ${ville}">
+${A.fond(ctx.state.nuit, 61, { x: 820, y: 110, r: 30 })}
+<g class="vv-loin"><path d="M0 470Q150 430 300 455T600 445T900 452T1200 440T1500 460T1800 445T2100 455T2400 440T2700 450T3000 445T3300 455T3600 450V600H0Z" fill="#1b2a52"/></g>
+<g class="vv-pays"><rect x="0" y="540" width="4000" height="60" fill="#14302a"/>${pays}${silhouette}</g>
+<g class="vv-ballon" transform="translate(440,230) scale(.55)"><g class="vv-ballon-in">${DEC.ballonSVG()}</g></g>
+</svg>`;
+      wrap.appendChild(v);
+      const pays_ = $('.vv-pays', v), loin = $('.vv-loin', v);
+      const fin = villeX - 620; // la ville s'arrête à droite de la montgolfière
+      const t0 = performance.now();
+      let r = 0;
+      const pas = t => {
+        if (mien !== jeton) { v.remove(); fini(); return; }
+        const k = Math.min(1, (t - t0) / DUREE), e = 1 - Math.pow(1 - k, 2.2); // ralentit en approchant
+        pays_.setAttribute('transform', `translate(${(-fin * e).toFixed(1)},0)`);
+        loin.setAttribute('transform', `translate(${(-fin * 0.25 * e).toFixed(1)},0)`);
+        if (k < 1) { r = requestAnimationFrame(pas); return; }
+        setTimeout(() => { if (mien === jeton) v.classList.add('part'); setTimeout(() => { v.remove(); fini(); }, RM ? 0 : 500); }, RM ? 300 : 1400);
+      };
+      r = requestAnimationFrame(pas);
+      SON.play('bruleur');
+      NARR.dire(bulle(D.voyage.depart)).then(() => wait(RM ? 0 : 2600)).then(() => { if (mien === jeton && v.isConnected) NARR.dire(bulle(D.voyage.arrivee)); });
+    });
+  }
+
   // La souris trottine vers la droite et sort de l'image
   async function sortie() {
     if (!svg) return;
@@ -665,7 +726,7 @@ window.SCENES = (function () {
     if (sc.pont) { await NARR.dire(derniere = bulle(sc.pont)); if (mien !== jeton) return; }
     const dernier = courant >= D.scenes.length - 1;
     if (dernier) NARR.action(A.icone('patte') + ' ' + T(sc.bouton), () => ctx.finChapitre(), 'btn-rouge');
-    else NARR.action('Scène suivante ' + A.icone('suite'), async () => { SON.play('clic'); NARR.action(null); const n = courant + 1; await sortie(); ctx.fondu(() => ouvrir(n)); });
+    else NARR.action('Scène suivante ' + A.icone('suite'), async () => { SON.play('clic'); NARR.action(null); const n = courant + 1; await sortie(); if (sc.id === 'etoiles') await voyageVille(); ctx.fondu(() => ouvrir(n)); });
   }
 
   // Passer la scène en cours (histoire déjà terminée) : la suivante, ou le chapitre suivant après la dernière

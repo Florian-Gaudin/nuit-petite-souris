@@ -30,7 +30,7 @@ TPB = 480
 # Cibles de niveau (LUFS intégrés) et crête maximale (dBTP)
 CIBLE_MUSIQUE, CIBLE_BRUITAGE, CRETE_MAX = -23.0, -18.0, -2.0
 # Les bruitages qui doivent rester en retrait (écart en dB par rapport à CIBLE_BRUITAGE)
-ECARTS_BRUITAGE = {'page': -8.0}
+ECARTS_BRUITAGE = {'page': -8.0, 'toucheville': -4.0, 'arriveeville': -4.0}
 
 
 def cible_bruitage(nom):

@@ -186,7 +186,7 @@ test("le carnet : les cartes restent grisées jusqu'à leur découverte, le livr
   await page.locator('[data-a="fermer"]').click();
   // Le menu : pas de carnet tant que rien n'est découvert
   await page.locator('#btn-prefs').click();
-  await expect(page.locator('#pref-carnet')).toBeHidden();
+  await expect(page.locator('#pref-carnet')).toBeDisabled(); // grisé tant que rien n'est découvert
 });
 
 test("le carnet : une barre ‹ grille › en bas, la croix en haut ; le livre se touche pour s'ouvrir", async ({ page }) => {
